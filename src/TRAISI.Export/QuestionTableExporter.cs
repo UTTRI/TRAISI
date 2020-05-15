@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using OfficeOpenXml;
-using OfficeOpenXml.Style; 
+using OfficeOpenXml.Style;
 using TRAISI.Helpers;
 using System.Web;
 using HtmlAgilityPack;
@@ -47,18 +47,19 @@ namespace TRAISI.Export
         public async Task<List<QuestionPartView>> QuestionPartsList(QuestionPartView questionPartView)
         {
             // don't look at child part views if there's a QuestionPart
-            
             if (questionPartView.QuestionPart != null)
             {
-                return new List<QuestionPartView>() {questionPartView};
+                return new List<QuestionPartView>() { questionPartView };
             }
-            
+
             var questionPartViewChildren = await _context.QuestionPartViews.AsQueryable()
                 .Where(qp => qp.ParentView == questionPartView)
                 .Include(qpv => qpv.QuestionPart)
                 .Include(qpv => qpv.QuestionPart.QuestionOptions)
                 .Include(qpv => qpv.QuestionPart.QuestionConfigurations)
-                .Include(qpv => qpv.QuestionPart).ThenInclude(qp=>qp.QuestionOptions).ThenInclude(qo=>qo.QuestionOptionLabels)
+                .Include(qpv => qpv.QuestionPart)
+                .ThenInclude(qp => qp.QuestionOptions)
+                .ThenInclude(qo => qo.QuestionOptionLabels)
                 .OrderBy(p => p.Order)
                 .ToListAsync();
 
@@ -76,21 +77,17 @@ namespace TRAISI.Export
         /// <param name="worksheet"></param>
         public void BuildQuestionTable(IList<QuestionPartView> questionPartViews, ExcelWorksheet worksheet)
         {
-            /* worksheet.Cells[Row: 1, Col: 1].Value = "Question Name";
-            worksheet.Cells[Row: 1, Col: 2].Value = "Question Text";
-            worksheet.Cells[Row: 1, Col: 3].Value = "Type";
-            worksheet.Cells[Row: 1, Col: 4].Value = "Option Code / Name";
-            worksheet.Cells[Row: 1, Col: 5].Value = "Option Text / Value";
-            worksheet.Cells[FromRow: 1, FromCol: 1, ToRow: 1, ToCol: 5].Style.Font.Bold = true; */
+            //Removed Timeline and Travel modes questions.
+            questionPartViews = questionPartViews.Where(res => res.QuestionPart.Name != "Timeline" && res.QuestionPart.Name != "Travel modes").ToList();                                                    
             
             // inject header
             var headerRow = new List<string[]>()
             {
                 new string[] { "Question Name", "Question Text", "Type", "Option Code / Name", "Option Text / Value" }
-            };         
+            };
             worksheet.Cells["A1:E1"].LoadFromArrays(headerRow);
             worksheet.Cells["A1:E1"].Style.Font.Bold = true;
-           
+
             // Loop over each question
             var currentRow = 2;
             foreach (var questionPartView in questionPartViews)
@@ -105,7 +102,7 @@ namespace TRAISI.Export
                 IEnumerable<string> optionCodes = new List<string>();
                 IEnumerable<string> optionLabels = new List<string>();
                 int bottomRow;
-                
+
                 if (numOptions > 0)
                 {
                     optionCodes = orderedOptions.Select(o => o.Code);
@@ -125,7 +122,6 @@ namespace TRAISI.Export
                 {
                     bottomRow = currentRow;
                 }
-
                 // Question Name
                 worksheet.Cells[currentRow, 1].Value = questionPart.Name;
                 if (numOptions > 0)
@@ -133,7 +129,6 @@ namespace TRAISI.Export
                     worksheet.Cells[currentRow, 1, bottomRow, 1].Merge = true;
                     worksheet.Cells.Style.VerticalAlignment = ExcelVerticalAlignment.Top;
                 }
-
                 // Question Text
                 worksheet.Cells[currentRow, 2].Value =
                     StripHtmlTags(questionPartView.Labels["en"].Value);
@@ -142,7 +137,6 @@ namespace TRAISI.Export
                     worksheet.Cells[currentRow, 2, bottomRow, 2].Merge = true;
                     worksheet.Cells.Style.VerticalAlignment = ExcelVerticalAlignment.Top;
                 }
-
                 // Question Type
                 worksheet.Cells[currentRow, 3].Value = questionPart.QuestionType;
                 if (numOptions > 0)
@@ -150,7 +144,6 @@ namespace TRAISI.Export
                     worksheet.Cells[currentRow, 3, bottomRow, 3].Merge = true;
                     worksheet.Cells.Style.VerticalAlignment = ExcelVerticalAlignment.Top;
                 }
-
                 // Loop over options
                 if (numOptions > 0)
                 {

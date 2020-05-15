@@ -69,16 +69,17 @@ namespace TRAISI.Export
                     context.Entry(q).Collection(c => c.Labels).Load();
                     context.Entry(q).Reference(r => r.QuestionPart).Load();
                     context.Entry(q).Collection(c => c.QuestionPartViewChildren).Load();
+
                     bool isHousehold = false;
                     if (q.QuestionPart != null)
-                    {
+                    {                        
                         context.Entry(q.QuestionPart).Collection(c => c.QuestionOptions).Load();
                         foreach (var option in q.QuestionPart.QuestionOptions)
                         {
                             context.Entry(option).Collection(option => option.QuestionOptionLabels).Load();
                         }
                         questionPartViews.Add(q);
-                        personQuestions.Add(q);                        
+                        householdQuestions.Add(q);                        
                     }
                     else if(q.IsHousehold)
                     {
@@ -96,6 +97,7 @@ namespace TRAISI.Export
                             context.Entry(option).Collection(option => option.QuestionOptionLabels).Load();
                         }
                         questionPartViews.Add(q2);
+                        
                         if(!isHousehold) {
                             householdQuestions.Add(q2);
                         }
@@ -183,6 +185,21 @@ namespace TRAISI.Export
                 eXp.Save();
             }
 
+            // Transit Routes Excel file
+            var rfi = new FileInfo(@"..\..\src\TRAISI.Export\surveyexportfiles\TransitRoutes.xlsx");
+            if (rfi.Exists)
+            {
+                rfi.Delete();
+            }
+            using (var eXp = new ExcelPackage(rfi))
+            {
+                // initalize a sheet in the workbook
+                var workbook = eXp.Workbook;
+                Console.WriteLine("Writing Transit Routes Response sheet");
+                var transitRoutesSheet = workbook.Worksheets.Add("Transit Routes Responses");
+                responseTableExporter.ResponsesPivot_TransitRoutes(questionParts_personal, responses_personal, respondents, transitRoutesSheet);
+                eXp.Save();
+            }
             return 0;
         }
 
