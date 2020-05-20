@@ -19,6 +19,7 @@ using TRAISI.Data.Models.ResponseTypes;
 using TRAISI.Data.Models.Questions;
 using Newtonsoft.Json.Linq;
 using TRAISI.Controllers;
+using TRAISI.Controllers;
 namespace TRAISI.Export
 {
     public class ResponseTableExporter
@@ -206,7 +207,6 @@ namespace TRAISI.Export
         private async Task<JObject> ReadTripLinxData(double lato, double lngo, double latd, double lngd, string mode, string transitModes, DateTime date) {
             return JObject.Parse(await this._geocontroller.GetTripLinxRoutePlanner(lato,lngo,latd,lngd,mode,transitModes,date));
         }
-
         private string ReadSplitLocation(ISurveyResponse surveyResponse, String locationPart)
         {
             string value = String.Empty;
