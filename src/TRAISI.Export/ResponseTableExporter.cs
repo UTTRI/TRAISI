@@ -18,13 +18,15 @@ using TRAISI.Data;
 using TRAISI.Data.Models.ResponseTypes;
 using TRAISI.Data.Models.Questions;
 using Newtonsoft.Json.Linq;
-
+using TRAISI.Controllers;
 namespace TRAISI.Export
 {
     public class ResponseTableExporter
     {
         private readonly ApplicationDbContext _context;
         private readonly QuestionTypeManager _questionTypeManager;
+
+        private readonly GeoServiceController _geocontroller;
         String locationPart = "";
 
         /// <summary>
@@ -44,6 +46,8 @@ namespace TRAISI.Export
                 _questionTypeManager = new QuestionTypeManager(null, new NullLoggerFactory());
                 _questionTypeManager.LoadQuestionExtensions("../TRAISI/extensions");
             }
+
+            this._geocontroller = new GeoServiceController(null,null);
         }
 
         public List<SurveyResponse> ResponseList(List<QuestionPartView> questionPartViews)
@@ -185,6 +189,22 @@ namespace TRAISI.Export
 
             var locationJson = JsonSerializer.Serialize(locations);
             return locationJson;
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="lato"></param>
+        /// <param name="lngo"></param>
+        /// <param name="latd"></param>
+        /// <param name="lngd"></param>
+        /// <param name="mode"></param>
+        /// <param name="transitModes"></param>
+        /// <param name="date"></param>
+        /// <returns></returns>
+        private async Task<JObject> ReadTripLinxData(double lato, double lngo, double latd, double lngd, string mode, string transitModes, DateTime date) {
+            return JObject.Parse(await this._geocontroller.GetTripLinxRoutePlanner(lato,lngo,latd,lngd,mode,transitModes,date));
         }
 
         private string ReadSplitLocation(ISurveyResponse surveyResponse, String locationPart)
