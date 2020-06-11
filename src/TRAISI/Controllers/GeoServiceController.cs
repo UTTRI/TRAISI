@@ -92,9 +92,9 @@ namespace TRAISI.Controllers
             request.AddParameter("DateType", "DEPARTURE");
             request.AddParameter("Algorithm", "FASTEST");
 
-            var response = await _triplinx.ExecuteAsync(request);
-
-
+            //var response = await _triplinx.ExecuteAsync(request); 
+            var response =  _triplinx.Execute(request);  
+                         
             return response.Content;
         }
 
