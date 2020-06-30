@@ -256,7 +256,7 @@ namespace TRAISI.Controllers {
 						return BadRequest ($"{nameof(user)} cannot be null");
 
 					// force user type to be 'user' to avoid any other type being set through here
-					user.Roles = new string[] { "user" };
+					// user.Roles = new string[] { "user" };
 
 					TraisiUser appUser = Mapper.Map<TraisiUser> (user);
 

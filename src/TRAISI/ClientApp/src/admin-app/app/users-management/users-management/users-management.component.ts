@@ -123,10 +123,11 @@ export class UsersManagementComponent implements OnInit, AfterViewInit {
 				flexGrow: 240
 			},
 			{
-				prop: 'role',
+				prop: 'roles',
 				name: gT('Role'),
 				minWidth: 220,
-				flexGrow: 240
+				flexGrow: 240,
+				cellTemplate: this.rolesTemplate
 			}
 		];
 
@@ -260,6 +261,7 @@ export class UsersManagementComponent implements OnInit, AfterViewInit {
 			} else {
 				this.accountService.getSoloUsers().subscribe(
 					users => {
+
 						this.userGroupService
 							.listUserGroupsWhereAdmin()
 							.subscribe(
@@ -294,7 +296,7 @@ export class UsersManagementComponent implements OnInit, AfterViewInit {
 		users.forEach((user, index) => {
 			(<any>user).index = index + 1;
 		});
-
+		console.log(users);
 		this.soloUserRowsCache = [...users];
 		this.soloUserRows = users;
 

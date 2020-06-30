@@ -52,10 +52,22 @@ namespace TRAISI.Data
                 const string groupAdminRoleName = "group administrator";
                 const string userRoleName = "user";
                 const string respondentRoleName = "respondent";
+                const string managementRoleName = "management";
+                const string teamleadRoleName = "teamlead";
+                const string interviewerRoleName = "interviewer";
+                const string qcRoleName = "qc";
+
 
                 await EnsureRoleAsync(adminRoleName, "Super administrator", 0, ApplicationPermissions.GetAllPermissionValues());
                 await EnsureRoleAsync(groupAdminRoleName, "Group administrator", 1, ApplicationPermissions.GetAllGroupPermissionValues());
                 await EnsureRoleAsync(userRoleName, "Basic user", 2, ApplicationPermissions.GetAdministrativePermissionValues());
+                await EnsureRoleAsync(respondentRoleName, "Survey Respondent", 3, new string[] { });
+                await EnsureRoleAsync(managementRoleName, "Management", 4, ApplicationPermissions.GetAdministrativePermissionValues());
+                await EnsureRoleAsync(interviewerRoleName, "Interviewer", 5, ApplicationPermissions.GetAdministrativePermissionValues());
+                await EnsureRoleAsync(teamleadRoleName, "Team Lead", 6, ApplicationPermissions.GetAdministrativePermissionValues());
+                await EnsureRoleAsync(qcRoleName, "QC Analyst", 7, ApplicationPermissions.GetAdministrativePermissionValues());
+
+                // ensure cati roles
                 await EnsureRoleAsync(respondentRoleName, "Survey Respondent", 3, new string[] { });
 
                 var adminAccounts = _configuration.GetSection("AdminAccounts").GetChildren();

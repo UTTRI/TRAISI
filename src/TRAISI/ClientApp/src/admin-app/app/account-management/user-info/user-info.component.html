@@ -416,14 +416,13 @@
                 *ngIf="isEditMode"
                 [class.col-md-9]="isViewOnly"
                 [class.col-md-7]="!isViewOnly">                    
-                    <select name="role" ng-model="roleSelect" class="form-control">
+                    <select aria-placeholder="Select a roll" name="role" [(ngModel)]="selectedRole" class="form-control">
                         <br>
-                        <option value="">--Select the Role--</option>
-                        <option value="1">Traisi</option>
-                        <option value="2">Management Staff</option>
-                        <option value="3">Team Leaders and Supervisors</option>
-                        <option value="4">Telephone Interviewers</option>
-                        <option value="5">QC Analysts</option>
+                        <option value="user">Traisi Administrator</option>
+                        <option value="management">Management Staff</option>
+                        <option value="teamlead">Team Leaders and Supervisors</option>
+                        <option value="interviewer">Telephone Interviewers</option>
+                        <option value="qc">QC Analysts</option>
                     </select>
             </div>
         </div>

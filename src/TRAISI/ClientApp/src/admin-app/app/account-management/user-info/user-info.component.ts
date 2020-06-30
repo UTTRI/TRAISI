@@ -192,7 +192,7 @@ export class UserInfoComponent implements OnInit, AfterViewInit {
 	private save(): void {
 		this.isSaving = true;
 		this.alertService.startLoadingMessage('Saving changes...');
-
+		this.userEdit.roles.push(this.selectedRole);
 		if (this.isNewUser) {
 			this.accountService
 				.newUser(this.userEdit)
