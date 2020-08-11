@@ -1,0 +1,226 @@
+<div>
+	<form (ngSubmit)="onNewSampleFormSubmit()" #f="ngForm" class="form-horizontal">
+		<div *ngIf="!importing">
+			<div class="form-group form-group-adjust row">
+				<label for="accessCode" class="col-md-2 col-form-label text-md-right">Access Code</label>
+				<div class="col-md-8">
+					<input [(ngModel)]="model.accessCode" type="text" class="form-control" id="accessCode"
+						aria-describedby="accessCode" placeholder="Access Code" name="accessCode" required />
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<hr class="edit-separator-hr" />
+				</div>
+			</div>
+			<div class="form-group form-group-adjust row">
+				<label for="sampleHhIdNumber" class="col-md-2 col-form-label text-md-right">HhId Num</label>
+				<div class="col-md-8">
+					<input [(ngModel)]="model.hhIdNum" type="text" class="form-control" id="sampleHhIdNumber"
+						aria-describedby="sampleHhIdNumber" placeholder="Hh Id Num" name="sampleHhIdNumber" required />
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<hr class="edit-separator-hr" />
+				</div>
+			</div>
+			<div class="form-group form-group-adjust row">
+				<label for="mailingBlock" class="col-md-2 col-form-label text-md-right">Mailing Block</label>
+				<div class="col-md-8">
+					<input [(ngModel)]="model.mailingBlock" type="text" class="form-control" id="mailingBlock"
+						aria-describedby="mailingBlock" placeholder="Mailing Block" name="mailingBlock" required />
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<hr class="edit-separator-hr" />
+				</div>
+			</div>
+			<div class="form-group form-group-adjust row">
+				<label for="lastName" class="col-md-2 col-form-label text-md-right">Last Name</label>
+				<div class="col-md-8">
+					<input [(ngModel)]="model.lastName" type="text" class="form-control" id="lastName"
+						aria-describedby="lastName" placeholder="Last Name" name="lastName" required />
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<hr class="edit-separator-hr" />
+				</div>
+			</div>
+			<div class="form-group form-group-adjust row">
+				<label for="postalCode" class="col-md-2 col-form-label text-md-right">Postal Code</label>
+				<div class="col-md-8">
+					<input [(ngModel)]="model.postalCode" type="text" class="form-control" id="postalCode"
+						aria-describedby="postalCode" placeholder="Postal Code" name="postalCode" required />
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<hr class="edit-separator-hr" />
+				</div>
+			</div>
+			<div class="form-group form-group-adjust row">
+				<label for="sampleAddress" class="col-md-2 col-form-label text-md-right">Address</label>
+				<div class="col-md-8">
+					<input [(ngModel)]="model.address" type="text" class="form-control" id="sampleAddress"
+						aria-describedby="sampleAddress" placeholder="Address" name="sampleAddress" required />
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<hr class="edit-separator-hr" />
+				</div>
+			</div>
+			<div class="form-group form-group-adjust row">
+				<label for="samplePhoneNumber" class="col-md-2 col-form-label text-md-right">Phone Number</label>
+				<div class="col-md-8">
+					<input [(ngModel)]="model.phoneNumber" type="tel" class="form-control" id="samplePhoneNumber"
+						aria-describedby="samplePhoneNumber" placeholder="111-111-1111" name="samplePhoneNumber"
+						required />
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<hr class="edit-separator-hr" />
+				</div>
+			</div>
+			<div class="form-group form-group-adjust row">
+				<label for="sampleOwner" class="col-md-2 col-form-label text-md-right">Owner</label>
+				<div class="col-md-8">
+					<input [(ngModel)]="model.owner" type="text" class="form-control" id="sampleOwner"
+						aria-describedby="sampleOwner" placeholder="Owner" name="sampleOwner" required />
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<hr class="edit-separator-hr" />
+				</div>
+			</div>
+			<div class="form-group form-group-adjust row">
+				<label for="sampleGroup" class="col-md-2 col-form-label text-md-right">Group</label>
+				<div class="col-md-8">
+					<input [(ngModel)]="model.group" type="text" class="form-control" id="sampleGroup"
+						aria-describedby="sampleGroup" placeholder="Group" name="sampleGroup" required />
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<hr class="edit-separator-hr" />
+				</div>
+			</div>
+			<div class="form-group form-group-adjust row">
+				<label for="sampleStartDate" class="col-md-2 col-form-label text-md-right">Start Date</label>
+				<div class="col-md-8">
+					<input type="text" placeholder="Start Date" class="form-control" aria-describedby="sampleStartDate"
+					bsDatepicker [bsConfig]="bsConfig" name="sampleStartDate" id="sampleStartDate" 
+					[(ngModel)]="model.startDate" />
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<hr class="edit-separator-hr" />
+				</div>
+			</div>
+			<div class="form-group form-group-adjust row">
+				<label for="sampleLastModified" class="col-md-2 col-form-label text-md-right">Last Modified</label>
+				<div class="col-md-8">
+					<input type="text" placeholder="Last Modified" class="form-control"	aria-describedby="sampleLastModified"		
+					bsDatepicker [bsConfig]="bsConfig" name="sampleLastModified" id="sampleLastModified" 
+					[(ngModel)]="model.lastModified" />
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<hr class="edit-separator-hr" />
+				</div>
+			</div>
+			<div class="form-group form-group-adjust row">			
+				<label for="sampleState" class="col-md-2 col-form-label text-md-right">Sample State</label>
+					<div class="col-md-8">
+						<input [(ngModel)]="model.state" type="text" class="form-control" id="sampleState"
+							aria-describedby="sampleState" placeholder="Sample State" name="sampleState" required />
+					</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<hr class="edit-separator-hr" />
+				</div>
+			</div>
+			<div class="form-group form-group-adjust row">
+				<label for="sampleStatus" class="col-md-2 col-form-label text-md-right">Sample Status</label>
+					<div class="col-md-8">
+						<input [(ngModel)]="model.status" type="text" class="form-control" id="sampleStatus"
+							aria-describedby="sampleStatus" placeholder="Sample Status" name="sampleStatus" required />
+					</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<hr class="edit-separator-hr" />
+				</div>
+			</div>
+			<div class="form-group form-group-adjust row">
+				<label for="sampleLanguage" class="col-md-2 col-form-label text-md-right">Language</label>
+					<div class="col-md-8">
+						<input [(ngModel)]="model.language" type="text" class="form-control" id="sampleLanguage"
+							aria-describedby="sampleLanguage" placeholder="Language" name="sampleLanguage" required />
+					</div>
+			</div>
+		</div>
+		<div class="row" *ngIf="importing">
+			<div class="col-md-12">
+				<hr class="edit-separator-hr" />
+			</div>
+		</div>
+		<div class="form-group row" *ngIf="importing">
+			<label class="col-form-label col-md-2 text-md-right" for="fileupload1">
+				Sample CSV File Upload
+			</label>
+			<div class="col-md-8 ">
+				<div class="fileinput fileinput-new input-group">
+					<div class="form-control reset-height">
+						<i class="glyphicon glyphicon-file"></i>
+						<div *ngIf="importFile" class="text-nowrap float-right filename">{{ importFile.name }}</div>
+					</div>
+					<input type="file" #csvReader name="Upload CSV" accept=".csv" />
+					<!--
+					<span class="input-group-addon btn btn-default btn-file">
+						<span *ngIf="!importFile" class="fileinput-new">Select file</span>
+						<span *ngIf="importFile" class="fileinput-new">Change</span>
+						 <input type="file" ng2FileSelect [uploader]="uploader"
+							(onFileSelected)="setImportFile($event)" />
+						<a *ngIf="importFile" class="input-group-addon btn btn-default fileinput-exists"
+						data-dismiss="fileinput">Remove</a>
+					</span>
+					-->
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<hr class="edit-separator-hr" />
+			</div>
+		</div>
+		<div class="modal-footer">
+			<div class="">
+				<button type="button" class="btn btn-secondary action-button" data-dismiss="modal" (click)="cancel()"
+					[disabled]="isSaving">
+					<i class="fas fa-times"></i>
+					Cancel
+				</button>
+				<button *ngIf="!importing" type="submit" class="btn btn-primary" [disabled]="isSaving">
+					<i *ngIf="!isSaving" class="fas fa-save"></i>
+					<i *ngIf="isSaving" class="fas fa-circle-o-notch fa-spin"></i>
+					{{ isSaving ? ('users.editor.Saving' | translate) : ('users.editor.Save' | translate) }}
+				</button>
+				<button *ngIf="importing" type="submit" class="btn btn-primary">
+					<i *ngIf="!isSaving" class="fas fa-file-import"></i>
+					<i *ngIf="isSaving" class="fas fa-circle-o-notch fa-spin"></i>
+					{{ isSaving ? ('users.editor.Importing' | translate) : ('users.editor.Import' | translate) }}
+				</button>
+			</div>
+		</div>
+		<div class="clearfix"></div>
+	</form>
+</div>

@@ -76,6 +76,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 		this.authService.login(this.userLogin.email, this.userLogin.password, this.userLogin.rememberMe).subscribe(
 			(user) => {
 				setTimeout(() => {
+					console.log(user);
 					this.alertService.stopLoadingMessage();
 					this.isLoading = false;
 					this.reset();

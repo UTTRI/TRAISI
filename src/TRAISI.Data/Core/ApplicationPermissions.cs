@@ -35,12 +35,14 @@ namespace TRAISI.Data.Core
         public const string SystemPermissionGroupName = "System Permissions";
         public static ApplicationPermission AccessAdmin = new ApplicationPermission("Access Admin", "system.accessadmin", SystemPermissionGroupName, "Permission to access admin interface");
 
+        public static ApplicationPermission ViewAllSamples = new ApplicationPermission("View All Samples", "samples.view", SystemPermissionGroupName, "Permission to view all samples");
+    
         static ApplicationPermissions()
         {
             List<ApplicationPermission> allPermissions = new List<ApplicationPermission>()
             {
                 AccessAdmin,
-
+                
                 ViewUsers,
                 ManageUsers,
                 ManageGroups,
@@ -55,7 +57,10 @@ namespace TRAISI.Data.Core
                 ManageSurveys,
                 ViewGroupSurveys,
                 ManageGroupSurveys,
-                CreateGroupSurveys
+                CreateGroupSurveys,
+
+                ViewAllSamples
+               
             };
 
             AllPermissions = allPermissions.AsReadOnly();

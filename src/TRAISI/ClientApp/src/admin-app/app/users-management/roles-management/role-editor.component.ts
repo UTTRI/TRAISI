@@ -91,11 +91,11 @@ export class RoleEditorComponent {
 	private refreshLoggedInUser() {
 		this.accountService.refreshLoggedInUser()
 			.subscribe(user => { },
-			error => {
-				this.alertService.resetStickyMessage();
-				this.alertService.showStickyMessage('Refresh failed',
-					'An error occured whilst refreshing logged in user information from the server', MessageSeverity.error, error);
-			});
+				error => {
+					this.alertService.resetStickyMessage();
+					this.alertService.showStickyMessage('Refresh failed',
+						'An error occured whilst refreshing logged in user information from the server', MessageSeverity.error, error);
+				});
 	}
 
 
@@ -188,6 +188,16 @@ export class RoleEditorComponent {
 	}
 
 	editRole(role: Role, allPermissions: Permission[]) {
+		var r = -1;
+		for (let i = 0; i < role.permissions.length; i++) {
+			if (role.permissions[i] == null) {
+				r = i;
+			}
+		}
+		if (r != -1) {
+			role.permissions.splice(r, 1);
+		}
+		console.log(role.permissions);
 		if (role) {
 			this.isNewRole = false;
 			this.showValidationErrors = true;

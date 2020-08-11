@@ -65,6 +65,13 @@
 					</a>
 				</li>
 
+				<li class="menu-item" *ngIf="canViewSamples">
+					<a [routerLink]="['samples']" class="menu-link" routerLinkActive="has-active">
+						<span class="menu-icon fab fa-gg-circle"></span>
+						<span class="menu-text">{{ 'sidebar.ViewSamples' | translate}}</span>
+					</a>
+				</li>
+
 				<!-- /.menu-item -->
 			</ul>
 			<!-- /.menu -->

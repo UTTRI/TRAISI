@@ -356,6 +356,8 @@ namespace TRAISI
                    policy => policy.RequireClaim(CustomClaimTypes.Permission, AppPermissions.ManageGroupSurveys));
                 options.AddPolicy(Policies.CreateGroupSurveysPolicy,
                    policy => policy.RequireClaim(CustomClaimTypes.Permission, AppPermissions.CreateGroupSurveys));
+                options.AddPolicy(Policies.ViewAllSamplesPolicy,
+                   policy => policy.RequireClaim(CustomClaimTypes.Permission, AppPermissions.ViewAllSamples));
 
                 options.AddPolicy(Policies.RespondToSurveyPolicy,
                    policy => policy.Requirements.Add(new SurveyRespondentAuthorizationRequirement()));

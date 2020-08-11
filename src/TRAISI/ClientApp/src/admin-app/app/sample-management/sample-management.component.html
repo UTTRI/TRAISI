@@ -1,0 +1,219 @@
+<div [@fadeInOut]>
+	<h1 class="page-title">
+		{{ 'samples.management.ViewSamples' | translate }}
+	</h1>
+	<div class="card" style="width:80rem;">
+		<div>
+			<ul class="nav nav-tabs float-left" id="myTab" role="tablist">
+				<li class="nav-item">
+					<a class="nav-link active fw-semi-bold" (click)="switchGroup('Activate')" id="activate-tab"
+						data-toggle="tab" href="#activate" role="tab" aria-controls="activate" aria-expanded="true">
+						{{ 'samples.management.Activate' | translate  }}
+					</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link fw-semi-bold" (click)="switchGroup('Distribution')" id="distribution-tab"
+						data-toggle="tab" href="#distribution" role="tab" aria-controls="distribution"
+						aria-expanded="true">
+						{{ 'samples.management.Distribution' | translate  }}
+					</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link fw-semi-bold" (click)="switchGroup('Queue')" id="queue-tab" data-toggle="tab"
+						href="#queue" role="tab" aria-controls="queue" aria-expanded="true">
+						{{ 'samples.management.Queue' | translate }}
+					</a>
+				</li>
+			</ul>
+			<!--Activation tab-->
+			<div class="tab-content card-body" id="myTabContent">
+				<div role="tabpanel" style="clear:left;" class="tab-pane active in clearfix" id="activate"
+					aria-labelledby="activate-tab" aria-expanded="true">
+					<div class="row" *ngIf="activateBeingViewed">
+						<label for="sampleStatus"><strong>Sample Status</strong></label>
+						<div class="col-md-2">
+							<select aria-placeholder="Select a sample status" id="sampleStatus" style="clear:right;"
+								aria-labelledby="sampleStatus" name="sampleStatus" (change)="onStatusChanged()"
+								[(ngModel)]="model.status" class="form-control" required>
+								<option value="Fresh">Fresh</option>
+								<option value="Partially Completed">Partially Completed</option>
+								<option value="Completed">Completed</option>
+								<option value="Invalid">Invalid</option>
+								<option value="Rejected">Rejected</option>
+							</select>
+						</div>
+						<label for="sampleSearch" class="justify-content-center"><strong>Search Samples</strong></label>
+						<div class="col-sm-2">
+							<div class="form-group search-box">
+								<select aria-placeholder="Select search option" id="searchKey"
+									aria-labelledby="searchKey" style="clear:right;" class="form-control"
+									[(ngModel)]="searchKey" name="searchKey">
+									<option value="">Select search option</option>
+									<option value="postalCode">Postal Code (FSA)</option>
+									<option value="address">Address</option>
+									<option value="phoneNumber">Phone Number</option>
+									<option value="accessCode">Access Code</option>
+									<option value="mailingBlock">Mailing Block</option>
+									<option value="hhIdNum">Household Number</option>
+								</select>
+							</div>
+						</div>
+						<input type="search" class="form-control col-sm-2 fa fa-search" name="sampleSearchValue"
+							aria-labelledby="sampleSearchValue" id="sampleSearchValue" [(ngModel)]="searchValue"
+							(keyup)="onSearchChanged()" placeholder="{{ 'samples.management.Search' | translate }}" />
+
+						<label for="sampleState"><strong>Sample Action</strong></label>
+						<div class="col-md-2">
+							<select aria-placeholder="Select a sample action" id="state" aria-labelledby="sampleState"
+								style="clear:right;" name="state" (change)="onStateChanged()" [(ngModel)]="model.state"
+								class="form-control" required>
+								<option value="Activate">Activate</option>
+								<option value="Deactivate">Deactivate</option>
+								<option value="Reject">Reject</option>
+							</select>
+						</div>
+						<button (click)="sampleStateAction()" class="btn btn-secondary mr-2">
+							<i class="fas fa-plus-circle"></i>
+							{{ 'samples.management.Apply' | translate }}
+						</button>
+					</div>
+					<!--Activation table-->
+					<ngx-datatable [@fadeInOut] #activateTable *ngIf="activateBeingViewed"
+						class="bootstrap sm table table-striped table-hover table-responsive"
+						[rows]="activateSampleRows" [columns]="activateSampleColumns"
+						[loadingIndicator]="loadingIndicator" [scrollbarH]="true" [rowHeight]="35" [headerHeight]="40"
+						[footerHeight]="45" [columnMode]="'flex'" (activate)="rowExpand($event)" [rowClass]="rowCursor">
+						<ngx-datatable-row-detail [rowHeight]="'auto'" #myDetailRow>
+							<ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
+								<div class="activateDetails">
+									<div class="row justify-content-between pl-3 pr-3">
+										<div *ngIf="canEdit(row)" class="btn btn-primary col rounded-0"
+											(click)="editSample(row)">
+										</div>
+									</div>
+								</div>
+							</ng-template>
+						</ngx-datatable-row-detail>
+					</ngx-datatable>
+				</div>
+				<!--Distribution tab-->
+				<div role="tabpanel" style="clear:left;" class="tab-pane active in clearfix" id="distribution"
+					aria-labelledby="distribution-tab" aria-expanded="true">
+					<div class="row" *ngIf="distributionBeingViewed">
+						<!--<div class="col-sm-4">
+							<div class="form-group search-box">
+								<search-input (searchChange)="onSearchChanged($event)"
+									placeholder="{{ 'samples.management.Search' | translate }}">
+								</search-input>
+							</div>
+						</div>-->
+						<div class="card-body" style="margin-left: 1rem;">
+							<h6 class="card-title">Toronto Trasit Survey 2021 Sample Distribution</h6>
+							<p class="card-text">TRAISI Transit Survey Sample Collection in Eight Municipal Regions
+							</p>
+							<div class="row">
+								<div class="col-md-4 text-primary" style="text-align: left; height: 3.7rem;">Impact of COVID-19 on
+									transit demand in the <br> GTHA</div>
+								<div class="col-md-2" style="text-align: center;">{{daysInField}} <br> Days in Field</div>
+								<div class="col-md-2" style="text-align: center;">{{avgResponsePerDay}}<br> Avg Response/Day</div>
+								<div class="col-md-2" style="text-align: center;">{{completed}} <br> Completed</div>
+							</div>
+							<div class="progress" style="height:1.5rem;">
+								<div class="progress-bar bg-danger" role="progressbar" style="width: 100%"
+									aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+							</div>
+							<div style="height: 1.5rem;"></div>
+							<div  *ngFor="let item of responses" class="row" style="clear:right;">
+								<div class="col-2">{{item.region}} Region</div>
+									<div class="col-6" style="height:2.5rem;">
+										<div class="progress" style="height:1.5rem;">
+											<div  class="{{item.colorClass}}" [style.width] = "item.percentage"></div>
+										</div>
+									</div>
+								<div class="col-4">{{item.resCount}}/{{item.totalSurveys}}</div>
+							</div>
+						</div>
+					</div>
+					<!--Queue tab-->
+					<div role="tabpanel" style="clear:left;" class="tab-pane active in clearfix" id="queue"
+						aria-labelledby="queue-tab" aria-expanded="true">
+						<div class="row" *ngIf="queueBeingViewed">
+							<!--<div class="col-sm-4">
+							<div class="form-group search-box">
+								<search-input (searchChange)="onSearchChanged($event)"
+									placeholder="{{ 'samples.management.Search' | translate }}">
+								</search-input>
+							</div>
+						</div>-->
+						</div>
+						<!-- <ngx-datatable [@fadeInOut] #queueTable *ngIf="queueBeingViewed && !distributionBeingViewed"
+						class="bootstrap sm table table-striped table-hover table-responsive" [rows]="queueSampleRows"
+						[columns]="queueSampleColumns" [loadingIndicator]="loadingIndicator" [scrollbarH]="true"
+						[rowHeight]="45" [headerHeight]="35" [footerHeight]="35" [columnMode]="'flex'"
+						(activate)="rowExpand($event)" [rowClass]="rowCursor">
+						<ngx-datatable-row-detail [rowHeight]="'auto'" #myDetailRow>
+							<ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
+								<div class="queueDetails">
+									<div class="row justify-content-between pl-3 pr-3">
+									</div>
+								</div>
+							</ng-template>
+						</ngx-datatable-row-detail>
+					</ngx-datatable> -->
+					</div>
+				</div>
+
+				<div class="modal fade" bsModal #editorModal="bs-modal" (onHidden)="onEditorModalHidden()"
+					[config]="{ backdrop: 'static' }" (onShow)="onEditorModalShow()" tabindex="-1">
+					<div class="modal-dialog modal-lg">
+						<div class="modal-content">
+							<div class="modal-header" style="clear:left;">
+								<h4 class="modal-title pull-left" *ngIf="sampleEditMode">
+									<i class="fab fa-wpforms mr-2"></i>
+									Edit Sample
+								</h4>
+								<h4 class="modal-title pull-left" *ngIf="!sampleEditMode && !importing">
+									<i class="fab fa-wpforms mr-2"></i>
+									{{ 'samples.management.NewSample' | translate }}
+								</h4>
+								<h4 class="modal-title pull-left" *ngIf="!sampleEditMode && importing">
+									<i class="fab fa-wpforms mr-2"></i>
+									{{ 'samples.management.ImportSample' | translate }}
+								</h4>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close"
+									(click)="closeEditorModal()">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								<app-sample-editor [importing]="importing" (onSampleSave)="addToSamples($event)"
+									(onImportSamples)="addFromImport($event)" #sampleEditor>
+								</app-sample-editor>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<ng-template #actionsTemplate let-row="row" let-value="value" let-i="index">
+			<div>
+				<a class="badge bg-gray-lighter text-gray" href="javascript:;" (click)="editSample(row)"><i
+						class="fas fa-edit" aria-hidden="true"></i>
+					{{ "samples.management.Edit" | translate }}</a>
+			</div>
+		</ng-template>
+		<ng-template #dateTemplate let-row="row" let-value="value" let-i="index">
+			<div>{{ value | date }}</div>
+		</ng-template>
+	</div>
+	<div class="row justify-content-center">
+		<button class="btn btn-primary mr-3" (click)="newSample()">
+			<i class="fas fa-plus-circle"></i>
+			{{ 'samples.management.NewSample' | translate }}
+		</button>
+		<button class="btn btn-secondary" (click)="importSample()">
+			<i class="fas fa-file-import"></i>
+			{{ 'samples.management.ImportSample' | translate }}
+		</button>
+	</div>
+</div>

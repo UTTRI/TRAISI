@@ -124,7 +124,7 @@ export class UsersManagementComponent implements OnInit, AfterViewInit {
 			},
 			{
 				prop: 'roles',
-				name: gT('Role'),
+				name: gT('users.management.Roles'),
 				minWidth: 220,
 				flexGrow: 240,
 				cellTemplate: this.rolesTemplate
@@ -168,8 +168,8 @@ export class UsersManagementComponent implements OnInit, AfterViewInit {
 				flexGrow: 240
 			},
 			{
-				prop: 'user.role',
-				name: gT('Role'),
+				prop: 'user.roles',
+				name: gT('users.management.Roles'),
 				minWidth: 220,
 				flexGrow: 260
 			}

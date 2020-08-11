@@ -38,6 +38,11 @@ const routes: Routes = [
 				loadChildren: () => import('../survey-execute/survey-execute.module').then(m => m.SurveyExecuteModule)
 			},
 			{
+				path: 'samples',
+				loadChildren: () => import('../sample-management/sample-management.module').then(m => m.SampleManagementModule),
+				data: { hasSidebar: true }
+			},
+			{
 				path: 'chat',
 				component: ChatAppComponent
 			}

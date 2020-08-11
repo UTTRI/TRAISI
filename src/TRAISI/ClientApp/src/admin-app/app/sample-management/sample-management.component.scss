@@ -1,0 +1,63 @@
+@import 'src/shared/assets/scss/helpers';
+.sampleDetails {
+  width: calc(100% - 0px);
+	padding: 0px;
+	overflow: hidden;
+}
+
+.sampleAction {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-right:10px;
+	position: relative;
+	cursor: pointer;
+
+	i {
+		font-size:20px;
+	}
+}
+
+.sampleActionLabel {
+	font-size:11px;
+}
+
+.cursor-pointer {
+	cursor: pointer;
+	-webkit-touch-callout: none; /* iOS Safari */
+	-webkit-user-select: none; /* Safari */
+	 -khtml-user-select: none; /* Konqueror HTML */
+		 -moz-user-select: none; /* Firefox */
+			-ms-user-select: none; /* Internet Explorer/Edge */
+					user-select: none; /* Non-prefixed version, currently
+																supported by Chrome and Opera */
+}
+
+.sample-management-table datatable-body-row, .sample-management-table datatable-body-cell
+{
+  height: auto !important;
+  overflow: visible !important;
+  min-height: 45px !important;
+}
+
+.build-icon
+{
+  font-size:22px;
+  text-align: center;
+}
+
+.distribute-dialog {
+	max-width: 300px;
+	margin: auto;
+}
+
+#activate {
+	.datatable-body {
+		@include media-breakpoint-up(sm) {
+			overflow-x: auto;
+		}
+		@include media-breakpoint-only(xs) {
+			overflow-x: hidden;
+		}
+	}
+}

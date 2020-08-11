@@ -403,20 +403,20 @@
                 [class.col-md-3]="isViewOnly"
                 [class.col-md-2]="!isViewOnly"
                 class="col-form-label text-md-right"
-                for="Role">
-                {{'Role: ' | translate}}
+                for="Roles">
+                {{'users.editor.Roles' | translate}}
             </label>
             <div
                 *ngIf="!isEditMode"
                 [class.col-md-9]="isViewOnly"
                 [class.col-md-7]="!isViewOnly">
-                <p class="form-control bg-gray-lighter">{{Role}}</p>
+                <p class="form-control bg-gray-lighter">{{'users.editor.Roles' | translate}}</p>
             </div>
             <div
                 *ngIf="isEditMode"
                 [class.col-md-9]="isViewOnly"
                 [class.col-md-7]="!isViewOnly">                    
-                    <select aria-placeholder="Select a roll" name="role" [(ngModel)]="selectedRole" class="form-control">
+                    <select aria-placeholder="Select a role" name="role" [(ngModel)]="selectedRole" class="form-control">
                         <br>
                         <option value="user">Traisi Administrator</option>
                         <option value="management">Management Staff</option>

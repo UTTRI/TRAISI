@@ -9,7 +9,8 @@
 		"ManageSurveys": "Manage Surveys",
 		"ManageGroups": "Manage Groups",
 		"ManageUsers": "Manage Users",
-		"ManageRoles": "Manage Roles",
+    "ManageRoles": "Manage Roles",
+    "ViewSamples": "Manage Samples",
 		"Logout": "Logout"
   },
   "pageHeader": {
@@ -103,6 +104,21 @@
 			"Delete": "Delete",
 			"View": "View"
     }
+  },
+  "samples": {
+    "management" : {
+      "ViewSamples": "Manage Samples",
+      "NewSample": "New Sample",
+      "Edit": "Edit",
+      "Delete": "Delete",
+      "SearchOption": "Select search option",
+      "Apply": "Apply",
+      "ImportSample": "Import Sample",
+			"Activate": "Sample Activate/Deactivate",
+			"Distribution": "Sample Distribution",
+      "Queue": "Sample Queues",
+      "Search": "Search using filter option"
+		}
   },
   "users": {
     "management": {
