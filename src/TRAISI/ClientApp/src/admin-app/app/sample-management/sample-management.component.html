@@ -67,6 +67,7 @@
 							<select aria-placeholder="Select a sample action" id="state" aria-labelledby="sampleState"
 								style="clear:right;" name="state" (change)="onStateChanged()" [(ngModel)]="model.state"
 								class="form-control" required>
+								<option value="">Select a sample action</option>
 								<option value="Activate">Activate</option>
 								<option value="Deactivate">Deactivate</option>
 								<option value="Reject">Reject</option>

@@ -135,7 +135,7 @@ export class SampleManagementComponent implements OnInit, AfterViewInit {
 			{ accessCode: "ATS-461", hhIdNum: 1000005, mailingBlock: 100, lastName: "Leung", postalCode: "N2A5B6", address: "55 Stoney Creek St", phoneNumber: 4161991111, owner: "Management Staff", group: "TTS", startDate: new Date(), lastModified: new Date(), status: "Fresh", state: "Inactive", language: "English" },
 			{ accessCode: "YCH-001", hhIdNum: 1000006, mailingBlock: 100, lastName: "Omaruan", postalCode: "N2A6C8", address: "10 Matheson St", phoneNumber: 4372225555, owner: "Management Staff", group: "TTS", startDate: new Date(), lastModified: new Date(), status: "Fresh", state: "Inactive", language: "English" }
 		];
-		//Sample Distributiona visual data
+		//Sample Distribution visual data
 		for (let i = 0; i < this.responses.length; i++) {
 			let rC = this.responses[i].resCount;
 			let tS = this.responses[i].totalSurveys;
@@ -146,6 +146,7 @@ export class SampleManagementComponent implements OnInit, AfterViewInit {
 		
 		//Manage Samples page
 		this.model.status = "Fresh";
+		this.model.state = "";
 		this.activateSampleRows = this.samplesArray;
 		this.activateSampleColumns = this.samplesArray;
 
@@ -443,8 +444,9 @@ export class SampleManagementComponent implements OnInit, AfterViewInit {
 		};
 	}
 
+	//Sample Action
 	public sampleStateAction(): void {
-		if (this.model.state == undefined)
+		if (this.model.state == "")
 			return;
 
 		for (var i in this.activateSampleRows) {
@@ -453,6 +455,7 @@ export class SampleManagementComponent implements OnInit, AfterViewInit {
 		this.activateSampleRows = [...this.activateSampleRows];
 	}
 
+	//Sample Status
 	public onStatusChanged(): void {
 		if (this.model.status != "Select Status") {
 			this.activateSampleRowsCache = this.samplesArray;
