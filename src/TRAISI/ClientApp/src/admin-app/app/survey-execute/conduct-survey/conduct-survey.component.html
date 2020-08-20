@@ -1,11 +1,11 @@
 <div>
-	<h1 class="page-title">
+	<h1 class="page-title" *ngIf="executeMode != 'settings'">
 		Execute Survey -
 		<strong>{{ survey.name }}</strong> - <span class="text-danger">{{ executeMode | titlecase }} Survey</span>
 	</h1>
-
-
-	<div class="card card-fluid">
+	<h1 class="page-title" *ngIf="executeMode == 'settings'">Execute Survey - Settings</h1>
+	<!-- Execute Survey Navigate tabs -->
+	<div class="card card-fluid" *ngIf="executeMode != 'settings'">
 		<div class="card-header nav-scroller">
 			<ul class="nav nav-tabs card-header-tabs" id="myTab" role="tablist">
 				<li class="nav-item">
@@ -18,6 +18,10 @@
 						href="#gcodes" role="tab" aria-controls="gcodes" aria-expanded="true">Group Codes</a>
 				</li>
 				<li class="nav-item">
+					<a class="nav-link fw-semi-bold" id="samples-tab" (click)="switchTab('samples')" data-toggle="tab"
+						href="#samples" role="tab" aria-controls="samples" aria-expanded="true">Samples</a>
+				</li>
+				<li class="nav-item">
 					<a class="nav-link fw-semi-bold" id="email-tab" (click)="switchTab('email')" data-toggle="tab"
 						href="#email" role="tab" aria-controls="email" aria-expanded="true">E-mail</a>
 				</li>
@@ -27,18 +31,14 @@
 				</li>
 			</ul>
 		</div>
-
+		<!-- Execute Survey tabs panel -->
 		<div class="tab-content mb-lg" id="myTabContent">
+			<!-- Individual Codes tab -->
 			<div role="tabpanel" class="tab-pane active in clearfix" id="codes" aria-labelledby="codes-tab"
 				aria-expanded="true">
 				<form (ngSubmit)="generateIndivCodes()" #f="ngForm" novalidate class="form-horizontal">
 					<fieldset>
-
-						<div class="form-group row row-grid">
-							<div class="col-md-2 col-sm-4 offset-md-1 col-10">
-								<h4>Properties</h4>
-							</div>
-						</div>
+						<legend>Properties</legend>
 						<div class="form-group row row-grid">
 							<div class="form-check abc-radio abc-radio-danger col-md-2 col-sm-4 offset-md-1 col-10">
 								<input class="form-check-input" type="radio" name="property" ng-control="property"
@@ -167,6 +167,7 @@
 					</div>
 				</form>
 			</div>
+			<!-- Group Codes tab -->
 			<div role="tabpanel" class="tab-pane" id="gcodes" aria-labelledby="gcodes-tab" aria-expanded="true">
 				<form (ngSubmit)="generateGroupCodes()" #f="ngForm" novalidate class="form-horizontal">
 					<fieldset>
@@ -293,14 +294,162 @@
 					</div>
 				</form>
 			</div>
+			<!-- Samples tab -->
+			<div role="tabpanel" class="tab-pane" id="samples" aria-labelledby="samples-tab" aria-expanded="true">
+				<div class="tab-content card-body" id="samples">
+					<div class="row" *ngIf="samplesBeingViewed">
+						<label for="sampleStatus"><strong>Sample Status</strong></label>
+						<div class="col-md-2">
+							<select aria-placeholder="Select a sample status" id="sampleStatus" style="clear:right;"
+								aria-labelledby="sampleStatus" name="sampleStatus" (change)="onStatusChanged()"
+								[(ngModel)]="model.status" class="form-control" required>
+								<option value="Fresh">Fresh</option>
+								<option value="Partially Completed">Partially Completed</option>
+								<option value="Completed">Completed</option>
+								<option value="Invalid">Invalid</option>
+								<option value="Rejected">Rejected</option>
+							</select>
+						</div>
+						<label for="sampleSearch" class="justify-content-center"><strong>Search
+								Samples</strong></label>
+						<div class="col-sm-2">
+							<div class="form-group search-box">
+								<select aria-placeholder="Select search option" id="searchKey"
+									aria-labelledby="searchKey" style="clear:right;" class="form-control"
+									[(ngModel)]="searchKey" name="searchKey">
+									<option value="">Select search option</option>
+									<option value="postalCode">Postal Code (FSA)</option>
+									<option value="address">Address</option>
+									<option value="phoneNumber">Phone Number</option>
+									<option value="accessCode">Access Code</option>
+									<option value="mailingBlock">Mailing Block</option>
+									<option value="hhIdNum">Household Number</option>
+								</select>
+							</div>
+						</div>
+						<input type="search" class="form-control col-sm-2 fa fa-search" name="sampleSearchValue"
+							aria-labelledby="sampleSearchValue" id="sampleSearchValue" [(ngModel)]="searchValue"
+							(keyup)="onSearchChanged()" placeholder="{{ 'samples.management.Search' | translate }}" />
+
+						<label for="sampleState"><strong>Sample Action</strong></label>
+						<div class="col-md-2">
+							<select aria-placeholder="Select sample action" id="state" aria-labelledby="sampleState"
+								style="clear:right;" name="state" (change)="onStateChanged()" [(ngModel)]="model.state"
+								class="form-control" required>
+								<option value="">Select sample action</option>
+								<option value="Activate">Activate</option>
+								<option value="Deactivate">Deactivate</option>
+								<option value="Reject">Reject</option>
+							</select>
+						</div>
+						<button (click)="sampleStateAction()" class="btn btn-secondary mr-2">
+							<i class="fas fa-plus-circle"></i>
+							{{ 'surveys.execute.Apply' | translate }}
+						</button>
+					</div>
+					<!--Samples table-->
+					<ngx-datatable [@fadeInOut] #samplesTable *ngIf="samplesBeingViewed"
+						class="bootstrap sm table table-striped table-hover table-responsive" [rows]="sampleRows"
+						[columns]="sampleColumns" [loadingIndicator]="loadingIndicator" [scrollbarH]="true"
+						[rowHeight]="35" [headerHeight]="40" [footerHeight]="45" [columnMode]="'flex'"
+						[rowClass]="rowCursor">
+						<ngx-datatable-row-detail [rowHeight]="'auto'" #myDetailRow>
+							<ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
+								<div class="sampleDetails">
+									<div class="row justify-content-between pl-3 pr-3">
+										<div *ngIf="canEdit(row)" class="btn btn-primary col rounded-0"
+											(click)="editSample(row)">
+										</div>
+									</div>
+								</div>
+							</ng-template>
+						</ngx-datatable-row-detail>
+					</ngx-datatable>
+				</div>
+				<!-- Samples Modal dialog window -->
+				<div class="modal fade" bsModal #editorModal="bs-modal" (onHidden)="onEditorModalHidden()"
+					[config]="{ backdrop: 'static' }" (onShow)="onEditorModalShow()" tabindex="-1">
+					<div class="modal-dialog modal-lg">
+						<div class="modal-content">
+							<div class="modal-header" style="clear:left;">
+								<h4 class="modal-title pull-left" *ngIf="sampleEditMode">
+									<i class="fab fa-wpforms mr-2"></i>
+									Edit Sample
+								</h4>
+								<h4 class="modal-title pull-left" *ngIf="!sampleEditMode && !importing">
+									<i class="fab fa-wpforms mr-2"></i>
+									{{ 'surveys.execute.NewSample' | translate }}
+								</h4>
+								<h4 class="modal-title pull-left" *ngIf="!sampleEditMode && importing">
+									<i class="fab fa-wpforms mr-2"></i>
+									{{ 'surveys.execute.ImportSample' | translate }}
+								</h4>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close"
+									(click)="closeEditorModal()">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								<app-sample-editor [importing]="importing" (onSampleSave)="addToSamples($event)"
+									(onImportSamples)="addFromImport($event)" #sampleEditor>
+								</app-sample-editor>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- Email tab -->
 			<div role="tabpanel" class="tab-pane" id="email" aria-labelledby="email-tab" aria-expanded="true">
 			</div>
+			<!-- Schedule tab -->
 			<div role="tabpanel" class="tab-pane" id="schedule" aria-labelledby="schedule-tab" aria-expanded="true">
 			</div>
+			<ng-template #dateTemplate let-row="row" let-value="value" let-i="index">
+				<div>{{ value | date: 'medium' : getFormattedTimeZone()}}</div>
+			</ng-template>
 		</div>
-
-		<ng-template #dateTemplate let-row="row" let-value="value" let-i="index">
-			<div>{{ value | date: 'medium' : getFormattedTimeZone()}}</div>
-		</ng-template>
 	</div>
+	<!-- New Sample and Import Sample buttons -->
+	<div class="row justify-content-center" *ngIf="samplesBeingViewed">
+		<button class="btn btn-primary mr-3" (click)="newSample()">
+			<i class="fas fa-plus-circle"></i>
+			{{ 'surveys.execute.NewSample' | translate }}
+		</button>
+		<button class="btn btn-secondary" (click)="importSample()">
+			<i class="fas fa-file-import"></i>
+			{{ 'surveys.execute.ImportSample' | translate }}
+		</button>
+	</div>
+	<!--Survey Sample Settings for File Upload conversion -->
+	<div class="card card-body" *ngIf="executeMode == 'settings'">
+		<h5 style="margin-left: 1rem; height: 3.2rem;">Upload files for Region conversion </h5>
+		<div class="form-group form-group-adjust row">
+			<label for="uploadCsv" class="col-md-2 col-form-label text-md-right">Select a CSV file to Upload</label>
+			<div class="col-md-5" style="margin-left: 1rem;">
+				<div class="fileinput fileinput-new input-group">
+					<div class="form-control reset-height">
+						<i class="glyphicon glyphicon-file"></i>
+					</div>
+					<input type="file" #csvReader name="uploadCsv" id="uploadCsv" accept=".csv" /> 
+					<!-- <input type="file" ng2FileSelect [uploader]="uploader"
+							(onFileSelected)="setImportFile($event)"/> -->
+				</div>
+			</div>
+			<button *ngIf="!importing" type="submit" class="btn btn-primary" [disabled]="isSaving">
+				<i *ngIf="!isSaving" class="fas fa-save"></i>
+				<i *ngIf="isSaving" class="fas fa-circle-o-notch fa-spin"></i>
+				{{ isSaving ? ('users.editor.Saving' | translate) : ('users.editor.Save' | translate) }}
+			</button>
+		</div>
+	</div>
+	<ng-template #actionsTemplate let-row="row" let-value="value" let-i="index">
+		<div>
+			<a class="badge bg-gray-lighter text-gray" href="javascript:;" (click)="editSample(row)">
+				<i class="fas fa-edit" aria-hidden="true"></i>
+				{{ 'surveys.execute.Edit' | translate }}</a>
+		</div>
+	</ng-template>
+	<ng-template #dateTemplate let-row="row" let-value="value" let-i="index">
+		<div>{{ value | date }}</div>
+	</ng-template> 
 </div>

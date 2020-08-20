@@ -42,6 +42,7 @@ import { HTTP_INTERCEPTORS } from "@angular/common/http";
 import { TokenInterceptor } from "../../shared/interceptors/token.interceptor";
 import { NgSelectModule } from '@ng-select/ng-select';
 import "pace-progressbar";
+import { SurveyAnalyzeComponent } from './survey-analyze/survey-analyze.component';
 
 export function monacoLoad() {}
 

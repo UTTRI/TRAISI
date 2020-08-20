@@ -1,0 +1,38 @@
+<div [@fadeInOut]>
+    <h1 class="page-title">
+        {{ 'surveys.analyze.SampleAnalysis' | translate }}
+    </h1>
+    <div class="card card-fluid">
+        <!--Sample Distribution Analysis-->
+        <div class="row">
+            <div class="card-body" style="margin-left: 1rem;">
+                <h6 class="card-title">Toronto Trasit Survey 2021 Sample Distribution</h6>
+                <p class="card-text">TRAISI Transit Survey Sample Collection in Eight Municipal Regions
+                </p>
+                <div class="row">
+                    <div class="col-md-4 text-primary" style="text-align: left; height: 3.7rem;">Impact of
+                        COVID-19 on
+                        transit demand in the <br> GTHA</div>
+                    <div class="col-md-2" style="text-align: center;">{{daysInField}} <br> Days in Field</div>
+                    <div class="col-md-2" style="text-align: center;">{{avgResponsePerDay}}<br> Avg Response/Day
+                    </div>
+                    <div class="col-md-2" style="text-align: center;">{{completed}} <br> Completed</div>
+                </div>
+                <div class="progress" style="height:1.5rem;">
+                    <div class="progress-bar bg-danger" role="progressbar" style="width: 100%" aria-valuenow="0"
+                        aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <div style="height: 1.5rem;"></div>
+                <div *ngFor="let item of responses" class="row" style="clear:right;">
+                    <div class="col-2">{{item.region}} Region</div>
+                    <div class="col-6" style="height:2.5rem;">
+                        <div class="progress" style="height:1.5rem;">
+                            <div class="{{item.colorClass}}" [style.width]="item.percentage"></div>
+                        </div>
+                    </div>
+                    <div class="col-4">{{item.resCount}}/{{item.totalSurveys}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

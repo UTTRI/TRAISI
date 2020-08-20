@@ -103,7 +103,6 @@ export class SampleEditorComponent implements OnInit {
 				for (let i = 1; i < csvRecordsArray.length - 1; i++) {
 					let currentRecord = (<string>csvRecordsArray[i]).split(',');
 					let csvRecord: Sample = {};
-					//csvRecord.accessCode = currentRecord[0];
 					csvRecord.lastName = currentRecord[0];
 					csvRecord.postalCode = currentRecord[1];
 					csvRecord.address = currentRecord[2];

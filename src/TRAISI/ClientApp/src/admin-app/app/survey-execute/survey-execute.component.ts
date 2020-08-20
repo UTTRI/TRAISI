@@ -42,4 +42,8 @@ export class SurveyExecuteComponent implements OnInit {
 		this.executionType = 'Live';
 	}
 
+	public executeSettings(): void {
+		this.executionType = 'Settings';
+	}
+
 }

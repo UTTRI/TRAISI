@@ -103,6 +103,15 @@
 			"Edit": "Edit",
 			"Delete": "Delete",
 			"View": "View"
+    },
+    "analyze":{
+      "SampleAnalysis": "Survey Sample Distribution Data"
+    },
+    "execute":{
+      "Apply": "Apply",
+      "NewSample": "New Sample",
+      "ImportSample": "Import Sample",
+      "Edit": "Edit"
     }
   },
   "samples": {

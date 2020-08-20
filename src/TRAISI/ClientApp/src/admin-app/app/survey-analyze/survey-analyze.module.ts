@@ -5,16 +5,10 @@ import { SharedModule } from "../shared/shared.module";
 import { TranslateLanguageLoader } from "../../../shared/services/app-translation.service";
 import { TranslateModule, TranslateLoader } from "@ngx-translate/core";
 import { ButtonsModule } from "ngx-bootstrap";
-import { SurveyExecuteComponent } from "./survey-execute.component";
-import { ROUTES } from "./survey-execute.routes";
-import { ConductSurveyComponent } from "./conduct-survey/conduct-survey.component";
+import { SurveyAnalyzeComponent } from "./survey-analyze.component";
+import { ROUTES } from "./survey-analyze.routes";
 import { DropzoneModule } from "ngx-dropzone-wrapper";
 import { NgxDatatableModule } from "@swimlane/ngx-datatable";
-import { SampleEditorComponent } from 'app/sample-management/sample-editor/sample-editor.component';
-import { SampleManagementModule } from 'app/sample-management/sample-management.module';
-import { ModalModule } from 'ngx-bootstrap/modal';
-import { FileUploadModule } from 'ng2-file-upload';
-import { NgSelect2Module } from 'ng-select2';
 
 export const buttonsModule = ButtonsModule.forRoot();
 export const translateModule = TranslateModule.forChild({
@@ -30,13 +24,9 @@ export const translateModule = TranslateModule.forChild({
 		buttonsModule,
 		translateModule,
 		DropzoneModule,
-		NgxDatatableModule,
-		SampleManagementModule,
-		NgSelect2Module,	
-		FileUploadModule,
-		ModalModule
+		NgxDatatableModule
 	],
-	declarations: [SurveyExecuteComponent, ConductSurveyComponent],
+	declarations: [SurveyAnalyzeComponent],
 	providers: []
 })
-export class SurveyExecuteModule {}
+export class SurveyAnalyzeModule {}

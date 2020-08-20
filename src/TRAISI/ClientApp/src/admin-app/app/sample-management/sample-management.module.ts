@@ -45,6 +45,7 @@ export const bsDropdownForRoot = BsDropdownModule.forRoot();
 		NgSelectModule,
 		FileUploadModule
 	],
-	declarations: [ SampleManagementComponent, SampleEditorComponent]
+	declarations: [ SampleManagementComponent, SampleEditorComponent],
+	exports :  [ SampleEditorComponent ]
 })
 export class SampleManagementModule {}

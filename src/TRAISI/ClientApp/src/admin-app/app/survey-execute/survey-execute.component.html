@@ -1,20 +1,31 @@
 <div>
 	<h1 class="page-title">Execute Survey - <strong>{{ survey.name }}</strong></h1>
 	<div class="row">
-		<button class="survey-select col-10 col-sm-5 col-md-4 col-lg-3" [routerLink]="['/app/survey-execute', surveyId, 'test']">
+		<button class="survey-select col-10 col-sm-5 col-md-4 col-lg-3"
+			[routerLink]="['/app/survey-execute', surveyId, 'test']">
 			<h2>Test Survey</h2>
 			<div class="survey-execute-icon">
-			<i class="fas fa-search fa-7x text-primary"></i>
-		</div>
-			<div class="select-description">Send a survey to yourself and/or to someone else to test your survey. Test survey responses will be saved separately from the live survey responses.</div>
+				<i class="fas fa-search fa-7x text-primary"></i>
+			</div>
+			<div class="select-description">Send a survey to yourself and/or to someone else to test your survey. Test
+				survey responses will be saved separately from the live survey responses.</div>
 		</button>
-		<button class="survey-select col-10 col-sm-5 col-md-4 col-lg-3" [routerLink]="['/app/survey-execute', surveyId, 'live']">
+		<button class="survey-select col-10 col-sm-5 col-md-4 col-lg-3"
+			[routerLink]="['/app/survey-execute', surveyId, 'live']">
 			<h2>Live Survey</h2>
 			<div class="survey-execute-icon">
-			<i class="far fa-play-circle fa-7x text-primary"></i>
+				<i class="far fa-play-circle fa-7x text-primary"></i>
 			</div>
-			
-			<div class="select-description">Send a survey to target respondents.  Live survey responses will be saved separately from the test survey responses.</div> 
+			<div class="select-description">Send a survey to target respondents. Live survey responses will be saved
+				separately from the test survey responses.</div>
+		</button>
+		<button class="survey-select col-10 col-sm-5 col-md-4 col-lg-3"
+			[routerLink]="['/app/survey-execute', surveyId, 'settings']">
+			<h2>Settings</h2>
+			<div class="survey-execute-icon">
+				<i class="fas fa-cog fa-7x text-primary"></i>
+			</div>
+			<div class="select-description">Settings page is used to upload files for conversion.</div>
 		</button>
 	</div>
 </div>

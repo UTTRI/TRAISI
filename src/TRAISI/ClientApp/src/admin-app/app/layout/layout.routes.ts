@@ -38,6 +38,10 @@ const routes: Routes = [
 				loadChildren: () => import('../survey-execute/survey-execute.module').then(m => m.SurveyExecuteModule)
 			},
 			{
+				path: 'survey-analyze',
+				loadChildren: () => import('../survey-analyze/survey-analyze.module').then(m => m.SurveyAnalyzeModule)
+			},
+			{
 				path: 'samples',
 				loadChildren: () => import('../sample-management/sample-management.module').then(m => m.SampleManagementModule),
 				data: { hasSidebar: true }

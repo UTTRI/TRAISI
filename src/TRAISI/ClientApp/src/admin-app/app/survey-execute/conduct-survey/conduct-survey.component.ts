@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, ViewChild, TemplateRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ViewChild, TemplateRef, AfterViewInit} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Survey } from '../../models/survey.model';
 import { SurveyService } from '../../services/survey.service';
@@ -16,12 +16,26 @@ import { TitleCasePipe } from '@angular/common';
 import { RealTimeNotificationServce } from '../../services/real-time-notification.service';
 import { DownloadNotification } from '../../models/download-notification';
 import { Subject } from 'rxjs';
+import { ModalDirective } from 'ngx-bootstrap/modal';
+import { UserGroupService } from 'app/services/user-group.service';
+import { UserGroup } from 'app/models/user-group.model';
+import { AccountService } from 'app/services/account.service';
+import { Permission } from '../../../../shared/models/permission.model';
+import { Sample } from 'app/models/sample.model';
+import { SampleEditorComponent } from '../../../app/sample-management/sample-editor/sample-editor.component';
+import { SampleService } from '../../services/sample.service';
+import { fadeInOut } from '../../services/animations';
+import { AppTranslationService } from '../../../../shared/services/app-translation.service';
+import { FileUploader, FileUploaderOptions, Headers, FileItem, FileLikeObject } from 'ng2-file-upload';
+
 
 @Component({
 	selector: 'app-test-survey',
 	templateUrl: './conduct-survey.component.html',
 	styleUrls: ['./conduct-survey.component.scss'],
-	encapsulation: ViewEncapsulation.None
+	encapsulation: ViewEncapsulation.None,
+	animations: [fadeInOut],
+	exportAs: 'child'
 })
 export class ConductSurveyComponent implements OnInit, AfterViewInit {
 	public surveyId: number;
@@ -39,8 +53,34 @@ export class ConductSurveyComponent implements OnInit, AfterViewInit {
 
 	public individualCodeBeingViewed: boolean = true;
 	public groupCodeBeingViewed: boolean = false;
+	public samplesBeingViewed: boolean = false;
 	public emailBeingViewed: boolean = false;
 	public scheduleBeingViewed: boolean = false;
+
+	//TestSampleData
+	public samplesArray: Sample[] = [];
+	public sampleColumns: any[] = [];
+	public sampleRows: Sample[] = [];
+	public sampleRowsCache: Sample[] = [];
+	public editModel: Sample;
+	public model: Sample;
+	public sampleEditMode: boolean = false;
+
+	public importing: boolean = false;
+
+	public searchKey: string = "";
+	public searchValue: string = "";
+
+	private importOptions: FileUploaderOptions = {
+		autoUpload: false,
+		allowedFileType: ['compress'],
+		authTokenHeader: 'Authorization',
+		queueLimit: 2,
+		url: this.configurationService.baseUrl + '/api/survey/import',
+		removeAfterUpload: true
+	};
+
+	public uploader: FileUploader = new FileUploader(this.importOptions);
 
 	public indivCodeRows: ShortCode[];
 	public indivCodeColumns: any[] = [];
@@ -78,14 +118,28 @@ export class ConductSurveyComponent implements OnInit, AfterViewInit {
 		timeout: 3000000
 	};
 
+
+	@ViewChild('samplesTable')
+	public stable: any;
+	@ViewChild('sampleTagTemplate', { static: true })
+	public sampleTagTemplate: TemplateRef<any>;
+	@ViewChild('expandTemplate', { static: true })
+	public expandTemplate: TemplateRef<any>;
+	@ViewChild('textTemplate', { static: true })
+	public textTemplate: TemplateRef<any>;
+	@ViewChild('actionsTemplate', { static: true })
+	public actionsTemplate: TemplateRef<any>;
+	@ViewChild('dateTemplate', { static: true })
+	public dateTemplate: TemplateRef<any>;
+	@ViewChild('editorModal')
+	public editorModal: ModalDirective;
+	@ViewChild('sampleEditor')
+	public sampleEditor: SampleEditorComponent;
+
 	@ViewChild('indivUpload', { static: true })
 	dropZoneIndiv: DropzoneComponent;
 	@ViewChild('groupUpload', { static: true })
 	dropZoneGroup: DropzoneComponent;
-	@ViewChild('dateTemplate', { static: true })
-	dateTemplate: TemplateRef<any>;
-
-
 
 	constructor(
 		private surveyService: SurveyService,
@@ -94,12 +148,17 @@ export class ConductSurveyComponent implements OnInit, AfterViewInit {
 		private configurationService: ConfigurationService,
 		private alertService: AlertService,
 		private authService: AuthService,
+		private sampleService: SampleService,
+		private translationService: AppTranslationService,
+		private userGroupService: UserGroupService,
+		private accountService: AccountService,
 		private router: Router,
 		private title: Title,
 		private titleCasePipe: TitleCasePipe,
 		private notificationService: RealTimeNotificationServce
 	) {
 		this.survey = new Survey();
+		this.model = new Sample();
 		this.codeGenParams = new CodeGenerator();
 		this.downloadProgress = new DownloadNotification();
 		this.baseUrl = configurationService.baseUrl;
@@ -122,6 +181,8 @@ export class ConductSurveyComponent implements OnInit, AfterViewInit {
 				this.codeGenParams.isTest = true;
 			} else if (this.executeMode === 'live') {
 				this.codeGenParams.isTest = false;
+			} else if (this.executeMode === 'settings') {
+				this.codeGenParams.isTest = false;
 			} else {
 				this.router.navigate(['error']);
 			}
@@ -130,7 +191,160 @@ export class ConductSurveyComponent implements OnInit, AfterViewInit {
 		console.log(this.authService.currentUser.roles);
 	}
 
-	ngOnInit() {
+	public ngOnInit(): void {
+		//SampleTestData
+		/* this.samplesArray = [
+			{ accessCode: "DKT-406", hhIdNum: 1000001, mailingBlock: 100, lastName: "Philips", postalCode: "L1G4P2", address: "45 Leyton St", phoneNumber: 6478888151, owner: "Management Staff", group: "TTS", startDate: new Date(), lastModified: new Date(), status: "Fresh", state: "Inactive", language: "English" },
+			{ accessCode: "YFE-314", hhIdNum: 1000002, mailingBlock: 100, lastName: "Pugh", postalCode: "L1G5O2", address: "55 Sunrise St", phoneNumber: 6478998080, owner: "Management Staff", group: "TTS", startDate: new Date(), lastModified: new Date(), status: "Fresh", state: "Inactive", language: "English" },
+			{ accessCode: "RER-313", hhIdNum: 1000003, mailingBlock: 100, lastName: "Hossain", postalCode: "M2G3Y1", address: "105 Sunset Ave", phoneNumber: 6479901080, owner: "Management Staff", group: "TTS", startDate: new Date(), lastModified: new Date(), status: "Fresh", state: "Inactive", language: "English" },
+			{ accessCode: "CQW-438", hhIdNum: 1000004, mailingBlock: 100, lastName: "Perry", postalCode: "M2G4Z5", address: "15 Don Valley PWY", phoneNumber: 4168901000, owner: "Management Staff", group: "TTS", startDate: new Date(), lastModified: new Date(), status: "Fresh", state: "Inactive", language: "English" },
+			{ accessCode: "ATS-461", hhIdNum: 1000005, mailingBlock: 100, lastName: "Leung", postalCode: "N2A5B6", address: "55 Stoney Creek St", phoneNumber: 4161991111, owner: "Management Staff", group: "TTS", startDate: new Date(), lastModified: new Date(), status: "Fresh", state: "Inactive", language: "English" },
+			{ accessCode: "YCH-001", hhIdNum: 1000006, mailingBlock: 100, lastName: "Omaruan", postalCode: "N2A6C8", address: "10 Matheson St", phoneNumber: 4372225555, owner: "Management Staff", group: "TTS", startDate: new Date(), lastModified: new Date(), status: "Fresh", state: "Inactive", language: "English" }
+		];  */
+
+		//Manage Samples page
+		this.model.status = "Fresh";
+		this.model.state = "";
+		this.sampleRows = this.samplesArray;
+		this.sampleColumns = this.samplesArray;
+
+		// columns for the display data table
+		this.sampleColumns = [
+			{
+				width: 10,
+				cellTemplate: this.expandTemplate,
+				sortable: false,
+				resizeable: false,
+				draggable: false,
+				canAutoResize: false
+			},
+			{
+				prop: 'accessCode',
+				name: 'Access Code',
+				width: 80,
+				flexGrow: 30,
+				cellTemplate: this.textTemplate,
+				canAutoResize: false
+			},
+			{
+				prop: 'hhIdNum',
+				name: 'HhId Num',
+				minWidth: 80,
+				flexGrow: 30,
+				cellTemplate: this.textTemplate,
+				headerClass: 'col',
+				cellClass: 'col'
+			},
+			{
+				prop: 'mailingBlock',
+				name: 'Mailing Block',
+				minWidth: 100,
+				flexGrow: 30,
+				cellTemplate: this.textTemplate,
+				headerClass: 'col',
+				cellClass: 'col'
+			},
+			{
+				prop: 'lastName',
+				name: 'Last Name',
+				minWidth: 90,
+				flexGrow: 30,
+				cellTemplate: this.textTemplate,
+				headerClass: 'col',
+				cellClass: 'col'
+			},
+			{
+				prop: 'postalCode',
+				name: 'Postal Code',
+				minWidth: 90,
+				flexGrow: 30,
+				cellTemplate: this.textTemplate,
+				headerClass: 'col',
+				cellClass: 'col'
+			},
+			{
+				prop: 'address',
+				name: 'Address',
+				minWidth: 140,
+				flexGrow: 35,
+				cellTemplate: this.textTemplate,
+				headerClass: 'col d-none d-md-block',
+				cellClass: 'col d-none d-md-block'
+			},
+			{
+				prop: 'phoneNumber',
+				name: 'Phone Number',
+				minWidth: 115,
+				flexGrow: 30,
+				cellTemplate: this.textTemplate,
+				headerClass: 'col d-none d-md-block',
+				cellClass: 'col d-none d-md-block'
+			},
+			{
+				prop: 'status',
+				name: 'Sample Status',
+				minWidth: 110,
+				flexGrow: 30,
+				cellTemplate: this.sampleTagTemplate,
+				headerClass: 'col d-none d-md-block',
+				cellClass: 'col d-none d-md-block'
+			},
+			{
+				prop: 'state',
+				name: 'Sample State',
+				minWidth: 98,
+				flexGrow: 30,
+				cellTemplate: this.sampleTagTemplate,
+				headerClass: 'col d-none d-md-block',
+				cellClass: 'col d-none d-md-block'
+			},
+			{
+				prop: 'startDate',
+				name: 'Start Date',
+				minWidth: 105,
+				flexGrow: 35,
+				cellTemplate: this.dateTemplate,
+				headerClass: 'col d-none d-md-block',
+				cellClass: 'col d-none d-md-block'
+			},
+			{
+				prop: 'lastModified',
+				name: 'Last Modified',
+				minWidth: 110,
+				flexGrow: 35,
+				cellTemplate: this.dateTemplate,
+				headerClass: 'col d-none d-md-block',
+				cellClass: 'col d-none d-md-block'
+			},
+			{
+				prop: 'owner',
+				name: 'Owner',
+				minWidth: 140,
+				flexGrow: 30,
+				cellTemplate: this.textTemplate,
+				headerClass: 'col',
+				cellClass: 'col'
+			},
+			{
+				prop: 'group',
+				name: 'Group',
+				minWidth: 70,
+				flexGrow: 30,
+				cellTemplate: this.textTemplate,
+				headerClass: 'col d-none d-md-block',
+				cellClass: 'col d-none d-md-block'
+			},
+			{
+				prop: 'language',
+				name: 'Language',
+				minWidth: 85,
+				flexGrow: 30,
+				cellTemplate: this.sampleTagTemplate,
+				headerClass: 'col d-none d-md-block',
+				cellClass: 'col d-none d-md-block'
+			}
+		];
+
 		this.indivCodeColumns = [
 			{
 				prop: 'index',
@@ -193,6 +407,19 @@ export class ConductSurveyComponent implements OnInit, AfterViewInit {
 			}
 		];
 
+		if (this.canViewSamples){
+			this.sampleColumns.push({
+				name: 'Actions',
+				width: 120,
+				cellTemplate: this.actionsTemplate,
+				resizeable: false,
+				canAutoResize: false,
+				sortable: false,
+				draggable: false
+			});
+		}
+		this.loadData();
+
 		this.survey = this.surveyService.getLastSurvey();
 		if (!this.survey || this.survey === null || this.survey.id !== this.surveyId) {
 			this.survey = new Survey();
@@ -213,15 +440,54 @@ export class ConductSurveyComponent implements OnInit, AfterViewInit {
 		this.title.setTitle(`Execute ${this.titleCasePipe.transform(this.executeMode)} Survey - TRAISI`);
 	}
 
-	ngAfterViewInit() {
+	public get canViewSamples(): boolean {
+		return this.accountService.userHasPermission(Permission.viewSamplesPermission);
+	}
+
+	/**
+	* Launches the new sample modal.
+	*/
+	public newSample(): void {
+		this.importing = false;
+		this.sampleEditMode = false;
+		this.sampleEditor.isNewSample = true;
+		this.editorModal.show();
+	}
+
+	public editSample(sample: Sample): void {
+		this.sampleEditMode = true;
+		this.sampleEditor.isNewSample = false;
+		this.model = sample;
+		this.editModel = new Sample();
+		Object.assign(this.editModel, this.model);
+		this.editorModal.show();
+	}
+
+	public ngAfterViewInit(): void {
+		this.sampleEditor.changesSavedCallback = () => {
+			this.importing = false;
+			Object.assign(this.model, this.editModel);
+			this.editorModal.hide();
+			this.sampleService.listSamples().subscribe(samples => {
+				this.sampleRows = samples;
+				this.sampleRowsCache = [...samples];
+			});
+		};
+		this.sampleEditor.changesCancelledCallback = () => {
+			this.importing = false;
+			this.editModel = null;
+			this.editorModal.hide();
+		};
+
 		this.dropZoneIndiv.DZ_SENDING.subscribe(data => this.onSendingIndiv(data));
 		this.dropZoneGroup.DZ_SENDING.subscribe(data => this.onSendingGroup(data));
 	}
 
-	switchTab(tab: string): void {
+	public switchTab(tab: string): void {
 		if (tab === 'indivCode') {
 			this.individualCodeBeingViewed = true;
 			this.groupCodeBeingViewed = false;
+			this.samplesBeingViewed = false;
 			this.emailBeingViewed = false;
 			this.scheduleBeingViewed = false;
 			this.generateType = 'numberCodes';
@@ -230,22 +496,212 @@ export class ConductSurveyComponent implements OnInit, AfterViewInit {
 		} else if (tab === 'groupCode') {
 			this.individualCodeBeingViewed = false;
 			this.groupCodeBeingViewed = true;
+			this.samplesBeingViewed = false;
 			this.emailBeingViewed = false;
 			this.scheduleBeingViewed = false;
 			this.generateType = 'single';
 			this.loadGroupCodeData(1);
 			this.loadGroupCodeCount();
+		} else if (tab === 'samples') {
+			this.individualCodeBeingViewed = false;
+			this.groupCodeBeingViewed = false;
+			this.samplesBeingViewed = true;
+			this.emailBeingViewed = false;
+			this.scheduleBeingViewed = false;
 		} else if (tab === 'email') {
 			this.individualCodeBeingViewed = false;
 			this.groupCodeBeingViewed = false;
+			this.samplesBeingViewed = false;
 			this.emailBeingViewed = true;
 			this.scheduleBeingViewed = false;
 		} else {
 			this.individualCodeBeingViewed = false;
 			this.groupCodeBeingViewed = false;
+			this.samplesBeingViewed = false;
 			this.emailBeingViewed = false;
 			this.scheduleBeingViewed = true;
 		}
+	}
+
+	/* public setImportFile(): void
+	{
+		this.uploader.authToken = `Bearer ${this.authService.accessToken}`;
+				let sampleInfo: Headers = {
+					name: 'parameters',
+					value: JSON.stringify(this.model)
+				};
+				this.uploader.options.headers = [sampleInfo];
+				this.uploader.onSuccessItem = (item, response, status, headers) => {
+					alert("File is uploaded");
+				};
+				this.uploader.onErrorItem = (item, response, status, headers) => {
+					alert("Failed to upload the file");
+					let files: File[] = [item._file];
+					this.uploader.addToQueue(files);
+				};
+				this.uploader.uploadAll();
+	} */
+
+	//Sample Action
+	public sampleStateAction(): void {
+		if (this.model.state == "")
+			return;
+
+		for (var i in this.sampleRows) {
+			this.sampleRows[i].state = this.model.state;
+		}
+		this.sampleRows = [...this.sampleRows];
+	}
+
+	//Sample Status
+	public onStatusChanged(): void {
+		if (this.model.status != "Select Status") {
+			this.sampleRowsCache = this.samplesArray;
+			this.sampleRows = this.sampleRowsCache.filter(r => r.status == this.model.status);
+			this.sampleRows = [...this.sampleRows];
+		}
+		else {
+			this.sampleRows = this.samplesArray;
+			this.sampleRows = [...this.sampleRows];
+		}
+	}
+
+	/**
+	 * Load initial sample info (samples for user and group list)
+	 */
+	public loadData(): void {
+		this.alertService.startLoadingMessage();
+		this.loadingIndicator = true;
+
+		this.sampleService.listSamples().subscribe(
+			(activeSamples: Sample[]) => {
+					this.userGroupService
+						.listUserGroups()
+						.subscribe(
+							userGroups => this.onDataLoadSuccessful(activeSamples, userGroups),
+							error => this.onDataLoadFailed(error)
+						);
+			},
+			error => this.onDataLoadFailed(error)
+		);
+	}
+
+	/**
+	*
+	* @param value
+	*/
+	public onSearchChanged(): void {
+		this.sampleRowsCache = this.samplesArray;
+		this.sampleRows = this.sampleRowsCache
+			.filter(item => item[this.searchKey]
+				.toString().toLowerCase().indexOf(this.searchValue.toLowerCase()) >= 0);
+	}
+
+	public onDataLoadSuccessful(activeSamples: Sample[],
+		groups: UserGroup[]): void {
+		this.alertService.stopLoadingMessage();
+		this.loadingIndicator = false;
+
+		this.sampleRows = activeSamples;
+		this.sampleRowsCache = [...activeSamples];
+
+	}
+
+	public onDataLoadFailed(error: any): void {
+		this.alertService.stopLoadingMessage();
+		this.loadingIndicator = false;
+
+		this.alertService.showStickyMessage(
+			'Load Error',
+			`Unable to retrieve surveys from the server.\r\nErrors: "${Utilities.getHttpResponseMessage(error)}"`,
+			MessageSeverity.error,
+			error
+		);
+	}
+
+	public importSample(): void {
+		this.sampleEditMode = false;
+		this.sampleEditor.isNewSample = true;
+		this.importing = true;
+		this.editorModal.show();
+	}
+
+	//TestSamples
+	public addToSamples(newSampleData: any) {
+		if (newSampleData.isNewSample) {
+			this.samplesArray.push(newSampleData.modelObj);
+			this.samplesArray = [...this.samplesArray];
+			this.sampleRows = this.samplesArray;
+		}
+	}
+
+	//Importing from CSV file
+	public addFromImport(csvArray: Sample[]) {
+
+		let bno = Math.floor(Math.random() * (999 - 100)) + 100;
+		bno = Math.round(bno);
+
+		for (var i = 0; i < csvArray.length; i++) {
+			var currentObj: Sample = csvArray[i];
+			var index: number = this.samplesArray.findIndex(item => item.phoneNumber == currentObj.phoneNumber);
+			if (index < 0) {
+				var n: any = 0;
+				if (this.samplesArray.length == 0) {
+					n = 1000000;
+				}
+				else {
+					n = this.samplesArray[this.samplesArray.length - 1].hhIdNum;
+				}
+				csvArray[i].hhIdNum = ++n;
+				csvArray[i].mailingBlock = bno;
+				csvArray[i].accessCode = this.getAccessCode();
+				this.samplesArray.push(csvArray[i]);
+			}
+		}
+		console.log(csvArray);
+		this.samplesArray = [...this.samplesArray];
+		this.sampleRows = this.samplesArray;
+	}
+
+	public getAccessCode() {
+		const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXTZ';
+		var x = Math.floor(Math.random() * (999 - 100)) + 100;
+		const stringLength = 3;
+		let randomstring = '';
+		for (let i = 0; i < stringLength; i++) {
+			const rnum = Math.floor(Math.random() * chars.length);
+			randomstring += chars.substring(rnum, rnum + 1);
+		}
+		return randomstring + "-" + x;
+	}
+
+	public onEditorModalHidden(): void { }
+
+	/**
+	 * Called before new sample modal is displayed. The input data and model will be reset.
+	 */
+	public onEditorModalShow(): void {
+		if (!this.sampleEditMode) {
+			this.model = new Sample();
+			this.model.startDate = new Date();
+			this.model.lastModified = new Date();
+			this.model.group = this.sampleEditor.selectedGroup;
+			this.model.owner = this.authService.currentUser.fullName;
+			this.model.group = "TTS";
+			this.model.status = "Fresh";
+			this.model.state = "Inactive";
+			this.model.language = "English";
+			this.editModel = new Sample();
+			Object.assign(this.editModel, this.model);
+			this.sampleEditor.editMode = false;
+		} else {
+			this.sampleEditor.editMode = true;
+		}
+		this.sampleEditor.model = this.editModel;
+	}
+
+	public closeEditorModal(): void {
+		this.editorModal.hide();
 	}
 
 	setIndivPage(pageInfo: any) {
