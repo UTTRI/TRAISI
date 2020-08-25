@@ -1,0 +1,82 @@
+[
+	{
+		"label": "home",
+		"icon": "fas fa-home",
+		"id": "home"
+	},
+	{
+		"label": "usual work location",
+		"icon": "fas fa-building",
+		"id": "work"
+	},
+	{
+		"label": "work-related/business meeting",
+		"icon": "fas fa-briefcase",
+		"id": "work-related"
+	},
+	{
+		"label": "school/education",
+		"icon": "fas fa-school",
+		"id": "school"
+	},
+	{
+		"label": "school-related/school-trip",
+		"icon": "fas fa-bus-school",
+		"id": "school-related"
+	},
+	{
+		"label": "restaurant, bar, coffee",
+		"icon": "fas fa-utensils",
+		"id": "restaurant"
+	},
+	{
+		"label": "visiting friends, family",
+		"icon": "fas fa-users",
+		"id": "vsiting"
+	},
+	{
+		"label": "recreation, sports, leisure, arts",
+		"icon": "fas fa-hockey-sticks",
+		"id": "recreation"
+	},
+	{
+		"label": "worship, religion",
+		"icon": "fas fa-place-of-worship",
+		"id": "worship"
+	},
+	{
+		"label": "health and personal care",
+		"icon": "fas fa-head-side-medical",
+		"id": "health"
+	},
+	{
+		"label": "drop someone off",
+		"icon": "fas car-bus",
+		"id": "dropoff"
+	},
+	{
+		"label": "pick someone up",
+		"icon": "fas car-garage",
+		"id": "pickup"
+	},
+	{
+		"label": "education (including TA/RA work)",
+		"icon": "fas fa-home",
+		"id": "education-work"
+	},
+	{
+		"label": "shopping and errands (groceries, corner store, shopping center, gas station, etc.)",
+		"icon": "fas fa-home",
+		"id": "shopping"
+	},
+	{
+		"label": "services (bank, hairdresser, lawyer, notary, mechanic, etc.)",
+		"icon": "fas fa-car-mechanic",
+		"id": "services"
+	},
+	{
+		"label": "other",
+		"icon": "fas fa-cogs",
+		"id": "other"
+	}
+]

@@ -1,0 +1,59 @@
+<section
+	[@fadeInOut]
+	class="widget mb-0 mb-md-3 question-widget mx-md-3"
+	[ngClass]="displayClass"
+	#section
+	(window:resize)="onResize($event)"
+>
+	<div class="row flex-nowrap header-row" #headerDiv>
+		<div class="question-number-container col-auto">
+			<div
+				class="tile bg-primary tile-number"
+				[ngClass]="{ 'question-section': question.parentSection !== undefined }"
+			>
+				<span *ngIf="question.repeatNumber === undefined && question.parentSection === undefined">
+					Q{{ surveyViewQuestion.viewOrder + 1 }}
+				</span>
+				<span *ngIf="question.repeatNumber === undefined && question.parentSection !== undefined">
+					Q{{ surveyViewQuestion.viewOrder + 1 }}.{{ surveyViewQuestion.inSectionIndex + 1 }}
+				</span>
+				<span *ngIf="question.repeatNumber !== undefined && question.parentSection !== undefined">
+					Q{{ surveyViewQuestion.viewOrder + 1 }}.{{ surveyViewQuestion.inSectionIndex + 1 }} -
+					{{ repeatNumber + 1 }}
+				</span>
+				<span *ngIf="question.repeatNumber !== undefined && question.parentSection === undefined">
+					Q{{ surveyViewQuestion.viewOrder + 1 }} - {{ repeatNumber + 1 }}
+				</span>
+			</div>
+			<ng-container *ngIf="instanceState.validationState$ | async; let state">
+				<div
+					class="question-complete animated tada slow"
+					*ngIf="state.clientValidationState === validationStates.Valid"
+				>
+					<i class="far fa-check-circle"></i>
+				</div>
+			</ng-container>
+		</div>
+		<div class="question-header-text col" [innerHTML]="titleLabel | async | safeHtml"></div>
+	</div>
+
+	<span class="badge badge-info" *ngIf="question.isOptional" [hidden]="true">Optional</span>
+	<!-- <div class="question-header-divider mt-3 mb-0 mb-md-3"></div>-->
+	<div class="widget-body card-body">
+		<div class="question-description-text" #descriptionDiv>
+			<span [innerHTML]="descriptionLabel | async | safeHtml"></span>
+		</div>
+
+		<div class="question-container-inner">
+			<ng-container *ngTemplateOutlet="!isLoaded ? loadingTemplate : questionTemplate"> </ng-container>
+		</div>
+		<ng-template #loadingTemplate>
+			<!-- <traisi-question-placeholder></traisi-question-placeholder> -->
+			<div class="loading"></div>
+		</ng-template>
+
+		<ng-template #questionTemplate>
+			<ng-container #container></ng-container>
+		</ng-template>
+	</div>
+</section>

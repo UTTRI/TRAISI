@@ -1,0 +1,107 @@
+[
+	{
+		"label": "Car driving alone",
+		"icon": "fas fa-cari",
+		"id": "car-driving-alone"
+	},
+	{
+		"label": "Car driving with passenger(s) (household members only)",
+		"icon": "fas fa-cari",
+		"id": "car-driving-with-passengers-household-only"
+	},
+	{
+		"label": "Car driving with passenger(s) (including non-household members)",
+		"icon": "fas fa-cari",
+		"id": "car-driving-with-passengers-none-household"
+	},
+	{
+		"label": "Car passenger (driver is a household member)",
+		"icon": "fas fa-cari",
+		"id": "car-passenger-driver-household"
+	},
+	{
+		"label": "Car passenger (driver is a non-household member)",
+		"icon": "fas fa-cari",
+		"id": "car-passenger-driver-none-household"
+	},
+	{
+		"label": "Transit all way",
+		"icon": "fal fa-busi",
+		"id": "transit-all-way"
+	},
+	{
+		"label": "Transit (park & ride)",
+		"icon": "fal fa-car-busi",
+		"id": "transit-park-ride"
+	},
+	{
+		"label": "Transit (kiss & ride)",
+		"icon": "fal fa-car-busi",
+		"id": "transit-kiss-ride"
+	},
+	{
+		"label": "Transit (ridehailing & ride)",
+		"icon": "fal fa-car-busi",
+		"id": "transit-ridehailing-ride"
+	},
+	{
+		"label": "Transit (cycle & ride)",
+		"icon": "far fa-biking-mountaini",
+		"id": "transit-cycle-ride"
+	},
+	{
+        "label": "Transit (school bus)",
+        "icon": "fal fa-bus-school",
+        "identifier": "transit-schoolbus"
+    },
+	{
+		"label": "Cycling (bikeshare)",
+		"icon": "fas fa-bikingi",
+		"id": "cycling-bikeshare"
+	},
+	{
+		"label": "Cycling (personal bike)",
+		"icon": "fas fa-bikingi",
+		"id": "cycling-personal"
+	},
+	{
+		"label": "Walk",
+		"icon": "fas fa-walkingi",
+		"id": "Walk"
+	},
+	{
+		"label": "Motorcycle / Scooter",
+		"icon": "fas fa-motorcyclei",
+		"id": "motorcycle-scooter"
+	},
+	{
+		"label": "Ridehailing alone",
+		"icon": "fab fa-uberi",
+		"id": "ridehailing-alone"
+	},
+	{
+		"label": "Ridehailing shared",
+		"icon": "fab fa-uberi",
+		"id": "ridehailing-shared"
+	},
+	{
+		"label": "Taxi",
+		"icon": "fal fa-taxii",
+		"id": "taxi"
+	},
+	{
+		"label": "Accessible car driver",
+		"icon": "fas fa-wheelchairi",
+		"id": "accessible-car-driver"
+	},
+	{
+		"label": "Accessible car passenger",
+		"icon": "fas fa-wheelchairi",
+		"id": "accessible-car-passenger"
+	},
+	{
+		"label": "Accessible paratransit",
+		"icon": "fas fa-wheelchair",
+		"id": "accessible-paratransit"
+	}
+]

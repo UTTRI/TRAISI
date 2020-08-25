@@ -1,0 +1,3067 @@
+{
+  "x-generator": "NSwag v13.7.0.0 (NJsonSchema v10.1.24.0 (Newtonsoft.Json v12.0.0.0))",
+  "openapi": "3.0.0",
+  "info": {
+    "title": "SurveyViewer API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/SurveyRespondent/surveys/{surveyId}/respondents/primary": {
+      "get": {
+        "tags": [
+          "SurveyRespondent"
+        ],
+        "operationId": "SurveyRespondent_GetSurveyPrimaryRespondent",
+        "parameters": [
+          {
+            "name": "surveyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/SurveyRespondent/respondents/groups": {
+      "post": {
+        "tags": [
+          "SurveyRespondent"
+        ],
+        "operationId": "SurveyRespondent_AddSurveyGroupMember",
+        "requestBody": {
+          "x-name": "respondent",
+          "content": {
+            "application/json": {
+              "schema": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/SurveyRespondentViewModel"
+                  }
+                ]
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "SurveyRespondent"
+        ],
+        "operationId": "SurveyRespondent_UpdateSurveyGroupMember",
+        "requestBody": {
+          "x-name": "respondent",
+          "content": {
+            "application/json": {
+              "schema": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/SurveyRespondentViewModel"
+                  }
+                ]
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/SurveyRespondent/groups/respondents/{respondentId}": {
+      "delete": {
+        "tags": [
+          "SurveyRespondent"
+        ],
+        "operationId": "SurveyRespondent_RemoveSurveyGroupMember",
+        "parameters": [
+          {
+            "name": "respondentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "SurveyRespondent"
+        ],
+        "operationId": "SurveyRespondent_ListSurveyGroupMembers",
+        "parameters": [
+          {
+            "name": "respondentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SurveyRespondentViewModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/SurveyResponse/surveys/{surveyId}/questions/{questionId}/respondents/{respondentId}/{repeat}": {
+      "post": {
+        "tags": [
+          "SurveyResponse"
+        ],
+        "operationId": "SurveyResponse_SaveResponse",
+        "parameters": [
+          {
+            "name": "surveyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "questionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 2
+          },
+          {
+            "name": "respondentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 3
+          },
+          {
+            "name": "repeat",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 4
+          },
+          {
+            "name": "language",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 6
+          },
+          {
+            "name": "force",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "x-position": 7
+          }
+        ],
+        "requestBody": {
+          "x-name": "content",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "nullable": true,
+                "items": {}
+              }
+            }
+          },
+          "required": true,
+          "x-position": 5
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SurveyViewerValidationStateViewModel"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "SurveyResponse"
+        ],
+        "operationId": "SurveyResponse_GetResponse",
+        "parameters": [
+          {
+            "name": "surveyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "questionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 2
+          },
+          {
+            "name": "respondentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 3
+          },
+          {
+            "name": "repeat",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 4
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SurveyResponseViewModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/SurveyResponse/surveys/{surveyId}/questions/respondents/{respondentId}/exclude/{shouldExclude}": {
+      "put": {
+        "tags": [
+          "SurveyResponse"
+        ],
+        "operationId": "SurveyResponse_ExcludeResponses",
+        "parameters": [
+          {
+            "name": "surveyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "respondentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 2
+          },
+          {
+            "name": "shouldExclude",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "boolean"
+            },
+            "x-position": 3
+          },
+          {
+            "name": "questionIds",
+            "in": "query",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "nullable": true,
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              }
+            },
+            "x-position": 4
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/SurveyResponse/surveys/{surveyId}/responses/types/{responseType}": {
+      "get": {
+        "tags": [
+          "SurveyResponse"
+        ],
+        "operationId": "SurveyResponse_ListResponsesOfType",
+        "parameters": [
+          {
+            "name": "surveyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "responseType",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/QuestionResponseType"
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SurveyResponseViewModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/SurveyResponse/questions/respondents/{respondentId}/responses": {
+      "get": {
+        "tags": [
+          "SurveyResponse"
+        ],
+        "operationId": "SurveyResponse_ListSurveyResponsesForQuestions",
+        "parameters": [
+          {
+            "name": "surveyId",
+            "in": "header",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "questionIds",
+            "in": "query",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "nullable": true,
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              }
+            },
+            "x-position": 2
+          },
+          {
+            "name": "respondentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 3
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SurveyResponseViewModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/SurveyResponse/questions/respondents/responses": {
+      "get": {
+        "tags": [
+          "SurveyResponse"
+        ],
+        "operationId": "SurveyResponse_ListSurveyResponsesForQuestionsForMultipleRespondents",
+        "parameters": [
+          {
+            "name": "surveyId",
+            "in": "header",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "questionIds",
+            "in": "query",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "nullable": true,
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              }
+            },
+            "x-position": 2
+          },
+          {
+            "name": "respondentIds",
+            "in": "query",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "nullable": true,
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              }
+            },
+            "x-position": 3
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SurveyResponseViewModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/SurveyResponse/questions/names/respondents/{respondentId}/responses": {
+      "get": {
+        "tags": [
+          "SurveyResponse"
+        ],
+        "operationId": "SurveyResponse_ListSurveyResponsesForQuestionsByName",
+        "parameters": [
+          {
+            "name": "surveyId",
+            "in": "header",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "questionNames",
+            "in": "query",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "nullable": true,
+              "items": {
+                "type": "string"
+              }
+            },
+            "x-position": 2
+          },
+          {
+            "name": "respondentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 3
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/SurveyResponse/completion-status/primary-respondents/{respondentId}": {
+      "get": {
+        "tags": [
+          "SurveyResponse"
+        ],
+        "operationId": "SurveyResponse_GetSurveyCompletionStatus",
+        "parameters": [
+          {
+            "name": "surveyId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "respondentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SurveyCompletionStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/SurveyResponse/surveys/{surveyId}/respondents/{respondentId}": {
+      "delete": {
+        "tags": [
+          "SurveyResponse"
+        ],
+        "operationId": "SurveyResponse_DeleteAllResponses",
+        "parameters": [
+          {
+            "name": "surveyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "respondentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/SurveyViewer/views/{surveyId}": {
+      "get": {
+        "tags": [
+          "SurveyViewer"
+        ],
+        "operationId": "SurveyViewer_GetSurveyViews",
+        "parameters": [
+          {
+            "name": "surveyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SurveyView"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/SurveyViewer/codes/{code}": {
+      "get": {
+        "tags": [
+          "SurveyViewer"
+        ],
+        "operationId": "SurveyViewer_GetSurveyFromCode",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/SurveyViewer/questions/{viewId}": {
+      "get": {
+        "tags": [
+          "SurveyViewer"
+        ],
+        "operationId": "SurveyViewer_GetSurveyViewQuestions",
+        "parameters": [
+          {
+            "name": "viewId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SurveyView"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/SurveyViewer/surveys/{surveyId}": {
+      "get": {
+        "tags": [
+          "SurveyViewer"
+        ],
+        "operationId": "SurveyViewer_GetSurveyViewPages",
+        "parameters": [
+          {
+            "name": "surveyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "viewType",
+            "in": "query",
+            "schema": {
+              "default": 0,
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/SurveyViewType"
+                }
+              ]
+            },
+            "x-position": 2
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "en",
+              "nullable": true
+            },
+            "x-position": 3
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SurveyViewPageViewModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/SurveyViewer/configurations/{questionId}": {
+      "get": {
+        "tags": [
+          "SurveyViewer"
+        ],
+        "operationId": "SurveyViewer_GetSurveyViewQuestionConfiguration",
+        "parameters": [
+          {
+            "name": "questionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionConfiguration"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/SurveyViewer/surveys/{surveyId}/questions/{questionId}/options": {
+      "get": {
+        "tags": [
+          "SurveyViewer"
+        ],
+        "operationId": "SurveyViewer_GetQuestionOptions",
+        "parameters": [
+          {
+            "name": "surveyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "questionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 2
+          },
+          {
+            "name": "query",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 3
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "en",
+              "nullable": true
+            },
+            "x-position": 4
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/QuestionOptionsViewModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/SurveyViewer/view/{surveyId}": {
+      "get": {
+        "tags": [
+          "SurveyViewer"
+        ],
+        "operationId": "SurveyViewer_GetDefaultSurveyView",
+        "parameters": [
+          {
+            "name": "surveyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "en",
+              "nullable": true
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SurveyViewerViewModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/SurveyViewer/styles/{surveyId}": {
+      "get": {
+        "tags": [
+          "SurveyViewer"
+        ],
+        "operationId": "SurveyViewer_GetSurveyStyles",
+        "parameters": [
+          {
+            "name": "surveyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/SurveyViewer/start/{surveyId}/{shortcode}": {
+      "post": {
+        "tags": [
+          "SurveyViewer"
+        ],
+        "operationId": "SurveyViewer_StartSurvey",
+        "parameters": [
+          {
+            "name": "surveyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "shortcode",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/SurveyViewer/start/{surveyId}/groupcode/{groupcode}": {
+      "post": {
+        "tags": [
+          "SurveyViewer"
+        ],
+        "operationId": "SurveyViewer_StartSurveyWithGroupcode",
+        "parameters": [
+          {
+            "name": "surveyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "groupcode",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 2
+          },
+          {
+            "name": "User-Agent",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 3
+          }
+        ],
+        "requestBody": {
+          "x-name": "queryParams",
+          "content": {
+            "application/json": {
+              "schema": {
+                "nullable": true
+              }
+            }
+          },
+          "required": true,
+          "x-position": 4
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/SurveyViewer/welcome/{name}": {
+      "get": {
+        "tags": [
+          "SurveyViewer"
+        ],
+        "operationId": "SurveyViewer_GetSurveyWelcomeView",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/SurveyViewer/surveys/{surveyId}/groupcodes/{groupcode}/validate": {
+      "get": {
+        "tags": [
+          "SurveyViewer"
+        ],
+        "operationId": "SurveyViewer_ValidateSurveyGroupcode",
+        "parameters": [
+          {
+            "name": "surveyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "groupcode",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/SurveyViewer/viewer/{surveyId}/page/{pageNumber}": {
+      "get": {
+        "tags": [
+          "SurveyViewer"
+        ],
+        "operationId": "SurveyViewer_GetRespondentSurveyViewPageQuestions",
+        "parameters": [
+          {
+            "name": "surveyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "pageNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 2
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "en",
+              "nullable": true
+            },
+            "x-position": 3
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/SurveyViewer/{surveyId}/page/{pageNumber}/{viewType}/{language}": {
+      "get": {
+        "tags": [
+          "SurveyViewer"
+        ],
+        "operationId": "SurveyViewer_GetSurveyViewPageQuestions",
+        "parameters": [
+          {
+            "name": "surveyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "pageNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 2
+          },
+          {
+            "name": "viewType",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SurveyViewType"
+            },
+            "x-position": 3
+          },
+          {
+            "name": "language",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 4
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/SurveyViewer/{surveyId}/terms/{viewType}/{language}": {
+      "get": {
+        "tags": [
+          "SurveyViewer"
+        ],
+        "operationId": "SurveyViewer_GetSurveyTermsAndConditions",
+        "parameters": [
+          {
+            "name": "surveyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "viewType",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SurveyViewType"
+            },
+            "x-position": 2
+          },
+          {
+            "name": "language",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 3
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/SurveyViewer/{surveyId}/screening/{language}": {
+      "get": {
+        "tags": [
+          "SurveyViewer"
+        ],
+        "operationId": "SurveyViewer_GetSurveyScreeningQuestions",
+        "parameters": [
+          {
+            "name": "surveyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "language",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/SurveyViewer/{surveyId}/thankyou/{viewType}/{language}": {
+      "get": {
+        "tags": [
+          "SurveyViewer"
+        ],
+        "operationId": "SurveyViewer_GetSurveyThankYou",
+        "parameters": [
+          {
+            "name": "surveyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "viewType",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SurveyViewType"
+            },
+            "x-position": 2
+          },
+          {
+            "name": "language",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 3
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/SurveyViewer/complete/{surveyId}": {
+      "put": {
+        "tags": [
+          "SurveyViewer"
+        ],
+        "operationId": "SurveyViewer_SurveyComplete",
+        "parameters": [
+          {
+            "name": "surveyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "Shortcode",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "SurveyRespondentViewModel": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "relationship": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "SurveyViewerValidationStateViewModel": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isValid": {
+            "type": "boolean"
+          },
+          "questionValidationState": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ValidationStateViewModel"
+              }
+            ]
+          },
+          "surveyLogicValidationState": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ValidationStateViewModel"
+              }
+            ]
+          }
+        }
+      },
+      "ValidationStateViewModel": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "relatedQuestions": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "validationState": {
+            "$ref": "#/components/schemas/ValidationState"
+          },
+          "errorMessages": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ValidationState": {
+        "type": "integer",
+        "description": "",
+        "x-enumNames": [
+          "Invalid",
+          "Valid",
+          "Untouched",
+          "Touched"
+        ],
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "SurveyResponseViewModel": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "questionId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "responseValues": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            }
+          },
+          "configuration": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {}
+          },
+          "respondent": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/SurveyRespondentViewModel"
+              }
+            ]
+          }
+        }
+      },
+      "QuestionResponseType": {
+        "type": "integer",
+        "description": "",
+        "x-enumNames": [
+          "String",
+          "Boolean",
+          "Number",
+          "Location",
+          "Json",
+          "OptionSelect",
+          "DateTime",
+          "Time",
+          "Path",
+          "Timeline",
+          "None"
+        ],
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ]
+      },
+      "SurveyCompletionStatus": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "completedQuestionIds": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        }
+      },
+      "SurveyView": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "survey": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Survey"
+              }
+            ]
+          },
+          "questionPartViews": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/QuestionPartView"
+            }
+          },
+          "welcomePageLabels": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LabelCollectionOfLabel"
+              }
+            ]
+          },
+          "termsAndConditionsLabels": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LabelCollectionOfLabel"
+              }
+            ]
+          },
+          "thankYouPageLabels": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LabelCollectionOfLabel"
+              }
+            ]
+          },
+          "screeningQuestionLabels": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LabelCollectionOfLabel"
+              }
+            ]
+          },
+          "viewName": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Survey": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AuditableEntity"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "code": {
+                "type": "string",
+                "nullable": true
+              },
+              "name": {
+                "type": "string",
+                "nullable": true
+              },
+              "owner": {
+                "type": "string",
+                "nullable": true
+              },
+              "group": {
+                "type": "string",
+                "nullable": true
+              },
+              "startAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "endAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "isActive": {
+                "type": "boolean"
+              },
+              "isOpen": {
+                "type": "boolean"
+              },
+              "successLink": {
+                "type": "string",
+                "nullable": true
+              },
+              "rejectionLink": {
+                "type": "string",
+                "nullable": true
+              },
+              "defaultLanguage": {
+                "type": "string",
+                "nullable": true
+              },
+              "styleTemplate": {
+                "type": "string",
+                "nullable": true
+              },
+              "surveyViews": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/SurveyViewCollectionOfSurveyView"
+                  }
+                ]
+              },
+              "surveyPermissions": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "$ref": "#/components/schemas/SurveyPermission"
+                }
+              },
+              "groupCodes": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "$ref": "#/components/schemas/Groupcode"
+                }
+              },
+              "shortcodes": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "$ref": "#/components/schemas/Shortcode"
+                }
+              },
+              "extensionConfigurations": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "$ref": "#/components/schemas/ExtensionConfiguration"
+                }
+              },
+              "titleLabels": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/LabelCollectionOfLabel"
+                  }
+                ]
+              },
+              "surveyLogic": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "$ref": "#/components/schemas/SurveyLogic"
+                }
+              },
+              "hasGroupCodes": {
+                "type": "boolean"
+              }
+            }
+          }
+        ]
+      },
+      "SurveyViewCollectionOfSurveyView": {
+        "allOf": [
+          {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SurveyView"
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "Item": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/SurveyView"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "SurveyPermission": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userId": {
+            "type": "string",
+            "nullable": true
+          },
+          "user": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ApplicationUser"
+              }
+            ]
+          },
+          "surveyId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "survey": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Survey"
+              }
+            ]
+          },
+          "permissionCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "permissions": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ApplicationUser": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/IdentityUser"
+          },
+          {
+            "type": "object",
+            "x-abstract": true,
+            "additionalProperties": false,
+            "properties": {
+              "friendlyName": {
+                "type": "string",
+                "nullable": true
+              },
+              "jobTitle": {
+                "type": "string",
+                "nullable": true
+              },
+              "fullName": {
+                "type": "string",
+                "nullable": true
+              },
+              "configuration": {
+                "type": "string",
+                "nullable": true
+              },
+              "isEnabled": {
+                "type": "boolean"
+              },
+              "isLockedOut": {
+                "type": "boolean"
+              },
+              "createdBy": {
+                "type": "string",
+                "nullable": true
+              },
+              "updatedBy": {
+                "type": "string",
+                "nullable": true
+              },
+              "createdDate": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updatedDate": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "roles": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "$ref": "#/components/schemas/IdentityUserRoleOfString"
+                }
+              },
+              "claims": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "$ref": "#/components/schemas/IdentityUserClaimOfString"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "IdentityUserRoleOfString": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "userId": {
+            "type": "string",
+            "nullable": true
+          },
+          "roleId": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "IdentityUserClaimOfString": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userId": {
+            "type": "string",
+            "nullable": true
+          },
+          "claimType": {
+            "type": "string",
+            "nullable": true
+          },
+          "claimValue": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "IdentityUser": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/IdentityUserOfString"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false
+          }
+        ]
+      },
+      "IdentityUserOfString": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "userName": {
+            "type": "string",
+            "nullable": true
+          },
+          "normalizedUserName": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "normalizedEmail": {
+            "type": "string",
+            "nullable": true
+          },
+          "emailConfirmed": {
+            "type": "boolean"
+          },
+          "passwordHash": {
+            "type": "string",
+            "nullable": true
+          },
+          "securityStamp": {
+            "type": "string",
+            "nullable": true
+          },
+          "concurrencyStamp": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNumberConfirmed": {
+            "type": "boolean"
+          },
+          "twoFactorEnabled": {
+            "type": "boolean"
+          },
+          "lockoutEnd": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lockoutEnabled": {
+            "type": "boolean"
+          },
+          "accessFailedCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "Groupcode": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "survey": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Survey"
+              }
+            ]
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isTest": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Shortcode": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "survey": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Survey"
+              }
+            ]
+          },
+          "groupcode": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Groupcode"
+              }
+            ]
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "isTest": {
+            "type": "boolean"
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "surveyCompleted": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ExtensionConfiguration": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "extensionName",
+          "configuration"
+        ],
+        "properties": {
+          "survey": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Survey"
+              }
+            ]
+          },
+          "extensionName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "configuration": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "LabelCollectionOfLabel": {
+        "allOf": [
+          {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Label"
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "Item": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Label"
+                  }
+                ]
+              },
+              "Default": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Label"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "Label": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "value": {
+            "type": "string",
+            "nullable": true
+          },
+          "language": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "SurveyLogic": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "condition": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/SurveyLogicCondition"
+              }
+            ]
+          },
+          "expressions": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/SurveyLogic"
+            }
+          },
+          "validationMessages": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LabelCollectionOfLabel"
+              }
+            ]
+          },
+          "value": {
+            "type": "string",
+            "nullable": true
+          },
+          "question": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/QuestionPart"
+              }
+            ]
+          },
+          "validationQuestionId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "validationQuestion": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/QuestionPart"
+              }
+            ]
+          },
+          "parentId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "parent": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/SurveyLogic"
+              }
+            ]
+          },
+          "root": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/SurveyLogic"
+              }
+            ]
+          },
+          "operator": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/SurveyLogicOperator"
+              }
+            ]
+          },
+          "logicType": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/SurveyLogicType"
+              }
+            ]
+          }
+        }
+      },
+      "SurveyLogicCondition": {
+        "type": "integer",
+        "description": "",
+        "x-enumNames": [
+          "And",
+          "Or"
+        ],
+        "enum": [
+          0,
+          1
+        ]
+      },
+      "QuestionPart": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "questionType": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "questionPartChildren": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/QuestionPart"
+            }
+          },
+          "questionConfigurations": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/QuestionConfiguration"
+            }
+          },
+          "questionOptions": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/QuestionOption"
+            }
+          },
+          "questionOptionConditionalsSource": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/QuestionOptionConditional"
+            }
+          },
+          "isGroupQuestion": {
+            "type": "boolean"
+          },
+          "conditionals": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/SurveyLogic"
+            }
+          },
+          "survey": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Survey"
+              }
+            ]
+          }
+        }
+      },
+      "QuestionConfiguration": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "value": {
+            "type": "string",
+            "nullable": true
+          },
+          "isResourceOnly": {
+            "type": "boolean"
+          },
+          "valueType": {
+            "$ref": "#/components/schemas/ConfigurationValueType"
+          },
+          "questionConfigurationLabels": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LabelCollectionOfLabel"
+              }
+            ]
+          },
+          "isSourceInputRequired": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ConfigurationValueType": {
+        "type": "integer",
+        "description": "",
+        "x-enumNames": [
+          "String",
+          "Integer",
+          "Decimal",
+          "Boolean",
+          "Tuple",
+          "Time",
+          "Date",
+          "Custom",
+          "Label",
+          "Question",
+          "KeyValuePair",
+          "Response"
+        ],
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "QuestionOption": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "questionOptionLabels": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LabelCollectionOfLabel"
+              }
+            ]
+          },
+          "order": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "questionOptionConditionalsTarget": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/QuestionOptionConditional"
+            }
+          },
+          "questionPartParent": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/QuestionPart"
+              }
+            ]
+          }
+        }
+      },
+      "QuestionOptionConditional": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "targetOption": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/QuestionOption"
+              }
+            ]
+          },
+          "sourceQuestion": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/QuestionPart"
+              }
+            ]
+          },
+          "condition": {
+            "$ref": "#/components/schemas/QuestionConditionalType"
+          },
+          "value": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "QuestionConditionalType": {
+        "type": "integer",
+        "description": "",
+        "x-enumNames": [
+          "IsEqualTo",
+          "IsNotEqualTo",
+          "GreaterThan",
+          "LessThan",
+          "InBounds",
+          "OutOfBounds",
+          "InRange",
+          "OutsideRange",
+          "IsAnyOf",
+          "IsAllOf",
+          "Contains",
+          "DoesNotContain"
+        ],
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      "SurveyLogicOperator": {
+        "type": "integer",
+        "description": "",
+        "x-enumNames": [
+          "Equals",
+          "NotEquals",
+          "GreaterThan",
+          "GreaterThanEqualTo",
+          "LessThan",
+          "LessThanEqualTo",
+          "Contains",
+          "Like",
+          "AnyOf",
+          "AllOf",
+          "NoneOf"
+        ],
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ]
+      },
+      "SurveyLogicType": {
+        "type": "integer",
+        "description": "",
+        "x-enumNames": [
+          "Response",
+          "Value"
+        ],
+        "enum": [
+          0,
+          1
+        ]
+      },
+      "AuditableEntity": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "QuestionPartView": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "labels": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LabelCollectionOfLabel"
+              }
+            ]
+          },
+          "descriptionLabels": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LabelCollectionOfLabel"
+              }
+            ]
+          },
+          "questionPart": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/QuestionPart"
+              }
+            ]
+          },
+          "parentView": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/QuestionPartView"
+              }
+            ]
+          },
+          "surveyView": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/SurveyView"
+              }
+            ]
+          },
+          "questionPartViewChildren": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/QuestionPartView"
+            }
+          },
+          "order": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isOptional": {
+            "type": "boolean"
+          },
+          "isHousehold": {
+            "type": "boolean"
+          },
+          "isMultiView": {
+            "type": "boolean"
+          },
+          "isDefaultHidden": {
+            "type": "boolean"
+          },
+          "repeatSource": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/QuestionPart"
+              }
+            ]
+          },
+          "icon": {
+            "type": "string",
+            "nullable": true
+          },
+          "catiDependent": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/QuestionPartView"
+              }
+            ]
+          }
+        }
+      },
+      "SurveyViewPageViewModel": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sections": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/SurveyViewSectionViewModel"
+            }
+          },
+          "questions": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/QuestionViewModel"
+            }
+          },
+          "order": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "label": {
+            "type": "string",
+            "nullable": true
+          },
+          "icon": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "SurveyViewSectionViewModel": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "order": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "questions": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/QuestionViewModel"
+            }
+          },
+          "label": {
+            "type": "string",
+            "nullable": true
+          },
+          "descriptionLabel": {
+            "type": "string",
+            "nullable": true
+          },
+          "icon": {
+            "type": "string",
+            "nullable": true
+          },
+          "isHousehold": {
+            "type": "boolean"
+          },
+          "repeatSource": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isRepeat": {
+            "type": "boolean"
+          },
+          "isMultiView": {
+            "type": "boolean"
+          }
+        }
+      },
+      "QuestionViewModel": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "questionId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "label": {
+            "type": "string",
+            "nullable": true
+          },
+          "descriptionLabel": {
+            "type": "string",
+            "nullable": true
+          },
+          "questionType": {
+            "type": "string",
+            "nullable": true
+          },
+          "isOptional": {
+            "type": "boolean"
+          },
+          "isRepeat": {
+            "type": "boolean"
+          },
+          "repeatSource": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "order": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isHousehold": {
+            "type": "boolean"
+          },
+          "isMultiView": {
+            "type": "boolean"
+          },
+          "configuration": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {}
+          },
+          "conditionals": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/SurveyViewerLogicRulesViewModel"
+            }
+          }
+        }
+      },
+      "SurveyViewerLogicRulesViewModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SurveyLogicBaseViewModel"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "condition": {
+                "type": "string",
+                "nullable": true
+              },
+              "rules": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "$ref": "#/components/schemas/SurveyLogicBaseViewModel"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "SurveyLogicBaseViewModel": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "SurveyViewType": {
+        "type": "integer",
+        "description": "",
+        "x-enumNames": [
+          "RespondentView",
+          "CatiView"
+        ],
+        "enum": [
+          0,
+          1
+        ]
+      },
+      "QuestionOptionsViewModel": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "SurveyViewerViewModel": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "questions": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/QuestionPartViewViewModel"
+            }
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "viewName": {
+            "type": "string",
+            "nullable": true
+          },
+          "survey": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/SurveyViewModel"
+              }
+            ]
+          },
+          "titleText": {
+            "type": "string",
+            "nullable": true
+          },
+          "termsAndConditionsText": {
+            "type": "string",
+            "nullable": true
+          },
+          "welcomeText": {
+            "type": "string",
+            "nullable": true
+          },
+          "surveyCompletionText": {
+            "type": "string",
+            "nullable": true
+          },
+          "screeningQuestions": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "QuestionPartViewViewModel": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "questionChildren": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/QuestionPartViewViewModel"
+            }
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "label": {
+            "type": "string",
+            "nullable": true
+          },
+          "descriptionLabel": {
+            "type": "string",
+            "nullable": true
+          },
+          "order": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "questionType": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "SurveyViewModel": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "owner": {
+            "type": "string",
+            "nullable": true
+          },
+          "group": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "startAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "isOpen": {
+            "type": "boolean"
+          },
+          "successLink": {
+            "type": "string",
+            "nullable": true
+          },
+          "rejectionLink": {
+            "type": "string",
+            "nullable": true
+          },
+          "defaultLanguage": {
+            "type": "string",
+            "nullable": true
+          },
+          "styleTemplate": {
+            "type": "string",
+            "nullable": true
+          },
+          "surveyPermissions": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/SurveyPermissionViewModel"
+            }
+          }
+        }
+      },
+      "SurveyPermissionViewModel": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userId": {
+            "type": "string",
+            "nullable": true
+          },
+          "surveyId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "permissions": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

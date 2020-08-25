@@ -1,0 +1,27 @@
+<div class="customt-event-title event-display-container">
+	<div class="event-title-group">
+		<div class="event-purpose">
+			{{ timeEvent.event.meta.purpose }}
+		</div>
+		<div class="event-name">
+			{{ timeEvent.event.title }}
+		</div>
+	</div>
+	<div class="event-message-group">
+		<div *ngIf="timeEvent.event.meta.homeAllDay">
+			Based on information entered earlier in the survey, a travel diary has already been built for this
+			respondent. This event indicates that you stayed home all day on ENTER_DATE. If this is incorrect, please
+			delete the event to add additional events to your diary for that day.
+		</div>
+	</div>
+	<div class="mode-address-group">
+		<div class="event-mode">
+			<div *ngIf="!timeEvent.event.meta.mode && !timeEvent.event.meta.homeAllDay" class="no-mode-message">
+				This auto generated event has no travel mode assigned, please click the event and choose
+				a travel mode you used to reach the destination.
+			</div>
+			{{ timeEvent.event.meta.mode }}
+		</div>
+		<div class="event-address"><i class="fas fa-map-marked-alt"></i> {{ timeEvent.event.meta.address }}</div>
+	</div>
+</div>

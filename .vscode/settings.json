@@ -24,5 +24,7 @@
 			"server": "localhost",
 			"username": "traisi"
 		}
-	]
+	],
+	"debug.showBreakpointsInOverviewRuler": true,
+	"editor.wordWrapColumn": 120
 }

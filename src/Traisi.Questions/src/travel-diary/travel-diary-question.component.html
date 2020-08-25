@@ -1,0 +1,10 @@
+<div class="travel-diary-question" [style.height.px]="containerHeight"  *ngIf="isComponentLoaded | async">
+	<traisi-travel-dairy-day-view-scheduler [viewDate]="viewDate" [events]="events" [dayStartHour]="4" [dayEndHour]="24" [refresh]="events$"
+	[users]="users" #schedule (eventClicked)="eventClicked($event)">
+	</traisi-travel-dairy-day-view-scheduler>
+	<div class="add-event-overlay">
+		<button type="button" class="btn btn-primary" (click)="newEvent()">+ New Event</button>
+	</div>
+</div>
+
+<traisi-travel-diary-edit-dialog (eventDeleted)="eventDeleted($event)" (newEventSaved)="newEntrySaved($event)"  #entryDialog></traisi-travel-diary-edit-dialog>

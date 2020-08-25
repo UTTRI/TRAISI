@@ -1,0 +1,152 @@
+<div bsModal #newEntryModal="bs-modal" class="modal fade">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title pull-left">New Event</h4>
+				<button type="button" class="close pull-right" aria-label="Close" (click)="hide()">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form #eventForm="ngForm"  validate>
+					<div class="form-group row">
+						<label for="name" class="col-md-2 col-form-label-lg">Name</label>
+						<div class="col-md-10">
+							<input class="form-control" type="text" 
+							[(ngModel)]="model.name" name="name" minlength="4"
+							id="name" placeholder="Enter a name" required>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="purpose" class="col-md-2 col-form-label-lg">Purpose</label>
+						<div class="col-md-10">
+							<ng-select
+								appearance="outline"
+								#purposeSelect
+								[(ngModel)]="model.purpose"
+								(change)="model.purpose = $event"
+								[items]="purposes"
+								name="purpose"
+								[selectOnTab]="true"
+								labelForId="purpose"
+								bindLabel="label"
+								placeholder="Select Purpose"
+								required
+							>
+							</ng-select>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="mode" class="col-md-2 col-form-label-lg">Mode</label>
+						<div class="col-md-10">
+							<ng-select
+								appearance="outline"
+								#purposeSelect
+								[(ngModel)]="model.mode"
+								(change)="model.mode = $event"
+								[items]="modes"
+								name="mode"
+								[selectOnTab]="true"
+								labelForId="mode"
+								bindLabel="label"
+								placeholder="Select Travel Mode"
+								required
+							>
+							</ng-select>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="members" class="col-md-2 col-form-label-lg">Members</label>
+						<div class="col-md-10">
+							<ng-select
+								appearance="outline"
+								#memberSelect
+								[items]="users | async"
+								name="members"
+								[(ngModel)]="model.users"
+								[multiple]="true"
+								bindLabel="name"
+								[selectOnTab]="true"
+								labelForId="members"
+								placeholder="Select Household Members"
+								required
+							>
+							</ng-select>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="timeA" class="col-sm-2 col-form-label">Time A</label>
+						<div class="col-sm-10">
+							<input
+								class="form-control"
+								id="timeA"
+								type="text"
+								name="timeA"
+								mwlFlatpickr
+								[(ngModel)]="model.timeA"
+								[noCalendar]="true"
+								[enableTime]="true"
+								dateFormat="H:i"
+								[convertModelValue]="true"
+								required
+							/>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="timeb" class="col-sm-2 col-form-label">Time B</label>
+						<div class="col-sm-10">
+							<input
+								id="timeB"
+								type="text"
+								class="form-control"
+								name="timeB"
+								mwlFlatpickr 
+								[(ngModel)]="model.timeB"
+								[noCalendar]="true"
+								[enableTime]="true"
+								dateFormat="H:i"
+								[convertModelValue]="true"
+								required
+							/>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="location" class="col-sm-2 col-form-label">Location</label>
+						<div class="col-sm-10">
+							<ng-select
+								[items]="addresses | async"
+								[hideSelected]="true"
+								bindLabel="place_name"
+								[minTermLength]="3"
+								typeToSearchText="Search for location"
+								[typeahead]="addressInput"
+								(focus)="searchFocus()"
+								(change)="locationChanged($event)"
+								required
+							>
+							</ng-select>
+							<div [hidden]="!searchInFocus">
+								<ng-template #mapTemplate>
+									<ng-container #container></ng-container>
+								</ng-template>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<span class="delete-container">
+				<button *ngIf="dialogMode === dialogModeEdit" type="button" class="btn btn-danger" (click)="delete()">
+					Delete
+				</button>
+			</span>
+				<button type="button" class="btn btn-default" (click)="hide()">
+					Cancel
+				</button>
+				<button type="button" [class.disabled]="!eventForm.valid" class="btn btn-primary" [disabled]="!eventForm.valid" (click)="dialogSave()">
+					Save
+				</button>
+			</div>
+		</div>
+	</div>
+</div>

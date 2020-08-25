@@ -1,0 +1,19 @@
+<div class="matrix-question">
+	<form #matrixForm="ngForm">
+		<div class="matrix-table ">
+			<div class="matrix-row">
+				<div class="matrix-space"></div>
+				<div class="matrix-header" *ngFor="let header of columnLabels;">{{ header }}</div>
+			</div>
+
+			<div class="matrix-row " *ngFor="let header of rowLabels;; let row = index">
+				<div class="matrix-header">{{ header }}</div>
+				<div *ngFor="let entry of columnLabels; let col = index" class="custom-control custom-radio matrix-entry">
+          <input required [value]="entry" type="radio" id="customRadio{{row}}_{{col}}" name="{{header}}" class="custom-control-input"
+           (change)="changed($event,row+'_'+col)" [(ngModel)]="model[header]">
+          <label class="custom-control-label" for="customRadio{{row}}_{{col}}"></label>
+        </div>
+			</div>
+		</div>
+	</form>
+</div>

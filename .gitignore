@@ -1,8 +1,8 @@
-/src/TRAISI/Properties/launchSettings.json
-/src/TRAISI/Properties/PublishProfiles
-/src/TRAISI/_Factory
+/src/Traisi/Properties/launchSettings.json
+/src/Traisi/Properties/PublishProfiles
+/src/Traisi/_Factory
 
-/src/TRAISI/development/
+/src/Traisi/development/
 ## /src/TRAISI/Migrations
 
 ## Ignore Visual Studio temporary files, build results, and
@@ -33,14 +33,14 @@ Obj/
 dist/
 # Visual Studio 2015 cache/options directory
 .vs/
-/src/TRAISI/wwwroot/dist/
-/src/TRAISI/ClientApp/dist/
+/src/Traisi/wwwroot/dist/
+/src/Traisi/ClientApp/dist/
 
 #Upload directory
-/src/TRAISI/wwwroot/Upload/
+/src/Traisi/wwwroot/Upload/
 
 #Download directory
-/src/TRAISI/wwwroot/Download/
+/src/Traisi/wwwroot/Download/
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
@@ -194,12 +194,12 @@ ClientBin/
 *.publishsettings
 orleans.codegen.cs
 
-/src/TRAISI/node_modules
-/src/TRAISI.SDK/Module/node_modules
-/src/TRAISI.SDK/node_modules
+/src/Traisi/node_modules
+/src/Traisi.Sdk/Module/node_modules
+/src/Traisi.Sdk/node_modules
 node_modules/
-/src/TRAISI/package-lock.json
-/src/TRAISI/yarn.lock
+/src/Traisi/package-lock.json
+/src/Traisi/yarn.lock
 
 # RIA/Silverlight projects
 Generated_Code/
@@ -265,11 +265,11 @@ Thumbs.db
 appsettings.local.json
 dev.db
 
-src/TRAISI/extensions/
+src/Traisi/extensions/
 
 traisi_testing.db
 !/src/TRAISI/ClientApp/local_node_modules/smooth-dnd/dist/
 
-!/src/TRAISI.SDK/bin/cli/gitkeep
+!/src/Traisi.SDK/bin/cli/gitkeep
 
 !systemjs/dist/

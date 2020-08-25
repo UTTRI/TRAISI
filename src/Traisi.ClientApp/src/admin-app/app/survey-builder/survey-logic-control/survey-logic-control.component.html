@@ -1,0 +1,10 @@
+<traisi-survey-logic-query-builder
+	[surveyLogic]="model"
+	[showValidationMessage]="true"
+	[showValidationQuestion]="true"
+	(onLogicChanged)="onModelChanged($event)"
+	(onLogicDeleted)="onLogicDeleted($event)"
+	(onLogicAdded)="onLogicAdded($event)"
+	#queryBuilder
+	[source]="source"
+></traisi-survey-logic-query-builder>

@@ -1,0 +1,61 @@
+<div class="progressContainer" *ngIf="navigator.navigationState$ | async as state">
+	<ul class="progress-inner" *ngIf="state.activePage">
+		<li
+			class="progress__item progress-page"
+			[ngClass]="{
+				'progress__item--active': state.activePage?.id === page.id,
+				visited: viewerState.pageStates[page.id].isVisited,
+				'not-visited': !viewerState.pageStates[page.id].isVisited
+			}"
+			(click)="navigateToPage(page)"
+			*ngFor="let page of viewerStateService.viewerState.surveyPages; let i = index"
+		>
+			<i class="{{ page.icon }} page-icon"></i>
+			<p class="progress__title">{{ page.label }}</p>
+
+			<ng-container *ngFor="let section of page.sections">
+				<p class="progress__info" [ngClass]="{ 'section--active': state.activeSection?.id === section.id }">
+					{{ section.label }}
+					<i class="fad fa-users section-icon" *ngIf="section.isHousehold"></i>
+				</p>
+				<ng-container *ngIf="state.activeSection?.id === section.id">
+					<p class="progress__question" *ngFor="let question of state.activeQuestionInstances">
+						<span class="validation-status">
+							<i
+								*ngIf="
+									question.validationState?.clientValidationState === validationStates.VALID &&
+									question.validationState?.isValid
+								"
+								class="far fa-check-square"
+							></i>
+							<i
+								*ngIf="
+									!(
+										question.validationState?.clientValidationState === validationStates.VALID &&
+										question.validationState?.isValid
+									)
+								"
+								class="far fa-square"
+							></i>
+						</span>
+						{{ question.model.name }}
+					</p>
+				</ng-container>
+			</ng-container>
+		</li>
+
+		<!--
+    <li class="progress__item progress__item--completed">
+      <p class="progress__title">Step 1</p>
+      <p class="progress__info">Completed</p>
+    </li>
+    <li class="progress__item progress__item--active">
+      <p class="progress__title">Step 2</p>
+      <p class="progress__info">Current or Active</p>
+    </li>
+    <li class="progress__item">
+      <p class="progress__title">Step 3</p>
+      <p class="progress__info">Next Step</p>
+    </li>-->
+	</ul>
+</div>

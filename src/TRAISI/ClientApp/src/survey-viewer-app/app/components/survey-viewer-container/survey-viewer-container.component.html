@@ -1,8 +1,0 @@
-<div class="survey-viewer-container">
-
-
-	<div class="shortcode-container" *ngIf="(surveySession.data | async) as session">
-		<span *ngIf="session.isUsingGroupcode" class="text-info">{{ session.shortcode }}</span>
-	</div>
-	<router-outlet></router-outlet>
-</div>

@@ -1,0 +1,18 @@
+.matrix-row {
+	display: flex;
+	flex-direction: row;
+}
+
+:not(.matrix-header) .matrix-row:nth-child(even) {
+	background-color: #ddd;
+}
+
+.matrix-header,
+.matrix-space,
+.matrix-entry {
+	flex-grow: 1;
+}
+
+.matrix-entry {
+	// border-right: solid 1px #ddd;
+}

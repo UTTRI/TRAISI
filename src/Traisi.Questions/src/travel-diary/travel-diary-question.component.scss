@@ -1,0 +1,36 @@
+@import '~angular-calendar/css/angular-calendar.css';
+
+.travel-diary-question::-webkit-scrollbar {
+	width: 6px;
+}
+
+.travel-diary-question::-webkit-scrollbar-track {
+	background: #e6e6e6;
+	border-radius: 2px;
+	border: solid 1px #e8e8e8;
+}
+
+.travel-diary-question::-webkit-scrollbar-thumb {
+	background-color: #346cb0;
+	outline: 1px solid #304690;
+	border-radius: 5px;
+}
+
+.travel-diary-question {
+	overflow-y: auto;
+	.add-event-overlay {
+		position: absolute;
+		bottom: 60px;
+		right: 50px;
+		z-index: 10;
+	}
+	margin-bottom: 20px;
+
+	.mapboxgl-ctrl-geocoder {
+		display: none;
+	}
+
+	.cal-hour-segment {
+		border: none;
+	}
+}

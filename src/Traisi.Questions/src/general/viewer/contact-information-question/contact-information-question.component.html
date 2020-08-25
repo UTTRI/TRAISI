@@ -1,0 +1,53 @@
+<div>
+  <form (ngSubmit)="onSubmit()" #contactForm="ngForm">
+    <div class="form-group">
+      <label for="nameInput">Name</label>
+      <input
+        required
+        [disabled]="!(isLoaded | async)"
+        type="text"
+        [(ngModel)]="contactRespondent.name"
+        class="form-control form-control-lg"
+        placeholder="Enter name..."
+        name="nameInput"
+        #respondentNameInput
+        *ngIf="configuration.collectRespondentName === 'true'"
+        [maxlength]="configuration.maxLength"
+      />
+    </div>
+
+    <div class="form-group" *ngIf="configuration.collectEmail === 'true'">
+      <label for="emailInput">Email address</label>
+      <input
+        required
+        [disabled]="!(isLoaded | async)"
+        type="email"
+        [(ngModel)]="contactRespondent.email"
+        class="form-control form-control-lg"
+        placeholder="Enter e-mail..."
+        pattern="^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
+        name="emailInput"
+        #emailInput
+        [maxlength]="configuration.maxLength"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="phoneNumberInput">Phone Number</label>
+      <input
+        matInput
+        mask="(000) 000-0000"
+        [disabled]="!(isLoaded | async)"
+        type="text"
+        required
+        [(ngModel)]="contactRespondent.phoneNumber"
+        class="form-control form-control-lg"
+        placeholder="Enter phone number..."
+        name="phoneNumberInput"
+        #phoneNumberInput
+        *ngIf="configuration.collectPhoneNumber === 'true'"
+        [maxlength]="configuration.maxLength"
+      />
+    </div>
+  </form>
+</div>

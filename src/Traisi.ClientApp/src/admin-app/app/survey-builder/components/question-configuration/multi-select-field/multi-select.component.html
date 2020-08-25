@@ -1,0 +1,28 @@
+<div class="form-group form-group-adjust row">
+	<label for="{{ 'multiselect-' + id }}" class="col-md-3 col-form-label text-md-right">{{
+		questionConfiguration.name
+	}}</label>
+	<div class="col-sm-9">
+		<!-- <select class="selectpicker" id="{{ 'multiselect-' + id }}" #selectElement multiple>
+			<option value="{{ option.text }}" *ngFor="let option of options">{{ option.text }}</option>
+		</select> -->
+		<ng-select
+			[items]="options"
+			[multiple]="true"
+			[searchable]="true"
+			class="option-select"
+			placeholder="Select ..."
+			bindLabel="label"
+			[(ngModel)]="model"
+			(change)="onChanged($event)"
+			
+		></ng-select>
+
+		<small id="{{ 'config-description-' + id }}" class="form-text text-muted">
+			{{ questionConfiguration.description }}
+		</small>
+		<!--
+			[(ngModel)]="rule.value"-->
+		<!--<select2  [value]="selected" [data]="getSelect2GroupedList()" [options]="select2Options" (valueChanged)="changed($event)"></select2> -->
+	</div>
+</div>

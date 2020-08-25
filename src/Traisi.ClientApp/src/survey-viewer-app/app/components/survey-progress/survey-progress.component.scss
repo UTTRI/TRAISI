@@ -1,0 +1,179 @@
+// CONFIG
+$SPACER_XS: 0.5rem;
+$SPACER_SM: 0.75rem;
+$SPACER: 1rem;
+$SPACER_MD: 1.5rem;
+$SPACER_LG: 2rem;
+$BORDER_RADIUS: 3px;
+$PROGRESS_HEIGHT: 600px;
+$PROGRESS_LIST_HEIGHT: 75px;
+$PROGRESS_COUNTER_WIDTH: 26px;
+$LIST_ITEM_WIDTH: 100px;
+$PROGRESS_BG: #392a60;
+$BODY_BG: #2e1f47;
+$ICON_COLOR: #f3597d;
+$FONT_COLOR: #333;
+
+.not-visited {
+	opacity: 0.3;
+	pointer-events: none;
+}
+
+.page-icon {
+	width: 30px;
+	position: absolute;
+	left: -42px;
+	z-index: 10;
+	top: 14px;
+	text-align: center;
+}
+
+p {
+	font-size: 14px;
+	margin: 0 0 11px;
+}
+
+a {
+	color: $FONT_COLOR;
+	text-decoration: none;
+}
+
+header {
+	text-align: center;
+	margin-bottom: $SPACER_LG * 2;
+	h1 {
+		font-size: 1.8rem;
+		line-height: 2.1rem;
+	}
+	p {
+		margin-top: $SPACER;
+	}
+	.icon {
+		color: $ICON_COLOR;
+	}
+}
+
+.progress-page {
+	cursor: pointer;
+}
+
+.section-icon {
+	margin-left: 5px;
+	opacity: 0.5;
+}
+
+// THE GOOD STUFF
+.progressContainer {
+	position: relative;
+	width: 300px;
+	margin: 0 auto;
+	overflow: hidden;
+	color: $FONT_COLOR;
+	// @include box-shadow(0 0 15px rgba(0, 0, 0, 0.3));
+}
+
+.progress-inner {
+	position: relative;
+	padding: 0 $SPACER 0 3.5rem;
+	margin: $SPACER_LG 0 0;
+	list-style: none;
+	display: block;
+	height: auto;
+	list-style-type: none;
+}
+
+.progress__question {
+	color: #878c9c;
+	margin-bottom: 5px;
+	margin-top: 5px;
+	font-weight: 500;
+	font-size: 14px;
+	.validation-status {
+		display: inline-block;
+		width: 16px;
+		height: 16px;
+		font-size: 16px;
+		margin-right: 5px;
+	}
+}
+
+.progress__item {
+	position: relative;
+	min-height: $PROGRESS_LIST_HEIGHT;
+	// counter-increment: list;
+	padding-left: $SPACER_XS;
+	margin-top: 25px;
+	&:before {
+		content: '';
+		position: absolute;
+		left: -27px;
+		top: 33px;
+		height: 100%;
+		width: 1px;
+		border-left: 1px solid #a08d8d;
+	}
+	&:after {
+		content: '';
+		position: absolute;
+		top: 10px;
+		left: -40px;
+		width: $PROGRESS_COUNTER_WIDTH;
+		height: $PROGRESS_COUNTER_WIDTH;
+		// border-radius: 50%;
+		border-radius: 4px;
+		border-color: #a08d8d;
+		background: #fff;
+		color: #333;
+		font-weight: 400;
+		font-size: 13px;
+		line-height: 2rem;
+		text-align: center;
+		border: 1px solid #b5b5b5;
+	}
+	//Hide border for Last Step
+	&:last-child {
+		&:before {
+			border: none;
+		}
+	}
+	//Completed
+	&.progress__item--completed {
+		opacity: 0.6;
+		color: $FONT_COLOR;
+		&:after {
+			content: '\2713';
+			font-weight: 400;
+			background: #fff;
+		}
+	}
+	//Active
+	&.progress__item--active {
+		font-weight: bold;
+		color: #16359a;
+		&:after {
+			background: #fff;
+			border-width: 1px;
+			border-color: #16359a;
+		}
+	}
+}
+
+.progress__title {
+	padding: 0rem 0 0;
+	margin: 0;
+	font-size: 1rem;
+	padding-top: 10px;
+}
+
+.progress__info {
+	font-size: 14px;
+	margin-bottom: 5px;
+	margin-top: 5px;
+	color: #333;
+	.section--active {
+		color: #16359a !important;
+	}
+}
+.progress__info.section--active {
+	color: #4f6b8e !important;
+}

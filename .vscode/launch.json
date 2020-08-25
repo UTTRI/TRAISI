@@ -4,6 +4,7 @@
 	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
 	"version": "0.2.0",
 	"configurations": [
+		
 		{
 			"name": ".NET Core Launch (console) EXPORT",
 			"type": "coreclr",
@@ -25,6 +26,7 @@
 			"cwd": "${workspaceFolder}/src/TRAISI",
 			"stopAtEntry": false,
 			"internalConsoleOptions": "openOnSessionStart",
+			"requireExactSource": false,
 			"launchBrowser": {
 				"enabled": true,
 				"args": "http://localhost:5000",
@@ -43,39 +45,6 @@
 			"env": {
 				"ASPNETCORE_ENVIRONMENT": "Development",
 				"ASPNETCORE_URLS": "http://0.0.0.0:5000/"
-			},
-			"sourceFileMap": {
-				"/Views": "/src/TRAISI/Views"
-			}
-		},
-		{
-			"name": ".NET Core Launch TRAISI LOCAL (web2)",
-			"type": "coreclr",
-			"request": "launch",
-			"preLaunchTask": "build",
-			"program": "${workspaceFolder}/src/TRAISI/bin/Debug/netcoreapp2.2/TRAISI.dll",
-			"args": ["--database", "Server=localhost;Database=traisi2; Username=traisi; Password=traisi"],
-			"cwd": "${workspaceFolder}/src/TRAISI",
-			"stopAtEntry": false,
-			"internalConsoleOptions": "openOnSessionStart",
-			"launchBrowser": {
-				"enabled": true,
-				"args": "http://localhost:8777",
-				"windows": {
-					"command": "cmd.exe",
-					"args": "/C start http://localhost:8777"
-				},
-				"osx": {
-					"command": "open"
-				},
-				"linux": {
-					"command": "xdg-open"
-				}
-			},
-
-			"env": {
-				"ASPNETCORE_ENVIRONMENT": "Development",
-				"ASPNETCORE_URLS": "http://0.0.0.0:8000/"
 			},
 			"sourceFileMap": {
 				"/Views": "/src/TRAISI/Views"

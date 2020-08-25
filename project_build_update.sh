@@ -14,33 +14,33 @@ echo "Clean and restore project root"
 dotnet clean
 dotnet restore
 
-echo "Update TRAISI.SDK"
-cd ${DIR}/src/TRAISI.SDK
+echo "Update Traisi.Sdk"
+cd ${DIR}/src/Traisi.Sdk
 dotnet build -c cli
 
-cd ${DIR}/src/TRAISI.SDK/Client
+cd ${DIR}/src/Traisi.Sdk/Client
 update_npm
 
-echo "Update TRAISI.Questions"
-cd ${DIR}/src/TRAISI.Questions
+echo "Update Traisi.Questions"
+cd ${DIR}/src/Traisi.Questions
 if test -f "package.json"; then
     npm install
     npm run staging
 fi
 
-echo "Update TRAISI-Tripdiary"
-cd ${DIR}/../TRAISI-TripDiary
+echo "Update Traisi.Tripdiary"
+cd ${DIR}/src/Traisi.TripDiary
 dotnet restore
 dotnet clean
-cd ${DIR}/../TRAISI-TripDiary/src
+cd ${DIR}/src/Traisi.TripDiary/src
 update_npm
-cd ${DIR}/../TRAISI-TripDiary
+cd ${DIR}/src/Traisi.TripDiary
 dotnet build
 
-echo "Update TRAISI/ClientApp"
-cd ${DIR}/src/TRAISI/ClientApp
+echo "Update Traisi.ClientApp"
+cd ${DIR}/src/Traisi.ClientApp
 update_npm
 
 echo "Build Project"
-cd ${DIR}/src/TRAISI
+cd ${DIR}/src/Traisi
 dotnet build

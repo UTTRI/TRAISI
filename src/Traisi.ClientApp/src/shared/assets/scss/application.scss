@@ -1,0 +1,43 @@
+@import 'theme';
+@import 'traisi-import';
+
+$info: #31708f !default;
+
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap/variables";
+
+// @import "~awesome-bootstrap-checkbox/awesome-bootstrap-checkbox";
+@import '~ngx-bootstrap/datepicker/bs-datepicker';
+//
+
+body .pace .pace-activity {
+	display: none;
+}
+
+
+
+@font-face {
+	font-family: 'Metropolis';
+	src: url('../fonts/Metropolis-Regular.woff2');
+	font-weight: 500;
+	@font-face {
+		font-family: 'Metropolis';
+		src: url('../fonts/Metropolis-Bold.woff2');
+		font-weight: 700;
+	}
+	@font-face {
+		font-family: 'Metropolis';
+		src: url('../fonts/Metropolis-Light.woff2');
+		font-style: normal;
+		font-weight: lighter;
+	}
+	@font-face {
+		font-family: 'Metropolis';
+		src: url('../fonts/Metropolis-SemiBold.woff2');
+		font-weight: 600;
+	}
+	@font-face {
+		font-family: 'Metropolis';
+		src: url('../fonts/Metropolis-Medium.woff2');
+		font-weight: 400;
+	}
+}

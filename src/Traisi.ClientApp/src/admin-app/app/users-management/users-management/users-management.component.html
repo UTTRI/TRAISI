@@ -1,0 +1,436 @@
+<div>
+	<h1 class="page-title">Manage Users</h1>
+	<div class="row mb-lg">
+		<div class="col-lg-12 col-12">
+			<div class="clearfix">
+				<ul class="nav nav-tabs float-left" id="myTab" role="tablist">
+					<li class="nav-item" *ngIf="canManageUsers">
+						<a
+							class="nav-link active fw-semi-bold"
+							(click)="switchGroup('unGrouped')"
+							id="solo-tab"
+							data-toggle="tab"
+							href="#solo"
+							role="tab"
+							aria-controls="solo"
+							aria-expanded="true"
+							>Solo</a
+						>
+					</li>
+					<li *ngFor="let group of allGroups" class="nav-item">
+						<a
+							class="nav-link fw-semi-bold"
+							(click)="switchGroup(group.name)"
+							id="{{ group.name + '-tab' }}"
+							data-toggle="tab"
+							href="#group"
+							role="tab"
+							aria-controls="group.name"
+							aria-expanded="true"
+						>
+							{{ group.name }}
+							<sup class="badge badge-pill badge-primary">
+								G
+							</sup>
+						</a>
+					</li>
+					<li class="nav-item">
+						<a
+							*ngIf="canManageUsers"
+							class="btn btn-primary new-group-tab nav-link"
+							(click)="createGroupModal.show()"
+						>
+							<i class="fas fa-plus-circle"></i>
+							{{ "users.management.NewGroup" | translate }}
+						</a>
+					</li>
+				</ul>
+			</div>
+			<div class="tab-content mb-lg" id="myTabContent">
+				<div
+					role="tabpanel"
+					*ngIf="canManageUsers"
+					class="tab-pane active in clearfix"
+					id="solo"
+					aria-labelledby="solo-tab"
+					aria-expanded="true"
+				>
+					<div class="row ">
+						<div class="col-sm-4">
+							<div
+								[hidden]="soloUserSelected.length > 0"
+								class="form-group search-box"
+							>
+								<search-input
+									(searchChange)="onSearchChanged($event)"
+									placeholder="{{
+										'users.management.Search' | translate
+									}}"
+								></search-input>
+							</div>
+							<div [hidden]="soloUserSelected.length == 0">
+								<button
+									class="btn btn-secondary mb-xs"
+									role="button"
+									(click)="addUsersToGroup()"
+								>
+									Add to Group
+								</button>
+								<ng-select
+								[items]="groupNameOptions"
+								(change)="updateGroupSelect($event)"
+								bindValue="selectedGroup"
+								>
+
+								</ng-select>
+								<!--<select2
+									[data]="groupNameOptions"
+									[value]="selectedGroup"
+									(valueChanged)="updateGroupSelect($event)"
+									[options]="select2Options"
+									[width]="200"
+								></select2> -->
+							</div>
+						</div>
+					</div>
+
+					<ngx-datatable
+						*ngIf="!groupBeingViewed"
+						class="bootstrap sm table table-striped table-hover table-responsive"
+						[rows]="soloUserRows"
+						[columns]="soloUserColumns"
+						[loadingIndicator]="loadingIndicator"
+						[scrollbarH]="true"
+						[rowHeight]="45"
+						[headerHeight]="35"
+						[footerHeight]="35"
+						[columnMode]="'flex'"
+						[selected]="soloUserSelected"
+						[selectionType]="'checkbox'"
+						[displayCheck]="displayCheck"
+					>
+					</ngx-datatable>
+				</div>
+				<div
+					role="tabpanel"
+					class="tab-pane"
+					id="group"
+					aria-labelledby="group-tab"
+					aria-expanded="true"
+				>
+					<div class="row">
+						<div class="col-sm-7">
+							<div
+								[hidden]="
+									groupUserSelected.length > 0 ||
+									groupUserRows.length == 0
+								"
+								class="form-group search-box"
+							>
+								<search-input
+									(searchChange)="onSearchChanged($event)"
+									placeholder="{{
+										'users.management.Search' | translate
+									}}"
+								></search-input>
+							</div>
+							<div [hidden]="groupUserSelected.length == 0">
+								<!--<button class="btn btn-secondary mb-xs" role="button">Enable Selected</button>
+    <button class="btn btn-secondary mb-xs" role="button">Disable Selected</button>-->
+								<button
+									class="btn btn-secondary mb-xs"
+									role="button"
+									(click)="removeUsersFromGroup()"
+								>
+									Remove from Group
+								</button>
+								<button
+									*ngIf="groupNameOptions.length > 0"
+									class="btn btn-secondary mb-xs"
+									role="button"
+									(click)="addGroupUsersToGroup()"
+								>
+									Add to Group
+								</button>
+
+								<ng-select>
+									*ngIf="groupNameOptions.length > 0"
+									[items]="groupNameOptions"
+									(change)="updateGroupSelect($event)"
+									bindValue="selectedGroup"
+								</ng-select>
+								<!-- <ng-select2
+									*ngIf="groupNameOptions.length > 0"
+									[data]="groupNameOptions"
+									[value]="selectedGroup"
+									(valueChanged)="updateGroupSelect($event)"
+									[options]="select2Options"
+									[width]="200"
+								></ng-select2> -->
+							</div>
+						</div>
+						<div
+							class="col-sm-2 offset-sm-2"
+							[hidden]="groupUserRows.length > 0"
+						>
+							<button
+								*ngIf="canManageGroups"
+								class="btn btn-danger pull-right"
+								(click)="deleteGroup()"
+							>
+								<i class="fas fa-plus-circle"></i>
+								{{ "users.management.DeleteGroup" | translate }}
+							</button>
+						</div>
+					</div>
+
+					<ngx-datatable
+						*ngIf="groupBeingViewed"
+						class="bootstrap sm table table-striped table-hover table-responsive"
+						[rows]="groupUserRows"
+						[columns]="groupUserColumns"
+						[loadingIndicator]="loadingIndicator"
+						[scrollbarH]="true"
+						[rowHeight]="45"
+						[headerHeight]="35"
+						[footerHeight]="35"
+						[columnMode]="'flex'"
+						[selected]="groupUserSelected"
+						[selectionType]="'checkbox'"
+					>
+					</ngx-datatable>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row justify-content-center">
+		<div>
+			<button
+				*ngIf="canManageUsers"
+				class="btn btn-primary"
+				(click)="newUser()"
+			>
+				<i class="fas fa-plus-circle"></i>
+				{{ "users.management.NewUser" | translate }}
+			</button>
+		</div>
+	</div>
+
+	<div
+		class="modal fade"
+		bsModal
+		#editorModal="bs-modal"
+		(onHidden)="onEditorModalHidden()"
+		[config]="{ backdrop: 'static' }"
+		tabindex="-1"
+	>
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title pull-left">
+						<i class="far fa-user-circle"></i>
+						{{
+							editingUserName
+								? ("users.management.EditUser"
+								  | translate: editingUserName)
+								: ("users.management.NewUser" | translate)
+						}}
+					</h4>
+					<button
+						type="button"
+						class="close pull-right"
+						title="Close"
+						(click)="editorModal.hide()"
+					>
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<user-info
+						#userEditor
+						[isGeneralEditor]="true"
+						[inGroupMode]="groupBeingViewed && canManageUsers"
+					></user-info>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div
+		bsModal
+		#createGroupModal="bs-modal"
+		class="modal fade"
+		tabindex="-1"
+		role="dialog"
+		aria-labelledby="myLargeModalLabel"
+		aria-hidden="true"
+	>
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title pull-left">
+						<i class="far fa-user-circle"></i>
+						{{ "users.management.NewGroup" | translate }}
+					</h4>
+					<button
+						type="button"
+						class="close pull-right"
+						title="Close"
+						(click)="createGroupModal.hide()"
+					>
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form
+						class="form-horizontal form-label-left"
+						role="form"
+						(ngSubmit)="createGroup(newGroupName)"
+					>
+						<div class="form-group row">
+							<label
+								for="normal-field"
+								class="col-md-4  col-form-label text-md-right"
+								>Group Name</label
+							>
+							<div class="col-md-7 ">
+								<input
+									type="text"
+									id="normal-field"
+									class="form-control"
+									placeholder="Group Name"
+									[(ngModel)]="newGroupName"
+									name="groupName"
+								/>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<!--<hr class="edit-last-separator-hr" /> -->
+							</div>
+						</div>
+						<div class="form-group row">
+							<div class="col-sm-12">
+								<div class="pull-right">
+									<button
+										type="submit"
+										class="btn btn-primary"
+										(click)="createGroupModal.hide()"
+										title="Create New Group"
+									>
+										{{
+											"users.management.NewGroup"
+												| translate
+										}}
+									</button>
+									<button
+										type="button"
+										class="btn btn-danger"
+										(click)="createGroupModal.hide()"
+										title="Cancel"
+									>
+										{{ "users.editor.Cancel" | translate }}
+									</button>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<ng-template #indexTemplate let-value="value">
+		<strong>{{ value }}</strong>
+	</ng-template>
+
+	<ng-template #userNameTemplate let-row="row" let-value="value">
+		<span
+			[class.locked-out]="row.isLockedOut"
+			[class.user-disabled]="!row.isEnabled"
+		>
+			<i *ngIf="row.isLockedOut" class="fa fa-exclamation-triangle"> </i>
+			<i *ngIf="!row.isEnabled" class="fa fa-exclamation"> </i>
+			{{ value }}
+		</span>
+	</ng-template>
+
+	<ng-template #rolesTemplate let-row="row" let-value="value" let-i="index">
+		<span
+			class="user-role badge badge-primary"
+			*ngFor="let role of value"
+			>{{ role }}</span
+		>
+	</ng-template>
+
+	<ng-template #actionsTemplate let-row="row" let-value="value" let-i="index">
+		<div *ngIf="canManageUsers || canManageGroupUsers">
+			<a
+				class="badge bg-gray-lighter text-gray"
+				href="javascript:;"
+				(click)="editUser(row)"
+				><i class="fas fa-edit" aria-hidden="true"></i>
+				{{ "users.management.Edit" | translate }}</a
+			>
+			|
+			<a
+				class="badge badge-danger"
+				href="javascript:;"
+				(click)="deleteUser(row)"
+				><i class="far fa-trash-alt" aria-hidden="true"></i>
+				{{ "users.management.Delete" | translate }}</a
+			>
+		</div>
+	</ng-template>
+
+	<ng-template #indexTemplateG let-value="value">
+		<strong>{{ value }}</strong>
+	</ng-template>
+
+	<ng-template #userNameTemplateG let-row="row" let-value="value">
+		<span
+			[class.locked-out]="row.user.isLockedOut"
+			[class.user-disabled]="!row.user.isEnabled"
+		>
+			<i *ngIf="row.user.isLockedOut" class="fa fa-exclamation-triangle">
+			</i>
+			<i *ngIf="!row.user.isEnabled" class="fa fa-exclamation"> </i>
+			{{ value }}
+		</span>
+	</ng-template>
+
+	<ng-template #rolesTemplateG let-row="row" let-value="value" let-i="index">
+		in here 
+		<span
+			class="user-role badge badge-primary"
+			*ngFor="let role of value"
+			>{{ role }}</span
+		>
+	</ng-template>
+
+	<ng-template
+		#actionsTemplateG
+		let-row="row"
+		let-value="value"
+		let-i="index"
+	>
+		<div *ngIf="canManageUsers || canManageGroupUsers">
+			<a
+				class="badge bg-gray-lighter text-gray"
+				href="javascript:;"
+				(click)="editGroupUser(row)"
+				><i class="fas fa-edit" aria-hidden="true"></i>
+				{{ "users.management.Edit" | translate }}</a
+			>
+			|
+			<a
+				class="badge badge-danger"
+				href="javascript:;"
+				(click)="deleteGroupUser(row)"
+				><i class="far fa-trash-alt" aria-hidden="true"></i>
+				{{ "users.management.Delete" | translate }}</a
+			>
+		</div>
+	</ng-template>
+</div>

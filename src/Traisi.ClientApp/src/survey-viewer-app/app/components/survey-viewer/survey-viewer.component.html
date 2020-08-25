@@ -1,0 +1,188 @@
+<!-- Fixed navbar -->
+
+<header>
+	<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+		<ndc-dynamic *ngIf="headerComponent" [ndcDynamicComponent]="headerComponent" [ndcDynamicInputs]="headerInputs">
+		</ndc-dynamic>
+	</nav>
+</header>
+<div class="container-fluid">
+	<div class="row">
+		<nav class="col-md-2 d-none d-md-block bg-light sidebar">
+			<div class="sidebar-sticky">
+				<div class="survey-title text-center">
+					{{ session.surveyTitle }}
+				</div>
+				<traisi-survey-progress></traisi-survey-progress>
+				<div class="shortcode-container text-center" *ngIf="!isAdmin">
+					{{ userShortcode }}
+				</div>
+			</div>
+		</nav>
+		<!-- Begin page content -->
+		<main role="main" class="col-md-9 ml-sm-auto col-lg-10 container" #surveyBodyContainer>
+			<div *ngIf="navigator.navigationState$ | async as state; else loading" class="questions-outer-container">
+				<div class="content-header">
+					<span class="page-header survey-section-header">{{ state.activePage?.label }}</span>
+					<span class="section-header survey-section-header" *ngIf="state.activeSectionId >= 0">
+						>
+						<span [innerHTML]="processedSectionLabel(state.activeSection.label) | safeHtml"></span>
+					</span>
+					<span class="respondent-header" *ngIf="state.activeSection?.isHousehold">
+						[ {{ state.activeRespondent.name }} ]
+					</span>
+				</div>
+
+				<div class="questions-container flex-grow-1" #questionsContainer>
+					<div
+						class="question-section"
+						[ngClass]="{
+							'single-question':
+								state.activeQuestionInstances.length === 1 &&
+								state.activeQuestionInstances[0]?.component?.isFillVertical
+						}"
+						#questionSection
+					>
+						<ng-container
+							*ngFor="let question of state.activeQuestionInstances; trackBy: trackById.bind(this); let i = index"
+						>
+							<div class="traisi-question-container-outer" >
+								<div
+									class="valid-state-container"
+									*ngIf="
+										question.validationState?.clientValidationState === validationStates.VALID &&
+										question.validationState?.isValid
+									"
+								>
+									<i class="fas fa-check"></i>
+								</div>
+								<traisi-question-container
+									class="d-flex flex-column"
+									[surveyViewer]="ref"
+									[ngClass]="{
+										invalid:
+											!question.validationState?.clientValidationState ===
+											validationStates.INVALID
+									}"
+									[activeQuestionIndex]="i"
+									[questionInstance]="question"
+									[respondent]="viewerState.groupMembers[state.activeRespondentIndex]"
+									[question]="question.model"
+									[attr.data-questionid]="question.model.questionId"
+									[attr.data-question-name]="question.model.name"
+									[attr.data-multiview]="state.isMultiView"
+									[attr.data-name]="'#question'+question.model.questionId"
+									[id]="'#question'+question.model.questionId" 
+									[surveyViewQuestion]="question.model"
+									[surveyId]="surveyId"
+									[repeatNumber]="0"
+									[sectionRepeatNumber]="0"
+									
+									[questionSectionElement]="questionSectionElement"
+									#questions
+								>
+								</traisi-question-container>
+								<div
+									class="alert alert-warning"
+									style="height: auto;"
+									role="alert"
+									*ngIf="
+										!question.validationState?.isValid &&
+										question.validationState?.surveyLogicValidationState?.errorMessages?.length > 0
+									"
+								>
+									<div class="row">
+										<div class="col-12">
+											{{
+												(question.validationState?.surveyLogicValidationState?.errorMessages)[0]
+											}}
+											<button class="btn btn-secondary float-right" (click)="forceSave(question)">
+												Confirm
+											</button>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-12">
+											<div
+												*ngFor="
+													let id of question.validationState?.surveyLogicValidationState
+														?.relatedQuestions
+												"
+											>
+												<a class="related-question-link" (click)="navigateToQuestion(id)">
+													{{ getQuestionModel(id).name }}
+												</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</ng-container>
+					</div>
+				</div>
+
+				<div
+					id="question-viewer-nav"
+					class="text-center viewer-nav"
+					[class.household-tabs]="viewerState.isSectionActive && viewerState.activeSection.isHousehold"
+				>
+					<div class="row justify-content-center btn-group align-center">
+						<button
+							[ngClass]="navButtonClass"
+							(click)="navigatePrevious()"
+							[disabled]="!(navigator.previousEnabled$ | async)"
+							class="btn btn-secondary pl-4 pr-4 survey-nav-button"
+							type="button"
+						>
+							<i class="fas fa-arrow-alt-circle-left mr-1"></i>
+							{{ 'Viewer.Previous' | translate }}
+						</button>
+
+						<button
+							*ngIf="!viewerState.isNavComplete && !viewerState.isNavFinished"
+							[ngClass]="navButtonClass"
+							(click)="navigateNext()"
+							[disabled]="!(navigator.nextEnabled$ | async)"
+							class="btn btn-primary pl-4 pr-4 survey-nav-button"
+							type="button"
+						>
+							<div *ngIf="!viewerState.isNavComplete">
+								{{ 'Viewer.Next' | translate }}
+								<i class="fas fa-arrow-alt-circle-right ml-1"></i>
+
+								<span *ngIf="false">Has Error</span>
+							</div>
+						</button>
+						<button
+							*ngIf="viewerState.isNavFinished"
+							[ngClass]="navButtonClass"
+							[disabled]="!viewerState.isNavComplete"
+							(click)="navigateCompleteSurvey()"
+							class="btn btn-primary pl-4 pr-4 survey-nav-button"
+							type="button"
+						>
+							<div>
+								{{ 'Viewer.CompleteSurvey' | translate }}
+								<i class="fas fa-arrow-alt-circle-right ml-1"></i>
+							</div>
+						</button>
+					</div>
+				</div>
+			</div>
+			<ng-template #loading>
+				Loading
+				<img src="/img/loading-bar.svg" />
+			</ng-template>
+		</main>
+	</div>
+</div>
+<footer class="footer">
+	<div class="container">
+		<ndc-dynamic *ngIf="footerComponent" [ndcDynamicComponent]="footerComponent" [ndcDynamicInputs]="footerInputs">
+		</ndc-dynamic>
+
+		<div class="admin-container">
+			<traisi-admin-toolbar *ngIf="isAdmin"></traisi-admin-toolbar>
+		</div>
+	</div>
+</footer>

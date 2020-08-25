@@ -1,0 +1,137 @@
+<div class="survey-logic-container">
+	<div *ngFor="let query of queryModels; let i = index" class="flex">
+		<query-builder
+			[ngModel]="queryModels[i]"
+			[config]="config"
+			[classNames]="classNames"
+			(ngModelChange)="onModelChange($event, i)"
+			#queryBuilder
+			ngDefaultControl
+		>
+			<ng-container *queryInput="let rule; type: 'option'">
+				<div class="col-auto">
+					<ng-select
+						id="{{ i }}-query"
+						[items]="options(rule.field) | async"
+						bindLabel="optionLabel.value"
+						[multiple]="true"
+						[searchable]="true"
+						class="option-select"
+						placeholder="Select ..."
+						bindValue="code"
+						(change)="onOptionModelChange($event, i, rule)"
+						[(ngModel)]="rule.value"
+					></ng-select>
+				</div>
+			</ng-container>
+
+			<ng-container *queryEntity="let rule; let entities = entities">
+				<ng-select
+					[items]="entityTypes"
+					[multiple]="false"
+					[searchable]="true"
+					class="option-select"
+					placeholder="Select ..."
+					[(ngModel)]="rule.entity"
+					bindLabel="name"
+					bindValue="value"
+					(change)="onEntityTypeChanged($event)"
+				></ng-select>
+			</ng-container>
+
+			<ng-container *queryInput="let rule; type: 'response'">
+				<div class="col-auto">
+					<ng-select
+						[items]="questionList$ | filter: rule:'id':true | async"
+						bindLabel="questionPart.name"
+						[multiple]="false"
+						[searchable]="true"
+						[(ngModel)]="rule.value"
+						class="option-select"
+						placeholder="Select ..."
+						bindValue="questionPart.id"
+						(change)="onResponseTypeValueChanged($event, i, rule)"
+					></ng-select>
+				</div>
+			</ng-container>
+
+			<ng-container *queryField="let rule; let fields = fields; let onChange = onChange">
+				<ng-select
+					bindLabel="name"
+					[multiple]="false"
+					[searchable]="true"
+					class="option-select"
+					placeholder="Select ..."
+					[(ngModel)]="rule.field"
+					(change)="onFieldValueChanged($event, rule)"
+					bindValue="value"
+				>
+					<ng-container *ngFor="let field of fields">
+						<ng-option *ngIf="field.entity === rule.entity" [value]="field.value">{{
+							field.name
+						}}</ng-option>
+					</ng-container>
+				</ng-select>
+			</ng-container>
+		</query-builder>
+
+		<div class="validation-message-container" *ngIf="showValidationQuestion || showValidationMessage">
+			<ng-container *ngIf="showValidationQuestion">
+				<div class="row align-items-center">
+					<div class="col">
+						<div class="form-group">
+							<label for="select-{{ i }}-message">Validation Question</label>
+							<ng-select
+								id="select-{{ i }}"
+								[items]="questionList$ | async"
+								bindLabel="questionPart.name"
+								[multiple]="false"
+								[searchable]="true"
+								class="option-select"
+								placeholder="Select ..."
+								bindValue="questionPart.id"
+								(change)="onValidationQuestionModelChange($event, i)"
+								[(ngModel)]="queryModels[i].validationQuestionId"
+							></ng-select>
+							<small class="form-text text-muted">
+								The question which will trigger the logic checks.
+							</small>
+						</div>
+					</div>
+				</div>
+			</ng-container>
+			<ng-container *ngIf="showValidationMessage">
+				<hr />
+				<div class="row align-items-center">
+					<div class="col">
+						<div class="form-group">
+							<label for="{{ i }}-message">Validation Message</label>
+							<input
+								type="text"
+								class="form-control"
+								id="{{ i }}-message"
+								placeholder="Enter validation message"
+								(ngModelChange)="onValidationMessageModelChange($event, i)"
+								[ngModel]="queryModels[i].message"
+							/>
+							<small class="form-text text-muted">
+								The validation message displayed to the user when the above conditions are met.
+							</small>
+						</div>
+					</div>
+					<div class="col text-right">
+						<button class="btn btn-primary mr-3" (click)="deleteLogic(i)">Delete</button>
+					</div>
+				</div>
+			</ng-container>
+		</div>
+		<hr />
+	</div>
+	<ng-container *ngIf="allowMultipleLogic">
+		<div class="text-center add-logic-container">
+			<button class="btn btn-primary mr-3" (click)="addLogic()" type="button">
+				<i class="fas fa-plus-circle"></i> Add Logic
+			</button>
+		</div>
+	</ng-container>
+</div>

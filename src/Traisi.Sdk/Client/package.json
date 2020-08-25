@@ -1,0 +1,38 @@
+{
+	"name": "traisi-question-sdk",
+	"version": "1.0.0",
+	"description": "SDK and interface definitions for creating new extension questions in TRAISI.",
+	"main": "src/public_api.ts",
+	"files": [
+		"scss",
+		"src"
+	],
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"build": "ng-packagr -p package.json"
+	},
+	"author": "University of Toronto",
+	"license": "ISC",
+	"devDependencies": {
+		"@angular/compiler": "^9.1.9",
+		"@angular/compiler-cli": "^9.1.9",
+		"@angular/core": "^9.1.9",
+		"@angular/forms": "^9.1.9",
+		"codelyzer": "^5.2.2",
+		"ng-packagr": "^9.1.5",
+		"typescript": "^3.8.3"
+	},
+	"dependencies": {},
+	"peerDependencies": {
+		"@angular/common": "^9.1.9",
+		"@angular/compiler": "^9.1.9",
+		"@angular/core": "^9.1.9",
+		"@angular/forms": "^9.1.9",
+		"rxjs": "^6.6.2"
+	},
+	"ngPackage": {
+		"lib": {
+			"entryFile": "src/public_api.ts"
+		}
+	}
+}

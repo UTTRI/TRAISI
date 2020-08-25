@@ -1,0 +1,35 @@
+<div class="form-group form-group-adjust row">
+	<label
+		for="{{ 'singleselect-' + id }}"
+		class="col-md-3 col-form-label text-md-right"
+		>{{ questionConfiguration.name }}</label
+	>
+	<div class="col-md-9">
+		<!-- <ngx-select
+			id="{{ 'singleselect-' + id }}"
+			[defaultValue]="dropDownListSelectedId"
+			[allowClear]="false"
+			[items]="dropDownListItems"
+			(select)="valueChanged($event)"
+			placeholder="please select an option"
+		>
+			<ng-template ngx-select-option-not-found>
+				Nothing found
+			</ng-template>
+		</ngx-select> -->
+
+		<ng-select
+			[items]="options"
+			[multiple]="false"
+			[searchable]="true"
+			class="option-select"
+			placeholder="Select ..."
+			bindLabel="label"
+			bindValue="id"
+			[(ngModel)]="selected"
+			(change)="onChanged($event)"></ng-select>
+			<small id="{{ 'config-description-' + id }}" class="form-text text-muted">
+				{{ questionConfiguration.description }}
+			</small>
+	</div>
+</div>

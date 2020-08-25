@@ -1,0 +1,25 @@
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
+@import "~ngx-toastr/toastr-bs4-alert";
+
+body {
+    font-family: Metropolis !important;
+    font-size: 16px !important;
+    background: #e2e6ef;
+}
+
+button.btn.btn-primary {
+	border-radius: 7px;
+	border-bottom: solid 4px #172a69;
+}
+
+button.btn.btn-primary:active {
+	border-radius: 7px;
+	border-bottom: solid 2px #172a69;
+}
+
+button.btn.btn-secondary {
+	border-bottom: solid 4px #808182;
+	border-radius: 7px;
+}
