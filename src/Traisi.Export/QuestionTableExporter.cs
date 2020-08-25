@@ -4,12 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using OfficeOpenXml;
-<<<<<<< HEAD:src/TRAISI.Export/QuestionTableExporter.cs
 using OfficeOpenXml.Style;
-using TRAISI.Helpers;
-=======
-using OfficeOpenXml.Style; 
->>>>>>> dev:src/Traisi.Export/QuestionTableExporter.cs
 using System.Web;
 using HtmlAgilityPack;
 using System.Data;

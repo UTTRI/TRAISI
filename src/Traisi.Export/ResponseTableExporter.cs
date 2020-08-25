@@ -4,25 +4,18 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using OfficeOpenXml;
-using OfficeOpenXml.Style;
-using System.Drawing;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Data;
-using System.Runtime;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
-<<<<<<< HEAD:src/TRAISI.Export/ResponseTableExporter.cs
-using TRAISI.Controllers;
-=======
-using Traisi.Data.Models.Surveys;
-using Traisi.Helpers;
 using Traisi.Data;
-using Traisi.Sdk.Enums;
-using Traisi.Data.Models.ResponseTypes;
-using Traisi.Data.Models.Questions;
+using Traisi.Controllers;
 using Traisi.Sdk.Services;
->>>>>>> dev:src/Traisi.Export/ResponseTableExporter.cs
+using Traisi.Data.Models.ResponseTypes;
+using Traisi.Sdk.Enums;
+using Traisi.Data.Models.Surveys;
+using Traisi.Data.Models.Questions;
 
 namespace TRAISI.Export
 {
