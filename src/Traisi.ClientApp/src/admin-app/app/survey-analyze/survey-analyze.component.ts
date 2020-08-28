@@ -34,7 +34,6 @@ export class SurveyAnalyzeComponent implements OnInit {
 			let rPercent = (rC / tS) * 100;
 			this.responses[i].percentage = Math.round(rPercent) + "%";
 		}
-		console.log(this.responses);
+		//console.log(this.responses);
   }
-
 }

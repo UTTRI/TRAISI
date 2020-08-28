@@ -28,7 +28,6 @@ import { fadeInOut } from '../../services/animations';
 import { AppTranslationService } from '../../../../shared/services/app-translation.service';
 import { FileUploader, FileUploaderOptions, Headers, FileItem, FileLikeObject } from 'ng2-file-upload';
 
-
 @Component({
 	selector: 'app-test-survey',
 	templateUrl: './conduct-survey.component.html',
@@ -73,10 +72,11 @@ export class ConductSurveyComponent implements OnInit, AfterViewInit {
 
 	private importOptions: FileUploaderOptions = {
 		autoUpload: false,
-		allowedFileType: ['compress'],
+		//allowedFileType: ['compress','csv'], allowedMimeType:['application/x-zip-compressed'],
+		allowedMimeType:['application/vnd.ms-excel'],
 		authTokenHeader: 'Authorization',
 		queueLimit: 2,
-		url: this.configurationService.baseUrl + '/api/survey/import',
+		url: this.configurationService.baseUrl + '/api/upload',
 		removeAfterUpload: true
 	};
 
@@ -136,6 +136,8 @@ export class ConductSurveyComponent implements OnInit, AfterViewInit {
 	@ViewChild('sampleEditor')
 	public sampleEditor: SampleEditorComponent;
 
+	@ViewChild('csvReader') csvReader: any;
+
 	@ViewChild('indivUpload', { static: true })
 	dropZoneIndiv: DropzoneComponent;
 	@ViewChild('groupUpload', { static: true })
@@ -187,19 +189,18 @@ export class ConductSurveyComponent implements OnInit, AfterViewInit {
 				this.router.navigate(['error']);
 			}
 		});
-
 		console.log(this.authService.currentUser.roles);
 	}
 
 	public ngOnInit(): void {
 		//SampleTestData
-		/* this.samplesArray = [
-			{ accessCode: "DKT-406", hhIdNum: 1000001, mailingBlock: 100, lastName: "Philips", postalCode: "L1G4P2", address: "45 Leyton St", phoneNumber: 6478888151, owner: "Management Staff", group: "TTS", startDate: new Date(), lastModified: new Date(), status: "Fresh", state: "Inactive", language: "English" },
-			{ accessCode: "YFE-314", hhIdNum: 1000002, mailingBlock: 100, lastName: "Pugh", postalCode: "L1G5O2", address: "55 Sunrise St", phoneNumber: 6478998080, owner: "Management Staff", group: "TTS", startDate: new Date(), lastModified: new Date(), status: "Fresh", state: "Inactive", language: "English" },
-			{ accessCode: "RER-313", hhIdNum: 1000003, mailingBlock: 100, lastName: "Hossain", postalCode: "M2G3Y1", address: "105 Sunset Ave", phoneNumber: 6479901080, owner: "Management Staff", group: "TTS", startDate: new Date(), lastModified: new Date(), status: "Fresh", state: "Inactive", language: "English" },
-			{ accessCode: "CQW-438", hhIdNum: 1000004, mailingBlock: 100, lastName: "Perry", postalCode: "M2G4Z5", address: "15 Don Valley PWY", phoneNumber: 4168901000, owner: "Management Staff", group: "TTS", startDate: new Date(), lastModified: new Date(), status: "Fresh", state: "Inactive", language: "English" },
-			{ accessCode: "ATS-461", hhIdNum: 1000005, mailingBlock: 100, lastName: "Leung", postalCode: "N2A5B6", address: "55 Stoney Creek St", phoneNumber: 4161991111, owner: "Management Staff", group: "TTS", startDate: new Date(), lastModified: new Date(), status: "Fresh", state: "Inactive", language: "English" },
-			{ accessCode: "YCH-001", hhIdNum: 1000006, mailingBlock: 100, lastName: "Omaruan", postalCode: "N2A6C8", address: "10 Matheson St", phoneNumber: 4372225555, owner: "Management Staff", group: "TTS", startDate: new Date(), lastModified: new Date(), status: "Fresh", state: "Inactive", language: "English" }
+		/*this.samplesArray = [
+			{ accessCode: "DKT-406", hhIdNum: 1000001, mailingBlock: 100, lastName: "Philips", postalCode: "L1G4P2", address: "45 Leyton St", phoneNumber: 6478888151, owner: "Administrator", group: "TTS", startDate: new Date(), lastModified: new Date(), status: "Fresh", state: "Inactive", language: "English" },
+			{ accessCode: "YFE-314", hhIdNum: 1000002, mailingBlock: 100, lastName: "Pugh", postalCode: "L1G5O2", address: "55 Sunrise St", phoneNumber: 6478998080, owner: "Administrator", group: "TTS", startDate: new Date(), lastModified: new Date(), status: "Fresh", state: "Inactive", language: "English" },
+			{ accessCode: "RER-313", hhIdNum: 1000003, mailingBlock: 100, lastName: "Hossain", postalCode: "M2G3Y1", address: "105 Sunset Ave", phoneNumber: 6479901080, owner: "Administrator", group: "TTS", startDate: new Date(), lastModified: new Date(), status: "Fresh", state: "Inactive", language: "English" },
+			{ accessCode: "CQW-438", hhIdNum: 1000004, mailingBlock: 100, lastName: "Perry", postalCode: "M2G4Z5", address: "15 Don Valley PWY", phoneNumber: 4168901000, owner: "Administrator", group: "TTS", startDate: new Date(), lastModified: new Date(), status: "Fresh", state: "Inactive", language: "English" },
+			{ accessCode: "ATS-461", hhIdNum: 1000005, mailingBlock: 100, lastName: "Leung", postalCode: "N2A5B6", address: "55 Stoney Creek St", phoneNumber: 4161991111, owner: "Administrator", group: "TTS", startDate: new Date(), lastModified: new Date(), status: "Fresh", state: "Inactive", language: "English" },
+			{ accessCode: "YCH-001", hhIdNum: 1000006, mailingBlock: 100, lastName: "Omaruan", postalCode: "N2A6C8", address: "10 Matheson St", phoneNumber: 4372225555, owner: "Administrator", group: "TTS", startDate: new Date(), lastModified: new Date(), status: "Fresh", state: "Inactive", language: "English" }
 		];  */
 
 		//Manage Samples page
@@ -221,7 +222,7 @@ export class ConductSurveyComponent implements OnInit, AfterViewInit {
 			{
 				prop: 'accessCode',
 				name: 'Access Code',
-				width: 80,
+				width: 90,
 				flexGrow: 30,
 				cellTemplate: this.textTemplate,
 				canAutoResize: false
@@ -463,7 +464,8 @@ export class ConductSurveyComponent implements OnInit, AfterViewInit {
 		this.editorModal.show();
 	}
 
-	public ngAfterViewInit(): void {
+	public ngAfterViewInit(): void 
+	{
 		this.sampleEditor.changesSavedCallback = () => {
 			this.importing = false;
 			Object.assign(this.model, this.editModel);
@@ -478,7 +480,7 @@ export class ConductSurveyComponent implements OnInit, AfterViewInit {
 			this.editModel = null;
 			this.editorModal.hide();
 		};
-
+		
 		this.dropZoneIndiv.DZ_SENDING.subscribe(data => this.onSendingIndiv(data));
 		this.dropZoneGroup.DZ_SENDING.subscribe(data => this.onSendingGroup(data));
 	}
@@ -541,6 +543,29 @@ export class ConductSurveyComponent implements OnInit, AfterViewInit {
 				};
 				this.uploader.uploadAll();
 	} */
+
+	public uploadFiles(): void {
+		if (this.csvReader.nativeElement.files[0] == null) {
+			this.alertService.showStickyMessage('Error', "Please select a file to upload", MessageSeverity.error);
+			return;
+		}
+		this.uploader.authToken = `Bearer ${this.authService.accessToken}`;
+		let sampleInfo: Headers = {
+			name: 'parameters',
+			value: JSON.stringify(this.model)
+		};
+		this.uploader.options.headers = [sampleInfo];
+		this.uploader.onSuccessItem = (item, response, status, headers) => {
+			let files: File[] = [item._file];
+			this.alertService.showMessage('Success', "File is uploaded successfully for Region conversion", MessageSeverity.success);
+			this.csvReader.nativeElement.value = '';
+		};
+		this.uploader.onErrorItem = (item, response, status, headers) => {
+			this.alertService.showStickyMessage('Error', "Failed to upload the file", MessageSeverity.error);
+			let files: File[] = [item._file];			
+		};
+		this.uploader.uploadAll();
+	}
 
 	//Sample Action
 	public sampleStateAction(): void {
@@ -658,7 +683,6 @@ export class ConductSurveyComponent implements OnInit, AfterViewInit {
 				this.samplesArray.push(csvArray[i]);
 			}
 		}
-		console.log(csvArray);
 		this.samplesArray = [...this.samplesArray];
 		this.sampleRows = this.samplesArray;
 	}

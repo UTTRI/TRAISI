@@ -127,14 +127,14 @@ export class SampleManagementComponent implements OnInit, AfterViewInit {
 	public ngOnInit(): void {
 		const gT = (key: string) => this.translationService.getTranslation(key);
 		//SampleTestData
-		this.samplesArray = [
-			{ accessCode: "DKT-406", hhIdNum: 1000001, mailingBlock: 100, lastName: "Philips", postalCode: "L1G4P2", address: "45 Leyton St", phoneNumber: 6478888151, owner: "Management Staff", group: "TTS", startDate: new Date(), lastModified: new Date(), status: "Fresh", state: "Inactive", language: "English" },
-			{ accessCode: "YFE-314", hhIdNum: 1000002, mailingBlock: 100, lastName: "Pugh", postalCode: "L1G5O2", address: "55 Sunrise St", phoneNumber: 6478998080, owner: "Management Staff", group: "TTS", startDate: new Date(), lastModified: new Date(), status: "Fresh", state: "Inactive", language: "English" },
-			{ accessCode: "RER-313", hhIdNum: 1000003, mailingBlock: 100, lastName: "Hossain", postalCode: "M2G3Y1", address: "105 Sunset Ave", phoneNumber: 6479901080, owner: "Management Staff", group: "TTS", startDate: new Date(), lastModified: new Date(), status: "Fresh", state: "Inactive", language: "English" },
-			{ accessCode: "CQW-438", hhIdNum: 1000004, mailingBlock: 100, lastName: "Perry", postalCode: "M2G4Z5", address: "15 Don Valley PWY", phoneNumber: 4168901000, owner: "Management Staff", group: "TTS", startDate: new Date(), lastModified: new Date(), status: "Fresh", state: "Inactive", language: "English" },
-			{ accessCode: "ATS-461", hhIdNum: 1000005, mailingBlock: 100, lastName: "Leung", postalCode: "N2A5B6", address: "55 Stoney Creek St", phoneNumber: 4161991111, owner: "Management Staff", group: "TTS", startDate: new Date(), lastModified: new Date(), status: "Fresh", state: "Inactive", language: "English" },
-			{ accessCode: "YCH-001", hhIdNum: 1000006, mailingBlock: 100, lastName: "Omaruan", postalCode: "N2A6C8", address: "10 Matheson St", phoneNumber: 4372225555, owner: "Management Staff", group: "TTS", startDate: new Date(), lastModified: new Date(), status: "Fresh", state: "Inactive", language: "English" }
-		];
+		/* this.samplesArray = [
+			{ accessCode: "DKT-406", hhIdNum: 1000001, mailingBlock: 100, lastName: "Philips", postalCode: "L1G4P2", address: "45 Leyton St", phoneNumber: 6478888151, owner: "Administrator", group: "TTS", startDate: new Date(), lastModified: new Date(), status: "Fresh", state: "Inactive", language: "English" },
+			{ accessCode: "YFE-314", hhIdNum: 1000002, mailingBlock: 100, lastName: "Pugh", postalCode: "L1G5O2", address: "55 Sunrise St", phoneNumber: 6478998080, owner: "Administrator", group: "TTS", startDate: new Date(), lastModified: new Date(), status: "Fresh", state: "Inactive", language: "English" },
+			{ accessCode: "RER-313", hhIdNum: 1000003, mailingBlock: 100, lastName: "Hossain", postalCode: "M2G3Y1", address: "105 Sunset Ave", phoneNumber: 6479901080, owner: "Administrator", group: "TTS", startDate: new Date(), lastModified: new Date(), status: "Fresh", state: "Inactive", language: "English" },
+			{ accessCode: "CQW-438", hhIdNum: 1000004, mailingBlock: 100, lastName: "Perry", postalCode: "M2G4Z5", address: "15 Don Valley PWY", phoneNumber: 4168901000, owner: "Administrator", group: "TTS", startDate: new Date(), lastModified: new Date(), status: "Fresh", state: "Inactive", language: "English" },
+			{ accessCode: "ATS-461", hhIdNum: 1000005, mailingBlock: 100, lastName: "Leung", postalCode: "N2A5B6", address: "55 Stoney Creek St", phoneNumber: 4161991111, owner: "Administrator", group: "TTS", startDate: new Date(), lastModified: new Date(), status: "Fresh", state: "Inactive", language: "English" },
+			{ accessCode: "YCH-001", hhIdNum: 1000006, mailingBlock: 100, lastName: "Omaruan", postalCode: "N2A6C8", address: "10 Matheson St", phoneNumber: 4372225555, owner: "Administrator", group: "TTS", startDate: new Date(), lastModified: new Date(), status: "Fresh", state: "Inactive", language: "English" }
+		]; */
 		//Sample Distribution visual data
 		for (let i = 0; i < this.responses.length; i++) {
 			let rC = this.responses[i].resCount;
@@ -142,7 +142,7 @@ export class SampleManagementComponent implements OnInit, AfterViewInit {
 			let rPercent = (rC / tS) * 100;
 			this.responses[i].percentage = Math.round(rPercent) + "%";
 		}
-		console.log(this.responses);
+		//console.log(this.responses);
 		
 		//Manage Samples page
 		this.model.status = "Fresh";
@@ -163,7 +163,7 @@ export class SampleManagementComponent implements OnInit, AfterViewInit {
 			{
 				prop: 'accessCode',
 				name: 'Access Code',
-				width: 80,
+				width: 90,
 				flexGrow: 30,
 				cellTemplate: this.textTemplate,
 				canAutoResize: false
@@ -562,7 +562,7 @@ export class SampleManagementComponent implements OnInit, AfterViewInit {
 				this.samplesArray.push(csvArray[i]);
 			}
 		}
-		console.log(csvArray);
+		//console.log(csvArray);
 		this.samplesArray = [...this.samplesArray];
 		this.activateSampleRows = this.samplesArray;
 	}

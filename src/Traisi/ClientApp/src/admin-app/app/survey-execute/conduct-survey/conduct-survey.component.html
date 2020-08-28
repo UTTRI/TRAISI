@@ -221,7 +221,7 @@
 									ng-control="singleOrList" id="list" value="list" [(ngModel)]="generateType">
 								<label class="form-check-label vertical-middle" for="list">
 									Import List
-								</label>
+								</label> 
 							</div>
 							<div class="col-md-4 col-sm-4">
 								<dropzone #groupUpload class="code-drop" [class.hidden]="generateType=='single'"
@@ -430,11 +430,15 @@
 					<div class="form-control reset-height">
 						<i class="glyphicon glyphicon-file"></i>
 					</div>
-					<input type="file" #csvReader ng2FileSelect [uploader]="uploader" accept=".csv"/> 
+					<input type="file" #csvReader name="uploadCsv" id="uploadCsv" accept=".csv" /> 
+					<!-- <input type="file" ng2FileSelect [uploader]="uploader"
+							(onFileSelected)="setImportFile($event)"/> -->
 				</div>
 			</div>
-			<button class="btn btn-primary" (click)="uploadFiles()">
-				<i class = "fas fa-save"> {{ 'users.editor.Save' | translate }} </i>
+			<button *ngIf="!importing" type="submit" class="btn btn-primary" [disabled]="isSaving">
+				<i *ngIf="!isSaving" class="fas fa-save"></i>
+				<i *ngIf="isSaving" class="fas fa-circle-o-notch fa-spin"></i>
+				{{ isSaving ? ('users.editor.Saving' | translate) : ('users.editor.Save' | translate) }}
 			</button>
 		</div>
 	</div>

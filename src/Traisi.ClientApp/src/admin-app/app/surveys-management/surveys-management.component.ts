@@ -130,7 +130,7 @@ export class SurveysManagementComponent implements OnInit, AfterViewInit {
 				draggable: false,
 				canAutoResize: false
 			},
-			{ prop: 'code', name: 'Code', width: 60, cellTemplate: this.textTemplate, canAutoResize: false },
+			{ prop: 'code', name: 'Code', width: 120, cellTemplate: this.textTemplate, canAutoResize: false },
 			{
 				prop: 'name',
 				name: 'Survey Title',
