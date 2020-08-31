@@ -467,20 +467,13 @@ export class ConductSurveyComponent implements OnInit, AfterViewInit {
 	public ngAfterViewInit(): void 
 	{
 		this.sampleEditor.changesSavedCallback = () => {
-			this.importing = false;
-			Object.assign(this.model, this.editModel);
-			this.editorModal.hide();
-			this.sampleService.listSamples().subscribe(samples => {
-				this.sampleRows = samples;
-				this.sampleRowsCache = [...samples];
-			});
+		this.editorModal.hide();
 		};
 		this.sampleEditor.changesCancelledCallback = () => {
 			this.importing = false;
 			this.editModel = null;
 			this.editorModal.hide();
 		};
-		
 		this.dropZoneIndiv.DZ_SENDING.subscribe(data => this.onSendingIndiv(data));
 		this.dropZoneGroup.DZ_SENDING.subscribe(data => this.onSendingGroup(data));
 	}
@@ -524,26 +517,7 @@ export class ConductSurveyComponent implements OnInit, AfterViewInit {
 			this.scheduleBeingViewed = true;
 		}
 	}
-
-	/* public setImportFile(): void
-	{
-		this.uploader.authToken = `Bearer ${this.authService.accessToken}`;
-				let sampleInfo: Headers = {
-					name: 'parameters',
-					value: JSON.stringify(this.model)
-				};
-				this.uploader.options.headers = [sampleInfo];
-				this.uploader.onSuccessItem = (item, response, status, headers) => {
-					alert("File is uploaded");
-				};
-				this.uploader.onErrorItem = (item, response, status, headers) => {
-					alert("Failed to upload the file");
-					let files: File[] = [item._file];
-					this.uploader.addToQueue(files);
-				};
-				this.uploader.uploadAll();
-	} */
-
+	
 	public uploadFiles(): void {
 		if (this.csvReader.nativeElement.files[0] == null) {
 			this.alertService.showStickyMessage('Error', "Please select a file to upload", MessageSeverity.error);
