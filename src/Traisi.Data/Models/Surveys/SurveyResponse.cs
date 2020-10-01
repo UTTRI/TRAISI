@@ -26,6 +26,12 @@ namespace Traisi.Data.Models.Surveys
         /// <value></value>
         public bool Excluded { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <value></value>
+        public bool IsPartial {get;set;}
+
         public SurveyResponse()
         {
             this.ResponseValues = new List<ResponseValue>();

@@ -24,6 +24,22 @@
 					></ng-select>
 				</div>
 			</ng-container>
+			<ng-container *queryInput="let rule; type: 'timeline'">
+				<div class="col-auto">
+					<ng-select
+						id="{{ i }}-query"
+						[items]="options(rule.field) | async"
+						bindLabel="optionLabel.value"
+						[multiple]="true"
+						[searchable]="true"
+						class="option-select"
+						placeholder="Select ..."
+						bindValue="code"
+						(change)="onOptionModelChange($event, i, rule)"
+						[(ngModel)]="rule.value"
+					></ng-select>
+				</div>
+			</ng-container>
 
 			<ng-container *queryEntity="let rule; let entities = entities">
 				<ng-select

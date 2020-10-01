@@ -16,7 +16,8 @@
 		"stated_preference": "Stated Preference",
 		"slider": "Value Slider",
 		"contact-information": "Contact Information",
-		"travel-diary": "Travel Diary V2"
+		"travel-diary": "Travel Diary V2",
+		"route-select": "Route Select"
 	},
 	"fr": {
 		"text": "Texte",
@@ -35,6 +36,7 @@
 		"stated_preference": "Stated Preference",
 		"slider": "Value Slider",
 		"contact-information": "Contact Information",
-		"travel-diary": "Travel Diary V2"
+		"travel-diary": "Travel Diary V2",
+		"route-select": "Route Select"
 	}
 }

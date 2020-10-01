@@ -1,0 +1,37 @@
+<div bsModal #routeDetailModal="bs-modal" class="modal fade">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title pull-left">Detailed Route Information</h4>
+				<button type="button" class="close pull-right" aria-label="Close" (click)="hide()">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<ul class="site-list">
+					<div class="start">
+						{{ trip?.Departure.Site.Name }}
+					</div>
+					<div *ngFor="let section of trip?.sections.Section; index as i; last as isLast">
+						<div *ngIf="section.PTRide">
+							<div><span class="stop-circle"></span>{{ section.PTRide.Arrival.StopPlace.Name }}</div>
+							<div class="direction">{{ section.PTRide.Direction.Name }}</div>
+						</div>
+						<div *ngIf="section.Leg && !isLast">
+							<div><span class="no-stop-circle"></span>{{ section.Leg.Arrival.Site.Name }}</div>
+						</div>
+					</div>
+					<div class="start">
+						{{ trip?.Arrival.Site.Name }}
+					</div>
+					
+				</ul>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" (click)="hide()">
+					Ok
+				</button>
+			</div>
+		</div>
+	</div>
+</div>

@@ -377,7 +377,7 @@ namespace TRAISI.Export
 
 
         /// <summary>
-        /// 
+        /// TODO: REIMPLEMENT TRIPLIINX CALL
         /// </summary>
         /// <param name="lato"></param> 
         /// <param name="lngo"></param>
@@ -390,9 +390,9 @@ namespace TRAISI.Export
         private async Task<JObject> ReadTripLinxData(double lato, double lngo, double latd, double lngd, string mode, string transitModes, DateTime date)
         {
 
-            JObject jo = JObject.Parse(await this._geocontroller.GetTripLinxRoutePlanner(lato, lngo, latd, lngd, mode, transitModes, date));
-            return jo;
-
+            //JObject jo = JObject.Parse(await this._geocontroller.GetTripLinxRoutePlanner(lato, lngo, latd, lngd, mode, transitModes, date));
+           // return jo;
+            return null;
         }
         private string ReadSplitLocation(ISurveyResponse surveyResponse, String locationPart)
         {

@@ -323,6 +323,7 @@ namespace Traisi.Services
             bool isOptional,
             bool isHousehold,
             string repeatSourceQuestionName,
+            int repeatSourceQuestionId,
             string icon
         )
         {
@@ -333,10 +334,10 @@ namespace Traisi.Services
             qpv.IsHousehold = isHousehold;
             qpv.IsOptional = isOptional;
 
-            if (repeatSourceQuestionName != null)
+            if (repeatSourceQuestionId > 0 )
             {
                 int sourceQuestionId =
-                    int.Parse(repeatSourceQuestionName.Split('~').Last());
+                    repeatSourceQuestionId;
                 qpv.RepeatSource =
                     this._unitOfWork.QuestionParts.Get(sourceQuestionId);
             }

@@ -1,68 +1,91 @@
-<div bsModal #newEntryModal="bs-modal" class="modal fade">
+<div
+	bsModal
+	#newEntryModal="bs-modal"
+	class="modal fade"
+	[config]="{ ignoreBackdropClick: true }"
+	(onShown)="modalShown($event)"
+>
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h4 class="modal-title pull-left">New Event</h4>
+				<h4 class="modal-title pull-left" *ngIf="dialogMode === dialogModeNew">New Trip</h4>
+				<h4 class="modal-title pull-left" *ngIf="dialogMode === dialogModeEdit">Edit Trip</h4>
+				<h4 class="modal-title pull-left" *ngIf="dialogMode === dialogModeCreateHome">{{respondent.name}} was not at home at 3 am on the diary day, please tell us his/her activity at the beginning of the diary day.</h4>
 				<button type="button" class="close pull-right" aria-label="Close" (click)="hide()">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
 			<div class="modal-body">
-				<form #eventForm="ngForm"  validate>
+				<form #eventForm="ngForm" validate returnTime>
 					<div class="form-group row">
-						<label for="name" class="col-md-2 col-form-label-lg">Name</label>
-						<div class="col-md-10">
-							<input class="form-control" type="text" 
-							[(ngModel)]="model.name" name="name" minlength="4"
-							id="name" placeholder="Enter a name" required>
+						<div class="col-12">
+							<label for="name" class="col-form-label">Title of the activity</label>
+							<input
+								class="form-control"
+								type="text"
+								[(ngModel)]="model.name"
+								name="name"
+								minlength="4"
+								id="name"
+								placeholder="Enter a title to describe the event"
+								required
+							/>
 						</div>
 					</div>
 					<div class="form-group row">
-						<label for="purpose" class="col-md-2 col-form-label-lg">Purpose</label>
-						<div class="col-md-10">
+						<div class="col-12">
+							<label for="purpose" class="col-form-label">Purpose of the activity</label>
 							<ng-select
 								appearance="outline"
 								#purposeSelect
 								[(ngModel)]="model.purpose"
-								(change)="model.purpose = $event"
 								[items]="purposes"
 								name="purpose"
 								[selectOnTab]="true"
 								labelForId="purpose"
 								bindLabel="label"
+								bindValue="id"
 								placeholder="Select Purpose"
 								required
 							>
+								<!---->
+								<!---->
 							</ng-select>
 						</div>
 					</div>
-					<div class="form-group row">
-						<label for="mode" class="col-md-2 col-form-label-lg">Mode</label>
-						<div class="col-md-10">
+					<div class="form-group row" *ngIf="!isFirstEventInDay">
+						<div class="col-12">
+							<label for="mode" class="col-form-label"
+								>{{ activeRespondentName }}'s travel mode for the trip</label
+							>
 							<ng-select
 								appearance="outline"
 								#purposeSelect
 								[(ngModel)]="model.mode"
-								(change)="model.mode = $event"
+								(change)="model.mode = $event.id"
 								[items]="modes"
 								name="mode"
 								[selectOnTab]="true"
 								labelForId="mode"
 								bindLabel="label"
+								bindValue="id"
 								placeholder="Select Travel Mode"
 								required
 							>
 							</ng-select>
 						</div>
 					</div>
-					<div class="form-group row">
-						<label for="members" class="col-md-2 col-form-label-lg">Members</label>
-						<div class="col-md-10">
+					<div class="form-group row" *ngIf="isShowMemberSelect">
+						<div class="col-12">
+							<label for="members" class="col-form-label"
+								>Family members who attended this activity</label
+							>
 							<ng-select
 								appearance="outline"
 								#memberSelect
 								[items]="users | async"
 								name="members"
+								(change)="onMembersChanged($event)"
 								[(ngModel)]="model.users"
 								[multiple]="true"
 								bindLabel="name"
@@ -74,61 +97,195 @@
 							</ng-select>
 						</div>
 					</div>
-					<div class="form-group row">
-						<label for="timeA" class="col-sm-2 col-form-label">Time A</label>
-						<div class="col-sm-10">
-							<input
-								class="form-control"
-								id="timeA"
-								type="text"
-								name="timeA"
-								mwlFlatpickr
-								[(ngModel)]="model.timeA"
-								[noCalendar]="true"
-								[enableTime]="true"
-								dateFormat="H:i"
-								[convertModelValue]="true"
-								required
-							/>
+
+					<div class="form-group row" *ngIf="!isFirstEventInDay">
+						<div class="col-12">
+							<label for="timeA" class="col-form-label">Departure time for the trip (as 24-hours) </label>
+							<div class="input-group">
+								<div class="input-group-prepend">
+									<span class="input-group-text" id="inputGroupPrepend2"
+										><i class="far fa-clock"></i
+									></span>
+								</div>
+								<input
+									id="timeA"
+									type="text"
+									class="form-control"
+									name="timeA"
+									mwlFlatpickr
+									(ngModelChange)="onDepartureTimeChange($event)"
+									[(ngModel)]="model.timeA"
+									[noCalendar]="true"
+									[enableTime]="true"
+									[time24hr]="true"
+									[now]="defaultDate"
+									dateFormat="H:i"
+									aria-describedby="inputGroupPrepend2"
+									[convertModelValue]="true"
+									required
+								/>
+							</div>
+							<div class="info-feedback"></div>
+							<alert type="info" *ngIf="dialogMode === dialogModeEdit && !model.isValid">
+								<strong>Note</strong> You can update the default departure time if it does not match
+								your daily schedule.
+							</alert>
 						</div>
 					</div>
+
 					<div class="form-group row">
-						<label for="timeb" class="col-sm-2 col-form-label">Time B</label>
-						<div class="col-sm-10">
-							<input
-								id="timeB"
-								type="text"
-								class="form-control"
-								name="timeB"
-								mwlFlatpickr 
-								[(ngModel)]="model.timeB"
-								[noCalendar]="true"
-								[enableTime]="true"
-								dateFormat="H:i"
-								[convertModelValue]="true"
-								required
-							/>
-						</div>
-					</div>
-					<div class="form-group row">
-						<label for="location" class="col-sm-2 col-form-label">Location</label>
-						<div class="col-sm-10">
-							<ng-select
+						<div class="col-12">
+							<label for="location" class="col-form-label">Activity location</label>
+
+							<!-- <ng-select
+								name="location"
 								[items]="addresses | async"
 								[hideSelected]="true"
 								bindLabel="place_name"
-								[minTermLength]="3"
+								[minTermLength]="4"
 								typeToSearchText="Search for location"
 								[typeahead]="addressInput"
 								(focus)="searchFocus()"
+								minlength="10"
+								placeholder="Search for location"
+								aria-describedby="inputGroupPrepend3"
+								[ngModel]="model.address"
 								(change)="locationChanged($event)"
 								required
 							>
-							</ng-select>
-							<div [hidden]="!searchInFocus">
+								<ng-template ng-label-tmp let-item="item">
+									{{ item.streetNumber }} {{ item.streetAddress }}, {{ item.city }}
+								</ng-template>
+							</ng-select> -->
+							<div [class.missingMap]="model && !model.address">
 								<ng-template #mapTemplate>
 									<ng-container #container></ng-container>
 								</ng-template>
+							</div>
+						</div>
+					</div>
+
+					<!-- ask about insert after -->
+					<div
+						class="form-group row return-confirm"
+						*ngIf="dialogMode === dialogModeEdit && this.isRequiresEventSwapConfirm"
+					>
+						<div class="col-12">
+							<div class="confirm-label col-form-label">
+								Did you want to move this trip <strong>{{ model.name }}</strong> after
+								<strong>{{ swapEvent?.meta.model.name }}</strong> ?
+							</div>
+							<div class="custom-control custom-radio custom-control-inline">
+								<input
+									type="radio"
+									id="updateEventSwapYes"
+									name="updateEventSwap"
+									[value]="true"
+									[(ngModel)]="model.isUpdateEventSwap"
+									class="custom-control-input"
+									required
+								/>
+								<label class="custom-control-label" for="updateEventSwapYes">Yes, I want to change the order</label>
+							</div>
+							<div class="custom-control custom-radio custom-control-inline">
+								<input
+									type="radio"
+									id="updateEventSwapNo"
+									name="updateEventSwap"
+									[value]="false"
+									[(ngModel)]="model.isUpdateEventSwap"
+									class="custom-control-input"
+									required
+								/>
+								<label class="custom-control-label" for="updateEventSwapNo">No, I want to keep the current order</label>
+							</div>
+						</div>
+					</div>
+
+					<div
+						class="form-group row return-confirm"
+						*ngIf="isInsertedDepartureTime && dialogMode !== dialogModeEdit && !isRequiresReturnHomeTime"
+					>
+						<div class="col-12">
+							<div class="confirm-label col-form-label" *ngIf="!isInsertedDepartureTime">
+								After finishing this activity, did {{ respondent.name }} travel back contunuing his/her previous activityon the timeline?  
+							</div>
+							<div class="confirm-label col-form-label" *ngIf="isInsertedDepartureTime">
+								After finishing this activity, did {{ respondent.name }} travel back contunuing his/her previous activity  [{{ insertedIntoEvent?.meta.model.name }}] on the timeline?  
+							
+							</div>
+							<div class="custom-control custom-radio custom-control-inline">
+								<input
+									type="radio"
+									id="insertRadioYes"
+									name="insertRadio"
+									[value]="true"
+									(change)="onInsertionConfirm($event)"
+									[(ngModel)]="model.isInserted"
+									class="custom-control-input"
+									required
+								/>
+								<label class="custom-control-label" for="insertRadioYes">Yes</label>
+							</div>
+							<div class="custom-control custom-radio custom-control-inline">
+								<input
+									type="radio"
+									id="insertRadioNo"
+									name="insertRadio"
+									[value]="false"
+									(change)="onInsertionConfirm($event)"
+									[(ngModel)]="model.isInserted"
+									class="custom-control-input"
+									required
+								/>
+								<label class="custom-control-label" for="insertRadioNo">No</label>
+							</div>
+						</div>
+					</div>
+					<div
+						class="form-group row"
+						*ngIf="(model.isInserted || isRequiresEndTime || isRequiresReturnHomeTime) && (displayIndex > 0)"
+					>
+						<div class="col-12">
+							<label
+								for="timeA"
+								class="col-form-label"
+								*ngIf="model.isInserted && !isRequiresReturnHomeTime"
+								> When did {{respondent.name}} travel back to the previous activity?</label
+							>
+							<label for="timeA" class="col-form-label" *ngIf="isRequiresEndTime"
+								>What time did you end this activity?</label
+							>
+							<label for="timeA" class="col-form-label" *ngIf="isRequiresReturnHomeTime"
+								>What time did you end this activity?</label
+							>
+							<div class="input-group">
+								<div class="input-group-prepend">
+									<span class="input-group-text" id="insertedEndTime"
+										><i class="far fa-clock"></i
+									></span>
+								</div>
+								<input
+									id="insertedEndTime"
+									type="text"
+									class="form-control"
+									name="insertedEndTime"
+									#insertedEndTime
+									mwlFlatpickr
+									(ngModelChange)="onReturnTimeChange($event)"
+									[(ngModel)]="model.insertedEndTime"
+									[noCalendar]="true"
+									[enableTime]="true"
+									[now]="defaultDate"
+									[time24hr]="true"
+									dateFormat="H:i"
+									aria-describedby="insertedEndTime"
+									[convertModelValue]="true"
+									required
+								/>
+							</div>
+							<div class="invalid-feedback">
+								Return time must be later than the original departure time.
 							</div>
 						</div>
 					</div>
@@ -136,17 +293,38 @@
 			</div>
 			<div class="modal-footer">
 				<span class="delete-container">
-				<button *ngIf="dialogMode === dialogModeEdit" type="button" class="btn btn-danger" (click)="delete()">
-					Delete
-				</button>
-			</span>
+					<button
+						*ngIf="dialogMode === dialogModeEdit"
+						type="button"
+						class="btn btn-danger"
+						(click)="delete()"
+					>
+						Delete
+					</button>
+				</span>
 				<button type="button" class="btn btn-default" (click)="hide()">
 					Cancel
 				</button>
-				<button type="button" [class.disabled]="!eventForm.valid" class="btn btn-primary" [disabled]="!eventForm.valid" (click)="dialogSave()">
+				<button
+					type="button"
+					[class.disabled]="!isFormValid"
+					class="btn btn-primary"
+					[disabled]="!isFormValid"
+					(click)="dialogSave()"
+				>
 					Save
 				</button>
 			</div>
 		</div>
 	</div>
 </div>
+
+<ng-template #allDayHomeTemplate>
+	<div class="modal-header"><h4 class="modal-title pull-left">Confirm: Home all day activity</h4></div>
+
+	<div class="modal-body text-center">
+		<p>Are you sure that you meant to create a stay at home all day activity for multiple family members?</p>
+		<button type="button" class="btn btn-default" (click)="forceDialogSave()">Yes</button>
+		<button type="button" class="btn btn-primary" (click)="confirmModalRef.hide()">No</button>
+	</div>
+</ng-template>

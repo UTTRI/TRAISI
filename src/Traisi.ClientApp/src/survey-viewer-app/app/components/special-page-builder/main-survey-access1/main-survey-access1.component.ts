@@ -157,7 +157,6 @@ export class MainSurveyAccess1Component
 
 	public startSurvey(): void {
 		this.hasAccessError = false;
-		console.log(this.accessCode);
 		this.surveyViewerService.startPageComponent
 			.startSurvey(this.accessCode)
 			.subscribe({

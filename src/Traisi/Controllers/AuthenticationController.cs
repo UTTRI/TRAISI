@@ -62,10 +62,10 @@ namespace Traisi.Controllers
                 if (connectRequest.HasParameter("survey_user")) {
                     user = await this._accountManager.GetSurveyUserByShortcodeAsync(
                         int.Parse(connectRequest.GetParameter("survey_id")?.Value.ToString()),
-                         connectRequest.GetParameter("shortcode")?.Value.ToString());
+                         connectRequest.GetParameter("shortcode")?.Value.ToString().Trim());
                 }
                 else {
-                    user = await _userManager.FindByEmailAsync(connectRequest.Username) ?? await _userManager.FindByNameAsync(connectRequest.Username);
+                    user = await _userManager.FindByEmailAsync(connectRequest.Username) ?? await _userManager.FindByNameAsync(connectRequest.Username.Trim());
                 }
                 if (user == null) {
                     return BadRequest(new OpenIdConnectResponse

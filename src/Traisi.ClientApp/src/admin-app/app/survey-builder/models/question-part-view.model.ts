@@ -15,6 +15,7 @@ export class QuestionPartView {
 		public isOptional?: boolean,
 		public isHousehold?: boolean,
 		public repeatSourceQuestionName?: string,
+		public repeatSourceQuestionId?: number,
 		public catiDependent?: QuestionPartView,
 		public isMultiView?: boolean,
 		public conditionals?: QuestionConditionalOperator[]

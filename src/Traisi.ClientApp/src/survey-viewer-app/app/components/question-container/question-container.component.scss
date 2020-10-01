@@ -1,7 +1,7 @@
-@import '../../../../shared/assets/scss/traisi-import.scss';
+@import 'traisi-import';
 
 :host.invalid {
-	border-left: solid 3px #ffadad;
+	// border-left: solid 3px #ffadad;
 }
 
 :host {
@@ -13,7 +13,6 @@
 .single-question :host {
 	overflow: hidden;
 }
-
 
 .loading {
 	position: relative;
@@ -69,8 +68,8 @@
 .question-description-text {
 	margin-bottom: 15px;
 	font-family: Metropolis;
-    font-size: 16px;
-    color: #c3c3c3;
+	font-size: 16px;
+	color: #c3c3c3;
 }
 
 .question-widget {
@@ -220,12 +219,14 @@ section.display-full {
 	// max-width: calc(100% - 70px);
 	flex-grow: 1;
 	font-size: 18px;
-    font-family: Metropolis;
-    font-weight: bold;
-    color: #848282;
+	font-family: Metropolis;
+	font-weight: bold;
+	color: #848282;
 }
 
 .question-header-divider {
 	height: 5px;
 	border-top: 1px solid rgb(200, 200, 200);
 }
+
+@import 'question-container.component.sm.scss';

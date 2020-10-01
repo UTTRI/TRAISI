@@ -1,3 +1,6 @@
+
+@import "traisi-import";
+
 // CONFIG
 $SPACER_XS: 0.5rem;
 $SPACER_SM: 0.75rem;
@@ -65,7 +68,7 @@ header {
 // THE GOOD STUFF
 .progressContainer {
 	position: relative;
-	width: 300px;
+	width: 100%;
 	margin: 0 auto;
 	overflow: hidden;
 	color: $FONT_COLOR;
@@ -81,21 +84,31 @@ header {
 	height: auto;
 	list-style-type: none;
 }
-
+.progress__question:hover {
+	background-color: #f3f0ea;
+}
 .progress__question {
 	color: #878c9c;
 	margin-bottom: 5px;
 	margin-top: 5px;
 	font-weight: 500;
 	font-size: 14px;
+	margin-left: 15px;
 	.validation-status {
 		display: inline-block;
 		width: 16px;
 		height: 16px;
 		font-size: 16px;
-		margin-right: 5px;
+		margin-right: 0px;
+	}
+	.validation-status.valid {
+		color: #00c1fb;
+	}
+	.validation-status.ivalid {
+		color: #777;
 	}
 }
+
 
 .progress__item {
 	position: relative;
@@ -176,4 +189,23 @@ header {
 }
 .progress__info.section--active {
 	color: #4f6b8e !important;
+}
+
+
+@include media-breakpoint-down(sm) {
+	.progress__item {
+		position: relative;
+		min-height: $PROGRESS_LIST_HEIGHT;
+		// counter-increment: list;
+		padding-left: $SPACER_XS;
+		margin-top: 15px;
+	}
+	position: relative;
+	padding: 0 $SPACER 0 3.5rem;
+	margin: 0x;
+	margin-top: 10px;
+	list-style: none;
+	display: block;
+	height: auto;
+	list-style-type: none;
 }

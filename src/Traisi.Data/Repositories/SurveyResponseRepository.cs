@@ -138,6 +138,7 @@ namespace Traisi.Data.Repositories
             {
                 var result = await this._entities.Where(s => s.Respondent == user && s.QuestionPart.Id == questionId && s.Repeat == repeat)
                     .Include(v => v.ResponseValues)
+                    .Include(v => v.QuestionPart).ThenInclude(q => q.QuestionConfigurations)
                     .Include(v => v.Respondent).ThenInclude(v => ((SubRespondent)v).PrimaryRespondent).ThenInclude(s => s.SurveyAccessRecords)
                     .Include(v => v.Respondent).ThenInclude(v => v.SurveyRespondentGroup).ThenInclude(v => v.GroupPrimaryRespondent)
                     .Include(v => v.SurveyAccessRecord).OrderByDescending(s => s.UpdatedDate).FirstOrDefaultAsync();
@@ -145,8 +146,9 @@ namespace Traisi.Data.Repositories
             }
             else if (user is PrimaryRespondent primaryRespondent)
             {
-                return await this._entities.Where(s => s.Respondent == user && s.QuestionPart.Id == questionId && s.Repeat == repeat )
+                return await this._entities.Where(s => s.Respondent == user && s.QuestionPart.Id == questionId && s.Repeat == repeat)
                    .Include(v => v.ResponseValues)
+                   .Include(v => v.QuestionPart).ThenInclude(q => q.QuestionConfigurations)
                    .Include(v => v.Respondent).ThenInclude(v => ((PrimaryRespondent)v).SurveyAccessRecords)
                    .Include(v => v.Respondent).ThenInclude(v => v.SurveyRespondentGroup).ThenInclude(v => v.GroupPrimaryRespondent)
                    .Include(v => v.SurveyAccessRecord).OrderByDescending(s => s.UpdatedDate).FirstOrDefaultAsync();
@@ -215,7 +217,7 @@ namespace Traisi.Data.Repositories
         /// <returns></returns>
         public async Task<List<SurveyResponse>> ListSurveyResponsesForQuestionsAsync(List<int> questionIds, List<int> users)
         {
-            var r1 = await this._entities.Where(s => users.AsEnumerable().Contains(s.Respondent.Id) && s.Excluded == false  &&
+            var r1 = await this._entities.Where(s => users.AsEnumerable().Contains(s.Respondent.Id) && s.Excluded == false &&
          questionIds.AsEnumerable().Contains(s.QuestionPart.Id))
              .Include(v => v.ResponseValues)
              .Include(v => v.QuestionPart)
@@ -287,7 +289,7 @@ namespace Traisi.Data.Repositories
         /// <returns></returns>
         public async Task<List<int>> ListQuestionIdsForCompletedResponses(int surveyId, SurveyRespondent respondent)
         {
-            return await this._entities.Where(r => r.Respondent.Id == respondent.Id  && r.Excluded == false 
+            return await this._entities.Where(r => r.Respondent.Id == respondent.Id && r.Excluded == false
             && r.QuestionPart.SurveyId == surveyId).Select(r => r.QuestionPart.Id).ToListAsync();
         }
     }

@@ -1,6 +1,7 @@
 .matrix-row {
 	display: flex;
 	flex-direction: row;
+	align-items: center;
 }
 
 :not(.matrix-header) .matrix-row:nth-child(even) {
@@ -11,8 +12,32 @@
 .matrix-space,
 .matrix-entry {
 	flex-grow: 1;
+	width: 200px;
 }
 
 .matrix-entry {
-	// border-right: solid 1px #ddd;
+	width: 150px;
+	text-align: center;
+	min-height: 50px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+
+	.custom-control-label {
+		top: -10px;
+	}
+}
+
+.matrix-header {
+	width: 150px;
+	text-align: center;
+	font-weight: bold;
+	font-size: 14px;
+}
+
+.matrix-space {
+	//width: 200px;
+}
+.matrix-row-header {
+	//width: 200px;
 }

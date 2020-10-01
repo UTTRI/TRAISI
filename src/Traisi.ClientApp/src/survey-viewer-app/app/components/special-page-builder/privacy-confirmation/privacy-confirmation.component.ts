@@ -4,11 +4,11 @@ import { Utilities } from 'shared/services/utilities';
 @Component({
 	selector: 'app-privacy-confirmation',
 	templateUrl: './privacy-confirmation.component.html',
-	styleUrls: ['./privacy-confirmation.component.scss']
+	styleUrls: ['./privacy-confirmation.component.scss'],
 })
 export class PrivacyConfirmationComponent implements OnInit {
 	public quillMinimalModules: Object = {
-		toolbar: []
+		toolbar: [],
 	};
 
 	public quillModules: Object = {
@@ -30,8 +30,8 @@ export class PrivacyConfirmationComponent implements OnInit {
 
 			['clean'], // remove formatting button
 
-			['link'] // link and image, video
-		]
+			['link'], // link and image, video
+		],
 	};
 
 	public footerTextColour: string;
@@ -49,10 +49,13 @@ export class PrivacyConfirmationComponent implements OnInit {
 
 	public ngOnInit(): void {
 		try {
+
 			let pageData = JSON.parse(this.pageHTML);
+
 			this.pageHTMLJson = pageData;
 			this.acceptTermsHTML = pageData.acceptTerms;
 		} catch (e) {
+			console.log(e);
 			this.pageHTMLJson = {};
 		}
 		if (!('termsAcceptColour' in this.pageThemeInfo)) {

@@ -17,7 +17,7 @@ namespace Traisi.Data.Repositories.Interfaces
 
 		Task<SurveyRespondent> GetSurveyRespondentAsync(int respondentId);
 
-		Task<PrimaryRespondent> GetPrimaryRespondentForSurveyAndTraisiUserAsync(TraisiUser user, Survey survey);
+		Task<PrimaryRespondent> GetPrimaryRespondentForSurveyAndTraisiUserAsync(ApplicationUser user, Survey survey);
 
 		
 

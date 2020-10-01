@@ -51,7 +51,7 @@ export class AuthService {
 		if (this.currentUser === undefined) {
 			return false;
 		}
-		return this.currentUser.roles.findIndex(ele => ele === 'super administrator', 0) >= 0;
+		return this.currentUser.roles.findIndex((ele) => ele === 'super administrator', 0) >= 0;
 	}
 
 	/**
@@ -76,7 +76,7 @@ export class AuthService {
 	public gotoPage(page: string, preserveParams: boolean = true): void {
 		const navigationExtras: NavigationExtras = {
 			queryParamsHandling: preserveParams ? 'merge' : '',
-			preserveFragment: preserveParams
+			preserveFragment: preserveParams,
 		};
 
 		this.router.navigate([page], navigationExtras);
@@ -89,7 +89,9 @@ export class AuthService {
 	 */
 	public redirectLoginUser(): void {
 		const redirect =
-			this.loginRedirectUrl && this.loginRedirectUrl !== '/' && this.loginRedirectUrl !== ConfigurationService.defaultHomeUrl
+			this.loginRedirectUrl &&
+			this.loginRedirectUrl !== '/' &&
+			this.loginRedirectUrl !== ConfigurationService.defaultHomeUrl
 				? this.loginRedirectUrl
 				: this.homeUrl;
 		this.loginRedirectUrl = null;
@@ -100,7 +102,7 @@ export class AuthService {
 		const navigationExtras: NavigationExtras = {
 			fragment: urlParamsAndFragment.secondPart,
 			queryParams: Utilities.getQueryParamsFromString(urlAndParams.secondPart),
-			queryParamsHandling: 'merge'
+			queryParamsHandling: 'merge',
 		};
 
 		this.router.navigate([urlAndParams.firstPart], navigationExtras);
@@ -141,7 +143,7 @@ export class AuthService {
 	public refreshLogin(): Observable<User> {
 		return this.endpointFactory
 			.getRefreshLoginEndpoint<LoginResponse>()
-			.pipe(map(response => this.processLoginResponse(response, this.rememberMe)));
+			.pipe(map((response) => this.processLoginResponse(response, this.rememberMe)));
 	}
 
 	/**
@@ -160,7 +162,7 @@ export class AuthService {
 
 		return this.endpointFactory
 			.getLoginEndpoint<LoginResponse>(userName, password)
-			.pipe(map(response => this.processLoginResponse(response, rememberMe)));
+			.pipe(map((response) => this.processLoginResponse(response, rememberMe)));
 	}
 
 	/**
@@ -173,15 +175,23 @@ export class AuthService {
 	 * @returns {Observable<User>}
 	 * @memberof AuthService
 	 */
-	public surveyLogin(surveyId: number, shortcode: string, groupcode?: string, rememberMe?: boolean): Observable<User> {
+	public surveyLogin(
+		surveyId: number,
+		shortcode: string,
+		groupcode?: string,
+		rememberMe?: boolean
+	): Observable<User> {
 		if (this.isLoggedIn) {
 			this.logout();
 		}
 
-		console.log('here');
 		return this.endpointFactory
 			.getSurveyLoginEndpoint<LoginResponse>(surveyId, shortcode)
-			.pipe(map(response => this.processSurveyUserLoginResponse(response, rememberMe, surveyId, shortcode, groupcode)))
+			.pipe(
+				map((response) =>
+					this.processSurveyUserLoginResponse(response, rememberMe, surveyId, shortcode, groupcode)
+				)
+			)
 			.pipe(share());
 	}
 
@@ -247,7 +257,6 @@ export class AuthService {
 		this.saveUserDetails(user, permissions, accessToken, idToken, refreshToken, accessTokenExpiry, rememberMe);
 
 		this.reevaluateLoginStatus(user);
-		console.log(user);
 
 		return user;
 	}
@@ -262,7 +271,6 @@ export class AuthService {
 	 * @memberof AuthService
 	 */
 	private processLoginResponse(response: LoginResponse, rememberMe: boolean): User {
-
 		const accessToken = response.access_token;
 
 		if (accessToken == null) {
@@ -376,7 +384,7 @@ export class AuthService {
 
 	get currentUser(): User {
 		const user = this.localStorage.getDataObject<User>(DBkeys.CURRENT_USER);
-		this.reevaluateLoginStatus(user);
+		// this.reevaluateLoginStatus(user);
 
 		return user;
 	}
@@ -386,13 +394,13 @@ export class AuthService {
 	}
 
 	get accessToken(): string {
-		this.reevaluateLoginStatus();
+		// this.reevaluateLoginStatus();
 		let accessToken = this.localStorage.getData(DBkeys.ACCESS_TOKEN);
 		return accessToken;
 	}
 
 	get accessTokenExpiryDate(): Date {
-		this.reevaluateLoginStatus();
+		// this.reevaluateLoginStatus();
 		return this.localStorage.getDataObject<Date>(DBkeys.TOKEN_EXPIRES_IN, true);
 	}
 
@@ -405,12 +413,12 @@ export class AuthService {
 	}
 
 	get idToken(): string {
-		this.reevaluateLoginStatus();
+		/// this.reevaluateLoginStatus();
 		return this.localStorage.getData(DBkeys.ID_TOKEN);
 	}
 
 	get refreshToken(): string {
-		this.reevaluateLoginStatus();
+		// this.reevaluateLoginStatus();
 		return this.localStorage.getData(DBkeys.REFRESH_TOKEN);
 	}
 

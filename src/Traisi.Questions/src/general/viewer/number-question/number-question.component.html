@@ -2,10 +2,10 @@
 
   <div class="col-md-7 col-12 form-group">
 
-    <input (blur)="inputBlur()" [textMask]="{mask: numberMask}" [(ngModel)]="model" type="text"
+    <input (blur)="inputBlur()" [textMask]="numberMask" [(ngModel)]="model" type="text"
       [ngClass]="{'is-invalid':numberInput.invalid && (numberInput.dirty || numberInput.touched)  && (!numberInput.pristine)}"
       class="form-control form-control-lg" #numberInput="ngModel" name="numberInput" id="numberInput"
-      (ngModelChange)="modelChanged()" required />
+      (ngModelChange)="modelChanged($event)" required />
     <div *ngIf="numberInput.invalid && (numberInput.dirty || numberInput.touched) && (!numberInput.pristine)"
       class="invalid-feedback">
 

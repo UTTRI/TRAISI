@@ -24,6 +24,8 @@ namespace Traisi.ViewModels.SurveyBuilder
 		public bool isHousehold { get; set; }
 		public string repeatSourceQuestionName { get; set; }
 
+		public string repeatSourceQuestionId {get;set;}
+
 		public string Icon { get; set; }
 
 		public bool IsMultiView { get; set; }

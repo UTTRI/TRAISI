@@ -7,6 +7,7 @@ using Traisi.Data;
 using Traisi.Data.Models.Questions;
 using System.Collections.Generic;
 using Traisi.Data.Models.ResponseTypes;
+using Traisi.Sdk.Library.ResponseTypes;
 
 namespace Traisi.UnitTests.Services
 {

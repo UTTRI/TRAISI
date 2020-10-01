@@ -25,5 +25,4 @@ export abstract class SurveyResponseService {
     questions: Array<SurveyViewQuestion>,
     respondents: Array<SurveyRespondent>,
   ): Observable<ResponseModel[]>
-
 }

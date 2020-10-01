@@ -1,3 +1,7 @@
+.invalid-event traisi-travel-diary-event-display {
+	border-color: #de4c4c;
+}
+
 .cal-event {
 	border-right: solid 1px #ddd !important;
 	border-top: solid 1px #ddd !important;
@@ -46,7 +50,7 @@ mwl-calendar-event-title {
 
 .customt-event-title {
 	.event-title-group {
-		margin-bottom: 30px;
+		margin-bottom: 5px;
 	}
 	i {
 		color: #de4c4c;
@@ -64,7 +68,7 @@ mwl-calendar-event-title {
 	}
 	.event-name {
 		//flex-grow: 1;
-		font-size: 30px;
+		font-size: 22px;
 		font-weight: bold;
 		color: #333;
 	}
@@ -77,4 +81,12 @@ mwl-calendar-event-title {
 		font-size: 18px;
 		color: #99a;
 	}
+}
+
+.cal-event.invalid-event {
+	border: dashed 4px #ff8b13 !important;
+}
+
+mwl-calendar-week-view-hour-segment {
+	text-align: center;
 }

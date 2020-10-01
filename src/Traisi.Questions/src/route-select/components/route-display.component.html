@@ -1,0 +1,74 @@
+<div class="route-display-container">
+	<div class="route-display-steps">
+		<span *ngFor="let section of trip.sections.Section">
+			<ng-template [ngIf]="section.Leg?.TransportMode === 'WALK'">
+				<span class="non-transit-container">
+					<i class="fas fa-walking"></i>
+				</span>
+			</ng-template>
+			<ng-template [ngIf]="section.PTRide?.TransportMode === 'BUS'">
+				<span class="transit-container-outer">
+					<span class="transit-container" [style.background-color]="'#' + section.PTRide?.Line?.Color">
+						<i class="fas fa-bus"></i>
+					</span>
+					<span class="transit-line-info" [style.border-color]="'#' + section.PTRide?.Line?.Color">
+						{{ section.PTRide?.Line?.Number }}
+					</span>
+				</span>
+			</ng-template>
+			<ng-template [ngIf]="section.PTRide?.TransportMode === 'METRO'">
+				<span class="transit-container-outer">
+					<span class="transit-container" [style.background-color]="'#' + section.PTRide?.Line?.Color">
+						<i class="fas fa-subway"></i>
+					</span>
+					<span class="transit-line-info" [style.border-color]="'#' + section.PTRide?.Line?.Color">
+						{{ section.PTRide?.Line?.Number }}
+					</span>
+				</span>
+			</ng-template>
+
+			<ng-template [ngIf]="section.PTRide?.TransportMode === 'TRAMWAY'">
+				<span class="transit-container-outer">
+					<span class="transit-container" [style.background-color]="'#' + section.PTRide?.Line?.Color">
+						<i class="fas fa-subway"></i>
+					</span>
+					<span class="transit-line-info" [style.border-color]="'#' + section.PTRide?.Line?.Color">
+						{{ section.PTRide?.Line?.Number }}
+					</span>
+				</span>
+			</ng-template>
+
+			<ng-template [ngIf]="section.PTRide?.TransportMode === 'TRAIN'">
+				<span class="transit-container-outer">
+					<span class="transit-container" [style.background-color]="'#' + section.PTRide?.Line?.Color">
+						<i class="fas fa-train"></i>
+					</span>
+					<span class="transit-line-info" [style.border-color]="'#' + section.PTRide?.Line?.Color">
+						{{ section.PTRide?.Line?.Number }}
+					</span>
+				</span>
+			</ng-template>
+			<ng-template [ngIf]="section.PTRide?.TransportMode === 'LOCAL_TRAIN'">
+				<span class="transit-container-outer">
+					<span class="transit-container" [style.background-color]="'#' + section.PTRide?.Line?.Color">
+						<i class="fad fa-train"></i>
+					</span>
+					<span class="transit-line-info" [style.border-color]="'#' + section.PTRide?.Line?.Color">
+						{{ section.PTRide?.Line?.Number }}
+					</span>
+				</span>
+			</ng-template>
+			<ng-template [ngIf]="section.PTRide?.TransportMode === 'SCHOOL'">
+				<span class="non-transit-container">
+					<i class="fas fa-bus-school"></i>
+				</span>
+			</ng-template>
+		</span>
+	</div>
+	<div class="route-operators">
+		<span *ngFor="let operator of operators">
+			{{ operator }},
+		</span>
+	</div>
+
+</div>

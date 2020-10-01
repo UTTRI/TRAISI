@@ -49,6 +49,7 @@ export class SurveyViewerStateService {
 			surveyQuestions: [],
 			surveyQuestionsFull: [],
 			activeQuestionIndex: -1,
+			surveyAccessTime: undefined,
 			activePageIndex: -1,
 			groupMembers: [],
 			activeGroupMemberIndex: -1,

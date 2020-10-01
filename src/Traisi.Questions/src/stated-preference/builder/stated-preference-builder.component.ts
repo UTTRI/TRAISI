@@ -12,7 +12,7 @@ import {
 	ResponseTypes,
 	SurveyQuestion,
 	SURVEY_ID,
-	TraisiSurveyBuilder
+	TraisiSurveyBuilder,
 } from 'traisi-question-sdk';
 import demoConfig from './demo-config.model';
 const defaultOption = {
@@ -22,10 +22,12 @@ const defaultOption = {
 
 	optionLabel: {
 		language: 'en',
-		value: '{}'
-	}
+		value: '{}',
+	},
 };
 
+import template from './stated-preference-builder.component.html';
+import style from './stated-preference-builder.component.scss';
 /**
  * Base question component definition for the question type "Stated Preference"
  *
@@ -38,9 +40,9 @@ const defaultOption = {
  */
 @Component({
 	selector: 'traisi-stated-preference-builder',
-	template: require('./stated-preference-builder.component.html'),
+	template: '' + template,
 	encapsulation: ViewEncapsulation.None,
-	styles: [require('./stated-preference-builder.component.scss')]
+	styles: [''+style],
 })
 export class StatedPreferenceBuilderComponent
 	implements CustomBuilderOnInit, CustomBuilderOnHidden, CustomBuilderOnShown, OnInit, AfterViewInit {
@@ -67,7 +69,7 @@ export class StatedPreferenceBuilderComponent
 
 		this.modelOption
 			.pipe(
-				map(optionValue => {
+				map((optionValue) => {
 					try {
 						let data = JSON.parse(optionValue.optionLabel.value);
 						return data;
@@ -77,7 +79,7 @@ export class StatedPreferenceBuilderComponent
 					}
 				})
 			)
-			.subscribe(value => {
+			.subscribe((value) => {
 				this.modelJson.next(value);
 			});
 	}
@@ -111,7 +113,7 @@ export class StatedPreferenceBuilderComponent
 	 * @memberof StatedPreferenceBuilderComponent
 	 */
 	public ngOnInit(): void {
-		this._surveyBuilder.getQuestionPartOptions(this._surveyId, this._questionId, 'en').subscribe(result => {
+		this._surveyBuilder.getQuestionPartOptions(this._surveyId, this._questionId, 'en').subscribe((result) => {
 			if (result.length > 0) {
 				(<BehaviorSubject<QuestionOptionValue>>this.modelOption).next(result[0]);
 			} else {
@@ -126,9 +128,9 @@ export class StatedPreferenceBuilderComponent
 	public onSave(): void {
 		this.modelOption.value.optionLabel.value = this.editor.getText();
 		this._surveyBuilder.setQuestionPartOption(this._surveyId, this._questionId, this.modelOption.value).subscribe({
-			error: error => {
+			error: (error) => {
 				console.log(error);
-			}
+			},
 		});
 	}
 }

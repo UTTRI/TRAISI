@@ -8,7 +8,8 @@ module.exports = {
 		map: path.join(process.cwd(), './src/map-question/traisi-map-question.module.ts'),
 		sp: path.join(process.cwd(), './src/stated-preference/viewer/traisi-sp-question-viewer.module.ts'),
 		'sp-builder': path.join(process.cwd(), './src/stated-preference/builder/traisi-sp-question-builder.module.ts'),
-		'travel-diary': path.join(process.cwd(), './src/travel-diary/travel-diary-question.module.ts')
+		'travel-diary': path.join(process.cwd(), './src/travel-diary/travel-diary-question.module.ts'),
+		'route-select': path.join(process.cwd(), './src/route-select/route-select-question.module.ts')
 	},
 
 	output: {
@@ -120,6 +121,7 @@ module.exports = {
 		/^@angular\/core/,
 		/^@angular\/upgrade/,
 		/^@angular\/forms/,
+		/^@angular\/router/,
 		/^@angular\/platform-browser/,
 		/^ngx-bootstrap/,
 		/^@fortawesome/,

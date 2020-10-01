@@ -45,8 +45,8 @@ export class QuestionLoaderEndpointService extends SurveyViewerEndpointFactory {
 	 * Returns the client code endpoint URL
 	 * @param questionType
 	 */
-	public getClientCodeEndpointUrl(questionType: string): string {
-		return `${this.getClientCodeUrl}/${questionType}`;
+	public getClientCodeEndpointUrl(questionType: string, es5: boolean = false): string {
+		return `${this.getClientCodeUrl}/${questionType}?es5=${es5}`;
 	}
 
 	/**

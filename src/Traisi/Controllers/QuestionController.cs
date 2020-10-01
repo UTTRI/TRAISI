@@ -34,11 +34,16 @@ namespace Traisi.Controllers
         /// <param name="definition"></param>
         /// <param name="bundleName"></param>
         /// <returns></returns>
-        private async Task<FileContentResult> LoadCodeBundleFile(QuestionTypeDefinition definition, string bundleName)
+        private async Task<FileContentResult> LoadCodeBundleFile(QuestionTypeDefinition definition, string bundleName, bool es5 = false)
         {
             if (bundleName == null)
             {
                 return File(QuestionTypeDefinition.ClientModules.Values.ToList()[0], "application/javascript");
+            }
+
+            if (es5)
+            {
+                bundleName = bundleName.Replace(".module.js", "es5.module.js");
             }
 
             // check if loading development bundle
@@ -62,9 +67,10 @@ namespace Traisi.Controllers
         /// Returns the builder client code (browser) for the associated question type.
         /// </summary>
         /// <param name="questionType"></param>
+        ///<param name="es5"></param>
         /// <returns></returns>
         [HttpGet("client-code/builder/{questionType}")]
-        public async Task<ActionResult> CustomBuilderClientCode(string questionType)
+        public async Task<ActionResult> CustomBuilderClientCode(string questionType, [FromQuery] bool es5 = false)
         {
             if (!_questionTypeManager.QuestionTypeDefinitions.Keys.Contains(questionType))
             {
@@ -74,8 +80,8 @@ namespace Traisi.Controllers
             {
                 try
                 {
-
-                    return await this.LoadCodeBundleFile(_questionTypeManager.QuestionTypeDefinitions[questionType], _questionTypeManager.QuestionTypeDefinitions[questionType].CustomBuilderCodeBundleName);
+                    return await this.LoadCodeBundleFile(_questionTypeManager.QuestionTypeDefinitions[questionType],
+                     _questionTypeManager.QuestionTypeDefinitions[questionType].CustomBuilderCodeBundleName, es5);
                 }
                 catch (Exception e)
                 {
@@ -93,7 +99,7 @@ namespace Traisi.Controllers
         /// <param name="questionType"></param>
         /// <returns></returns>
         [HttpGet("client-code/{questionType}")]
-        public async Task<ActionResult> ClientCode(string questionType)
+        public async Task<ActionResult> ClientCode(string questionType, [FromQuery] bool es5 = false)
         {
             if (!_questionTypeManager.QuestionTypeDefinitions.Keys.Contains(questionType))
             {
@@ -103,7 +109,7 @@ namespace Traisi.Controllers
             {
                 try
                 {
-                    return await this.LoadCodeBundleFile(_questionTypeManager.QuestionTypeDefinitions[questionType], _questionTypeManager.QuestionTypeDefinitions[questionType].CodeBundleName);
+                    return await this.LoadCodeBundleFile(_questionTypeManager.QuestionTypeDefinitions[questionType], _questionTypeManager.QuestionTypeDefinitions[questionType].CodeBundleName, es5);
                 }
                 catch (Exception e)
                 {

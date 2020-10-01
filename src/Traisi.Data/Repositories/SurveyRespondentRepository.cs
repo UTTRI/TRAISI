@@ -119,7 +119,7 @@ namespace Traisi.Data.Repositories
         /// <param name="user"></param>
         /// <param name="survey"></param>
         /// <returns></returns>
-        public async Task<PrimaryRespondent> GetPrimaryRespondentForSurveyAndTraisiUserAsync(TraisiUser user, Survey survey)
+        public async Task<PrimaryRespondent> GetPrimaryRespondentForSurveyAndTraisiUserAsync(ApplicationUser user, Survey survey)
         {
             var respondent = await this._appContext.PrimaryRespondents.Where(p => p.Survey == survey && p.User == user)
            .FirstOrDefaultAsync();

@@ -18,7 +18,7 @@ export class QuestionInstanceState {
 	private _questionModel: SurveyViewQuestion;
 	private _questionInstance: SurveyQuestion<ResponseTypes>;
 	private _respondent: SurveyRespondent;
-
+	private _repeatIndex: number = 0;
 	public get questionInstance(): SurveyQuestion<ResponseTypes> {
 		return this._questionInstance;
 	}
@@ -29,6 +29,10 @@ export class QuestionInstanceState {
 
 	public get respondent(): SurveyRespondent {
 		return this._respondent;
+	}
+
+	public get repeatNumber(): number {
+		return this._repeatIndex;
 	}
 
 	public validationState$: BehaviorSubject<SurveyViewerValidationStateViewModel>;
@@ -46,6 +50,7 @@ export class QuestionInstanceState {
 		questionInstance: SurveyQuestion<ResponseTypes>,
 		repeatIndex: number = 0
 	): void {
+		this._repeatIndex = repeatIndex;
 		this._respondent = respondent;
 		this._questionInstance = questionInstance;
 		this._questionModel = questionModel;
@@ -78,12 +83,14 @@ export class QuestionInstanceState {
 	}
 
 	private loadSavedResponse(): void {
-		this._responseService.loadSavedResponse(this._questionModel, this._respondent, 0).subscribe((response) => {
-			this._questionInstance.savedResponse.next(
-				response === undefined || response === null ? 'none' : response.responseValues
-			);
-			this._questionInstance.traisiOnLoaded();
-		});
+		this._responseService
+			.loadSavedResponse(this._questionModel, this._respondent, this._repeatIndex)
+			.subscribe((response) => {
+				this._questionInstance.savedResponse.next(
+					response === undefined || response === null ? 'none' : response.responseValues
+				);
+				this._questionInstance.traisiOnLoaded();
+			});
 	}
 
 	/**
@@ -94,7 +101,12 @@ export class QuestionInstanceState {
 		// submit the response, convert it to single element
 		// array if not done so
 		this._responseService
-			.saveResponse(this._questionModel, this._respondent, 0, Array.isArray(response) ? response : [response])
+			.saveResponse(
+				this._questionModel,
+				this._respondent,
+				this._repeatIndex,
+				Array.isArray(response) ? response : [response]
+			)
 			.subscribe(this.onResponseSaved);
 	};
 
@@ -107,14 +119,25 @@ export class QuestionInstanceState {
 		respondent: SurveyRespondent;
 		response: ResponseData<ResponseTypes>[];
 	}): void => {
-		this._responseService
-			.saveResponse(
-				this._questionModel,
-				response.respondent,
-				0,
-				Array.isArray(response.response) ? response.response : [response.response]
-			)
-			.subscribe(this.onResponseSaved);
+		if (this.respondent.id === response.respondent.id) {
+			this._responseService
+				.saveResponse(
+					this._questionModel,
+					response.respondent,
+					this._repeatIndex,
+					Array.isArray(response.response) ? response.response : [response.response]
+				)
+				.subscribe(this.onResponseSaved);
+		} else {
+			this._responseService
+				.saveResponse(
+					this._questionModel,
+					response.respondent,
+					this._repeatIndex,
+					Array.isArray(response.response) ? response.response : [response.response]
+				)
+				.subscribe();
+		}
 	};
 
 	/**

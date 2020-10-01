@@ -1,29 +1,35 @@
-<!-- <div class="form-group form-group-adjust row">
-	<div class="custom-control custom-checkbox">
-		<div class="col-auto">
-			<input
-				[(ngModel)]="switchValue"
-				class="custom-control-input"
-				type="checkbox"
-				checked
-				id="{{ 'config-check-' + id }}"
-			/>
-			<label class="custom-control-label" for="{{ 'config-check-' + id }}">{{
-				questionConfiguration.name
-			}}</label>
-
-			
-		</div>
-	</div>
-</div> -->
-
 <div class="form-group form-group-adjust row">
-	
-	<div class="col-md-9 custom-control custom-checkbox">
-		<input type="checkbox" class="custom-control-input" id="{{ 'config-check-' + id }}" />
-		<label class="custom-control-label" for="{{ 'config-check-' + id }}">{{ questionConfiguration.name }}</label>
+	<span class="col-md-3 col-form-label text-md-right">{{ questionConfiguration.name }}</span>
+	<div class="col-md-9">
+		<!-- <ngx-select
+			id="{{ 'singleselect-' + id }}"
+			[defaultValue]="dropDownListSelectedId"
+			[allowClear]="false"
+			[items]="dropDownListItems"
+			(select)="valueChanged($event)"
+			placeholder="please select an option"
+		>
+			<ng-template ngx-select-option-not-found>
+				Nothing found
+			</ng-template>
+		</ngx-select> -->
+
+		<label class="switcher-control"
+			><input type="checkbox" class="switcher-input" checked=""  id="{{ 'config-check-' + id }}" [(ngModel)]="switchValue"/> <span class="switcher-indicator"></span
+		></label>
 		<small id="{{ 'config-description-' + id }}" class="form-text text-muted">
 			{{ questionConfiguration.description }}
 		</small>
 	</div>
 </div>
+
+<!--<div class="form-group form-group-adjust row">
+	
+	<div class="col-md-9 custom-control custom-checkbox">
+		<input type="checkbox" class="custom-control-input" id="{{ 'config-check-' + id }}"[(ngModel)]="switchValue" />
+		<label class="custom-control-label" for="{{ 'config-check-' + id }}">{{ questionConfiguration.name }}</label>
+		<small id="{{ 'config-description-' + id }}" class="form-text text-muted">
+			{{ questionConfiguration.description }}
+		</small>
+	</div>
+</div> -->

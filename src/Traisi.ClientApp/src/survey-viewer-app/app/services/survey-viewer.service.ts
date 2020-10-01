@@ -22,7 +22,7 @@ import { AuthService } from 'shared/services/auth.service';
 import { SurveyViewScreening } from 'app/models/survey-view-screening.model';
 import { find as _find } from 'lodash';
 import { SurveyViewerStateService } from './survey-viewer-state.service';
-import { tap, share, concat, map } from 'rxjs/operators';
+import { tap, share, concat, map, shareReplay } from 'rxjs/operators';
 import { zip } from 'rxjs';
 import { SurveyStartPageComponent } from 'app/components/survey-start-page/survey-start-page.component';
 import { User } from '../../../shared/models/user.model';
@@ -152,7 +152,6 @@ export class SurveyViewerService implements OnInit {
 		};
 
 		this.pageThemeInfo.next(this._pageThemeInfo);
-
 	}
 
 	public logout(): void {
@@ -450,6 +449,7 @@ export class SurveyViewerService implements OnInit {
 	 * @param shortcode
 	 */
 	public surveyStart(surveyId: number, shortcode: string, queryParams?: Params): Observable<{}> {
+		console.log('in survey start ');
 		let result = this._surveyViewerEndpointService.getSurveyViewerStartSurveyEndpoint(
 			surveyId,
 			shortcode,
@@ -490,14 +490,12 @@ export class SurveyViewerService implements OnInit {
 	 * @param shortcode
 	 */
 	public surveyLogin(surveyId: number, shortcode: string): Observable<User> {
-		return this._authService
-			.surveyLogin(surveyId, shortcode, '', true)
-			.pipe(
-				tap((user) => {
-					this.isLoggedIn.next(true);
-				})
-			)
-			.pipe(share());
+		return this._authService.surveyLogin(surveyId, shortcode, '', true).pipe(
+			tap((user) => {
+				this.isLoggedIn.next(true);
+			}),
+			shareReplay(1)
+		);
 	}
 
 	/**

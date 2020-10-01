@@ -32,7 +32,6 @@ import { TimepickerModule } from 'ngx-bootstrap/timepicker';
 import { PopoverModule } from 'ngx-bootstrap/popover';
 import { ModalModule, ModalBackdropComponent, BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { QuillModule } from 'ngx-quill';
-import { DynamicModule } from 'ng-dynamic-component';
 import { SpecialPageBuilderComponent } from './components/special-page-builder/special-page-builder.component';
 import { Header1Component } from './components/special-page-builder/header1/header1.component';
 import { Header2Component } from './components/special-page-builder/header2/header2.component';
@@ -67,6 +66,7 @@ import { SurveyViewerResponseService } from './services/survey-viewer-response.s
 import { SurveyViewerRespondentService } from './services/survey-viewer-respondent.service';
 import { SurveyProgressComponent } from './components/survey-progress/survey-progress.component';
 import { StorageServiceModule, StorageService } from 'ngx-webstorage-service';
+import { NgxPopperModule } from 'ngx-popper';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import {
 	CalendarModule,
@@ -77,6 +77,7 @@ import {
 	CalendarUtils,
 } from 'angular-calendar';
 import { SurveyViewerProviders } from './providers/survey-viewer.providers';
+import { SurveyNavigatorComponent } from './components/survey-navigator/survey-navigator.component';
 export const calendarProps = {
 	provide: DateAdapter,
 	useFactory: adapterFactory,
@@ -113,6 +114,7 @@ export const STORAGE_TOKEN = new InjectionToken<StorageService>('STORAGE_TOKEN')
 		SurveyShortcodePageComponent,
 		Footer1Component,
 		SurveyProgressComponent,
+		SurveyNavigatorComponent,
 	],
 	imports: [
 		BrowserModule,
@@ -135,7 +137,6 @@ export const STORAGE_TOKEN = new InjectionToken<StorageService>('STORAGE_TOKEN')
 		AlertModule.forRoot(),
 		PopoverModule.forRoot(),
 		QuillModule.forRoot(),
-		DynamicModule,
 		TooltipModule.forRoot(),
 		TimepickerModule.forRoot(),
 		SurveyNavigationModule.forRoot(),
@@ -144,6 +145,7 @@ export const STORAGE_TOKEN = new InjectionToken<StorageService>('STORAGE_TOKEN')
 		calModule,
 		calC,
 		StorageServiceModule,
+		NgxPopperModule.forRoot(),
 	],
 	providers: [
 		LocalStoreManager,
@@ -167,7 +169,7 @@ export const STORAGE_TOKEN = new InjectionToken<StorageService>('STORAGE_TOKEN')
 		httpInterceptorProviders,
 		SurveyResponderEndpointService,
 		BsModalRef,
-		{ provide: TraisiValues.QuestionLoader, useClass: QuestionLoaderService }, 
+		{ provide: TraisiValues.QuestionLoader, useClass: QuestionLoaderService },
 		{ provide: 'CONFIG_SERVICE', useExisting: QuestionConfigurationService },
 		{ provide: Config, useExisting: QuestionConfigurationService },
 		SurveyDataResolver,

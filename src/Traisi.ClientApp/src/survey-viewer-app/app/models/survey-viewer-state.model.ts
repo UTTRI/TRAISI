@@ -34,6 +34,8 @@ export interface SurveyViewerState {
 	// ref to the primary respondent
 	primaryRespondent: SurveyRespondent;
 
+	surveyAccessTime: Date;
+
 
 	isNavProcessing: boolean;
 

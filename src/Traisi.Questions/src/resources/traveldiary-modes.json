@@ -1,47 +1,47 @@
 [
 	{
 		"label": "Car driving alone",
-		"icon": "fas fa-cari",
+		"icon": "fas fa-car",
 		"id": "car-driving-alone"
 	},
 	{
 		"label": "Car driving with passenger(s) (household members only)",
-		"icon": "fas fa-cari",
+		"icon": "fas fa-car",
 		"id": "car-driving-with-passengers-household-only"
 	},
 	{
 		"label": "Car driving with passenger(s) (including non-household members)",
-		"icon": "fas fa-cari",
+		"icon": "fas fa-car",
 		"id": "car-driving-with-passengers-none-household"
 	},
 	{
 		"label": "Car passenger (driver is a household member)",
-		"icon": "fas fa-cari",
+		"icon": "fas fa-car",
 		"id": "car-passenger-driver-household"
 	},
 	{
 		"label": "Car passenger (driver is a non-household member)",
-		"icon": "fas fa-cari",
+		"icon": "fas fa-car",
 		"id": "car-passenger-driver-none-household"
 	},
 	{
 		"label": "Transit all way",
-		"icon": "fal fa-busi",
+		"icon": "fal fa-bus",
 		"id": "transit-all-way"
 	},
 	{
 		"label": "Transit (park & ride)",
-		"icon": "fal fa-car-busi",
+		"icon": "fal fa-car-bus",
 		"id": "transit-park-ride"
 	},
 	{
 		"label": "Transit (kiss & ride)",
-		"icon": "fal fa-car-busi",
+		"icon": "fal fa-car-bus",
 		"id": "transit-kiss-ride"
 	},
 	{
 		"label": "Transit (ridehailing & ride)",
-		"icon": "fal fa-car-busi",
+		"icon": "fal fa-car-bus",
 		"id": "transit-ridehailing-ride"
 	},
 	{
@@ -56,17 +56,17 @@
     },
 	{
 		"label": "Cycling (bikeshare)",
-		"icon": "fas fa-bikingi",
+		"icon": "fas fa-biking",
 		"id": "cycling-bikeshare"
 	},
 	{
 		"label": "Cycling (personal bike)",
-		"icon": "fas fa-bikingi",
+		"icon": "fas fa-biking",
 		"id": "cycling-personal"
 	},
 	{
 		"label": "Walk",
-		"icon": "fas fa-walkingi",
+		"icon": "fas fa-walking",
 		"id": "Walk"
 	},
 	{
@@ -76,28 +76,28 @@
 	},
 	{
 		"label": "Ridehailing alone",
-		"icon": "fab fa-uberi",
+		"icon": "fab fa-uber",
 		"id": "ridehailing-alone"
 	},
 	{
 		"label": "Ridehailing shared",
-		"icon": "fab fa-uberi",
+		"icon": "fab fa-uber",
 		"id": "ridehailing-shared"
 	},
 	{
 		"label": "Taxi",
-		"icon": "fal fa-taxii",
+		"icon": "fal fa-taxi",
 		"id": "taxi"
 	},
 	{
 		"label": "Accessible car driver",
-		"icon": "fas fa-wheelchairi",
+		"icon": "fas fa-wheelchair",
 		"id": "accessible-car-driver"
 	},
 	{
 		"label": "Accessible car passenger",
-		"icon": "fas fa-wheelchairi",
-		"id": "accessible-car-passenger"
+		"icon": "fas fa-wheelchair",
+		"id": "accessible-car-passenger" 
 	},
 	{
 		"label": "Accessible paratransit",

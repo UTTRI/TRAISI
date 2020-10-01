@@ -1,10 +1,127 @@
-<div class="travel-diary-question" [style.height.px]="containerHeight"  *ngIf="isComponentLoaded | async">
-	<traisi-travel-dairy-day-view-scheduler [viewDate]="viewDate" [events]="events" [dayStartHour]="4" [dayEndHour]="24" [refresh]="events$"
-	[users]="users" #schedule (eventClicked)="eventClicked($event)">
-	</traisi-travel-dairy-day-view-scheduler>
-	<div class="add-event-overlay">
-		<button type="button" class="btn btn-primary" (click)="newEvent()">+ New Event</button>
+<div id="travelDiaryQuestionContainer">
+	<div class="travel-diary-question" [style.height.px]="containerHeight - 30" *ngIf="isComponentLoaded | async">
+		<traisi-travel-dairy-day-view-scheduler
+			[viewDate]="viewDate"
+			[events]="events"
+			[dayStartHour]="0"
+			[dayEndHour]="24"
+			[hourSegments]="1"
+			[refresh]="events$"
+			[users]="users | async"
+			*ngIf="!isTravelDiaryCollectionDisabled"
+			#schedule
+			(eventClicked)="eventClicked($event)"
+		>
+		</traisi-travel-dairy-day-view-scheduler>
+
+		<div class="inactive-user-message" *ngIf="isTravelDiaryCollectionDisabled">
+			<div class="alert alert-primary" role="alert">
+				<p>
+					No travel information will be used for this respondent as they do not fulfill the minimum age
+					requirements for data collection.
+				</p>
+				<p>You may press next to continue the survey.</p>
+			</div>
+		</div>
+	</div>
+
+	<div class="add-event-overlay" *ngIf="!isTravelDiaryCollectionDisabled">
+		<span
+			class="btn-group add-event-button"
+			dropdown
+			container="body"
+			placement="top right"
+			[dropup]="isDropup"
+			[autoClose]="false"
+			#dropdownToggle="bs-dropdown"
+		>
+			<button type="button" class="btn btn-primary" (click)="newEvent()">Add Trip</button>
+			<button
+				id="button-split"
+				type="button"
+				dropdownToggle
+				autoClose="true"
+				class="btn btn-primary dropdown-toggle dropdown-toggle-split"
+				aria-controls="dropdown-split"
+			>
+				<span class="caret"></span>
+				<span class="sr-only">Split button</span>
+			</button>
+			<ul id="dropdown-split" *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="button-split">
+				<li role="menuitem">
+					<a [routerLink]="" class="dropdown-item" (click)="resetEvents()">Reset travel diary</a>
+				</li>
+				<li role="menuitem">
+					<a [routerLink]="" class="dropdown-item" (click)="clearEvents()">Clear all trips</a>
+				</li>
+			</ul>
+		</span>
+
+		<a [routerLink]="" class="tour" (click)="startTour(true)"> <i class="fas fa-info-circle"></i>Help </a>
+
+		<span
+			class="view-validation-errors"
+			[popover]="popTemplate"
+			triggers=""
+			#pop="bs-popover"
+			(click)="pop.toggle()"
+			*ngIf="!isTravelDiaryValid"
+		>
+			<i class="fas fa-exclamation-triangle warning-icon"></i>Invalid Information
+		</span>
 	</div>
 </div>
+<traisi-travel-diary-edit-dialog
+	(eventDeleted)="eventDeleted($event)"
+	(newEventSaved)="newEntrySaved($event)"
+	(eventSaved)="eventSaved($event)"
+	#entryDialog
+></traisi-travel-diary-edit-dialog>
 
-<traisi-travel-diary-edit-dialog (eventDeleted)="eventDeleted($event)" (newEventSaved)="newEntrySaved($event)"  #entryDialog></traisi-travel-diary-edit-dialog>
+<ng-template #popTemplate
+	><p>
+		The dravel diary is missing information for some events. Click on events with an orange border to fill in the
+		missing information.
+	</p>
+
+	<p>The diary also requires that there are no two consecutive home events appearing for a household member.</p>
+
+	<p>Overlapping departure times are also not allowed for the travel diary input.</p>
+</ng-template>
+
+<ng-template #template>
+	<div class="modal-header">
+		<h4 class="modal-title pull-left">At Home (Temporarily)</h4>
+		<button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+	<div class="modal-body text-center">
+		<p>
+			A temporary return home activity was added to the travel diary. If you are not departing from home to this activity, please
+			delete the temporary home trip from your travel diary.
+		</p>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-primary" (click)="modalRef.hide()">Ok</button>
+	</div>
+</ng-template>
+
+
+<ng-template #activitySwap>
+	<div class="modal-header">
+		<h4 class="modal-title pull-left">Please Confirm Departure Time</h4>
+		<button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+	<div class="modal-body text-center">
+		<p>
+			The order of two activities have been swapped in your travel diary. Please confirm the updated departure time for the activity with the updated
+			departure time. It will be highlighted with an orange border. To confirm or change the departure time information, click the activity in the travel diary summary.
+		</p>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-primary" (click)="modalRef.hide()">Ok</button>
+	</div>
+</ng-template>

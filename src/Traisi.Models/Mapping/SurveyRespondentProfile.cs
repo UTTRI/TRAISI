@@ -22,18 +22,34 @@ namespace Traisi.Models.Mapping
                 .ForMember(s => s.QuestionId, r => r.MapFrom(r2 => r2.QuestionPart.Id));
 
             CreateMap<SurveyRespondentGroup, SurveyRespondentGroupViewModel>();
-            CreateMap<SurveyRespondent, SurveyRespondentViewModel>();
+            CreateMap<SurveyRespondent, SurveyRespondentViewModel>()
+            .AfterMap((s, svm, opt) =>
+                {
+                    if (s.HomeLocation != null)
+                    {
+                        svm.HomeLatitude = s.HomeLocation.Y;
+                        svm.HomeLongitude = s.HomeLocation.X;
+                    }
+                });
+
+
             CreateMap<SubRespondent, SurveyRespondentViewModel>();
             CreateMap<SurveyRespondentViewModel, SubRespondent>()
                 .ForMember(m => m.SurveyRespondentGroup, c => c.Ignore());
-            CreateMap<PrimaryRespondent, SurveyRespondentViewModel>();
+            CreateMap<PrimaryRespondent, SurveyRespondentViewModel>()
+                .ForMember(m => m.HomeLatitude, c => c.MapFrom(x => x.HomeLocation.Y))
+                .ForMember(m => m.HomeLongitude, c => c.MapFrom(x => x.HomeLocation.X))
+                .ForMember(m => m.SurveyAccessTime, c => c.MapFrom(x => x.SurveyAccessDateTime));
+                
             CreateMap<SurveyResponse, LocationResponseViewModel>().ForMember(
                 m => m.ResponseValues, r => r.MapFrom<LocationResponseValueResolver>()
-            ).ForMember(s => s.Configuration, r => r.MapFrom<SurveyResponseConfigurationValueResolver>());
+            ).ForMember(s => s.Configuration, r => r.MapFrom<SurveyResponseConfigurationValueResolver>())
+             .ForMember(s => s.QuestionId, r => r.MapFrom(r2 => r2.QuestionPart.Id));
 
             CreateMap<SurveyResponse, TimelineResponseViewModel>().ForMember(
                 m => m.ResponseValues, r => r.MapFrom<TimelineResponseValueResolver>()
-            ).ForMember(s => s.Configuration, r => r.MapFrom<SurveyResponseConfigurationValueResolver>());
+            ).ForMember(s => s.Configuration, r => r.MapFrom<SurveyResponseConfigurationValueResolver>())
+             .ForMember(s => s.QuestionId, r => r.MapFrom(r2 => r2.QuestionPart.Id));
         }
     }
 
@@ -55,7 +71,8 @@ namespace Traisi.Models.Mapping
                     Order = locationResponse.Order.GetValueOrDefault(),
                     Purpose = locationResponse.Purpose,
                     TimeA = locationResponse.TimeA,
-                    TimeB = locationResponse.TimeB
+                    TimeB = locationResponse.TimeB,
+                    Mode = locationResponse.Mode
 
                 });
             }
@@ -152,6 +169,7 @@ namespace Traisi.Models.Mapping
             List<Dictionary<string, object>> responseValues = new List<Dictionary<string, object>>();
             foreach (var response in source.ResponseValues)
             {
+
                 var obj = response.GetType()
                             .GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(f =>
                             {
@@ -159,7 +177,13 @@ namespace Traisi.Models.Mapping
                             })
                           .ToDictionary<PropertyInfo, string, object>(prop => NamesContractResolver.GetResolvedPropertyName(prop.Name), prop => prop.GetValue(response, null));
 
+                if (response is TimelineResponse res)
+                {
+                    obj["latitude"] = res.Location.Coordinate.Y;
+                    obj["longitude"] = res.Location.Coordinate.X;
+                }
                 responseValues.Add(obj);
+
             }
 
             return responseValues;

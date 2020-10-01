@@ -35,6 +35,7 @@ namespace Traisi.Controllers.SurveyViewer
 
         private UserManager<ApplicationUser> _userManager;
 
+
         private IUnitOfWork _unitOfWork;
 
         private readonly IMapper _mapper;
@@ -61,7 +62,7 @@ namespace Traisi.Controllers.SurveyViewer
 
 
 
-        [Produces(typeof(int))]
+        [Produces(typeof(SurveyRespondentViewModel))]
         //[Authorize(Policy = Policies.RespondToSurveyPolicy)]
         [HttpGet]
         [Route("surveys/{surveyId}/respondents/primary", Name = "Get_Primary_Respondent_For_Survey")]
@@ -74,20 +75,24 @@ namespace Traisi.Controllers.SurveyViewer
             }
             else
             {
-                var respondent = await this._unitOfWork.SurveyRespondents.GetPrimaryRespondentForSurveyAsync(survey);
+                var user = await _userManager.FindByNameAsync(this.User.Identity.Name);
+                var respondent = await this._unitOfWork.SurveyRespondents.GetPrimaryRespondentForSurveyAndTraisiUserAsync(user, survey);
 
                 if (respondent == null)
                 {
-                    var user = await _userManager.FindByNameAsync(this.User.Identity.Name);
+
                     var newRespondent = await this._unitOfWork.SurveyRespondents.CreatePrimaryResponentForUserAsnyc(user);
+                    newRespondent.SurveyAccessDateTime = DateTime.Now;
                     newRespondent.Survey = survey;
                     this._unitOfWork.SaveChanges();
-                    return new ObjectResult(_mapper.Map<SurveyRespondentViewModel>(newRespondent));
+                    var resp = _mapper.Map<SurveyRespondentViewModel>(newRespondent);
+                    return new OkObjectResult(resp);
 
                 }
                 else
                 {
-                    return new ObjectResult(_mapper.Map<SurveyRespondentViewModel>(respondent));
+                    var resp = _mapper.Map<SurveyRespondentViewModel>(respondent);
+                    return new OkObjectResult(resp);
                 }
             }
         }
@@ -108,7 +113,7 @@ namespace Traisi.Controllers.SurveyViewer
             var group = await this._respondentGroupService.GetSurveyRespondentGroupForUser(user);
             await this._respondentGroupService.AddRespondent(group, model);
             // await this._unitOfWork.SaveChangesAsync();
-            return new CreatedResult("",model.Id);
+            return new CreatedResult("", model.Id);
         }
 
         /// <summary>
@@ -118,7 +123,7 @@ namespace Traisi.Controllers.SurveyViewer
         /// <returns></returns>
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK)]
-       // [Authorize(Policy = Policies.RespondToSurveyPolicy)]
+        // [Authorize(Policy = Policies.RespondToSurveyPolicy)]
         [Route("respondents/groups")]
         public async Task<IActionResult> UpdateSurveyGroupMember([FromBody] SurveyRespondentViewModel respondent)
         {
@@ -153,9 +158,7 @@ namespace Traisi.Controllers.SurveyViewer
             var user = await _userManager.FindByNameAsync(this.User.Identity.Name);
             var group = await this._respondentGroupService.GetSurveyRespondentGroupForUser(user);
             await this._respondentGroupService.RemoveRespondent(group, respondent);
-
             await this._unitOfWork.SaveChangesAsync();
-
             return new OkResult();
         }
 
@@ -175,7 +178,5 @@ namespace Traisi.Controllers.SurveyViewer
             var members = _mapper.Map<List<SurveyRespondentViewModel>>(group.GroupMembers);
             return new OkObjectResult(members);
         }
-
-
     }
 }

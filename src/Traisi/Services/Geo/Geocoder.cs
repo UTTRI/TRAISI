@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using Traisi.Helpers.Interfaces;
+using Traisi.Sdk.Interfaces;
 
 namespace Traisi.Services.Geo
 {
@@ -21,7 +22,7 @@ namespace Traisi.Services.Geo
             throw new NotImplementedException();
         }
 
-        public Task<JObject> ReverseGeocodeAsync(double latitude, double longitude)
+        public Task<Address> ReverseGeocodeAsync(double latitude, double longitude)
         {
             throw new NotImplementedException();
         }

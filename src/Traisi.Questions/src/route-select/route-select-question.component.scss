@@ -1,0 +1,61 @@
+[type='radio'] {
+	position: absolute;
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+[type='radio'] + .route-display {
+	cursor: pointer;
+}
+
+[type='radio']:checked + .route-display {
+	outline: 2px solid #4a1bbb;
+	background-color: #e2e2e2;
+}
+
+[type='radio']:not(:checked) + .route-display {
+	background-color: #f4f4f4;
+}
+
+.route-display {
+	min-height: 125px;
+	display: flex;
+	padding-left: 10px;
+}
+.route-select-question-container {
+	height: 125px;
+	display: block;
+	margin-bottom: 10px;
+	border-top: #9361ca solid 2px;
+	border-bottom: #bcbcbc solid 1px;
+	display: block;
+	align-items: center;
+	position: relative;
+}
+
+label {
+	width: 100%;
+}
+
+.address-header {
+	font-size: 16px;
+	margin-bottom: 10px;
+}
+
+.purpose {
+	text-transform: uppercase;
+	font-size: 20px;
+	font-weight: bold;
+	margin-right: 15px;
+}
+
+
+.detailed-button {
+	position: absolute;
+    right: 30px;
+    top: 30px;
+    font-size: 30px;
+	cursor: pointer;
+	color: #3d47c5;
+}

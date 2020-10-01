@@ -3,6 +3,6 @@
         <option [ngValue]="option.id" *ngFor="let option of selectOptions">{{option.label}}</option> 
 		</select>-->
 	<ng-select [items]="selectOptions" bindLabel="label" bindValue="code" [virtualScroll]="true"
-		[(ngModel)]="selectedOptionId" (change)="onModelChanged($event)">
+		[(ngModel)]="selectedOptionId" (change)="onModelChanged($event)" placeholder="Please select an option">
 	</ng-select>
 </div>

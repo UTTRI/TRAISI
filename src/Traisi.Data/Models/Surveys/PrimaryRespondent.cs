@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -11,6 +12,8 @@ namespace Traisi.Data.Models.Surveys {
 		public Groupcode Groupcode { get; set; }
 		public ApplicationUser User { get; set; }
 		public List<SurveyAccessRecord> SurveyAccessRecords { get; set; }
+
+		public DateTimeOffset SurveyAccessDateTime { get; set; }
 		public Survey Survey { get; set; }
 
 		public PrimaryRespondent () {

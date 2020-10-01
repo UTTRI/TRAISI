@@ -13,6 +13,10 @@
 	font-size: 16px;
 }
 
+.ql-align-center {
+	text-align: center;
+}
+
 .traisi-survey-viewer-container {
 	position: absolute;
 	margin-bottom: auto;
@@ -83,4 +87,14 @@
 
 .survey-body-container {
 	position: relative;
+}
+
+@include media-breakpoint-down(sm) {
+	.question-header-text {
+		font-size: 16px;
+	}
+
+	.tile .tile-number span {
+		font-size: 12px !important;
+	}
 }

@@ -1,8 +1,16 @@
 @import '~angular-calendar/css/angular-calendar.css';
+@import '~intro.js/introjs.css';
 
 .travel-diary-question::-webkit-scrollbar {
 	width: 6px;
 }
+
+traisi-travel-diary-question {
+	display: flex;
+	flex-direction: column;
+}
+
+
 
 .travel-diary-question::-webkit-scrollbar-track {
 	background: #e6e6e6;
@@ -12,19 +20,13 @@
 
 .travel-diary-question::-webkit-scrollbar-thumb {
 	background-color: #346cb0;
-	outline: 1px solid #304690;
+	// outline: 1px solid #304690;
 	border-radius: 5px;
 }
 
 .travel-diary-question {
 	overflow-y: auto;
-	.add-event-overlay {
-		position: absolute;
-		bottom: 60px;
-		right: 50px;
-		z-index: 10;
-	}
-	margin-bottom: 20px;
+
 
 	.mapboxgl-ctrl-geocoder {
 		display: none;
@@ -32,5 +34,70 @@
 
 	.cal-hour-segment {
 		border: none;
+	}
+}
+.add-event-overlay {
+	position: relative;
+	z-index: 10;
+	width: 320px;
+	background-color: white;
+	margin: auto;
+
+	.tour {
+		margin-left: 10px;
+		
+	}
+}
+
+.inactive-user-message {
+	font-weight: bold;
+}
+
+
+.view-validation-errors{
+	cursor: pointer;
+	font-size: 14px;
+	margin-left: 10px;
+	text-decoration: underline;
+
+	.warning-icon {
+		color: orange;
+	}
+}
+
+ul.dropdown-menu {
+	margin: 0px;
+	padding: 0px;
+	padding-top: 5px;
+	padding-bottom: 0px;
+	border-radius: 5px;
+	box-shadow: 0px 0px black;
+	border: solid 1px #DDD;
+	background-color: white;
+	li {
+		padding-left: 20px;
+		padding-right: 20px;
+		padding-top: 5px;
+		padding-bottom: 10px;
+		list-style: none;
+		color: #333;
+		a {
+			display: block;
+			color: #333;
+			text-decoration: none;
+		}
+	}
+	li:hover {
+		background-color: #e6e6e6;
+	}
+}
+
+
+
+
+@media (max-width: 575.98px) { 
+	.cal-event {
+		writing-mode: vertical-rl;
+		text-orientation: mixed;
 	}
 }

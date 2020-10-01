@@ -1,14 +1,9 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { TravelDiaryQuestionComponent } from './travel-diary-question.component';
-import {
-	CalendarModule,
-	DateAdapter,
-	CalendarCommonModule,
-	CalendarDayModule,
-	CalendarTooltipWindowComponent,
-} from 'angular-calendar';
+import { CalendarModule, DateAdapter, CalendarCommonModule, CalendarDayModule } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { FlatpickrModule } from 'angularx-flatpickr';
 import { FormsModule } from '@angular/forms';
@@ -17,6 +12,11 @@ import { ModalModule, BsModalService } from 'ngx-bootstrap/modal';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { DayViewSchedulerComponent } from './components/day-view-scheduler.component';
 import { TravelDiaryEventDisplayComponent } from './components/travel-diary-event-display.component';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { AlertModule } from 'ngx-bootstrap/alert';
+import { ReturnTimeValidatorDirective } from './validators/return-time.directive';
+import { PopoverModule } from 'ngx-bootstrap/popover';
+
 
 export const calendarProps = {
 	provide: DateAdapter,
@@ -30,6 +30,7 @@ export const calModule: ModuleWithProviders = CalendarModule.forRoot(calendarPro
 		TravelDiaryEditDialogComponent,
 		DayViewSchedulerComponent,
 		TravelDiaryEventDisplayComponent,
+		ReturnTimeValidatorDirective,
 	],
 	entryComponents: [
 		TravelDiaryQuestionComponent,
@@ -61,6 +62,11 @@ export const calModule: ModuleWithProviders = CalendarModule.forRoot(calendarPro
 					id: 'travel-diary-event-display',
 					component: TravelDiaryEventDisplayComponent,
 				},
+				{
+					name: 'returnTime',
+					id: 'travel-diary-returnTime',
+					component: ReturnTimeValidatorDirective,
+				},
 			],
 			multi: true,
 		},
@@ -71,8 +77,10 @@ export const calModule: ModuleWithProviders = CalendarModule.forRoot(calendarPro
 				name: 'location',
 			},
 		},
+		ReturnTimeValidatorDirective,
 	],
 	imports: [
+		RouterModule,
 		CommonModule,
 		FormsModule,
 		HttpClientModule,
@@ -82,6 +90,9 @@ export const calModule: ModuleWithProviders = CalendarModule.forRoot(calendarPro
 		CalendarCommonModule.forRoot(calendarProps),
 		CalendarDayModule,
 		NgSelectModule,
+		AlertModule.forRoot(),
+		BsDropdownModule.forRoot(),
+		PopoverModule.forRoot(),
 	],
 	exports: [CalendarDayModule, CalendarModule, CalendarCommonModule],
 })

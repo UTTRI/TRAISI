@@ -7,12 +7,20 @@ import {
 	ResponseData,
 	DecimalResponseData,
 	ResponseValidationState,
+	TraisiValues,
+	NumberResponseData,
 } from 'traisi-question-sdk';
 import { NumberQuestionConfiguration } from './number-question.configuration';
 import templateString from './number-question.component.html';
 import styles from './number-question.component.scss';
 import { debounceTime } from 'rxjs/operators';
-import { createNumberMask } from 'text-mask-addons';
+import createNumberMask from 'text-mask-addons/dist/createNumberMask';
+
+const numberMask = createNumberMask({
+	prefix: '',
+	suffix: '',
+	allowDecimal: true,
+});
 
 @Component({
 	selector: 'traisi-number-question',
@@ -20,13 +28,13 @@ import { createNumberMask } from 'text-mask-addons';
 	styles: ['' + styles],
 })
 export class NumberQuestionComponent extends SurveyQuestion<ResponseTypes.Number> implements OnInit {
-	public configuration: NumberQuestionConfiguration;
-
-	public model: string;
+	public model: string = '';
 
 	private _numberModel: number;
 
 	public numberMask: any;
+
+	public mask = { mask: numberMask };
 
 	@ViewChild('f', { static: true })
 	public inputForm: NgForm;
@@ -35,14 +43,14 @@ export class NumberQuestionComponent extends SurveyQuestion<ResponseTypes.Number
 	 *
 	 * @param surveyViewerService
 	 */
-	constructor() {
+	constructor(@Inject(TraisiValues.Configuration) public configuration: NumberQuestionConfiguration) {
 		super();
 	}
 
 	/**
 	 * Models changed
 	 */
-	public modelChanged(): void { }
+	public modelChanged($event): void {}
 
 	/**
 	 *
@@ -51,13 +59,13 @@ export class NumberQuestionComponent extends SurveyQuestion<ResponseTypes.Number
 	 * @memberof TextQuestionComponent
 	 */
 	public onResponseSaved(): void {
-		this.validationState.emit(ResponseValidationState.VALID);
+		// this.validationState.emit(ResponseValidationState.VALID);
 	}
 
 	/**
 	 * Inputs blur
 	 */
-	public inputBlur(): void { }
+	public inputBlur(): void {}
 
 	/**
 	 * Validates input
@@ -79,31 +87,44 @@ export class NumberQuestionComponent extends SurveyQuestion<ResponseTypes.Number
 	 * on init
 	 */
 	public ngOnInit(): void {
-		const format: any = JSON.parse(this.configuration.numberFormat);
+		const format: any = this.configuration.numberFormat;
 
-		this.configuration.max = parseInt('' + this.configuration['max'], 10);
-		this.configuration.min = parseInt('' + this.configuration['min'], 10);
 		switch (format.id) {
 			case 'Integer':
-				this.numberMask = createNumberMask({
-					prefix: '',
-					suffix: '',
-					allowDecimal: false,
-				});
+				this.numberMask = {
+					mask: createNumberMask({
+						prefix: '',
+						suffix: '',
+						allowDecimal: false,
+					}),
+				};
 				break;
 			case 'Currency':
-				this.numberMask = createNumberMask({
-					prefix: '$ ',
-					suffix: '',
-					allowDecimal: true,
-				});
+				this.numberMask = {
+					mask: this.numberMask = createNumberMask({
+						prefix: '$ ',
+						suffix: '',
+						allowDecimal: true,
+					}),
+				};
 				break;
 			case 'Decimal':
-				this.numberMask = createNumberMask({
-					prefix: '',
-					suffix: '',
-					allowDecimal: true,
-				});
+				this.numberMask = {
+					mask: this.numberMask = createNumberMask({
+						prefix: '',
+						suffix: '',
+						allowDecimal: true,
+					}),
+				};
+				break;
+			default:
+				this.numberMask = {
+					mask: createNumberMask({
+						prefix: '',
+						suffix: '',
+						allowDecimal: false,
+					}),
+				};
 				break;
 		}
 
@@ -117,7 +138,7 @@ export class NumberQuestionComponent extends SurveyQuestion<ResponseTypes.Number
 		response: ResponseData<ResponseTypes.Number>[] | 'none'
 	) => {
 		if (response !== 'none') {
-			let decimalResponse = <DecimalResponseData>response[0];
+			let decimalResponse = <NumberResponseData>response[0];
 			this.model = '' + decimalResponse.value;
 			this._numberModel = Number(this.model.replace(/[^0-9\.]+/g, ''));
 			this.validationState.emit(ResponseValidationState.VALID);
@@ -132,7 +153,10 @@ export class NumberQuestionComponent extends SurveyQuestion<ResponseTypes.Number
 					const validated: boolean = this.validateInput();
 
 					if (validated && this.inputForm.valid) {
-						this.response.emit({ value: this._numberModel });
+						let data: NumberResponseData = {
+							value: this._numberModel,
+						};
+						this.response.emit([data]);
 					} else {
 						this.validationState.emit(ResponseValidationState.INVALID);
 					}

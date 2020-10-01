@@ -1,4 +1,13 @@
-import { ChangeDetectorRef, Component, ElementRef, Inject, OnInit, ViewChild, AfterViewInit, ViewEncapsulation } from '@angular/core';
+import {
+	ChangeDetectorRef,
+	Component,
+	ElementRef,
+	Inject,
+	OnInit,
+	ViewChild,
+	AfterViewInit,
+	ViewEncapsulation,
+} from '@angular/core';
 import {
 	SurveyQuestion,
 	ResponseTypes,
@@ -16,15 +25,17 @@ import {
 } from 'traisi-question-sdk';
 import templateString from './select-question.component.html';
 import styleString from './select-question.component.scss';
+import selectStyleString from '@ng-select/ng-select/themes/default.theme.css';
 declare var $: any;
 
 @Component({
 	selector: 'traisi-select-question',
 	template: '' + templateString,
-	styles: ['' + styleString],
+	styles: ['' + styleString + selectStyleString],
 	encapsulation: ViewEncapsulation.None,
 })
-export class SelectQuestionComponent extends SurveyQuestion<ResponseTypes.OptionSelect> implements OnInit, OnOptionsLoaded, AfterViewInit {
+export class SelectQuestionComponent extends SurveyQuestion<ResponseTypes.OptionSelect>
+	implements OnInit, OnOptionsLoaded, AfterViewInit {
 	public readonly QUESTION_TYPE_NAME: string = 'Select Question';
 
 	public typeName: string;
@@ -89,8 +100,6 @@ export class SelectQuestionComponent extends SurveyQuestion<ResponseTypes.Option
 			this.response.emit([option]);
 		}
 	}
-
-	
 
 	public onResponseSaved(): void {}
 }

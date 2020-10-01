@@ -19,6 +19,7 @@ using Traisi.ViewModels.SurveyViewer;
 using AutoMapper;
 using Traisi.Models.Surveys.Validation;
 using System.Linq;
+using System;
 
 namespace Traisi.Controllers.SurveyViewer
 {
@@ -27,12 +28,12 @@ namespace Traisi.Controllers.SurveyViewer
     [Route("api/[controller]/")]
     public class SurveyResponseController : ControllerBase
     {
-        private UserManager<ApplicationUser> _userManager;
+        private UserManager<TraisiUser> _userManager;
         private IUnitOfWork _unitOfWork;
         private ISurveyResponseService _resonseService;
         private readonly IMapper _mapper;
         public SurveyResponseController(IUnitOfWork unitOfWork, ISurveyResponseService responseService,
-        UserManager<ApplicationUser> userManager,
+        UserManager<TraisiUser> userManager,
         IMapper mapper)
         {
             _unitOfWork = unitOfWork;
@@ -53,7 +54,7 @@ namespace Traisi.Controllers.SurveyViewer
         [HttpPost]
         [Route("surveys/{surveyId}/questions/{questionId}/respondents/{respondentId}/{repeat}", Name = "Save_Response")]
         public async Task<ActionResult<SurveyViewerValidationStateViewModel>> SaveResponse(int surveyId, int questionId,
-            int respondentId, int repeat, [FromBody] JArray content, [FromHeader] string language, [FromQuery] bool force = false)
+            int respondentId, int repeat, [FromBody] JArray content, [FromHeader] string language, [FromQuery] bool force = false, [FromQuery] bool isPartial = false)
         {
             var respondent = await _unitOfWork.SurveyRespondents.GetSurveyRespondentAsync(respondentId);
             var question = await this._unitOfWork.QuestionParts.GetQuestionPartWithConfigurationsAsync(questionId);
@@ -74,7 +75,7 @@ namespace Traisi.Controllers.SurveyViewer
         [Authorize(Policy = Policies.RespondToSurveyPolicy)]
         [HttpPut]
         [Route("surveys/{surveyId}/questions/respondents/{respondentId}/exclude/{shouldExclude}", Name = "Exclude_Responses")]
-        public async Task<ActionResult<SurveyViewerValidationStateViewModel>> ExcludeResponses(int surveyId,int respondentId, bool shouldExclude, [FromQuery] int[] questionIds
+        public async Task<ActionResult<SurveyViewerValidationStateViewModel>> ExcludeResponses(int surveyId, int respondentId, bool shouldExclude, [FromQuery] int[] questionIds
             )
         {
             var survey = await this._unitOfWork.Surveys.GetAsync(surveyId);
@@ -83,7 +84,7 @@ namespace Traisi.Controllers.SurveyViewer
                 return new NotFoundResult();
             }
             var respondent = await _unitOfWork.SurveyRespondents.GetSurveyRespondentAsync(respondentId);
-            await this._resonseService.ExcludeResponse(survey, questionIds, respondent,shouldExclude);
+            await this._resonseService.ExcludeResponse(survey, questionIds, respondent, shouldExclude);
             return new OkResult();
         }
 
@@ -204,8 +205,25 @@ namespace Traisi.Controllers.SurveyViewer
                 return new NotFoundObjectResult(new List<SurveyResponseViewModel>());
             }
             var responses = await this._resonseService.ListSurveyResponsesForQuestionsMultipleRespondentsAsync(new List<int>(questionIds), new List<int>(respondentIds));
+            var responseList = new List<SurveyResponseViewModel>();
+            foreach (var response in responses)
+            {
 
-            return new OkObjectResult(_mapper.Map<List<SurveyResponseViewModel>>(responses));
+                if (response.ResponseValues.Count > 0 && response.ResponseValues[0] is TimelineResponse)
+                {
+                    responseList.Add(_mapper.Map<TimelineResponseViewModel>(response));
+                }
+                else if (response.ResponseValues.Count > 0 && response.ResponseValues[0] is LocationResponse)
+                {
+                    responseList.Add(_mapper.Map<LocationResponseViewModel>(response));
+                }
+                else
+                {
+                    responseList.Add(_mapper.Map<SurveyResponseViewModel>(response));
+                }
+            }
+
+            return new OkObjectResult(responseList);
         }
 
         [HttpGet]
@@ -258,8 +276,15 @@ namespace Traisi.Controllers.SurveyViewer
         public async Task<IActionResult> DeleteAllResponses(int surveyId, int respondentId)
         {
             var user = await _userManager.FindByNameAsync(this.User.Identity.Name);
-            await this._resonseService.RemoveAllResponses(surveyId, respondentId, user);
+            var survey = await this._unitOfWork.Surveys.GetAsync(surveyId);
+            var primaryRespondent = await _unitOfWork.SurveyRespondents.GetPrimaryRespondentForSurveyAndTraisiUserAsync(user, survey);
 
+            if (primaryRespondent != null)
+            {
+                primaryRespondent.SurveyAccessDateTime = DateTime.Now;
+            }
+            await this._resonseService.RemoveAllResponses(surveyId, respondentId, user);
+            await this._unitOfWork.SaveChangesAsync();
             return new OkResult();
         }
 

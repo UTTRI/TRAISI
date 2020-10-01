@@ -156,7 +156,7 @@
 						</quill-editor>
 					</div>
 				</div>
-				
+
 				<div class="row">
 					<div class="col-md-12">
 						<hr class="edit-separator-hr" />
@@ -238,6 +238,9 @@
 									</select>
 									<span class="ql-format-separator"></span>
 								</span>
+								<span class="ql-formats">
+									<button class="ql-image"></button>
+								  </span>
 								<span class="ql-ngx-tree ql-formats" *ngIf="questionsBefore.length > 0">
 									<!--<ngx-dropdown-treeview-select #pipeTreeSelect [items]="questionsBefore"
 										[config]="treedropdownSingleConfig" (valueChange)="pipeQuestion()">
@@ -410,37 +413,23 @@
 							<div
 								class="col-md-10"
 								[hidden]="
-									questionBeingEdited.id == 0 ||
-									repeatSourcesBefore.length == 0 ||
-									questionBeingEdited.isHousehold
+									questionBeingEdited.id == 0
 								"
 							>
-								<label class="pull-left form-check-label switch" for="isRepeatCheck">
-									<input
-										class="form-check-input"
-										type="checkbox"
-										value=""
-										id="isRepeatCheck"
-										#isRepeat
-										name="isRepeat"
-										(change)="repeatQuestion(isRepeat.checked)"
-										[checked]="questionBeingEdited.repeatSourceQuestionName != null"
-									/>
-									<i></i>
-								</label>
-								<!-- <ngx-dropdown-treeview-select class="pull-left ml-3" [hidden]="!isRepeat.checked"
-									#repeatTreeSelect [items]="repeatSourcesBefore" [config]="treedropdownSingleConfig"
-									(valueChange)="repeatQuestion(true)">
-								</ngx-dropdown-treeview-select> -->
+								<ng-select
+									bindLabel="questionPart.name"
+									bindValue="questionPart.id"
+									name="repeatSource"
+									[items]="repeatQuestionList | async"
+									[(ngModel)]="questionBeingEdited.repeatSourceQuestionId"
+									(change)="repeatSourceChanged($event)"
+									placeholder="None Selected"
+								></ng-select>
+
 							</div>
 							<div class="col-md-10 mt-2">
 								<span [hidden]="questionBeingEdited.id != 0" class="form-check-label"
 									>Setting Repeat Available After Save</span
-								>
-								<span
-									[hidden]="questionBeingEdited.id == 0 || repeatSourcesBefore.length > 0"
-									class="form-check-label"
-									>No Repeat Sources Available</span
 								>
 								<span class="form-check-label" [hidden]="!questionBeingEdited.isHousehold"
 									>Repeating Disabled for Household Questions</span
@@ -475,9 +464,7 @@
 			<div role="tabpanel" class="tab-pane" id="advanced" aria-labelledby="advanced-tab" aria-expanded="true">
 				<ng-container *ngFor="let config of configurations; let i = index">
 					<ng-template #dynamic></ng-template>
-					<div *ngIf="i < configurations.length - 1" class="row">
-						
-					</div>
+					<div *ngIf="i < configurations.length - 1" class="row"></div>
 				</ng-container>
 			</div>
 			<div

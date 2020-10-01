@@ -62,7 +62,11 @@ export class SurveyViewerResponseService extends SurveyResponseService {
 	 * @param questionIds
 	 * @param respondent
 	 */
-	public excludeResponses(questionIds: SurveyViewQuestion[], respondent: SurveyRespondent, shouldExclude: boolean = true): Observable<any> {
+	public excludeResponses(
+		questionIds: SurveyViewQuestion[],
+		respondent: SurveyRespondent,
+		shouldExclude: boolean = true
+	): Observable<any> {
 		return this._responseClient.excludeResponses(
 			this._session.surveyId,
 			respondent.id,
@@ -168,7 +172,8 @@ export class SurveyViewerResponseService extends SurveyResponseService {
 					repeat,
 					this._session.language,
 					false,
-					responseData
+					false,
+					responseData,
 				)
 				.subscribe((result) => {
 					if (result.isValid) {
@@ -203,6 +208,7 @@ export class SurveyViewerResponseService extends SurveyResponseService {
 						repeat,
 						this._session.language,
 						true,
+						false,
 						this._getStoredInvalidResponse(question, respondent)
 					)
 					.subscribe((result) => {
@@ -249,6 +255,7 @@ export class SurveyViewerResponseService extends SurveyResponseService {
 				})
 			);
 	}
+
 	/**
 	 * Preloads / retrieves a set of responses in bulk and stores them for later access.
 	 * @param questionIds A list of question IDs to load responses for.
@@ -275,6 +282,9 @@ export class SurveyViewerResponseService extends SurveyResponseService {
 							this._storeResponse(response.questionId, respondent, response.responseValues);
 						}
 					},
+					error: (e) => {
+						console.error(e);
+					},
 					complete: () => {
 						obs.complete();
 					},
@@ -296,9 +306,13 @@ export class SurveyViewerResponseService extends SurveyResponseService {
 		respondents: Array<SurveyRespondent>
 	): Observable<SurveyResponseViewModel[]> {
 		let queryIds = [];
+		let stored = [];
 		for (let question of questions) {
 			for (let respondent of respondents) {
 				if (!this.hasStoredResponse(question, respondent)) {
+					queryIds.push(question.questionId);
+				} else {
+					// same as above temporary
 					queryIds.push(question.questionId);
 				}
 			}
@@ -307,6 +321,7 @@ export class SurveyViewerResponseService extends SurveyResponseService {
 			// return empty, data already exists for these respondents
 			return EMPTY;
 		}
+		queryIds = [...new Set(queryIds)];
 		return new Observable((obs) => {
 			this._responseClient
 				.listSurveyResponsesForQuestionsForMultipleRespondents(
@@ -321,6 +336,10 @@ export class SurveyViewerResponseService extends SurveyResponseService {
 							this._storeResponse(response.questionId, response.respondent, response.responseValues);
 						}
 						obs.next(responses);
+						obs.complete();
+					},
+					error: (e) => {
+						console.error(e);
 					},
 					complete: () => {
 						obs.complete();

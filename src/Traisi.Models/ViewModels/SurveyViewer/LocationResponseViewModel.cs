@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Traisi.Data.Models.ResponseTypes;
 using Newtonsoft.Json.Linq;
 using Traisi.Sdk.Library.ResponseTypes;
+using Traisi.Sdk.Interfaces;
 
 namespace Traisi.ViewModels.SurveyViewer
 {
@@ -13,7 +14,7 @@ namespace Traisi.ViewModels.SurveyViewer
 
     public class LocationResponseValueViewModel
     {
-        public string Address { get; set; }
+        public Address Address { get; set; }
         public double Latitude { get; set; }
 
         public double Longitude { get; set; }

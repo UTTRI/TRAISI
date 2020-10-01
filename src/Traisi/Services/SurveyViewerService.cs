@@ -178,6 +178,7 @@ namespace Traisi.Services
 
             // create the associated primary respondent 
             var respondent = await this._respondentService.CreatePrimaryRespondentForUser(appUser, survey);
+            respondent.SurveyAccessDateTime = DateTime.Now;
             result.Item3.PrimaryRespondent = respondent;
             return (result.Item1, result.Item2, result.Item3, respondent);
 
@@ -251,6 +252,25 @@ namespace Traisi.Services
                     if (primaryRespondent == null)
                     {
                         primaryRespondent = await _respondentService.CreatePrimaryRespondentForUser(user, survey);
+                        primaryRespondent.SurveyAccessDateTime = DateTime.Now;
+                    }
+                }
+                else
+                {
+                    var existingUser = await this.GetSurveyUser(survey, shortcode);
+                    if (existingUser == null)
+                    {
+                        var shortcodeRef = await this._unitOfWork.Shortcodes.GetShortcodeForSurveyAsync(survey, shortcode);
+                        if (shortcodeRef == null)
+                        {
+                            return null;
+                        }
+                        var res = await CreateSurveyUser(survey, shortcodeRef, currentUser);
+                        primaryRespondent = res.respondent;
+                    }
+                    else
+                    {
+                        primaryRespondent = existingUser.PrimaryRespondent;
                     }
                 }
             }
@@ -266,6 +286,8 @@ namespace Traisi.Services
                     }
                     var res = await CreateSurveyUser(survey, shortcodeRef, currentUser);
                     primaryRespondent = res.respondent;
+                    res.user.PrimaryRespondent = primaryRespondent;
+                    // existingUser.PrimaryRespondent = primaryRespondent;
                 }
                 else
                 {
@@ -360,7 +382,7 @@ namespace Traisi.Services
         public async Task<QuestionPartView> GetSurveyViewPageQuestions(int surveyId, SurveyViewType viewType,
             int pageNumber)
         {
-            var survey = await this._unitOfWork.Surveys.GetSurveyFullAsync(surveyId, viewType);
+            var survey = await this._unitOfWork.Surveys.GetSurveyViewerFullAsync(surveyId, viewType);
             if (survey != null)
             {
                 return ((List<SurveyView>)survey.SurveyViews).Find(x =>
@@ -391,7 +413,7 @@ namespace Traisi.Services
         /// <returns></returns>
         public async Task<List<QuestionPartView>> GetSurveyViewPages(int surveyId, SurveyViewType viewType)
         {
-            var survey = await this._unitOfWork.Surveys.GetSurveyFullAsync(surveyId, viewType);
+            var survey = await this._unitOfWork.Surveys.GetSurveyViewerFullAsync(surveyId, viewType);
             if (survey != null)
             {
                 List<QuestionPartView> pages = survey.SurveyViews.Find(x =>

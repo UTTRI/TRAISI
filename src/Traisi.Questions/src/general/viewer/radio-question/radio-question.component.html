@@ -1,7 +1,7 @@
 
 <div class="radio-question-container form-check abc-radio abc-radio-primary custom-control custom-radio">
 
-	<div *ngFor="let option of options" class="custom-control custom-radio">
+	<div *ngFor="let option of options" class="custom-control custom-radio radio-row">
 		<input class="custom-control-input" id="{{option.id}}" type="radio" [value]="option.code" name="{{option.id}}"
 			[(ngModel)]="selectedOption" (ngModelChange)="onModelChanged(option)" #input />
 		<label for="{{option.id}}" class="custom-control-label">{{option.label}}</label>

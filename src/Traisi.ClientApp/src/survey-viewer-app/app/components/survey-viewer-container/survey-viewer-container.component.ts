@@ -11,7 +11,7 @@ declare var Modernizr;
 	selector: 'app-survey-viewer-container',
 	templateUrl: './survey-viewer-container.component.html',
 	styleUrls: ['./survey-viewer-container.component.scss'],
-	entryComponents: [SurveyErrorComponent, SurveyStartPageComponent]
+	entryComponents: [SurveyErrorComponent, SurveyStartPageComponent],
 })
 export class SurveyViewerContainerComponent implements OnInit {
 	private surveyName: string;
@@ -37,20 +37,10 @@ export class SurveyViewerContainerComponent implements OnInit {
 	 *
 	 */
 	public ngOnInit(): void {
-		this.surveySession.data.subscribe(data => {
+		this.surveySession.data.subscribe((data) => {
 			this._titleService.setTitle('TRAISI - ' + data.surveyTitle);
 		});
 		if (Modernizr.mq('(max-width: 768px)')) {
-			this._toastr.info('A desktop view may provide a better experience for answering some questions', 'Mobile Dislay', {
-				positionClass: 'toast-top-full-width',
-				timeOut: 5000,
-				toastClass: 'ngx-toastr mobile-toast',
-				messageClass: 'mobile-toast-message', 
-				titleClass: 'mobile-toast-title',
-				progressBar: true,
-				closeButton: true,
-				tapToDismiss: false,
-			});
 		}
 	}
 }

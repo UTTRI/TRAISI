@@ -429,7 +429,13 @@ namespace Traisi.Models.Mapping
     {
         public object Convert(string sourceMember, ResolutionContext context)
         {
-            return JToken.Parse(sourceMember);
+            if(sourceMember != null) {
+                return JToken.Parse(sourceMember);
+            }
+            else {
+                return new JArray();
+            }
+            
         }
     }
 

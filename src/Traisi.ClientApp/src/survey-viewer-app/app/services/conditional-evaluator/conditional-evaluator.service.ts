@@ -135,11 +135,11 @@ export class ConditionalEvaluator {
 			if (response === undefined) {
 				return false;
 			}
-			conditionals.forEach((conditional) => {
+			for (let conditional of conditionals) {
 				if (response.code === conditional) {
 					isAny = true;
 				}
-			});
+			}
 		});
 		return isAny;
 	}
@@ -265,4 +265,4 @@ export class ConditionalEvaluator {
 			}
 		});
 	}
-} 
+}

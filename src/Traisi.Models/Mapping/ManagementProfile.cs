@@ -131,6 +131,7 @@ namespace Traisi.Models.Mapping
 
             CreateMap<QuestionPartView, SBQuestionPartViewViewModel>()
                 .ForMember(m => m.ParentViewId, map => map.MapFrom(s => s.ParentView.Id))
+                .ForMember(m => m.repeatSourceQuestionId, map => map.MapFrom(x => x.RepeatSource.Id))
                 .ForMember(m => m.repeatSourceQuestionName, map => map.MapFrom<string>((src, dst) =>
                 {
                     if (src.RepeatSource != null)

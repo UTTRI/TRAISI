@@ -9,7 +9,7 @@ using Traisi.Sdk.Library.ResponseTypes;
 namespace Traisi.Sdk.Questions
 {
 
-    [SurveyQuestion(QuestionResponseType.None, CodeBundleName = "traisi-questions-travel-diary.module.js")]
+    [SurveyQuestion(QuestionResponseType.Timeline, CodeBundleName = "traisi-questions-travel-diary.module.js")]
     public class TravelDiaryQuestion : ISurveyQuestion
     {
 
@@ -22,6 +22,16 @@ namespace Traisi.Sdk.Questions
             get => "fas fa-map-marked-alt";
         }
         public QuestionIconType IconType { get => QuestionIconType.FONT; }
+
+        /// <summary>
+        /// The minimum or earliest allowed date
+        /// </summary>
+        [QuestionConfiguration(ConfigurationValueType.Boolean,
+        DisplayName = "CollectEntireHousehold",
+        Description = "Collect trips for the entire household.",
+        SurveyBuilderValueType = QuestionBuilderType.Switch,
+        DefaultValue = false)]
+        public DateTime CollectEntireHousehold;
 
         /// <summary>
         /// The minimum or earliest allowed date

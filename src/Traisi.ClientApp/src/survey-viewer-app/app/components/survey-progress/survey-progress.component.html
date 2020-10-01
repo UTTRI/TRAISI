@@ -20,7 +20,19 @@
 				</p>
 				<ng-container *ngIf="state.activeSection?.id === section.id">
 					<p class="progress__question" *ngFor="let question of state.activeQuestionInstances">
-						<span class="validation-status">
+						<span
+							class="validation-status"
+							[class.valid]="
+								question.validationState?.clientValidationState === validationStates.VALID &&
+								question.validationState?.isValid
+							"
+							[class.invalid]="
+								!(
+									question.validationState?.clientValidationState === validationStates.VALID &&
+									question.validationState?.isValid
+								)
+							"
+						>
 							<i
 								*ngIf="
 									question.validationState?.clientValidationState === validationStates.VALID &&
@@ -38,7 +50,7 @@
 								class="far fa-square"
 							></i>
 						</span>
-						{{ question.model.name }}
+						<a [routerLink]="" fragment="{{question.model.questionId}}">{{ question.model.name }}</a>
 					</p>
 				</ng-container>
 			</ng-container>

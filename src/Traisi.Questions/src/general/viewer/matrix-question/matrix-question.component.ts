@@ -30,21 +30,27 @@ export class MatrixQuestionComponent extends SurveyQuestion<ResponseTypes.Json> 
 	public rowLabels: string[] = [];
 	public columnLabels: string[] = [];
 
-	public ngOnInit(): void {}
+	public ngOnInit(): void {
+		this.savedResponse.subscribe(this.onSavedResponseData);
+	}
 
 	public model = {};
 
 	@ViewChild('matrixForm')
 	public form: NgForm;
 
+	public entryWidth: number = 0;
+	public rowHeaderWidth: number = 0;
+
 	private onSavedResponseData: (response: ResponseData<ResponseTypes.Json>[] | 'none') => void = (
 		response: ResponseData<ResponseTypes.Json>[] | 'none'
 	) => {
 		if (response !== 'none') {
+			console.log('got response ');
 			console.log(response);
 			let model = JSON.parse(response[0]['value']);
-			console.log(model);
 			this.model = model[0];
+			this.validationState.emit(ResponseValidationState.VALID);
 		}
 	};
 
@@ -57,7 +63,13 @@ export class MatrixQuestionComponent extends SurveyQuestion<ResponseTypes.Json> 
 				this.columnLabels.push(i['label']);
 			}
 		}
-		this.savedResponse.subscribe(this.onSavedResponseData);
+		
+		this.calculateDimensions();
+	}
+
+	public calculateDimensions(): void {
+		this.rowHeaderWidth = 10;
+		this.entryWidth = (100 - this.rowHeaderWidth) / this.columnLabels.length;
 	}
 
 	/**
@@ -67,10 +79,11 @@ export class MatrixQuestionComponent extends SurveyQuestion<ResponseTypes.Json> 
 	public changed(event, id): void {
 		if (this.form.valid) {
 			this.response.emit(this.model);
+			this.validationState.emit(ResponseValidationState.VALID);
 		}
 	}
 
 	public traisiOnInit(): void {
-		this.validationState.emit(ResponseValidationState.VALID);
+		// this.validationState.emit(ResponseValidationState.VALID);
 	}
 }

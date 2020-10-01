@@ -1,20 +1,25 @@
 <div class="special-page-editor" [style.background-color]="pageThemeInfo.pageBackgroundColour" *ngIf="loadedComponents">
 	<div id="special-page-header">
-		<ndc-dynamic *ngIf="headerComponent" [ndcDynamicComponent]="headerComponent" [ndcDynamicInputs]="headerInputs"></ndc-dynamic>
+		<ng-template #headerTemplate></ng-template>
+		<!-- <ndc-dynamic *ngIf="headerComponent" [ndcDynamicComponent]="headerComponent" [ndcDynamicInputs]="headerInputs"></ndc-dynamic> -->
 	</div>
 	<div *ngIf="pageType == 'welcome'" id="special-page-surveyAccess">
-		<ndc-dynamic *ngIf="surveyAccessComponent" [ndcDynamicComponent]="surveyAccessComponent" [ndcDynamicInputs]="surveyAccessInputs" [ndcDynamicOutputs]="surveyAccessOutputs" #accessComponent></ndc-dynamic>
+		<ng-template #surveyAccessTemplate></ng-template>
+		<!-- <ndc-dynamic *ngIf="surveyAccessComponent" [ndcDynamicComponent]="surveyAccessComponent"
+			 [ndcDynamicInputs]="surveyAccessInputs" [ndcDynamicOutputs]="surveyAccessOutputs" #accessComponent></ndc-dynamic> -->
 	</div>
 	<!--<app-question-viewer [pageThemeInfo]="pageThemeInfo" [allPages]="allPages" *ngIf="pageType == 'questionViewer'"></app-question-viewer>-->
 	<div *ngIf="pageType != 'questionViewer'" id="special-page-content">
-		<div *ngFor="let component of componentList; index as i">
-			<div [style.background-color]="pageThemeInfo.sectionBackgroundColour[pageType][i]" [style.color]="bestSectionTextColour[i]">
-				<ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="getComponentInputs(i)"></ndc-dynamic>
+		<!-- <div *ngFor="let component of componentList; index as i"> -->
+			<div [style.background-color]="pageThemeInfo.sectionBackgroundColour[pageType][0]" [style.color]="bestSectionTextColour[0]">
+				<ng-template #mainTemplate></ng-template>
+				<!-- <ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="getComponentInputs(i)"></ndc-dynamic> -->
 			</div>
-		</div>
+		<!-- </div> -->
 	</div>
 	<app-privacy-confirmation (termsAccepted)="acceptTerms()" [pageThemeInfo]="pageThemeInfo" [(pageHTML)]="termsFooterHTML" *ngIf="pageType == 'privacyPolicy'"></app-privacy-confirmation>
 	<div class="footer fixed-bottom" id="special-page-footer"  *ngIf="pageType != 'privacyPolicy'">
-		<ndc-dynamic *ngIf="footerComponent" [ndcDynamicComponent]="footerComponent" [ndcDynamicInputs]="footerInputs" ></ndc-dynamic>
+		<ng-template #footerTemplate></ng-template>
+		<!--<ndc-dynamic *ngIf="footerComponent" [ndcDynamicComponent]="footerComponent" [ndcDynamicInputs]="footerInputs" ></ndc-dynamic> -->
 		</div>
 </div>

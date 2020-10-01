@@ -76,7 +76,12 @@ namespace Traisi.Sdk.Services
         {
             var typeDefinition =
                 new QuestionTypeDefinition(Activator.CreateInstance(questionType) as ISurveyQuestion, attribute);
-            Console.WriteLine(questionType);
+            if (typeDefinition.Type is QuestionHook)
+            {
+                typeDefinition.Hook = typeDefinition.Type as QuestionHook;
+
+            }
+            Console.WriteLine(typeDefinition.Type);
             var configurations = ReadQuestionConfigurationData(questionType, sourceAssembly);
             typeDefinition.QuestionConfigurations = configurations;
             var parameterOptions = ReadQuestionOptionData(questionType, sourceAssembly);
@@ -210,7 +215,7 @@ namespace Traisi.Sdk.Services
                     }
                     catch (Exception e)
                     {
-                        _logger.LogError(e,"Could not find requested quesiont resource: " + configAttribute.Resource);
+                        _logger.LogError(e, "Could not find requested quesiont resource: " + configAttribute.Resource);
                     }
 
                 }

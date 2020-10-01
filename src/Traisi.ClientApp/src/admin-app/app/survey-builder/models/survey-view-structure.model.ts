@@ -14,4 +14,6 @@ export class SurveyViewStructure {
 		public welcomePage?: WelcomePage,
 		public surveyCompletionPage?: ThankYouPage,
 		public screeningQuestions?: ScreeningQuestions) {	}
+
+
 }

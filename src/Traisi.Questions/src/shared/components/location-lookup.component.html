@@ -1,0 +1,22 @@
+<ng-select
+	[typeahead]="addressInput$"
+	[loading]="addressesLoading"
+	[items]="addressResults$ | async"
+	[(ngModel)]="addressInputModel"
+	[clearable]="false"
+	bindLabel="address.formattedAddress"
+	(change)="addressChanged($event)"
+	placeholder="Please enter and address or name to search for a location"
+	typeToSearchText="Please enter the address or name to search for a location"
+	[minTermLength]="3"
+>
+<option value="">- Please Choose -</option>
+	<ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+		<div class="location-name">
+			{{ item.address.formattedAddress }}
+		</div>
+		<div class="location-fomratted-address">
+			{{ item.address.formattedAddress }}
+		</div>
+	</ng-template>
+</ng-select>

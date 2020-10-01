@@ -36,6 +36,8 @@ namespace Traisi.Data.Repositories.Interfaces
 
         Task<Survey> GetSurveyFullAsync(int surveyId, SurveyViewType viewType);
 
+        Task<Survey> GetSurveyViewerFullAsync(int surveyId, SurveyViewType viewType);
+
         Task<Survey> GetSurveyWithLabelsAsync(int surveyId, SurveyViewType viewType);
 
         Task<Survey> GetSurveyFullExportAsync(int surveyId);

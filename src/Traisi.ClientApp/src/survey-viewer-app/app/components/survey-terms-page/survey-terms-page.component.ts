@@ -70,7 +70,6 @@ export class SurveyTermsPageComponent implements OnInit {
 			this.surveyViewerService.pageThemeInfoJson
 		).subscribe(
 			(value: [SurveyViewerSessionData, SurveyViewTermsModel, SurveyViewScreening, any]) => {
-				console.log(value);
 				this.surveyId = value[0].surveyId;
 				this.model = value[1];
 				this.hasScreeningQuestions = value[2].questionsList.length > 0;
@@ -78,6 +77,7 @@ export class SurveyTermsPageComponent implements OnInit {
 				// this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor = this.pageThemeInfo.pageBackgroundColour;
 				this.finishedLoading = true;
 				this.surveyName = value[0].surveyCode;
+				console.log(this.model);
 			},
 			(error) => {
 				console.log(error);

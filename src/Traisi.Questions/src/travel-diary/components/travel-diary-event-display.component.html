@@ -1,10 +1,13 @@
 <div class="customt-event-title event-display-container">
 	<div class="event-title-group">
 		<div class="event-purpose">
-			{{ timeEvent.event.meta.purpose }}
+			<span *ngIf="model.purpose"> <i class="{{ purpose.icon }}"></i> </span>
+
+			{{ model.purpose }}
 		</div>
 		<div class="event-name">
-			{{ timeEvent.event.title }}
+			<span *ngIf="!model.isValid" class="invalid-icon"><i class="fas fa-exclamation-triangle"></i></span
+			>{{ model.name }}
 		</div>
 	</div>
 	<div class="event-message-group">
@@ -16,12 +19,29 @@
 	</div>
 	<div class="mode-address-group">
 		<div class="event-mode">
-			<div *ngIf="!timeEvent.event.meta.mode && !timeEvent.event.meta.homeAllDay" class="no-mode-message">
-				This auto generated event has no travel mode assigned, please click the event and choose
-				a travel mode you used to reach the destination.
+			<div
+				*ngIf="!timeEvent.event.meta.model.mode && !timeEvent.event.meta.homeAllDay && model.order > 0"
+				class="no-mode-message"
+			>
+				This auto generated event has no travel mode assigned, please click the event and choose a travel mode
+				you used to reach the destination.
 			</div>
-			{{ timeEvent.event.meta.mode }}
+			<div *ngIf="timeEvent.event.meta.model.mode && !timeEvent.event.meta.homeAllDay">
+				<i class="{{ mode.icon }}"></i>{{ mode.label }}
+			</div>
 		</div>
-		<div class="event-address"><i class="fas fa-map-marked-alt"></i> {{ timeEvent.event.meta.address }}</div>
+		<div class="event-address">
+			<i class="fas fa-map-marked-alt"></i>
+			<span *ngIf="timeEvent.event.meta.model?.address">
+				{{ addressDisplay }}
+			</span>
+			<span *ngIf="!timeEvent.event.meta.model?.address">
+				Please choose a location.
+			</span>
+		</div>
+		<div class="event-time" *ngIf="!isFirstEvent && model.order > 0">
+			<i class="fas fa-clock"></i>
+			{{ timeEvent.event.meta.model?.timeA | date: 'shortTime' }}
+		</div>
 	</div>
 </div>

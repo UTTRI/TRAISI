@@ -86,12 +86,22 @@
 					[segment]="segment"
 					[segmentHeight]="hourSegmentHeight"
 					[locale]="locale"
-					[customTemplate]="hourSegmentTemplate"
+					[customTemplate]="customHourSegment"
 					[isTimeLabel]="true"
 				>
 				</mwl-calendar-week-view-hour-segment>
 			</div>
 		</div>
+		<ng-template
+			let-segment="segment"
+			let-locale="locale"
+			let-segmentHeight="segmentHeight"
+			let-isTimeLabel="isTimeLabel"
+			let-daysInWeek="daysInWeek"
+			#customHourSegment
+		>
+			{{ renderDate(segment) }}
+		</ng-template>
 		<div class="cal-day-columns" [class.cal-resize-active]="timeEventResizes.size > 0" #dayColumns>
 			<div class="cal-day-column" *ngFor="let column of view.hourColumns; trackBy: trackByHourColumn">
 				<div
@@ -145,21 +155,107 @@
 						}"
 					></div>
 					<ng-template #customTitleTemplate>
-
-						<traisi-travel-diary-event-display [timeEvent]="timeEvent"
-						></traisi-travel-diary-event-display>
-		
+						<div [class.invalid-event]="!timeEvent.event.meta.model.isValid">
+							<traisi-travel-diary-event-display
+								[timeEvent]="timeEvent"
+								[class.invalid-event]="!timeEvent.event.meta.model.isValid"
+							></traisi-travel-diary-event-display>
+						</div>
 					</ng-template>
 					<ng-template #customCellTemplate>
 						hello there
 					</ng-template>
+					<ng-template
+						#eventTemplate
+						let-weekEvent="weekEvent"
+						let-tooltipPlacement="tooltipPlacement"
+						let-eventClicked="eventClicked"
+						let-tooltipTemplate="tooltipTemplate"
+						let-tooltipAppendToBody="tooltipAppendToBody"
+						let-tooltipDisabled="tooltipDisabled"
+						let-tooltipDelay="tooltipDelay"
+						let-column="column"
+						let-daysInWeek="daysInWeek"
+					>
+						<div
+							class="cal-event"
+							[ngStyle]="{
+								backgroundColor: weekEvent.event.color?.secondary,
+								borderColor: weekEvent.event.color?.primary
+							}"
+							[class.invalid-event]="!weekEvent.event.meta.model.isValid"
+							[class.valid-event]="weekEvent.event.meta.model.isValid"
+							[mwlCalendarTooltip]="
+								!tooltipDisabled
+									? (weekEvent.event.title
+									  | calendarEventTitle
+											: (daysInWeek === 1 ? 'dayTooltip' : 'weekTooltip')
+											: weekEvent.tempEvent || weekEvent.event)
+									: ''
+							"
+							[tooltipPlacement]="tooltipPlacement"
+							[tooltipEvent]="weekEvent.tempEvent || weekEvent.event"
+							[tooltipTemplate]="tooltipTemplate"
+							[tooltipAppendToBody]="tooltipAppendToBody"
+							[tooltipDelay]="tooltipDelay"
+							(mwlClick)="eventClicked.emit({ sourceEvent: $event })"
+							(mwlKeydownEnter)="eventClicked.emit({ sourceEvent: $event })"
+							tabindex="0"
+							role="application"
+							[attr.aria-label]="
+								{ event: weekEvent.tempEvent || weekEvent.event, locale: locale }
+									| calendarA11y: 'eventDescription'
+							"
+						>
+							<mwl-calendar-event-actions
+								[event]="weekEvent.tempEvent || weekEvent.event"
+								[customTemplate]="eventActionsTemplate"
+							>
+							</mwl-calendar-event-actions>
+							<mwl-calendar-event-title
+								[event]="weekEvent.tempEvent || weekEvent.event"
+								[customTemplate]="customTitleTemplate"
+								[view]="daysInWeek === 1 ? 'day' : 'week'"
+							>
+							</mwl-calendar-event-title>
+						</div>
+					</ng-template>
+					<ng-template
+						[ngTemplateOutlet]="customTemplate || defaultTemplate"
+						[ngTemplateOutletContext]="{
+							weekEvent: weekEvent,
+							tooltipPlacement: tooltipPlacement,
+							eventClicked: eventClicked,
+							tooltipTemplate: tooltipTemplate,
+							tooltipAppendToBody: tooltipAppendToBody,
+							tooltipDisabled: tooltipDisabled,
+							tooltipDelay: tooltipDelay,
+							column: column,
+							daysInWeek: daysInWeek
+						}"
+					>
+					</ng-template>
+					<ng-template #popTemplate let-event="event">
+						<div>{{ event.title }} - {{ event.meta.model.purpose }}</div>
+						<div>
+							{{ event.meta.model.mode }}
+						</div>
+						<span *ngIf="event.meta.model?.address">
+							{{ event.meta.model.address.streetNumber }} {{ event.meta.model.address.streetAddress }},
+							{{ event.meta.model.address.city }}
+						</span>
+					</ng-template>
 					<mwl-calendar-week-view-event
+						[popover]="popTemplate"
+						triggers="mouseenter:mouseleave"
+						#pop="bs-popover"
+						[popoverContext]="timeEvent"
 						[locale]="locale"
 						[weekEvent]="timeEvent"
 						[tooltipPlacement]="tooltipPlacement"
 						[tooltipTemplate]="tooltipTemplate"
 						[tooltipAppendToBody]="tooltipAppendToBody"
-						[tooltipDisabled]="dragActive || timeEventResizes.size > 0"
+						[tooltipDisabled]="true"
 						[tooltipDelay]="tooltipDelay"
 						[customTemplate]="eventTemplate"
 						[eventTitleTemplate]="customTitleTemplate"

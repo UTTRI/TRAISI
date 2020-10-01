@@ -63,8 +63,6 @@ export class MultiSelectComponent implements OnInit {
 	 * @param last
 	 */
 	public processPriorValue(last: string): void {
-		console.log('prior: ');
-		console.log(last);
 		this.model = JSON.parse(last);
 	}
 }

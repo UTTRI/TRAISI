@@ -11,11 +11,14 @@ import {
 	ResponseValidationState,
 	SurveyQuestion,
 	SurveyViewer,
-	SurveyRespondentService
+	SurveyRespondentService,
 } from 'traisi-question-sdk';
 import { StatedPreferenceConfig } from '../stated-preference-config.model';
 import { StatedPreferenceTemplateContext } from './stated-preference-template-context.model';
 import { flatMap, concatMap, mergeMap, merge, concat, take, map } from 'rxjs/operators';
+
+import template from './stated-preference-question.component.html';
+import style from './stated-preference-question.component.scss';
 /**
  * Base question component definition for the question type "Stated Preference"
  *
@@ -28,8 +31,8 @@ import { flatMap, concatMap, mergeMap, merge, concat, take, map } from 'rxjs/ope
  */
 @Component({
 	selector: 'traisi-stated-preference-question',
-	template: require('./stated-preference-question.component.html'),
-	styles: [require('./stated-preference-question.component.scss')]
+	template: '' + template,
+	styles: ['' + style],
 })
 export class StatedPreferenceQuestionComponent extends SurveyQuestion<ResponseTypes.OptionSelect[]>
 	implements OnInit, OnVisibilityChanged, OnSaveResponseStatus, AfterViewInit {
@@ -41,7 +44,7 @@ export class StatedPreferenceQuestionComponent extends SurveyQuestion<ResponseTy
 	public inputModel: { value?: string };
 	public context: StatedPreferenceTemplateContext;
 
-	@ViewChild('spForm', {static: true})
+	@ViewChild('spForm', { static: true })
 	public spForm: NgForm;
 
 	/**
@@ -66,19 +69,19 @@ export class StatedPreferenceQuestionComponent extends SurveyQuestion<ResponseTy
 			component: this,
 			distanceMatrixQueries: {
 				origins: new Set(),
-				destinations: new Set()
+				destinations: new Set(),
 			},
 			distanceMatrixQuestionQueries: {
 				origins: new Set(),
-				destinations: new Set()
+				destinations: new Set(),
 			},
-			distanceMatrixMap: {}
+			distanceMatrixMap: {},
 		};
 	}
 
-	public onQuestionShown(): void { }
-	public onQuestionHidden(): void { }
-	public onResponseSaved(): void { }
+	public onQuestionShown(): void {}
+	public onQuestionHidden(): void {}
+	public onResponseSaved(): void {}
 
 	/**
 	 * @private
@@ -89,7 +92,7 @@ export class StatedPreferenceQuestionComponent extends SurveyQuestion<ResponseTy
 		try {
 			let spModel = JSON.parse(value.label);
 			this.model.next(spModel);
-			this.transformToDisplayableData(spModel).subscribe(modelResult => {
+			this.transformToDisplayableData(spModel).subscribe((modelResult) => {
 				this.displayModel.next(modelResult);
 			});
 		} catch (exception) {
@@ -111,7 +114,7 @@ export class StatedPreferenceQuestionComponent extends SurveyQuestion<ResponseTy
 	 * @memberof StatedPreferenceQuestionComponent
 	 */
 	public ngOnInit(): void {
-		this.questionOptions.subscribe(options => {
+		this.questionOptions.subscribe((options) => {
 			if (options.length > 0) {
 				this.parseSpModel(options[0]);
 			}
@@ -208,7 +211,9 @@ export class StatedPreferenceQuestionComponent extends SurveyQuestion<ResponseTy
 	 * @private
 	 * @memberof StatedPreferenceQuestionComponent
 	 */
-	private onSavedResponseData: (response: ResponseData<any>[] | 'none') => void = (response: ResponseData<any>[] | 'none') => {
+	private onSavedResponseData: (response: ResponseData<any>[] | 'none') => void = (
+		response: ResponseData<any>[] | 'none'
+	) => {
 		if (response !== 'none') {
 			let r = JSON.parse(response[0]['value']).value;
 			this.inputModel.value = r;
@@ -238,7 +243,7 @@ export class StatedPreferenceQuestionComponent extends SurveyQuestion<ResponseTy
 			// let value = this.component._responderService.getResponseValue(questionName, this.component.respondent);
 			let value = null;
 			if (type == undefined) {
-				return value[0] === undefined ? "NULL" : value[0].value;
+				return value[0] === undefined ? 'NULL' : value[0].value;
 			} else if (type === 'distance') {
 				return String(this.component.parseDistance.call(this.component, value, arguments));
 			} else if (type === 'time') {
@@ -277,8 +282,6 @@ export class StatedPreferenceQuestionComponent extends SurveyQuestion<ResponseTy
 				return String(this.parseTripRouteDistance(jValue, arguments[1][2]));
 			}
 		} else {
-
-
 			return this.parseMatrix(
 				this.context.distanceMatrixResults,
 				arguments[1][2],
@@ -302,11 +305,10 @@ export class StatedPreferenceQuestionComponent extends SurveyQuestion<ResponseTy
 	 */
 	public parseMatrix(results, to, from, type, mode = 'driving'): string {
 		if (results[mode] === undefined) {
-			return "NULL";
+			return 'NULL';
 		}
-		let rowIndex = results[mode].origin_addresses.findIndex(e => e === this.context.distanceMatrixMap[from]);
-		let colIndex = results[mode].destination_addresses.findIndex(e => e === this.context.distanceMatrixMap[to]);
-
+		let rowIndex = results[mode].origin_addresses.findIndex((e) => e === this.context.distanceMatrixMap[from]);
+		let colIndex = results[mode].destination_addresses.findIndex((e) => e === this.context.distanceMatrixMap[to]);
 
 		if (rowIndex >= 0 && colIndex >= 0) {
 			let val = results[mode].rows[rowIndex].elements[colIndex][type].value;
@@ -365,5 +367,5 @@ export class StatedPreferenceQuestionComponent extends SurveyQuestion<ResponseTy
 	/**
 	 * @memberof StatedPreferenceQuestionComponent
 	 */
-	public ngAfterViewInit(): void { }
+	public ngAfterViewInit(): void {}
 }

@@ -8,3 +8,18 @@ export interface SurveyResponseViewModel {
 }
 
 export type ResponseModel = SurveyResponseViewModel
+
+export interface Address {
+    postalCode?: string;
+    streetAddress?: string;
+    streetNumber?: number;
+    city?: string;
+    province?: string;
+    formattedAddress?: string;
+    id?: string;
+}
+
+export interface ValidationError {
+    message: string;
+}
+

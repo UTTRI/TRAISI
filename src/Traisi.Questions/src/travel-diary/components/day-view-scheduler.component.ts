@@ -20,6 +20,7 @@ import {
 	CalendarEvent,
 	WeekViewAllDayEventRow,
 	WeekViewAllDayEvent,
+	WeekViewHourSegment,
 } from 'calendar-utils';
 import { DragEndEvent, DragMoveEvent } from 'angular-draggable-droppable';
 import templateString from './day-view-scheduler.component.html';
@@ -27,8 +28,6 @@ import styleString from './day-view-scheduler.component.scss';
 import { SurveyRespondentEdit } from 'general/viewer/household-question/models/survey-respondent-edit.model';
 import { SurveyRespondent } from 'traisi-question-sdk';
 import { SurveyRespondentUser } from 'travel-diary/models/consts';
-
-
 
 interface DayViewScheduler extends WeekView {
 	users: SurveyRespondentUser[];
@@ -191,5 +190,12 @@ export class DayViewSchedulerComponent extends CalendarWeekViewComponent impleme
 		const currentColumnIndex = this.view.users.findIndex((user) => user === dayEvent.event.meta.user);
 		const newIndex = currentColumnIndex + columnsMoved;
 		return this.view.users[newIndex];
+	}
+
+	public renderDate(segment: WeekViewHourSegment): string {
+		// segment.date.setHours(segment.date.getHours() + 4);
+		let tDate = new Date(segment.date);
+		tDate.setHours(segment.date.getHours() + 4);
+		return '' + tDate.getHours() + ':00';
 	}
 }

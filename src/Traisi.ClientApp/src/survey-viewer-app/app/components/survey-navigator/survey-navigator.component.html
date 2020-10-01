@@ -1,14 +1,9 @@
-<div
-	id="question-viewer-nav"
-	class="text-center viewer-nav"
-	[class.household-tabs]="viewerState.isSectionActive && viewerState.activeSection.isHousehold"
->
-	<div class="row justify-content-center btn-group align-center">
+<div id="question-viewer-nav" class="text-center viewer-nav">
+	<div class="row justify-content-center btn-group align-center"  #navContainer>
 		<button
-			[ngClass]="navButtonClass"
 			(click)="navigatePrevious()"
 			[disabled]="!(navigator.previousEnabled$ | async)"
-			class="btn btn-secondary pl-4 pr-4 survey-nav-button"
+			class="btn btn-secondary pl-4 pr-4 survey-nav-button survey-nav-button-previous"
 			type="button"
 		>
 			<i class="fas fa-arrow-alt-circle-left mr-1"></i>
@@ -16,24 +11,40 @@
 		</button>
 
 		<button
-			*ngIf="!viewerState.isNavComplete && !viewerState.isNavFinished"
-			[ngClass]="navButtonClass"
+			[popper]="validationPopperContent"
+			[popperHideOnScroll]="true"
+			[popperTrigger]="'none'"
+			[popperHideOnClickOutside]="true"
+			[popperHideOnMouseLeave]="false"
+			[popperTarget]="navContainer"
 			(click)="navigateNext()"
 			[disabled]="!(navigator.nextEnabled$ | async)"
-			class="btn btn-primary pl-4 pr-4 survey-nav-button"
+			class="btn btn-primary pl-4 pr-4 survey-nav-button survey-nav-button-next"
 			type="button"
+			#navigateNextButton
 		>
-			<div *ngIf="!viewerState.isNavComplete">
+			<div>
 				{{ 'Viewer.Next' | translate }}
 				<i class="fas fa-arrow-alt-circle-right ml-1"></i>
 
 				<span *ngIf="false">Has Error</span>
 			</div>
 		</button>
+		<popper-content #validationPopperContent>
+			<div class="validation-popper-title">You have not answered the following questions:</div>
+			<ng-container *ngFor="let question of invalidQuestions | async">
+				<div class="invalid-question-label">
+					<a [routerLink]="" fragment="{{ question.model.questionId }}">{{ question.model.name }}</a>
+				</div>
+				<ul class="invalid-question-messages">
+					<li class="invalid-question-message" *ngFor="let error of question.validationErrors">
+						<span [innerHTML]="error.message"></span>
+					</li>
+				</ul>
+			</ng-container>
+		</popper-content>
 		<button
-			*ngIf="viewerState.isNavFinished"
-			[ngClass]="navButtonClass"
-			[disabled]="!viewerState.isNavComplete"
+			*ngIf="false"
 			(click)="navigateCompleteSurvey()"
 			class="btn btn-primary pl-4 pr-4 survey-nav-button"
 			type="button"

@@ -1,4 +1,5 @@
 using NetTopologySuite.Geometries;
+using Traisi.Sdk.Interfaces;
 
 namespace Traisi.Sdk.Library.ResponseTypes
 {
@@ -6,6 +7,6 @@ namespace Traisi.Sdk.Library.ResponseTypes
     {
         Point Location {get;set;}
 
-        string Address { get; set; }
+        Address Address { get; set; }
     }
 }

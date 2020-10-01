@@ -14,5 +14,7 @@ namespace Traisi.Sdk.Library.ResponseTypes {
 		DateTimeOffset TimeB { get; set; }
 
 		int? Order { get; set; }
+
+		public string Mode {get;set;}
 	}
 }

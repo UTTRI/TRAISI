@@ -173,15 +173,25 @@ namespace Traisi.Data
                 .HasValue<OptionSelectResponse>((int)ResponseTypes.OptionSelectResponse)
                 .HasValue<NumberResponse>((int)ResponseTypes.NumberResponse);
 
+            builder.Entity<TimelineResponse>().Property(x => x.Identifier).IsRequired(false);
+
             builder.Entity<SurveyResponse>().HasMany(s => s.ResponseValues).WithOne(v => v.SurveyResponse).OnDelete(DeleteBehavior.Cascade);
             builder.Entity<SurveyResponse>().ToTable("SurveyResponses").HasOne(p => p.QuestionPart).WithMany().OnDelete(DeleteBehavior.Cascade);
             builder.Entity<SurveyResponse>().Property(x => x.Excluded).HasDefaultValue(false);
+            builder.Entity<SurveyResponse>().Property(x => x.IsPartial).HasDefaultValue(false);
             builder.Entity<SurveyRespondent>().ToTable("SurveyRespondents")
                 .HasDiscriminator<int>("RespondentType")
                 .HasValue<PrimaryRespondent>(0)
                 .HasValue<SubRespondent>(1);
 
             builder.Entity<PrimaryRespondent>().HasMany(o => o.SurveyAccessRecords).WithOne(o => o.Respondent).OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<PrimaryRespondent>().Property(m => m.HomeLocation).IsRequired(false);
+            builder.Entity<PrimaryRespondent>().Property(m => m.SurveyAccessDateTime).HasDefaultValue((DateTimeOffset)DateTime.MinValue);
+            builder.Entity<SubRespondent>().Property(m => m.HomeLocation).IsRequired(false);
+            builder.Entity<PrimaryRespondent>().Property(m => m.HomeAddress).IsRequired(false);
+            builder.Entity<SubRespondent>().Property(m => m.HomeAddress).IsRequired(false);
+            builder.Entity<PrimaryRespondent>().Property(m => m.Meta).IsRequired(false);
+            builder.Entity<SubRespondent>().Property(m => m.Meta).IsRequired(false);
             builder.Entity<SubRespondent>().HasOne(o => o.PrimaryRespondent).WithMany();
 
             builder.Entity<SurveyRespondentGroup>().ToTable("SurveyRespondentGroups")

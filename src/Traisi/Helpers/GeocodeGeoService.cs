@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 using Traisi.Helpers.Interfaces;
+using Traisi.Sdk.Interfaces;
 
 namespace Traisi.Helpers
 {
@@ -30,11 +31,11 @@ namespace Traisi.Helpers
             this._geocodeClient = new RestClient(GEOCODER_API_URL);
         }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="address"></param>
-		/// <returns></returns>
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="address"></param>
+        /// <returns></returns>
         public async Task<Tuple<double, double>> GeocodeAsync(string address)
         {
             var request = new RestRequest(Method.GET);
@@ -64,7 +65,7 @@ namespace Traisi.Helpers
         /// <param name="latitude"></param>
         /// <param name="longitude"></param>
         /// <returns></returns>
-        public async Task<JObject> ReverseGeocodeAsync(double latitude, double longitude)
+        public async Task<Address> ReverseGeocodeAsync(double latitude, double longitude)
         {
             var request = new RestRequest(Method.GET);
             request.AddParameter("latt", latitude);
@@ -74,7 +75,16 @@ namespace Traisi.Helpers
             request.AddParameter("auth", this._apiKey);
             var response = await this._geocodeClient.ExecuteAsync(request);
             var content = Newtonsoft.Json.Linq.JObject.Parse(response.Content);
-            return content;
+
+            var address = new Address()
+            {
+                City = content.Value<string>("city"),
+                PostalCode = content.Value<string>("postal"),
+                Province = content.Value<string>("prov"),
+                StreetAddress = content.Value<string>("staddress"),
+                StreetNumber = int.Parse(content.Value<string>("stnumber"))
+            };
+            return address;
         }
 
     }

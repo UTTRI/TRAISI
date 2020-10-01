@@ -1,3 +1,5 @@
+using Traisi.Sdk.Interfaces;
+
 namespace Traisi.Sdk.GeoServices
 {
     public interface IGeocodeResult
@@ -6,6 +8,6 @@ namespace Traisi.Sdk.GeoServices
 
         double Longitude { get; set; }
 
-        object Address { get; set; }
+        Address Address { get; set; }
     }
 }

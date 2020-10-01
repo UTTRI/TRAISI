@@ -1,12 +1,16 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using Traisi.Sdk.Attributes;
 using Traisi.Sdk.Enums;
 using Traisi.Sdk.Interfaces;
+using Traisi.Sdk.Library.ResponseTypes;
 
 namespace Traisi.Sdk.Questions
 {
     [SurveyQuestion(QuestionResponseType.Location, CodeBundleName = "traisi-questions-map.module.js")]
-    public class MapQuestion : ISurveyQuestion
+    public class MapQuestion : QuestionHook, ISurveyQuestion
     {
         public string TypeName
         {
@@ -60,12 +64,31 @@ namespace Traisi.Sdk.Questions
             Resource = "mapquestion-purpose")]
         public string Purpose = "home";
 
+
+        public const string HomeLocationProperty = "Home Location";
         
         [QuestionConfiguration(ConfigurationValueType.Boolean,
-            DisplayName = "Home Location",
+            DisplayName = HomeLocationProperty,
             Description = "Whether or not this response will be saved as the respondent's home location.",
             SurveyBuilderValueType = QuestionBuilderType.Switch,
             DefaultValue = false)]
         public bool IsHomeLocation = false;
+
+        public override void Execute(ISurveyRespondent respondent,  IEnumerable<IResponseType> responseValues, IEnumerable<IQuestionConfiguration>  config)
+        {
+            foreach(var x in config) {
+                if(x.Name == HomeLocationProperty) {
+                    if(bool.TryParse(x.Value, out var isHomeLocation)) {
+                        if(isHomeLocation) {
+                            respondent.HomeLocation = (responseValues.First() as ILocationResponse).Location;
+                            respondent.HomeAddress = (responseValues.First() as ILocationResponse).Address;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return;
+        }
     }
 }

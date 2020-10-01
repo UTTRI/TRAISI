@@ -1,0 +1,30 @@
+{
+	"compilerOptions": {
+		"target": "es5",
+		"module": "amd",
+		"moduleResolution": "node",
+		"sourceMap": true,
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"noImplicitAny": false,
+		"suppressImplicitAnyIndexErrors": true,
+		"lib": ["es6", "dom"],
+		// "rootDirs": ["."],
+		"types": [ "node", "jasmine"],
+		"baseUrl": "src",
+		"traceResolution": false,
+		
+		"paths": {
+		
+			//	// "*": ["../*", "generated/*"]
+		}
+	},
+	
+	"angularCompilerOptions": {
+		"genDir": "aot/",
+		"skipMetadataEmit": true,
+		"enableIvy": false
+	  },
+	
+	"exclude": ["dist", "node_modules"]
+}

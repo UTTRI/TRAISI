@@ -4,10 +4,11 @@ import { Observable } from 'rxjs';
 import { SurveyViewerService } from 'app/services/survey-viewer.service';
 import { take, tap } from 'rxjs/operators';
 import { SurveyData } from 'app/models/survey-data.model';
+import { SurveyViewerSession } from 'app/services/survey-viewer-session.service';
 
 @Injectable()
 export class SurveyDataResolver implements Resolve<SurveyData> {
-	constructor(private _viewer: SurveyViewerService) {}
+	constructor(private _viewer: SurveyViewerService, private _session: SurveyViewerSession) {}
 
 	/**
 	 *

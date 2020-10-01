@@ -3,14 +3,19 @@ const WebpackSystemRegister = require('webpack-system-register');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const TsConfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const WebpackBar = require('webpackbar');
-module.exports = {
+const SpeedMeasurePlugin = require('speed-measure-webpack-plugin');
+
+const smp = new SpeedMeasurePlugin();
+
+module.exports = smp.wrap({
 	entry: {
 		general: path.join(process.cwd(), './src/general/viewer/traisi-questions-viewer.module.ts'),
 		'general-builder': path.join(process.cwd(), './src/general/builder/traisi-questions-builder.module.ts'),
 		map: path.join(process.cwd(), './src/map-question/traisi-map-question.module.ts'),
 		sp: path.join(process.cwd(), './src/stated-preference/viewer/traisi-sp-question-viewer.module.ts'),
 		'sp-builder': path.join(process.cwd(), './src/stated-preference/builder/traisi-sp-question-builder.module.ts'),
-		'travel-diary': path.join(process.cwd(), './src/travel-diary/travel-diary-question.module.ts')
+		'travel-diary': path.join(process.cwd(), './src/travel-diary/travel-diary-question.module.ts'),
+		'route-select': path.join(process.cwd(), './src/route-select/route-select-question.module.ts'),
 	},
 
 	output: {
@@ -30,7 +35,10 @@ module.exports = {
 		rules: [
 			{
 				test: /\.tsx?$/,
-				exclude: [path.resolve(__dirname, 'node_modules/mapbox-gl'), path.resolve(__dirname, 'node_modules/angular-calendar/')],
+				exclude: [
+					path.resolve(__dirname, 'node_modules/mapbox-gl'),
+					path.resolve(__dirname, 'node_modules/angular-calendar/'),
+				],
 				use: {
 					loader: 'babel-loader',
 					options: {},
@@ -120,6 +128,7 @@ module.exports = {
 		/^@angular\/core/,
 		/^@angular\/upgrade/,
 		/^@angular\/upgrade/,
+		/^@angular\/router/,
 		/^@angular\/forms/,
 		/^@angular\/platform-browser/,
 		/^@angular/,
@@ -137,4 +146,4 @@ module.exports = {
 			patterns: [{ from: 'dist/', to: '../../Traisi/development', toType: 'dir' }],
 		}),
 	],
-};
+});

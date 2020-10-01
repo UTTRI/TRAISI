@@ -2,13 +2,27 @@
 
 <header>
 	<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-		<ndc-dynamic *ngIf="headerComponent" [ndcDynamicComponent]="headerComponent" [ndcDynamicInputs]="headerInputs">
-		</ndc-dynamic>
+		<span class="content-header" *ngIf="navigator.navigationState$ | async as state">
+			<span class="menu-row">
+				<i class="fas fa-bars" (click)="menuToggled = !menuToggled"></i>
+			</span>
+			<span class="page-header survey-section-header">{{ state.activePage?.label }}</span>
+			<span class="section-header survey-section-header" *ngIf="state.activeSectionId >= 0">
+				>
+				<span [innerHTML]="processedSectionLabel(state.activeSection.label) | safeHtml"></span>
+			</span>
+			<span class="respondent-header" *ngIf="state.activeSection?.isHousehold">
+				[ {{ state.activeRespondent.name }} ]
+			</span>
+		</span>
+		<ng-template headerTemplate></ng-template>
+		<!-- <ndc-dynamic *ngIf="headerComponent" [ndcDynamicComponent]="headerComponent" [ndcDynamicInputs]="headerInputs">
+		</ndc-dynamic> -->
 	</nav>
 </header>
 <div class="container-fluid">
 	<div class="row">
-		<nav class="col-md-2 d-none d-md-block bg-light sidebar">
+		<nav class="bg-light sidebar" [class.toggled]="menuToggled">
 			<div class="sidebar-sticky">
 				<div class="survey-title text-center">
 					{{ session.surveyTitle }}
@@ -20,19 +34,8 @@
 			</div>
 		</nav>
 		<!-- Begin page content -->
-		<main role="main" class="col-md-9 ml-sm-auto col-lg-10 container" #surveyBodyContainer>
+		<main role="main" class="ml-sm-auto survey-container" [class.menuToggled]="!menuToggled" #surveyBodyContainer>
 			<div *ngIf="navigator.navigationState$ | async as state; else loading" class="questions-outer-container">
-				<div class="content-header">
-					<span class="page-header survey-section-header">{{ state.activePage?.label }}</span>
-					<span class="section-header survey-section-header" *ngIf="state.activeSectionId >= 0">
-						>
-						<span [innerHTML]="processedSectionLabel(state.activeSection.label) | safeHtml"></span>
-					</span>
-					<span class="respondent-header" *ngIf="state.activeSection?.isHousehold">
-						[ {{ state.activeRespondent.name }} ]
-					</span>
-				</div>
-
 				<div class="questions-container flex-grow-1" #questionsContainer>
 					<div
 						class="question-section"
@@ -46,7 +49,7 @@
 						<ng-container
 							*ngFor="let question of state.activeQuestionInstances; trackBy: trackById.bind(this); let i = index"
 						>
-							<div class="traisi-question-container-outer" >
+							<div class="traisi-question-container-outer" [id]="'question' + question.model.questionId">
 								<div
 									class="valid-state-container"
 									*ngIf="
@@ -61,8 +64,8 @@
 									[surveyViewer]="ref"
 									[ngClass]="{
 										invalid:
-											!question.validationState?.clientValidationState ===
-											validationStates.INVALID
+											(question.validationState?.clientValidationState ===
+											validationStates.INVALID)
 									}"
 									[activeQuestionIndex]="i"
 									[questionInstance]="question"
@@ -71,13 +74,11 @@
 									[attr.data-questionid]="question.model.questionId"
 									[attr.data-question-name]="question.model.name"
 									[attr.data-multiview]="state.isMultiView"
-									[attr.data-name]="'#question'+question.model.questionId"
-									[id]="'#question'+question.model.questionId" 
+									[attr.data-name]="'#question' + question.model.questionId"
 									[surveyViewQuestion]="question.model"
 									[surveyId]="surveyId"
-									[repeatNumber]="0"
+									[repeatNumber]="question.repeat"
 									[sectionRepeatNumber]="0"
-									
 									[questionSectionElement]="questionSectionElement"
 									#questions
 								>
@@ -109,7 +110,7 @@
 														?.relatedQuestions
 												"
 											>
-												<a class="related-question-link" (click)="navigateToQuestion(id)">
+												<a class="related-question-link" [routerLink]="" fragment="{{id}}">
 													{{ getQuestionModel(id).name }}
 												</a>
 											</div>
@@ -121,7 +122,7 @@
 					</div>
 				</div>
 
-				<div
+				<!-- <div
 					id="question-viewer-nav"
 					class="text-center viewer-nav"
 					[class.household-tabs]="viewerState.isSectionActive && viewerState.activeSection.isHousehold"
@@ -167,7 +168,7 @@
 							</div>
 						</button>
 					</div>
-				</div>
+				</div> -->
 			</div>
 			<ng-template #loading>
 				Loading
@@ -178,8 +179,10 @@
 </div>
 <footer class="footer">
 	<div class="container">
-		<ndc-dynamic *ngIf="footerComponent" [ndcDynamicComponent]="footerComponent" [ndcDynamicInputs]="footerInputs">
-		</ndc-dynamic>
+		<traisi-survey-navigator></traisi-survey-navigator>
+		<ng-template footerTemplate></ng-template>
+		<!-- <ndc-dynamic *ngIf="footerComponent" [ndcDynamicComponent]="footerComponent" [ndcDynamicInputs]="footerInputs">
+		</ndc-dynamic> -->
 
 		<div class="admin-container">
 			<traisi-admin-toolbar *ngIf="isAdmin"></traisi-admin-toolbar>

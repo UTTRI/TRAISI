@@ -125,7 +125,7 @@
 		<Message Text="Building admin angular app..." Importance="high" />
 		<Exec WorkingDirectory="$(SpaRoot)" Command="npm run build -- --prod  --source-map" StandardOutputImportance="low" StandardErrorImportance="low" />
 		<Message Text="Building survey viewer angular app..." Importance="high" />
-		<Exec WorkingDirectory="$(SpaRoot)" Command="npm run build -- survey-viewer-app --aot=false --build-optimizer=false --source-map" StandardOutputImportance="low" StandardErrorImportance="low" />
+		<Exec WorkingDirectory="$(SpaRoot)" Command="npm run build -- survey-viewer-app --aot=true --build-optimizer=true --source-map --prod=true" StandardOutputImportance="low" StandardErrorImportance="low" />
 		<Message Text="Finished building client side components." Importance="high" />
 	</Target>
 

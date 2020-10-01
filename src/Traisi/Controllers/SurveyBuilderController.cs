@@ -28,6 +28,7 @@ using Traisi.ViewModels.Questions;
 using Traisi.ViewModels.SurveyBuilder;
 using Traisi.Models.ViewModels;
 using Traisi.Models.Extensions;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Traisi.Controllers
 {
@@ -43,17 +44,26 @@ namespace Traisi.Controllers
         private readonly IFileDownloader _fileDownloader;
         private readonly IOptions<RequestLocalizationOptions> _localizationOptions;
 
+        private readonly IWebHostEnvironment _hostingEnvironment;
+
         private readonly IMapper _mapper;
 
         /// <summary>
-        /// Constructor the controller.
+        /// 
         /// </summary>
-        /// <param name="unitOfWork">Unit of work service.</param>
-        /// <param name="questionTypeManager">Question type manager service.</param>
+        /// <param name="unitOfWork"></param>
+        /// <param name="fileDownloaderService"></param>
+        /// <param name="authorizationService"></param>
+        /// <param name="accountManager"></param>
+        /// <param name="questionTypeManager"></param>
+        /// <param name="surveyBuilderService"></param>
+        /// <param name="localizationOptions"></param>
+        /// <param name="mapper"></param>
+        /// <param name="hostingEnvironment"></param>
         public SurveyBuilderController(IUnitOfWork unitOfWork, IFileDownloader fileDownloaderService, IAuthorizationService authorizationService, IAccountManager accountManager,
             IQuestionTypeManager questionTypeManager, ISurveyBuilderService surveyBuilderService,
              IOptions<RequestLocalizationOptions> localizationOptions,
-             IMapper mapper)
+             IMapper mapper, IWebHostEnvironment hostingEnvironment)
         {
             this._unitOfWork = unitOfWork;
             this._authorizationService = authorizationService;
@@ -63,6 +73,7 @@ namespace Traisi.Controllers
             this._fileDownloader = fileDownloaderService;
             this._localizationOptions = localizationOptions;
             this._mapper = mapper;
+            this._hostingEnvironment = hostingEnvironment;
         }
 
         [HttpGet("question-types")]
@@ -319,7 +330,8 @@ namespace Traisi.Controllers
                     {
                         var questionPartView = await this._unitOfWork.QuestionPartViews.GetQuestionPartViewWithStructureAsync(updatedQPartView.Id);
                         this._surveyBuilderService.UpdateQuestionPartName(surveyId, questionPartView.QuestionPart, updatedQPartView.QuestionPart?.Name);
-                        this._surveyBuilderService.UpdateQuestionPartViewOptions(questionPartView, updatedQPartView.isOptional, updatedQPartView.isHousehold, updatedQPartView.repeatSourceQuestionName, updatedQPartView.Icon);
+                        this._surveyBuilderService.UpdateQuestionPartViewOptions(questionPartView, updatedQPartView.isOptional, updatedQPartView.isHousehold, updatedQPartView.repeatSourceQuestionName,
+                        updatedQPartView.repeatSourceQuestionId != null ? int.Parse(updatedQPartView.repeatSourceQuestionId) : 0, updatedQPartView.Icon);
                         this._surveyBuilderService.SetQuestionPartViewLabel(questionPartView, updatedQPartView.Label.Value, updatedQPartView.Label.Language);
                         this._surveyBuilderService.SetQuestionPartViewDescriptionLabel(questionPartView, updatedQPartView.DescriptionLabel.Value, updatedQPartView.Label.Language);
                         questionPartView.IsMultiView = updatedQPartView.IsMultiView;
@@ -327,7 +339,8 @@ namespace Traisi.Controllers
                         if (updatedQPartView.CATIDependent != null)
                         {
                             var catiConnectedQPartView = await this._unitOfWork.QuestionPartViews.GetQuestionPartViewWithStructureAsync(updatedQPartView.CATIDependent.Id);
-                            this._surveyBuilderService.UpdateQuestionPartViewOptions(catiConnectedQPartView, updatedQPartView.isOptional, updatedQPartView.isHousehold, updatedQPartView.repeatSourceQuestionName, updatedQPartView.Icon);
+                            this._surveyBuilderService.UpdateQuestionPartViewOptions(catiConnectedQPartView, updatedQPartView.isOptional, updatedQPartView.isHousehold,
+                            updatedQPartView.repeatSourceQuestionName, updatedQPartView.repeatSourceQuestionId != null ? int.Parse(updatedQPartView.repeatSourceQuestionId) : 0, updatedQPartView.Icon);
                             this._surveyBuilderService.SetQuestionPartViewLabel(catiConnectedQPartView, updatedQPartView.CATIDependent.Label.Value, updatedQPartView.Label.Language);
                         }
 
@@ -1088,7 +1101,8 @@ namespace Traisi.Controllers
         public async Task<IActionResult> UpdateQuestionLogic(int surveyId, int questionPartViewId, [FromBody] SurveyLogicViewModel surveyLogicViewModel, [FromQuery] string language = "en")
         {
             var qpv = await this._unitOfWork.QuestionPartViews.GetQuestionPartViewLogic(questionPartViewId);
-            if(qpv == null) {
+            if (qpv == null)
+            {
                 return new NotFoundResult();
             }
             var surveyLogic = _mapper.Map<SurveyLogic>(surveyLogicViewModel, opts =>
@@ -1096,9 +1110,9 @@ namespace Traisi.Controllers
                 opts.Items["Language"] = language;
             });
             await this._surveyBuilderService.UpdateQuestionLogic(qpv, surveyLogic);
-            var idMap = _mapper.Map<GeneratedIdsViewModel>(surveyLogic); 
+            var idMap = _mapper.Map<GeneratedIdsViewModel>(surveyLogic);
             return new OkObjectResult(idMap);
-           
+
         }
 
         /// <summary>
@@ -1240,6 +1254,19 @@ namespace Traisi.Controllers
             {
                 return new NotFoundResult();
             }
+        }
+
+        [HttpPost("surveys/{surveyId}/image")]
+        [Produces(typeof(List<SurveyLogicRulesModel>))]
+        public async Task<IActionResult> UploadSurveyImage(int surveyId, [FromBody] string imageData)
+        {
+
+            var survey = await this._unitOfWork.Surveys.GetAsync(surveyId);
+            var byteData = Convert.FromBase64String(imageData);
+            string projectRootPath = _hostingEnvironment.ContentRootPath;
+            var path = Path.Combine(projectRootPath, surveyId.ToString(), Guid.NewGuid().ToString());
+            await System.IO.File.WriteAllBytesAsync(path, byteData);
+            return new OkObjectResult(path);
         }
 
         private void AddErrors(IEnumerable<string> errors)

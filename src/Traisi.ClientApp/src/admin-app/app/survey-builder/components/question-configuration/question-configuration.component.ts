@@ -50,8 +50,9 @@ import { QuestionResponseType } from 'app/survey-builder/models/question-respons
 import { SurveyBuilderEditorData } from 'app/survey-builder/services/survey-builder-editor-data.service';
 import { QuestionConditionalOperator } from 'app/survey-builder/models/question-conditional-operator.model';
 import { SurveyLogic } from 'app/survey-builder/models/survey-logic.model';
-import { Observable } from 'rxjs';
+import { Observable, of, from } from 'rxjs';
 import { SurveyLogicQueryBuilderComponent } from '../survey-logic-query-builder/survey-logic-query-builder.component';
+import { filter, tap, toArray } from 'rxjs/operators';
 
 // override p with div tag
 const Parchment = Quill.import('parchment');
@@ -140,9 +141,6 @@ export class QuestionConfigurationComponent implements OnInit, AfterViewInit {
 	@ViewChild('catiPipeTreeSelect')
 	public catiPipeTreeSelect: DropdownTreeviewSelectComponent;
 
-	@ViewChild('repeatTreeSelect')
-	public repeatTreeSelect: DropdownTreeviewSelectComponent;
-
 	private questionQuillEditor: any;
 	private catiQuestionQuillEditor: any;
 
@@ -153,6 +151,8 @@ export class QuestionConfigurationComponent implements OnInit, AfterViewInit {
 
 	@ViewChild('queryBuilder')
 	public queryBuilder: SurveyLogicQueryBuilderComponent;
+
+	public repeatQuestionList: Observable<QuestionPartView[]>;
 
 	constructor(
 		private builderService: SurveyBuilderService,
@@ -165,6 +165,7 @@ export class QuestionConfigurationComponent implements OnInit, AfterViewInit {
 
 	public ngOnInit(): void {
 		// this.conditionalSource = this._builder.getQuestionLogic(this._editorData.surveyId, this.questionBeingEdited.id, this._editorData.activeLanguage);
+		this.repeatQuestionList = from([]);
 	}
 
 	public reset(): void {
@@ -179,11 +180,6 @@ export class QuestionConfigurationComponent implements OnInit, AfterViewInit {
 	public catiPipeDropdown(e: TreeviewSelection): string {
 		let selected = (<DropdownTreeviewSelectI18n>this.catiPipeTreeSelect.i18n).selectedItem;
 		return selected !== undefined && selected !== null ? selected.text : 'Pipe Question';
-	}
-
-	public repeatDropdown(e: TreeviewSelection): string {
-		let selected = (<DropdownTreeviewSelectI18n>this.repeatTreeSelect.i18n).selectedItem;
-		return selected !== undefined && selected !== null ? selected.text : 'Select Question';
 	}
 
 	public ngAfterViewInit() {
@@ -234,6 +230,15 @@ export class QuestionConfigurationComponent implements OnInit, AfterViewInit {
 		}
 	}
 
+	public repeatSourceChanged(event: QuestionPartView): void {
+		console.log(event);
+		if (event) {
+			this.questionBeingEdited.repeatSourceQuestionName = event.questionPart.name + '~' + event.questionPart.id;
+		} else {
+			this.questionBeingEdited.repeatSourceQuestionName = null;
+		}
+	}
+
 	public parameterComponents(): Array<any> {
 		let widgetComponents = [
 			{ id: 'Checkbox', component: CheckboxComponent },
@@ -259,7 +264,7 @@ export class QuestionConfigurationComponent implements OnInit, AfterViewInit {
 		}, 0);
 	}
 
-	public saveConfiguration(): void { 
+	public saveConfiguration(): void {
 		this.configurationValues = [];
 		this.childrenComponents.forEach((compRef) => {
 			let config = new QuestionConfigurationValue(
@@ -324,12 +329,12 @@ export class QuestionConfigurationComponent implements OnInit, AfterViewInit {
 		if (!enabled) {
 			this.questionBeingEdited.repeatSourceQuestionName = null;
 		} else {
-			let repeatQSelected = (<DropdownTreeviewSelectI18n>this.repeatTreeSelect.i18n).selectedItem;
-			if (repeatQSelected) {
-				this.questionBeingEdited.repeatSourceQuestionName = repeatQSelected.value;
-			} else {
-				this.questionBeingEdited.repeatSourceQuestionName = null;
-			}
+			//let repeatQSelected = (<DropdownTreeviewSelectI18n>this.repeatTreeSelect.i18n).selectedItem;
+			//if (repeatQSelected) {
+			//	this.questionBeingEdited.repeatSourceQuestionName = repeatQSelected.value;
+			//} else {
+			//	this.questionBeingEdited.repeatSourceQuestionName = null;
+			//}
 		}
 	}
 
@@ -380,9 +385,6 @@ export class QuestionConfigurationComponent implements OnInit, AfterViewInit {
 			}
 			if (this.catiPipeTreeSelect) {
 				this.catiPipeTreeSelect.i18n.getText = (e) => this.pipeDropdown(e);
-			}
-			if (this.repeatTreeSelect) {
-				this.repeatTreeSelect.i18n.getText = (e) => this.repeatDropdown(e);
 			}
 		}, 0);
 
@@ -449,8 +451,10 @@ export class QuestionConfigurationComponent implements OnInit, AfterViewInit {
 	}
 
 	private allowAsRepeatSource(typeValue: string): boolean {
-		let responseType = this.getQuestionResponseType(typeValue);
+		let responseType = this._editorData.questionTypeMap.get(typeValue)?.responseType;
 		if (responseType === QuestionResponseType.Number) {
+			return true;
+		} else if (responseType === QuestionResponseType.Timeline) {
 			return true;
 		} else {
 			return false;
@@ -729,6 +733,15 @@ export class QuestionConfigurationComponent implements OnInit, AfterViewInit {
 	 * Called when the configuration dialog is shown and input properties set
 	 */
 	public configurationShown(): void {
+		this.repeatQuestionList = from(this._editorData.questionList).pipe(
+			filter((x) => this.allowAsRepeatSource(x.questionPart.questionType) && x.questionPart !== undefined),
+			toArray()
+		);
+
+		this.repeatQuestionList.subscribe((x) => {
+			console.log(x);
+		});
+
 		this.conditionalSource = this._builder.getQuestionLogic(
 			this._editorData.surveyId,
 			this.questionBeingEdited.id,

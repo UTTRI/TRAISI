@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { SurveyQuestion, ResponseTypes, ResponseValidationState, ResponseData } from 'traisi-question-sdk';
 import templateString from './heading-question.component.html';
 import styleString from './heading-question.component.scss';
@@ -6,6 +6,7 @@ import styleString from './heading-question.component.scss';
 	selector: 'traisi-heading-question',
 	template: '' + templateString,
 	styles: ['' + styleString],
+	encapsulation: ViewEncapsulation.None
 })
 export class HeadingQuestionComponent extends SurveyQuestion<ResponseTypes.None> implements OnInit {
 	public constructor() {

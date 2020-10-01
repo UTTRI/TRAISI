@@ -104,7 +104,6 @@ export class QuestionPageDisplayComponent implements OnInit, AfterViewInit {
 
 		this._client.getSurveyViewPagesWithQuestionsAndOptions(this.surveyId, 'Standard', 'en').subscribe({
 			next: (model) => {
-				console.log(model);
 				this._questionStructure = model;
 			},
 			error: (error) => {
@@ -245,7 +244,6 @@ export class QuestionPageDisplayComponent implements OnInit, AfterViewInit {
 	 */
 	public editQuestionConfiguration(event: any, question: any): void {
 		event.stopPropagation();
-		console.log(question);
 		this.questionBeingEdited = question;
 		this.dragResult = new Subject<boolean>();
 		this.addingNewQuestion = false;
@@ -418,7 +416,6 @@ export class QuestionPageDisplayComponent implements OnInit, AfterViewInit {
 				cleanedQuestion.catiDependent.questionPartViewChildren = null;
 			}
 			cleanedQuestion.conditionals = this.qConfiguration.getUpdatedConditionals();
-			console.log(cleanedQuestion); 
 			this.surveyBuilderService.updateQuestionPartViewData(this.surveyId, cleanedQuestion).subscribe(
 				(result) => {
 					this._client
@@ -795,7 +792,6 @@ export class QuestionPageDisplayComponent implements OnInit, AfterViewInit {
 	 * @param dropResult
 	 */
 	public onDropInPart(partId: number, dropResult: DropResult): void {
-		console.log('on drop in part');
 		if (this.dragResult) {
 			if (partId !== dropResult.payload.id) {
 				let questionPart = this.qPartQuestions.get(partId);

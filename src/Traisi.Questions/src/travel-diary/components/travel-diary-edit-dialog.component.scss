@@ -1,17 +1,38 @@
-@import "~@ng-select/ng-select/themes/default.theme.css";
+@import '~@ng-select/ng-select/themes/default.theme.css';
 @import '~flatpickr/dist/flatpickr.css';
-:host {
-    
-}
 
 form :not(.ng-pristine).ng-invalid {
-    border: solid 1px red;
+	border: solid 1px red;
 }
 
 btn.disabled {
-    cursor: default;
+	cursor: default;
 }
 
 .delete-container {
-    flex-grow: 1;
+	flex-grow: 1;
+}
+
+form .ng-invalid {
+	border: solid 1px red;
+}
+
+.invalid-feedback {
+	margin-top: 10px;
+    height: 30px;
+}
+
+.missingMap {
+	border: solid 1px red;
+}
+
+.ng-invalid + .invalid-feedback {
+	display: block;
+}
+.ng-valid + .invalid-feedback {
+	display: none;
+}
+
+.info-feedback {
+	
 }

@@ -98,7 +98,7 @@ namespace Traisi.Services
                 await this
                     ._unitOfWork
                     .SurveyResponses
-                    .GetMostRecentResponseNoValuesForQuestionByRespondentAsync(survey, questionIds, (SurveyRespondent)respondent);
+                    .ListSurveyResponsesForQuestionsAsync(questionIds.ToList(), (SurveyRespondent)respondent);
             if (surveyResponses != null)
             {
                 foreach (var response in surveyResponses)
@@ -134,6 +134,7 @@ namespace Traisi.Services
                 this
                     ._questionTypeManager
                     .QuestionTypeDefinitions[question.QuestionType];
+
 
             if (type.ResponseValidator != null)
             {
@@ -267,11 +268,16 @@ namespace Traisi.Services
                         .ListSurveyLogicErrorsForResponse(surveyResponse,
                         respondent);
                 errorList.AddRange(errors);
+                if (type.Hook != null)
+                {
+                    type.Hook.Execute(respondent, surveyResponse.ResponseValues.Cast<IResponseType>(), surveyResponse.QuestionPart.QuestionConfigurations.Cast<IQuestionConfiguration>());
+                }
                 if (errorList.Count == 0 || force)
                 {
                     this._unitOfWork.SurveyResponses.Update(surveyResponse);
-                    await this._unitOfWork.SaveChangesAsync();
+
                 }
+                await this._unitOfWork.SaveChangesAsync();
                 return new SurveyResponseValidationState()
                 {
                     IsValid = errorList.Count == 0 || force ? true : false,
@@ -347,6 +353,9 @@ namespace Traisi.Services
                 case QuestionResponseType.String:
                     return new List<IResponseType>()
                     { response[0].ToObject<StringResponse>() };
+                   case QuestionResponseType.Number:
+                    return new List<IResponseType>()
+                    { response[0].ToObject<NumberResponse>() };
                 case QuestionResponseType.Location:
                     return new List<IResponseType>()
                     { response[0].ToObject<LocationResponse>() };
@@ -500,12 +509,13 @@ namespace Traisi.Services
                 values
                     .Add(new TimelineResponse()
                     {
-                        Address = responseValue.Address.ToString(),
+                        Address = responseValue.Address,
                         Name = responseValue.Name,
                         Purpose = responseValue.Purpose,
                         Order = responseValue.Order,
                         TimeA = responseValue.TimeA,
                         TimeB = responseValue.TimeB,
+                        Mode = responseValue.Mode,
                         Location =
                             new Point(responseValue.Longitude,
                                 responseValue.Latitude)
@@ -552,8 +562,7 @@ namespace Traisi.Services
             }
             (response.ResponseValues[0] as LocationResponse).Location =
                 new Point(responseData.Longitude, responseData.Latitude);
-            (response.ResponseValues[0] as LocationResponse).Address =
-                responseData.Address.ToString();
+            (response.ResponseValues[0] as LocationResponse).Address = responseData.Address;
             return;
         }
 

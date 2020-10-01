@@ -4,6 +4,7 @@ using Traisi.Data.Models.ResponseTypes;
 using Newtonsoft.Json.Linq;
 using System;
 using Traisi.Sdk.Library.ResponseTypes;
+using Traisi.Sdk.Interfaces;
 
 namespace Traisi.ViewModels.SurveyViewer
 {
@@ -15,7 +16,7 @@ namespace Traisi.ViewModels.SurveyViewer
 
     public class TimelineResponseValueViewModel
     {
-        public string Address { get; set; }
+        public Address Address { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         public DateTimeOffset TimeA { get; set; }
@@ -23,5 +24,7 @@ namespace Traisi.ViewModels.SurveyViewer
         public string Name { get; set; }
         public string Purpose { get; set; }
         public int Order { get; set; }
+
+        public string Mode {get;set;}
     }
 }

@@ -24,6 +24,14 @@ export class QuestionConfigurationService {
 		return this._configurations[question];
 	}
 
+	/**
+	 * 
+	 * @param question 
+	 */
+	public hasQuestionServerConfiguration(question: string): boolean {
+		return question in this._configurations;
+	}
+
 	public listConfigurations(): { question: string; property: string[], value: string [] }[] {
 		let result = [];
 		for (let k of Object.keys(this._configurations)) {

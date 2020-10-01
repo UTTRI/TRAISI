@@ -76,6 +76,7 @@
             "stylePreprocessorOptions": {
               "includePaths": [
                 ".",
+                "src/shared/assets/scss",
                 "./node_modules"
               ]
             }
@@ -269,6 +270,7 @@
               "includePaths": [
                 ".",
                 "..",
+                "src/shared/assets/scss",
                 "./node_modules"
               ]
             }
@@ -281,7 +283,13 @@
                   "maximumWarning": "6kb"
                 }
               ],
-              "tsConfig": "src/survey-viewer-app/tsconfig.app.es5.json"
+              "tsConfig": "src/survey-viewer-app/tsconfig.app.es5.json",
+              "fileReplacements": [
+                {
+                  "replace": "src/survey-viewer-app/environments/module.ts",
+                  "with": "src/survey-viewer-app/environments/module.es5.ts"
+                }
+              ]
             },
             "production": {
               "budgets": [

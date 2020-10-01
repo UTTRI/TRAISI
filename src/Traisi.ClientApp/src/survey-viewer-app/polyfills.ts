@@ -26,7 +26,7 @@
 // import 'classlist.js';
 
 import 'core-js/features/reflect';
-// import 'core-js/es/promise';
+import 'core-js/es/promise';
 import 'core-js/features/array';
 import 'core-js/features/object';
 import 'core-js/features/symbol';
@@ -35,7 +35,6 @@ import 'core-js/features/symbol/key-for';
 import 'core-js/features/symbol/has-instance';
 import 'core-js/features/symbol/for';
 // import '../shared/systemjs/system.src.js';
-// import 'core-js/features/symbol';
 
 /** IE10 and IE11 requires the following to support `@angular/animation`. ALL Firefox browsers require the following to support `@angular/animation`. **/
 

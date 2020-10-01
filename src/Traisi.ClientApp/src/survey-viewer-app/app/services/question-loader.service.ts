@@ -13,6 +13,8 @@ import {
 	InjectionToken,
 	Type,
 	Inject,
+	NgModuleFactory,
+	SystemJsNgModuleLoader,
 } from '@angular/core';
 import { QuestionLoaderEndpointService } from './question-loader-endpoint.service';
 import {
@@ -28,6 +30,7 @@ import {
 	combineLatest,
 } from 'rxjs';
 import * as AngularCore from '@angular/core';
+import * as AngularRouter from '@angular/router';
 import * as AngularCommon from '@angular/common';
 import * as AngularHttp from '@angular/common/http';
 import * as AngularForms from '@angular/forms';
@@ -39,7 +42,6 @@ import * as alert from 'ngx-bootstrap/alert';
 import * as buttons from 'ngx-bootstrap/buttons';
 import * as modal from 'ngx-bootstrap/modal';
 import * as dropdown from 'ngx-bootstrap/dropdown';
-import * as carousel from 'ngx-bootstrap/carousel';
 import * as datepicker from 'ngx-bootstrap/datepicker';
 import * as BrowserModule from '@angular/platform-browser';
 import * as tooltip from 'ngx-bootstrap/tooltip';
@@ -59,7 +61,7 @@ import * as rxjsOperators from 'rxjs/operators';
 import { UpgradeModule } from '@angular/upgrade/static';
 import { SurveyQuestion, QuestionConfiguration, SurveyViewQuestion } from 'traisi-question-sdk';
 import { QuestionConfigurationService } from './question-configuration.service';
-
+import { jsModule as moduleSupport } from 'environments/module';
 type ComponentFactoryBoundToModule<T> = any;
 
 declare const SystemJS;
@@ -104,6 +106,7 @@ export class QuestionLoaderService {
 	private init(): void {
 		SystemJS.registry.set('@angular/core', SystemJS.newModule(AngularCore));
 		SystemJS.registry.set('@angular/common', SystemJS.newModule(AngularCommon));
+		SystemJS.registry.set('@angular/router', SystemJS.newModule(AngularRouter));
 		SystemJS.registry.set('@angular/common/http', SystemJS.newModule(AngularHttp));
 		SystemJS.registry.set('@angular/forms', SystemJS.newModule(AngularForms));
 		SystemJS.registry.set('@angular/platform-browser', SystemJS.newModule(BrowserModule));
@@ -115,7 +118,7 @@ export class QuestionLoaderService {
 		SystemJS.registry.set('ngx-bootstrap/buttons', SystemJS.newModule(buttons));
 		SystemJS.registry.set('ngx-bootstrap/modal', SystemJS.newModule(modal));
 		SystemJS.registry.set('ngx-bootstrap/dropdown', SystemJS.newModule(dropdown));
-		SystemJS.registry.set('ngx-bootstrap/carousel', SystemJS.newModule(carousel));
+		// SystemJS.registry.set('ngx-bootstrap/carousel', SystemJS.newModule(carousel));
 		SystemJS.registry.set('ngx-bootstrap/tooltip', SystemJS.newModule(tooltip));
 		SystemJS.registry.set('ngx-bootstrap/timepicker', SystemJS.newModule(timePicker));
 		SystemJS.registry.set('traisi-question-sdk', SystemJS.newModule(traisiSdkModule));
@@ -161,23 +164,22 @@ export class QuestionLoaderService {
 					if (!(questionType in this._componentFactories)) {
 						this._componentFactories[questionType] = componentFactory;
 					}
-					console.log('returning here ');
 					return componentFactory;
 				})
 			);
 		} else {
 			return forkJoin([
-				from(SystemJS.import(this._questionLoaderEndpointService.getClientCodeEndpointUrl(questionType))),
+				from(SystemJS.import(this._questionLoaderEndpointService.getClientCodeEndpointUrl(questionType, moduleSupport.es5))),
 				this._questionLoaderEndpointService.getQuestionConfigurationEndpoint(questionType),
 			]).pipe(
 				map(([module, config]: any) => {
 					if (module.default.name in this._moduleRefs) {
 						return this._moduleRefs[module.default.name];
 					}
+
 					const moduleFactory = this.compiler.compileModuleAndAllComponentsSync(module.default);
 					const moduleRef: any = moduleFactory.ngModuleFactory.create(this.injector);
 					this._moduleRefs[<string>module.default.name] = moduleRef;
-
 					this._questionConfigurationService.setQuestionServerConfiguratioByType(questionType, config);
 					return moduleRef;
 				}),
@@ -198,7 +200,6 @@ export class QuestionLoaderService {
 						let provider = componentFactory['ngModule']._providers[key];
 						if (provider !== undefined && provider.hasOwnProperty('dependency')) {
 							hasDependency = true;
-							console.log('has dependency');
 							return this.getQuestionComponentFactory(provider.name);
 						}
 					}
@@ -233,6 +234,25 @@ export class QuestionLoaderService {
 			// 	this._componentFactories[questionType] = componentFactory;
 		}
 		return componentFactory;
+	}
+
+	/**
+	 * Preloads modules for questions, and only once
+	 * @param questions
+	 */
+	public loadModulesForQuestions(questions: SurveyViewQuestion[]): Observable<void> {
+		let unique = new Set<string>();
+		for (let question of questions) {
+			unique.add(question.questionType);
+		}
+		let moduleLoads = [];
+		for(let qType of unique) {
+			
+		}
+
+		return new Observable((obs) => {
+			obs.complete();
+		});
 	}
 
 	/**
@@ -277,7 +297,7 @@ export class QuestionLoaderService {
 		return new Observable((o) => {
 			forkJoin([
 				this.getQuestionComponentFactory(question.questionType),
-				this._questionLoaderEndpointService.getQuestionConfigurationEndpoint(question.questionType),
+				this.getQuestionConfiguration(question),
 			]).subscribe({
 				next: ([componentFactory, configuration]) => {
 					this._questionConfigurationService.setQuestionServerConfiguration(question, configuration);
@@ -299,6 +319,19 @@ export class QuestionLoaderService {
 	 * @param question
 	 */
 	public getQuestionConfiguration(question: SurveyViewQuestion): Observable<any> {
-		return this._questionLoaderEndpointService.getQuestionConfigurationEndpoint(question.questionType);
+		return new Observable((o) => {
+			if (this._questionConfigurationService.hasQuestionServerConfiguration(question.questionType)) {
+				o.next(this._questionConfigurationService.getQuestionServerConfiguration(question.questionType));
+				o.complete();
+			} else {
+				this._questionLoaderEndpointService
+					.getQuestionConfigurationEndpoint(question.questionType)
+					.subscribe((x) => {
+						this._questionConfigurationService.setQuestionServerConfiguration(question, x);
+						o.next(x);
+						o.complete();
+					});
+			}
+		});
 	}
 }

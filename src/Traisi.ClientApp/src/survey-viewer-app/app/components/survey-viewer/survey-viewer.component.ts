@@ -1,8 +1,10 @@
 import { animate, keyframes, query, stagger, style, transition, trigger, state } from '@angular/animations';
 import {
+	AfterContentChecked,
 	AfterContentInit,
 	AfterViewChecked,
 	AfterViewInit,
+	ChangeDetectorRef,
 	Component,
 	ElementRef,
 	Inject,
@@ -16,7 +18,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { SurveyViewerSessionData } from 'app/models/survey-viewer-session-data.model';
 import { SurveyViewerSession } from 'app/services/survey-viewer-session.service';
 import { sortBy } from 'lodash';
-import { flatMap, share } from 'rxjs/operators';
+import { flatMap, mergeMap, share, shareReplay } from 'rxjs/operators';
 import { SurveyUser } from 'shared/models/survey-user.model';
 import { Utilities } from 'shared/services/utilities';
 import {
@@ -46,6 +48,7 @@ import { LOCAL_STORAGE, StorageService } from 'ngx-webstorage-service';
 import { NavigationState } from 'app/models/navigation-state.model';
 import { AuthService } from 'shared/services/auth.service';
 import { SurveyViewerProviders } from 'app/providers/survey-viewer.providers';
+
 interface SpecialPageDataInput {
 	pageHTML: string;
 	pageThemeInfo: string;
@@ -72,7 +75,64 @@ interface SpecialPageDataInput {
 	],
 	providers: [SurveyViewerProviders],
 })
-export class SurveyViewerComponent implements OnInit, AfterViewInit, AfterContentInit, AfterViewChecked {
+export class SurveyViewerComponent
+	implements OnInit, AfterViewInit, AfterContentInit, AfterViewChecked, AfterContentChecked {
+	public get viewerState(): SurveyViewerState {
+		return this._viewerStateService.viewerState;
+	}
+
+	public set viewerState(viewerState: SurveyViewerState) {
+		this._viewerStateService.viewerState = viewerState;
+	}
+
+	public get userShortcode(): string {
+		return this._authService.currentSurveyUser.shortcode;
+	}
+
+	private previousState: NavigationState;
+
+	/**
+	 * Gets whether is admin
+	 */
+	public get isAdmin(): boolean {
+		if (this.currentUser === undefined) {
+			return false;
+		} else {
+			return this.currentUser !== undefined && this.currentUser.roles.includes('super administrator');
+		}
+	}
+
+	/**
+	 *Creates an instance of SurveyViewerComponent.
+	 * @param {SurveyViewerService} surveyViewerService
+	 * @param {SurveyResponderService} _surveyResponderService
+	 * @param {SurveyViewerStateService} _viewerStateService
+	 * @param {SurveyViewerNavigationService} _navigationService
+	 * @param {SurveyViewerSession} _sessionService
+	 * @param {ActivatedRoute} route
+	 * @param {Router} _router
+	 * @param {Title} _titleService
+	 * @param {ElementRef} elementRef
+	 * @memberof SurveyViewerComponent
+	 */
+	constructor(
+		@Inject('SurveyViewerService')
+		private surveyViewerService: SurveyViewerService,
+		private _viewerStateService: SurveyViewerStateService,
+		public navigator: SurveyNavigator,
+		private _sessionService: SurveyViewerSession,
+		private _router: Router,
+		private _route: ActivatedRoute,
+		private _titleService: Title,
+		private elementRef: ElementRef,
+		private _authService: AuthService,
+		@Inject(TraisiValues.SurveyRespondentService) private _respondentService: SurveyViewerRespondentService,
+		@Inject(LOCAL_STORAGE) private _storage: StorageService,
+		private _cd: ChangeDetectorRef
+	) {
+		this.ref = this;
+	}
+
 	public surveyId: number;
 	public titleText: string;
 	public loadedComponents: boolean = false;
@@ -119,14 +179,6 @@ export class SurveyViewerComponent implements OnInit, AfterViewInit, AfterConten
 
 	public validationStates: typeof ResponseValidationState = ResponseValidationState;
 
-	public get viewerState(): SurveyViewerState {
-		return this._viewerStateService.viewerState;
-	}
-
-	public set viewerState(viewerState: SurveyViewerState) {
-		this._viewerStateService.viewerState = viewerState;
-	}
-
 	public pageThemeInfo: any;
 	public viewerTheme: SurveyViewerTheme;
 
@@ -134,49 +186,7 @@ export class SurveyViewerComponent implements OnInit, AfterViewInit, AfterConten
 	public viewDate: Date = new Date();
 	public currentUser: SurveyUser;
 
-	public get userShortcode(): string {
-		return this._authService.currentSurveyUser.shortcode;
-	}
-
-	/**
-	 * Gets whether is admin
-	 */
-	public get isAdmin(): boolean {
-		if (this.currentUser === undefined) {
-			return false;
-		} else {
-			return this.currentUser !== undefined && this.currentUser.roles.includes('super administrator');
-		}
-	}
-
-	/**
-	 *Creates an instance of SurveyViewerComponent.
-	 * @param {SurveyViewerService} surveyViewerService
-	 * @param {SurveyResponderService} _surveyResponderService
-	 * @param {SurveyViewerStateService} _viewerStateService
-	 * @param {SurveyViewerNavigationService} _navigationService
-	 * @param {SurveyViewerSession} _sessionService
-	 * @param {ActivatedRoute} route
-	 * @param {Router} _router
-	 * @param {Title} _titleService
-	 * @param {ElementRef} elementRef
-	 * @memberof SurveyViewerComponent
-	 */
-	constructor(
-		@Inject('SurveyViewerService')
-		private surveyViewerService: SurveyViewerService,
-		private _viewerStateService: SurveyViewerStateService,
-		public navigator: SurveyNavigator,
-		private _sessionService: SurveyViewerSession,
-		private _router: Router,
-		private _titleService: Title,
-		private elementRef: ElementRef,
-		private _authService: AuthService,
-		@Inject(TraisiValues.SurveyRespondentService) private _respondentService: SurveyViewerRespondentService,
-		@Inject(LOCAL_STORAGE) private _storage: StorageService
-	) {
-		this.ref = this;
-	}
+	public menuToggled: boolean = false;
 
 	/**
 	 * Initialization
@@ -192,7 +202,6 @@ export class SurveyViewerComponent implements OnInit, AfterViewInit, AfterConten
 					this._titleService.setTitle(`TRAISI - ${session.surveyTitle}`);
 					return this.surveyViewerService.pageThemeInfoJson;
 				}),
-				share(),
 				flatMap((pageTheme: any) => {
 					this.pageThemeInfo = pageTheme;
 
@@ -230,16 +239,30 @@ export class SurveyViewerComponent implements OnInit, AfterViewInit, AfterConten
 					this.loadedComponents = true;
 					return this.surveyViewerService.getSurveyViewPages(this.surveyId);
 				}),
-				share()
+				shareReplay(1)
 			)
 			.subscribe((pages: SurveyViewPage[]) => {
-				pages.forEach((page) => {
-					// this.headerDisplay.completedPages.push(false);
-				});
 				this.loadQuestions(pages);
 			});
 
 		this.isShowComplete = false;
+		this._route.fragment.subscribe((f) => {
+			const element = document.querySelector('#question' + f);
+			if (element) {
+				element.scrollIntoView();
+				element.classList.add('highlighted');
+				setTimeout(() => {
+					element.classList.remove('highlighted');
+					this._router.navigate([]);
+				}, 3000);
+			}
+		});
+	}
+
+	public highlightQuestion(): void {}
+
+	public toggleMenu(): void {
+		this.menuToggled = !this.menuToggled;
 	}
 
 	/**
@@ -286,6 +309,17 @@ export class SurveyViewerComponent implements OnInit, AfterViewInit, AfterConten
 			},
 		};
 		this._storage.set(`surveyState:${this.surveyId}`, saveState);
+
+		if (this.previousState) {
+			if (
+				this.previousState.activeRespondentIndex !== v.activeRespondentIndex ||
+				this.previousState.activeQuestionIndex !== v.activeQuestionIndex
+			) {
+				this.questionsContainerElement.nativeElement.scrollTop = 0;
+				this.questionsContainerElement.nativeElement.scrollTo(0, 0);
+			}
+		}
+		this.previousState = v;
 	}
 
 	/**
@@ -314,17 +348,15 @@ export class SurveyViewerComponent implements OnInit, AfterViewInit, AfterConten
 		this._respondentService
 			.getSurveyPrimaryRespondent(this.surveyId)
 			.pipe(
-				flatMap((respondent: SurveyRespondent) => {
+				mergeMap((respondent: SurveyRespondent) => {
 					this._respondentService.primaryRespondent = {
 						id: respondent.id,
 						name: null,
 						relationship: null,
 					};
 					this.viewerState.primaryRespondent = this._respondentService.primaryRespondent;
-
 					return this._respondentService.getSurveyGroupMembers(this.viewerState.primaryRespondent);
-				}),
-				share()
+				})
 			)
 			.subscribe((members: Array<SurveyViewGroupMember>) => {
 				if (members.length > 0) {
@@ -441,7 +473,7 @@ export class SurveyViewerComponent implements OnInit, AfterViewInit, AfterConten
 				// create questionBlocks
 				this._viewerStateService.initialize().subscribe();
 				this.initializeNavigator();
-
+				console.log(this.viewerState);
 				this.navigator.navigationState$.subscribe(this.navigationStateChanged.bind(this));
 			});
 	}
@@ -490,36 +522,6 @@ export class SurveyViewerComponent implements OnInit, AfterViewInit, AfterConten
 	};
 
 	/**
-	 * Navigates previous
-	 */
-	public navigatePrevious(): void {
-		this.viewerState.isNavProcessing = true;
-		// this._navigationService.navigatePrevious();
-
-		this.navigator.navigatePrevious().subscribe({
-			next: (v) => {},
-			complete: () => {
-				this.questionsContainerElement.nativeElement.scrollTop = 0;
-				this.questionsContainerElement.nativeElement.scrollTo(0, 0);
-			},
-		});
-	}
-
-	/**
-	 * Navigates next
-	 */
-	public navigateNext(): void {
-		this.viewerState.isNavProcessing = true;
-		this.navigator.navigateNext().subscribe({
-			next: (v) => {},
-			complete: () => {
-				this.questionsContainerElement.nativeElement.scrollTop = 0;
-				this.questionsContainerElement.nativeElement.scrollTo(0, 0);
-			},
-		});
-	}
-
-	/**
 	 *
 	 */
 	private callVisibilityHooks(): void {
@@ -557,7 +559,7 @@ export class SurveyViewerComponent implements OnInit, AfterViewInit, AfterConten
 	 * @param questionPartId
 	 */
 	public navigateToQuestion(questionPartId: number): void {
-		this.navigator.navigateToQuestion(questionPartId).subscribe();
+		// this.navigator.navigateToQuestion(questionPartId).subscribe();
 	}
 
 	private retrieveHouseholdTag(): string {
@@ -587,6 +589,10 @@ export class SurveyViewerComponent implements OnInit, AfterViewInit, AfterConten
 				this.callVisibilityHooks();
 			});
 		});
+	}
+
+	public ngAfterContentChecked(): void {
+		this._cd.detectChanges();
 	}
 
 	/**

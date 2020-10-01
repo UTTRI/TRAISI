@@ -1,0 +1,49 @@
+//@import 'src/shared/assets/scss/helpers';
+@import 'traisi-import';
+
+@media #{$sm-down} {
+	.survey-body {
+		margin: 0px;
+	}
+	.survey-body-container {
+		margin-top: 0;
+		text-align: center;
+		overflow-y: auto;
+		width: 100%;
+		min-height: 200px;
+		padding: 4px;
+	}
+
+	.survey-title-container {
+		text-align: center;
+		margin: 0px;
+	}
+
+	#question-viewer-nav {
+		padding-bottom: 5px;
+	}
+}
+
+@include media-breakpoint-down(sm) {
+	.traisi-question-container-outer {
+		margin: 0px;
+		padding: 0px;
+		margin-bottom: 10px;
+		-webkit-box-shadow: none;
+		-moz-box-shadow: none;
+		box-shadow: none;
+	}
+
+
+	.question-header-text {
+		font-size: 14px;
+	}
+
+	.survey-section-header {
+		font-size: 14px;
+	}
+
+	.question-header-text {
+		font-size: 16px;
+	}
+}
