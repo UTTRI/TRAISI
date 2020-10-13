@@ -16,6 +16,7 @@ using Traisi.Data.Models.ResponseTypes;
 using Traisi.Sdk.Enums;
 using Traisi.Data.Models.Surveys;
 using Traisi.Data.Models.Questions;
+using Traisi.Sdk.Interfaces;
 
 namespace TRAISI.Export
 {
@@ -24,11 +25,11 @@ namespace TRAISI.Export
         private readonly ApplicationDbContext _context;
         private readonly QuestionTypeManager _questionTypeManager;
 
-        private readonly GeoServiceController _geocontroller;
+        //private readonly GeoServiceController _geocontroller;
         String locationPart = "";
 
         //Data Guide Transit Codes
-        Dictionary<string, string> data_guide_codes = new Dictionary<string, string>()
+       /*  Dictionary<string, string> data_guide_codes = new Dictionary<string, string>()
         {
             {"TTCBUS", "T"},
             {"TTCTRAMWAY", "T"},
@@ -61,9 +62,9 @@ namespace TRAISI.Export
             {"YRTBUS", "Y"},
             {"UPEXPRESSTRAIN", "GT10"}
         };
-
+ */
         //Mapping Transit Numbers with Data Guide Transit Codes
-        Dictionary<string, string> dg_codes_replacement = new Dictionary<string, string>()
+        /* Dictionary<string, string> dg_codes_replacement = new Dictionary<string, string>()
         {
             {"LW", "GT01"},
             {"ML", "GT02"},
@@ -96,7 +97,8 @@ namespace TRAISI.Export
             {"8B", "BA116"},
             {"057A","Y057"}
         };
-
+ */
+       
         /// <summary>
         /// Initializer for helper object
         /// </summary>
@@ -115,7 +117,7 @@ namespace TRAISI.Export
                 _questionTypeManager.LoadQuestionExtensions("../TRAISI/extensions");
             }
 
-            this._geocontroller = new GeoServiceController(null, null);
+            //this._geocontroller = new GeoServiceController(null, null);
         }
 
         public List<SurveyResponse> ResponseList(List<QuestionPartView> questionPartViews)
@@ -167,7 +169,7 @@ namespace TRAISI.Export
                 case QuestionResponseType.Timeline:
                     return ReadTimelineResponse(surveyResponse);
                 case QuestionResponseType.OptionSelect:
-                    return ((OptionSelectResponse)surveyResponse.ResponseValues.First()).Value;
+                    return ((OptionSelectResponse)surveyResponse.ResponseValues.FirstOrDefault())?.Value;
                 case QuestionResponseType.Boolean:
                     // this type is currently not implemented in in ResponseTypes
                     throw new NotImplementedException("Tried to export boolean type");
@@ -210,7 +212,7 @@ namespace TRAISI.Export
             }
             return modeDetails;
         }
-        private string GetValuesFromTripLinxData(JObject objTripLinx, string key, int sectionNumber = 0)
+        /* private string GetValuesFromTripLinxData(JObject objTripLinx, string key, int sectionNumber = 0)
         {
             string returnValue = string.Empty;
             bool strPTRide = true;
@@ -328,7 +330,7 @@ namespace TRAISI.Export
             }
             return returnValue;
         }
-
+ */
         private string ReadPathResponse(SurveyResponse surveyResponse) => throw new NotImplementedException();//return null;
 
         private string ReadTimelineResponse(ISurveyResponse surveyResponse)
@@ -376,7 +378,7 @@ namespace TRAISI.Export
         }
 
 
-        /// <summary>
+    /*     /// <summary>
         /// TODO: REIMPLEMENT TRIPLIINX CALL
         /// </summary>
         /// <param name="lato"></param> 
@@ -386,14 +388,15 @@ namespace TRAISI.Export
         /// <param name="mode"></param>
         /// <param name="transitModes"></param>
         /// <param name="date"></param>
-        /// <returns></returns>
-        private async Task<JObject> ReadTripLinxData(double lato, double lngo, double latd, double lngd, string mode, string transitModes, DateTime date)
+        /// <returns></returns> */
+        /* private async Task<JObject> ReadTripLinxData(double lato, double lngo, double latd, double lngd, string mode, string transitModes, DateTime date)
         {
 
             //JObject jo = JObject.Parse(await this._geocontroller.GetTripLinxRoutePlanner(lato, lngo, latd, lngd, mode, transitModes, date));
            // return jo;
             return null;
-        }
+        } */
+
         private string ReadSplitLocation(ISurveyResponse surveyResponse, String locationPart)
         {
             string value = String.Empty;
@@ -713,7 +716,7 @@ namespace TRAISI.Export
             }
         }
 
-        public void ResponsesPivot_TransitRoutes(
+       /*  public void ResponsesPivot_TransitRoutes(
             List<QuestionPart> questionParts,
             List<SurveyResponse> surveyResponses,
             List<SurveyRespondent> surveyRespondents,
@@ -1043,7 +1046,7 @@ namespace TRAISI.Export
 
             }
         }
-
+ */
         public void ResponseListToWorksheet(List<SurveyResponse> surveyResponses, ExcelWorksheet worksheet, Boolean isHouseHold)
         {
             //Removed Timeline and Travel modes responses. 

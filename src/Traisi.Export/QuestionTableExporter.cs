@@ -157,10 +157,12 @@ namespace TRAISI.Export
                             if (int.TryParse(codes.Current, out var codeNum))
                             {
                                 worksheet.Cells[currentRow, 4].Value = codeNum;
+                                worksheet.Cells.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
                             }
                             else
                             {
                                 worksheet.Cells[currentRow, 4].Value = codes.Current;
+                                worksheet.Cells.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
                             }
                             // Option Text
                             worksheet.Cells[currentRow, 5].Value = labels.Current;

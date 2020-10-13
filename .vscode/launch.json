@@ -11,7 +11,7 @@
 			"request": "launch",
 			"preLaunchTask": "build-export",
 			"program": "${workspaceFolder}/src/TRAISI.Export/bin/Debug/netcoreapp3.1/TRAISI.Export.dll",
-			"args": ["TTSDemo2020"],
+			"args": ["COVHITS"],
 			"cwd": "${workspaceFolder}/src/TRAISI.Export",
 			"stopAtEntry": false,
 			"console": "internalConsole"

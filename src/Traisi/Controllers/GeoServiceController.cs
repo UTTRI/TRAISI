@@ -39,7 +39,7 @@ namespace Traisi.Controllers
         public GeoServiceController(IGeoServiceProvider geoService, IConfiguration configuration)
         {
             this._geoService = geoService;
-            this._triplinx = new RestClient("https://api.triplinx.cityway.ca/api/journeyplanner/opt");
+            //this._triplinx = new RestClient("https://api.triplinx.cityway.ca/api/journeyplanner/opt");
             this._googleGeocoding = new RestClient("https://maps.googleapis.com/maps/api");
             this._ipApi = new RestClient("http://ip-api.com/");
             this._configuration = configuration;
