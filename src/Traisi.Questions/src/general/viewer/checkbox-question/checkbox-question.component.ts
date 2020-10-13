@@ -8,7 +8,10 @@ import {
 	QuestionOption,
 	OptionSelectResponseData,
 	ResponseValidationState,
+	TraisiValues,
+	QuestionOptionLabel,
 } from 'traisi-question-sdk';
+import { CheckboxQuestionConfiguration } from './checkbox-question-configuration.model';
 import templateString from './checkbox-question.component.html';
 import styleString from './checkbox-question.component.scss';
 @Component({
@@ -16,15 +19,21 @@ import styleString from './checkbox-question.component.scss';
 	template: '' + templateString,
 	styles: ['' + styleString],
 })
-export class CheckboxQuestionComponent extends SurveyQuestion<ResponseTypes.OptionSelect[]> implements OnInit, OnOptionsLoaded {
+export class CheckboxQuestionComponent extends SurveyQuestion<ResponseTypes.OptionSelect[]>
+	implements OnInit, OnOptionsLoaded {
 	public model: {};
 	public options: QuestionOption[];
+
+	public notaOption: QuestionOption;
 
 	/**
 	 *
 	 * @param surveyViewerService
 	 */
-	constructor(@Inject('SurveyViewerService') private surveyViewerService: SurveyViewer) {
+	constructor(
+		@Inject('SurveyViewerService') private surveyViewerService: SurveyViewer,
+		@Inject(TraisiValues.Configuration) public configuration: CheckboxQuestionConfiguration
+	) {
 		super();
 
 		this.options = [];
@@ -37,10 +46,15 @@ export class CheckboxQuestionComponent extends SurveyQuestion<ResponseTypes.Opti
 	 * @param $event
 	 * @param option
 	 */
-	public modelChanged($event, option): void {
-		this.model[option.code] = $event.srcElement.checked;
-
+	public modelChanged($event, option: QuestionOption): void {
 		let responses: Array<OptionSelectResponseData> = Array<OptionSelectResponseData>();
+
+		if (option === this.notaOption && this.model[option.code]) {
+			this._clearAllChecked();
+			this.model[option.code] = $event.srcElement.checked;
+		} else if (option !== this.notaOption && this.model[this.notaOption.code]) {
+			this.model[this.notaOption.code] = false;
+		}
 
 		for (let key in this.model) {
 			if (this.model[key] === true) {
@@ -52,8 +66,21 @@ export class CheckboxQuestionComponent extends SurveyQuestion<ResponseTypes.Opti
 			}
 		}
 
-		this.response.emit(responses);
-		this.validationState.emit(ResponseValidationState.VALID);
+		if (responses.length > 0) {
+			this.response.emit(responses);
+			this.validationState.emit(ResponseValidationState.VALID);
+		} else {
+			this.validationState.emit(ResponseValidationState.INVALID);
+		}
+	}
+
+	/**
+	 * Clears the model
+	 */
+	private _clearAllChecked(): void {
+		for (let key in this.model) {
+			this.model[key] = false;
+		}
 	}
 
 	/**
@@ -96,5 +123,17 @@ export class CheckboxQuestionComponent extends SurveyQuestion<ResponseTypes.Opti
 				this.model[option['code']] = false;
 			}
 		});
+
+		this.notaOption = {
+			code: 'nota',
+			id: this.options.length + 1,
+			label: 'None of the above',
+			name: 'None of the above',
+			order: this.options.length + 1,
+		};
+
+		if (this.configuration.isShowNoneOfTheAbove) {
+			this.options.push(this.notaOption);
+		}
 	}
 }

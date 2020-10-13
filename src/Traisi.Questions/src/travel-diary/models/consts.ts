@@ -31,7 +31,6 @@ export type SurveyRespondentUser = SurveyRespondent & {
 export type TimelineLineResponseDisplayData = TimelineResponseData & {
 	users: SurveyRespondentUser[];
 	id: number;
-	displayId: number;
 	isValid: boolean;
 	isInserted?: boolean;
 	hasEndTime?: boolean;
@@ -44,4 +43,13 @@ export type TimelineLineResponseDisplayData = TimelineResponseData & {
 	isFirstEvent?: boolean;
 };
 
-export type TravelDiaryEvent = CalendarEvent & { meta: { model: TimelineLineResponseDisplayData; [x: string]: any } };
+// export type TravelDiaryEvent = CalendarEvent & { meta: TravelDiaryMeta };
+
+export interface TravelDiaryEvent extends CalendarEvent {
+	meta: TravelDiaryMeta;
+}
+
+export interface TravelDiaryMeta {
+	[x: string]: any;
+	model: TimelineLineResponseDisplayData;
+}

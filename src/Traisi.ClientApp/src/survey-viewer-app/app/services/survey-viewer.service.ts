@@ -160,14 +160,7 @@ export class SurveyViewerService implements OnInit {
 		// navigate to survey start
 	}
 
-	/**
-	 *
-	 * @param state
-	 */
-	private _onNavigationChanged: (state: NavigationState) => void = (state: NavigationState) => {
-		console.log('in nav changed');
-		console.log(state);
-	};
+
 
 	public initialize(surveyCode: string): void {
 		this._surveyViewerEndpointService.getSurveyIdFromCodeEndpoint(surveyCode).subscribe((value) => {
@@ -527,7 +520,6 @@ export class SurveyViewerService implements OnInit {
 
 			id$.subscribe(
 				(value) => {
-					console.log(value);
 					this._activeSurveyId = <number>value[Object.keys(value)[0]];
 					this._activeSurveyTitle = <string>value[Object.keys(value)[2]];
 					this.activeSurveyId.next(this._activeSurveyId);

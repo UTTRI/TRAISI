@@ -180,6 +180,7 @@ export class QuestionInstanceState {
 					},
 				});
 			} else if (responseState === ResponseValidationState.INVALID) {
+				
 				this._navigator.updateQuestionValidationState(this, {
 					isValid: false,
 					clientValidationState: ResponseValidationState.INVALID,

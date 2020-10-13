@@ -85,7 +85,7 @@ export class SurveyViewerSession {
 					isLoggedIn: isLoggedIn,
 					isUsingGroupcode: false,
 					authenticationMode: authMode,
-					language: 'en'
+					language: 'en',
 				};
 				if (isLoggedIn) {
 					this._data.shortcode = this._surveyViewerService.currentUser.shortcode;

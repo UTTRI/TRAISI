@@ -37,6 +37,7 @@ import { LocationLookupComponent } from './../shared/components/location-lookup.
 	imports: [CommonModule, NgxMapboxGLModule, HttpClientModule, NgSelectModule, CommonModule, FormsModule],
 })
 export default class TraisiMapQuestion {
+	static moduleName = "map-question"; 
 	static forRoot(): ModuleWithProviders<TraisiMapQuestion> {
 		return {
 			ngModule: TraisiMapQuestion,

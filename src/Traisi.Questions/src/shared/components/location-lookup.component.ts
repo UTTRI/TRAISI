@@ -43,8 +43,6 @@ export class LocationLookupComponent implements OnInit {
 				switchMap((term) =>
 					this._geoService.addressCompletion(term).pipe(
 						catchError((err) => {
-							console.log('err');
-							console.log(err);
 							return of([]);
 						}),
 

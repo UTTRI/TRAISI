@@ -248,6 +248,8 @@ export class AuthService {
 		);
 		user.isEnabled = true;
 
+		console.log(user);
+
 		if (user.roles.includes('respondent')) {
 			(<SurveyUser>user).shortcode = shortcode;
 			(<SurveyUser>user).surveyId = surveyId;

@@ -40,7 +40,6 @@ export class SurveyViewerContainerComponent implements OnInit {
 		this.surveySession.data.subscribe((data) => {
 			this._titleService.setTitle('TRAISI - ' + data.surveyTitle);
 		});
-		if (Modernizr.mq('(max-width: 768px)')) {
-		}
+		
 	}
 }

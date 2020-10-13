@@ -313,6 +313,17 @@ namespace Traisi.Models.Mapping
                                                 .Replace(" ", "")] =
                                             double.Parse(a.Value);
                                         break;
+                                    case ConfigurationValueType.Boolean:
+
+
+                                        svm
+                                            .Configuration[ResponseValueResolver
+                                                .NamesContractResolver
+                                                .GetResolvedPropertyName(a.Name)
+                                                .Replace(" ", "")] = TryGetBool(a.Value.ToString());
+
+
+                                        break;
                                     case ConfigurationValueType.Custom:
                                         try
                                         {
@@ -423,21 +434,37 @@ namespace Traisi.Models.Mapping
                 .ForMember(x => x.SurveyLogicValidationState,
                 map => map.MapFrom(y => y.SurveyLogicError));
         }
+
+        private bool TryGetBool(string value)
+        {
+            if (bool.TryParse(value, out var v))
+            {
+                return v;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 
     public class StringToJsonValueConverter : IValueConverter<string, object>
     {
         public object Convert(string sourceMember, ResolutionContext context)
         {
-            if(sourceMember != null) {
+            if (sourceMember != null)
+            {
                 return JToken.Parse(sourceMember);
             }
-            else {
+            else
+            {
                 return new JArray();
             }
-            
+
         }
     }
+
+
 
     public class
     SurveyViewerLogicRuleValueConverter

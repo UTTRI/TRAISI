@@ -73,6 +73,8 @@ export class TravelDiaryQuestionComponent extends SurveyQuestion<ResponseTypes.T
 
 	public modalRef: BsModalRef | null;
 
+	public isSummaryTravelDiaryView: boolean = true;
+
 	public constructor(
 		private _travelDiaryService: TravelDiaryService,
 		private _modalService: BsModalService,
@@ -112,13 +114,14 @@ export class TravelDiaryQuestionComponent extends SurveyQuestion<ResponseTypes.T
 	}
 
 	public newEvent(): void {
+		this._tour.stopTour();
 		this.entryDialog.show(DialogMode.New);
 	}
 
 	public newEntrySaved(event: TimelineLineResponseDisplayData) {
-		if (event.isReturnHomeSplit) {
-			this.openModal(this.template);
-		}
+		// if (event.isReturnHomeSplit) {
+		// 	this.openModal(this.template);
+		// }
 		this._travelDiaryService.newEvent(event);
 	}
 
@@ -232,6 +235,10 @@ export class TravelDiaryQuestionComponent extends SurveyQuestion<ResponseTypes.T
 		}
 	}
 
+	public setSummaryTavelDiaryView(value: boolean): void {
+		this.isSummaryTravelDiaryView = value;
+	}
+
 	/**
 	 * Saves the inactive
 	 * @param respondent
@@ -247,6 +254,10 @@ export class TravelDiaryQuestionComponent extends SurveyQuestion<ResponseTypes.T
 	}
 
 	public eventClicked({ event }: { event: CalendarEvent }): void {
+		this.entryDialog.show(DialogMode.Edit, event.meta.model);
+	}
+
+	public linearViewEventClicked(event: TravelDiaryEvent): void {
 		this.entryDialog.show(DialogMode.Edit, event.meta.model);
 	}
 

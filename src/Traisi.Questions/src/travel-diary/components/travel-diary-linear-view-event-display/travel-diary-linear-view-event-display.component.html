@@ -1,4 +1,4 @@
-<div class="customt-event-title event-display-container">
+<div class="customt-event-title event-display-container linear-event-display" [class.invalid]="!model.isValid">
 	<div class="event-title-group">
 		<div class="event-purpose">
 			<span *ngIf="model.purpose"> <i class="{{ purpose.icon }}"></i> </span>
@@ -11,7 +11,7 @@
 		</div>
 	</div>
 	<div class="event-message-group">
-		<div *ngIf="timeEvent.event.meta.homeAllDay">
+		<div *ngIf="event.meta.homeAllDay">
 			Based on information entered earlier in the survey, a travel diary has already been built for {{ surveyRespondent.name}}. This event indicates that you stayed home all day on {{ surveyAccessTime | date }}. If this is incorrect, please
 			delete the event to add additional events to your diary for that day.
 		</div>
@@ -19,28 +19,28 @@
 	<div class="mode-address-group">
 		<div class="event-mode">
 			<div
-				*ngIf="!timeEvent.event.meta.model.mode && !timeEvent.event.meta.homeAllDay && model.order > 0"
+				*ngIf="!event.meta.model.mode && !event.meta.homeAllDay && model.order > 0"
 				class="no-mode-message"
 			>
 				This auto generated event has no travel mode assigned, please click the event and choose a travel mode
 				you used to reach the destination.
 			</div>
-			<div *ngIf="timeEvent.event.meta.model.mode && !timeEvent.event.meta.homeAllDay">
+			<div *ngIf="event.meta.model.mode && !event.meta.homeAllDay">
 				<i class="{{ mode.icon }}"></i>{{ mode.label }}
 			</div>
 		</div>
 		<div class="event-address">
 			<i class="fas fa-map-marked-alt"></i>
-			<span *ngIf="timeEvent.event.meta.model?.address">
+			<span *ngIf="event.meta.model?.address">
 				{{ addressDisplay }}
 			</span>
-			<span *ngIf="!timeEvent.event.meta.model?.address">
+			<span *ngIf="!event.meta.model?.address">
 				Please choose a location.
 			</span>
 		</div>
 		<div class="event-time" *ngIf="!isFirstEvent && model.order > 0">
 			<i class="fas fa-clock"></i>
-			{{ timeEvent.event.meta.model?.timeA | date: 'shortTime' }}
+			{{ event.meta.model?.timeA | date: 'shortTime' }}
 		</div>
 	</div>
 </div>

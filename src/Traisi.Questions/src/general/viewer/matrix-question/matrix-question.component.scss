@@ -17,14 +17,15 @@
 
 .matrix-entry {
 	width: 150px;
-	text-align: center;
+	text-align: center !important;
 	min-height: 50px;
 	display: inline-flex;
-	align-items: center;
-	justify-content: center;
+	align-items: center !important;
+	justify-content: center!important;
 
 	.custom-control-label {
 		top: -10px;
+		width: 0px !important;
 	}
 }
 

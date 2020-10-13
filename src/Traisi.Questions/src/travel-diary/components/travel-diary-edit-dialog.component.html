@@ -10,7 +10,7 @@
 			<div class="modal-header">
 				<h4 class="modal-title pull-left" *ngIf="dialogMode === dialogModeNew">New Trip</h4>
 				<h4 class="modal-title pull-left" *ngIf="dialogMode === dialogModeEdit">Edit Trip</h4>
-				<h4 class="modal-title pull-left" *ngIf="dialogMode === dialogModeCreateHome">{{respondent.name}} was not at home at 3 am on the diary day, please tell us his/her activity at the beginning of the diary day.</h4>
+				<h4 class="modal-title pull-left" *ngIf="dialogMode === dialogModeCreateHome">{{respondent.name}} was not at home at 4:00 am on the diary day, please tell us his/her activity at the beginning of the diary day.</h4>
 				<button type="button" class="close pull-right" aria-label="Close" (click)="hide()">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -25,7 +25,7 @@
 								type="text"
 								[(ngModel)]="model.name"
 								name="name"
-								minlength="4"
+								minlength="1"
 								id="name"
 								placeholder="Enter a title to describe the event"
 								required
@@ -100,7 +100,7 @@
 
 					<div class="form-group row" *ngIf="!isFirstEventInDay">
 						<div class="col-12">
-							<label for="timeA" class="col-form-label">Departure time for the trip (as 24-hours) </label>
+							<label for="timeA" class="col-form-label">Departure time for the trip </label>
 							<div class="input-group">
 								<div class="input-group-prepend">
 									<span class="input-group-text" id="inputGroupPrepend2"
@@ -113,11 +113,12 @@
 									class="form-control"
 									name="timeA"
 									mwlFlatpickr
+									(click)="initTimeInput(model)"
 									(ngModelChange)="onDepartureTimeChange($event)"
 									[(ngModel)]="model.timeA"
 									[noCalendar]="true"
 									[enableTime]="true"
-									[time24hr]="true"
+									[time24hr]="false"
 									[now]="defaultDate"
 									dateFormat="H:i"
 									aria-describedby="inputGroupPrepend2"
@@ -276,8 +277,9 @@
 									[(ngModel)]="model.insertedEndTime"
 									[noCalendar]="true"
 									[enableTime]="true"
+									(click)="initReturnTimeInput(model)"
 									[now]="defaultDate"
-									[time24hr]="true"
+									[time24hr]="false"
 									dateFormat="H:i"
 									aria-describedby="insertedEndTime"
 									[convertModelValue]="true"

@@ -29,6 +29,7 @@ export class HouseholdQuestionComponent extends SurveyQuestion<ResponseTypes.Non
 		'Spouse/Partner',
 		'Child',
 		'Parent',
+		'Sibling',
 		'Grandparent',
 		'Grandchild',
 		'Roommate',

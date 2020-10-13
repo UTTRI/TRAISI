@@ -94,7 +94,6 @@ export class SurveyNavigatorComponent implements OnInit {
 	public navigatePrevious(): void {
 		(<any>this.validationPopperContent)['hide']();
 		this.navigator.navigatePrevious().subscribe((state) => {
-			console.log('finished prev nav');
 		});
 	}
 }

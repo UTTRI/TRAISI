@@ -16,7 +16,8 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { AlertModule } from 'ngx-bootstrap/alert';
 import { ReturnTimeValidatorDirective } from './validators/return-time.directive';
 import { PopoverModule } from 'ngx-bootstrap/popover';
-
+import { TravelDiaryLinearViewComponent } from './components/travel-diary-linear-view.component';
+import { TravelDiaryLinearViewEventDisplayComponent } from './components/travel-diary-linear-view-event-display/travel-diary-linear-view-event-display.component';
 
 export const calendarProps = {
 	provide: DateAdapter,
@@ -31,12 +32,16 @@ export const calModule: ModuleWithProviders = CalendarModule.forRoot(calendarPro
 		DayViewSchedulerComponent,
 		TravelDiaryEventDisplayComponent,
 		ReturnTimeValidatorDirective,
+		TravelDiaryLinearViewComponent,
+		TravelDiaryLinearViewEventDisplayComponent
 	],
 	entryComponents: [
 		TravelDiaryQuestionComponent,
 		TravelDiaryEditDialogComponent,
 		DayViewSchedulerComponent,
 		TravelDiaryEventDisplayComponent,
+		TravelDiaryLinearViewComponent,
+		TravelDiaryLinearViewEventDisplayComponent
 	],
 	providers: [
 		{
@@ -61,6 +66,16 @@ export const calModule: ModuleWithProviders = CalendarModule.forRoot(calendarPro
 					name: 'traisi-travel-dairy-event-display',
 					id: 'travel-diary-event-display',
 					component: TravelDiaryEventDisplayComponent,
+				},
+				{
+					name: 'traisi-travel-dairy-linear-view',
+					id: 'travel-diary-linear-view',
+					component: TravelDiaryLinearViewComponent,
+				},
+				{
+					name: 'traisi-travel-diary-linear-view-event-display',
+					id: 'travel-diary-linear-view-event-display',
+					component: TravelDiaryLinearViewEventDisplayComponent,
 				},
 				{
 					name: 'returnTime',
@@ -97,6 +112,7 @@ export const calModule: ModuleWithProviders = CalendarModule.forRoot(calendarPro
 	exports: [CalendarDayModule, CalendarModule, CalendarCommonModule],
 })
 export default class TravelDiaryQuestionModule {
+	static moduleName = "travel-diary"; 
 	static forRoot(): ModuleWithProviders<TravelDiaryQuestionComponent> {
 		return {
 			ngModule: TravelDiaryQuestionComponent,
@@ -104,3 +120,4 @@ export default class TravelDiaryQuestionModule {
 		};
 	}
 }
+export const moduleName = "travel-diary";

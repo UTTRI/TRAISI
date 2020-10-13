@@ -173,13 +173,13 @@ export class QuestionLoaderService {
 				this._questionLoaderEndpointService.getQuestionConfigurationEndpoint(questionType),
 			]).pipe(
 				map(([module, config]: any) => {
-					if (module.default.name in this._moduleRefs) {
-						return this._moduleRefs[module.default.name];
+					if (module.default.moduleName in this._moduleRefs) {
+						return this._moduleRefs[module.default.moduleName];
 					}
 
 					const moduleFactory = this.compiler.compileModuleAndAllComponentsSync(module.default);
 					const moduleRef: any = moduleFactory.ngModuleFactory.create(this.injector);
-					this._moduleRefs[<string>module.default.name] = moduleRef;
+					this._moduleRefs[<string>module.default.moduleName] = moduleRef;
 					this._questionConfigurationService.setQuestionServerConfiguratioByType(questionType, config);
 					return moduleRef;
 				}),

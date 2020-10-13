@@ -72,7 +72,8 @@ namespace Traisi.Models.Mapping
                     Purpose = locationResponse.Purpose,
                     TimeA = locationResponse.TimeA,
                     TimeB = locationResponse.TimeB,
-                    Mode = locationResponse.Mode
+                    Mode = locationResponse.Mode,
+                    Identifier = locationResponse.Identifier
 
                 });
             }

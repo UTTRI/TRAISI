@@ -7,11 +7,10 @@
 				visited: viewerState.pageStates[page.id].isVisited,
 				'not-visited': !viewerState.pageStates[page.id].isVisited
 			}"
-			(click)="navigateToPage(page)"
 			*ngFor="let page of viewerStateService.viewerState.surveyPages; let i = index"
 		>
 			<i class="{{ page.icon }} page-icon"></i>
-			<p class="progress__title">{{ page.label }}</p>
+			<p class="progress__title" (click)="navigateToPage(page)">{{ page.label }}</p>
 
 			<ng-container *ngFor="let section of page.sections">
 				<p class="progress__info" [ngClass]="{ 'section--active': state.activeSection?.id === section.id }">
@@ -19,39 +18,45 @@
 					<i class="fad fa-users section-icon" *ngIf="section.isHousehold"></i>
 				</p>
 				<ng-container *ngIf="state.activeSection?.id === section.id">
-					<p class="progress__question" *ngFor="let question of state.activeQuestionInstances">
-						<span
-							class="validation-status"
-							[class.valid]="
-								question.validationState?.clientValidationState === validationStates.VALID &&
-								question.validationState?.isValid
-							"
-							[class.invalid]="
-								!(
-									question.validationState?.clientValidationState === validationStates.VALID &&
-									question.validationState?.isValid
-								)
-							"
-						>
-							<i
-								*ngIf="
+					<a
+						[routerLink]=""
+						fragment="{{ question.model.questionId }}"
+						*ngFor="let question of state.activeQuestionInstances"
+					>
+						<p class="progress__question">
+							<span
+								class="validation-status"
+								[class.valid]="
 									question.validationState?.clientValidationState === validationStates.VALID &&
 									question.validationState?.isValid
 								"
-								class="far fa-check-square"
-							></i>
-							<i
-								*ngIf="
+								[class.invalid]="
 									!(
 										question.validationState?.clientValidationState === validationStates.VALID &&
 										question.validationState?.isValid
 									)
 								"
-								class="far fa-square"
-							></i>
-						</span>
-						<a [routerLink]="" fragment="{{question.model.questionId}}">{{ question.model.name }}</a>
-					</p>
+							>
+								<i
+									*ngIf="
+										question.validationState?.clientValidationState === validationStates.VALID &&
+										question.validationState?.isValid
+									"
+									class="far fa-check-square"
+								></i>
+								<i
+									*ngIf="
+										!(
+											question.validationState?.clientValidationState ===
+												validationStates.VALID && question.validationState?.isValid
+										)
+									"
+									class="far fa-square"
+								></i>
+							</span>
+							{{ question.model.name }}
+						</p>
+					</a>
 				</ng-container>
 			</ng-container>
 		</li>

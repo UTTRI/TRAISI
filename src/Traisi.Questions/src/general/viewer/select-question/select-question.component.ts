@@ -99,6 +99,9 @@ export class SelectQuestionComponent extends SurveyQuestion<ResponseTypes.Option
 			// this.validationState.emit(ResponseValidationState.VALID);
 			this.response.emit([option]);
 		}
+		else {
+			this.validationState.emit(ResponseValidationState.INVALID);
+		}
 	}
 
 	public onResponseSaved(): void {}

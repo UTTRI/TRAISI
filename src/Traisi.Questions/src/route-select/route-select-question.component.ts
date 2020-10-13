@@ -48,6 +48,8 @@ export class RouteSelectQuestionComponent extends SurveyQuestion<ResponseTypes.J
 
 	public radioName: string;
 
+	public hasError: boolean;
+
 	@ViewChild('routeDetailDialog')
 	public routeDetailDialog: RouteDetailDialogComponent;
 
@@ -67,7 +69,6 @@ export class RouteSelectQuestionComponent extends SurveyQuestion<ResponseTypes.J
 
 	public ngOnInit(): void {
 		// retrieve the response of the timeine entry before this current one
-		console.log(this);
 		let idx = this._repeatSource.findIndex(
 			(x) => x.latitude === this._repeatValue.latitude && x.timeA === this._repeatValue.timeA
 		);
@@ -76,8 +77,8 @@ export class RouteSelectQuestionComponent extends SurveyQuestion<ResponseTypes.J
 		console.log(idx);
 		let priorEvent = this._repeatSource[idx - 1];
 
-		this.originAddress = `${priorEvent.address.streetNumber} ${priorEvent.address.streetAddress}`;
-		this.destinationAddress = `${this._repeatValue.address.streetNumber} ${this._repeatValue.address.streetAddress}`;
+		this.originAddress = `${priorEvent.address.formattedAddress}`;
+		this.destinationAddress = `${this._repeatValue.address.formattedAddress}`;
 		this.purpose = this._repeatValue.purpose;
 		let mode: string;
 		if (this._repeatValue.mode === 'transit-all-way') {
@@ -107,6 +108,12 @@ export class RouteSelectQuestionComponent extends SurveyQuestion<ResponseTypes.J
 				this.route = (x as RootObject).Data[0].response;
 				this.isLoaded.next(true);
 				console.log(this.route);
+				if (this.route.Status.Code !== 'OK') {
+					this.hasError = true;
+				} else {
+					this.hasError = false;
+					this.validationState.emit(ResponseValidationState.VALID);
+				}
 				this.savedResponse.subscribe(this.onSavedResponseData);
 			});
 	}

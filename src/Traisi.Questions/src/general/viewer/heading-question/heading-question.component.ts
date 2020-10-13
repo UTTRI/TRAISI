@@ -9,8 +9,12 @@ import styleString from './heading-question.component.scss';
 	encapsulation: ViewEncapsulation.None
 })
 export class HeadingQuestionComponent extends SurveyQuestion<ResponseTypes.None> implements OnInit {
+
+
+
 	public constructor() {
 		super();
+		this.displayClass = 'heading-question';
 	}
 
 	public ngOnInit(): void {}

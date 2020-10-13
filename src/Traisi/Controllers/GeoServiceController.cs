@@ -63,8 +63,12 @@ namespace Traisi.Controllers
 
             var response = await _googleGeocoding.ExecuteAsync(request);
             var content = JObject.Parse(response.Content);
-            var result = content.Value<JArray>("results").First();
+            var result = content.Value<JArray>("results").FirstOrDefault();
 
+            if (result == null)
+            {
+                return new NotFoundResult();
+            }
             MapLocation mapLocation = new MapLocation();
             mapLocation.Address = new Sdk.Interfaces.Address();
             mapLocation.Address.FormattedAddress = result.Value<string>("formatted_address");

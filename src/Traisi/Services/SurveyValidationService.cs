@@ -215,7 +215,7 @@ namespace Traisi.Services
                         compareObj = (compareResponse.ResponseValues[0] as LocationResponse).Address;
                         compareObj2 = ((response.ResponseValues[0] as LocationResponse).Address);
                     }
-                    catch (Exception e)
+                    catch 
                     {
                         return false;
                     }

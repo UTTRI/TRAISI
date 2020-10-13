@@ -48,6 +48,8 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 	exports: [],
 })
 export default class RouteSelectQuestionModule {
+	name = "route-select";
+	static moduleName = "route-select";  
 	static forRoot(): ModuleWithProviders<RouteSelectQuestionModule> {
 		return {
 			ngModule: RouteSelectQuestionModule,
@@ -55,3 +57,5 @@ export default class RouteSelectQuestionModule {
 		};
 	}
 }
+
+export const moduleName = "route-select";

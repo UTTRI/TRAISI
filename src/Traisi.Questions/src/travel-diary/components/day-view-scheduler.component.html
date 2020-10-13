@@ -241,8 +241,7 @@
 							{{ event.meta.model.mode }}
 						</div>
 						<span *ngIf="event.meta.model?.address">
-							{{ event.meta.model.address.streetNumber }} {{ event.meta.model.address.streetAddress }},
-							{{ event.meta.model.address.city }}
+							{{ event.meta.model?.address.formattedAddress }}
 						</span>
 					</ng-template>
 					<mwl-calendar-week-view-event

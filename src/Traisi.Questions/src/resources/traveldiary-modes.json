@@ -12,8 +12,14 @@
 	{
 		"label": "Car driving with passenger(s) (including non-household members)",
 		"icon": "fas fa-car",
-		"id": "car-driving-with-passengers-none-household"
+		"id": "car-driving-with-passengers-non-household"
 	},
+	{
+		"label": "Car driving with passenger(s) (non-household members only)",
+		"icon": "fas fa-car",
+		"id": "car-driving-with-passengers-non-household-only"
+	},
+
 	{
 		"label": "Car passenger (driver is a household member)",
 		"icon": "fas fa-car",
@@ -50,10 +56,10 @@
 		"id": "transit-cycle-ride"
 	},
 	{
-        "label": "Transit (school bus)",
-        "icon": "fal fa-bus-school",
-        "identifier": "transit-schoolbus"
-    },
+		"label": "Transit (school bus)",
+		"icon": "fal fa-bus-school",
+		"id": "transit-schoolbus"
+	},
 	{
 		"label": "Cycling (bikeshare)",
 		"icon": "fas fa-biking",
@@ -97,7 +103,7 @@
 	{
 		"label": "Accessible car passenger",
 		"icon": "fas fa-wheelchair",
-		"id": "accessible-car-passenger" 
+		"id": "accessible-car-passenger"
 	},
 	{
 		"label": "Accessible paratransit",

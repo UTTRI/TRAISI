@@ -1,12 +1,21 @@
 <div class="checkbox-container form-check abc-checkbox abc-checkbox-primary custom-control custom-checkbox">
-    <form role="form">
-        <div *ngFor="let option of options">
-            <div>
-                <input class="custom-control-input" type="checkbox" [(ngModel)]="model[option.code]"  id="{{questionId}}-{{option.id}}"  name="{{questionId}}-{{option.code}}" value="{{option}}" (change)="modelChanged($event,option)">
-                <label class="custom-control-label" for="{{questionId}}-{{option.id}}"> 
-                    {{option.label}}
-                </label>
-            </div>
-        </div>
-    </form>
-</div> 
+	<form role="form">
+		<ng-container *ngFor="let option of options">
+			<div>
+				<input
+					class="custom-control-input"
+					type="checkbox"
+					[(ngModel)]="model[option.code]"
+					id="{{ questionId }}-{{ option.id }}"
+					name="{{ questionId }}-{{ option.code }}"
+                    value="{{ option }}"
+                    
+					(change)="modelChanged($event, option)"
+				/>
+				<label class="custom-control-label" for="{{ questionId }}-{{ option.id }}">
+					{{ option.label }}
+				</label>
+			</div>
+		</ng-container>
+	</form>
+</div>

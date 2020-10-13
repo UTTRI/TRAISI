@@ -46,9 +46,6 @@
 				"ASPNETCORE_ENVIRONMENT": "Development",
 				"ASPNETCORE_URLS": "http://0.0.0.0:5000/"
 			},
-			"sourceFileMap": {
-				"/Views": "/src/TRAISI/Views"
-			}
 		},
 		{
 			"name": ".NET Core Launch TRAISI LOCAL (es5 viewer)",
@@ -79,9 +76,6 @@
 				"ASPNETCORE_ENVIRONMENT": "Development",
 				"ASPNETCORE_URLS": "http://0.0.0.0:5000/"
 			},
-			"sourceFileMap": {
-				"/Views": "/src/TRAISI/Views"
-			}
 		}
 	]
 }

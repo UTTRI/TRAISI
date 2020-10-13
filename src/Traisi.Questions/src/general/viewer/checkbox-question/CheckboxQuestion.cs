@@ -24,6 +24,13 @@ namespace Traisi.Sdk.Questions
             Description = "The list of available checkbox responses presented to the user.",
             SurveyBuilderValueType = QuestionOptionValueType.KeyValuePair)]
         public ICollection ResponseOptions;
+
+        [QuestionConfiguration(ConfigurationValueType.Boolean,
+            DisplayName = "IsShowNoneOfTheAbove",
+            Description = "Show a 'None of the above' option.",
+            SurveyBuilderValueType = QuestionBuilderType.Switch,
+            DefaultValue = false)]
+        public bool IsShowNoneOfTheAbove;
     }
 
 }

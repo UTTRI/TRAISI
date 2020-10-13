@@ -3,6 +3,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { CalendarEvent } from 'calendar-utils';
 import { start } from 'repl';
+import { v4 as uuidv4 } from 'uuid';
 import { SurveyResponseViewModel, LocationResponseData, TimelineResponseData, TraisiValues } from 'traisi-question-sdk';
 import {
 	SurveyRespondentUser,
@@ -81,9 +82,8 @@ export class TravelDiaryEditor {
 		}
 	}
 
-	public generateId(): number {
-		this._idCounter++;
-		return this._idCounter;
+	public generateId(): string {
+		return uuidv4();
 	}
 
 	private createHomeStartEvent(user: SurveyRespondentUser): TravelDiaryEvent {
@@ -104,7 +104,7 @@ export class TravelDiaryEditor {
 		returnHomeEvent.end = new Date(new Date(this._surveyAccessTime).setHours(23, 59, 0, 0));
 		returnHomeEvent.meta.model.timeA = new Date(new Date(this._surveyAccessTime).setHours(23, 1, 0, 0));
 		returnHomeEvent.meta.model.isValid = false;
-		returnHomeEvent.meta.model.model = 2;
+		returnHomeEvent.meta.model.order = 2;
 		returnHomeEvent.meta.model.address = user.homeAddress ?? {};
 		returnHomeEvent.meta.model.latitude = user.homeLatitude;
 		returnHomeEvent.meta.model.longitude = user.homeLongitude;
@@ -172,8 +172,15 @@ export class TravelDiaryEditor {
 	 * @param eventData
 	 */
 	public insertEvent(events: TravelDiaryEvent[], event: TimelineLineResponseDisplayData): TravelDiaryEvent[] {
-		let displayId = this.generateId();
-		event.displayId = displayId;
+		let displayId: string;
+		if (!event.identifier) {
+			displayId = this.generateId();
+		} else {
+			displayId = event.identifier;
+		}
+
+
+		event.identifier = displayId;
 		let u = event.users[0];
 		if (!event.isInserted) {
 			let startTime = new Date(event.timeA);
@@ -203,7 +210,7 @@ export class TravelDiaryEditor {
 				},
 				color: colors.blue,
 			};
-			newEvent.meta.model.displayId = displayId;
+			newEvent.meta.model.identifier = displayId;
 			newEvent.meta.model.isValid = true;
 			events.push(newEvent);
 		} else {
@@ -229,7 +236,7 @@ export class TravelDiaryEditor {
 						purpose: event.purpose['label'],
 						address: event.address,
 						user: u,
-						mode: event.mode['label'],
+						mode: event.mode?.['label'],
 						model: event,
 						id: displayId,
 					},
@@ -253,7 +260,7 @@ export class TravelDiaryEditor {
 					},
 					color: colors.blue,
 				};
-				returnEvent.meta.model.displayId = displayId;
+				returnEvent.meta.model.identifier = displayId;
 				returnEvent.meta.model.timeA = event.insertedEndTime;
 				returnEvent.meta.model.isValid = overlap.meta.model.isValid;
 
@@ -274,15 +281,18 @@ export class TravelDiaryEditor {
 		this.reAlignTimeBoundaries([].concat(u), events);
 		this.sortEvents(events);
 		this.updateHomeEvents(events);
+
+		// determine if made insert home event
+		let idx = events.findIndex((x) => x.meta.model.identifier === event.identifier);
+
+		if (idx > 1) {
+			let prevEvent = events[idx - 1];
+			if (prevEvent.meta.model.purpose === 'home') {
+				this.deleteEvent(prevEvent.meta.model, events);
+			}
+		}
+
 		return events;
-	}
-
-	private _hasHomeStartEvent(events: TravelDiaryEvent[]): boolean {
-		return true;
-	}
-
-	private _hasHomeEndEvent(events: TravelDiaryEvent[]): boolean {
-		return true;
 	}
 
 	/**
@@ -308,7 +318,7 @@ export class TravelDiaryEditor {
 				let timeB = new Date(userEvents[i].end);
 				timeB.setHours(timeB.getHours() - TIME_DELTA);
 
-				if (userEvents[i].meta.model.displayId === model.displayId) {
+				if (userEvents[i].meta.model.identifier === model.identifier) {
 					continue;
 				}
 
@@ -335,7 +345,7 @@ export class TravelDiaryEditor {
 		for (let respondent of model.users) {
 			// get users for event
 			let userEvents = events.filter((x) => x.meta.user.id === respondent.id);
-			let thisEventIdx = userEvents.findIndex((x) => x.meta.model.displayId === model.displayId);
+			let thisEventIdx = userEvents.findIndex((x) => x.meta.model.identifier === model.identifier);
 			for (let i = 1; i < userEvents.length; i++) {
 				let timeA = new Date(userEvents[i].start);
 				timeA.setHours(timeA.getHours() - TIME_DELTA);
@@ -344,7 +354,7 @@ export class TravelDiaryEditor {
 				timeB.setHours(timeB.getHours() - TIME_DELTA);
 
 				if (
-					userEvents[i].meta.model.displayId !== model.displayId &&
+					userEvents[i].meta.model.identifier !== model.identifier &&
 					timeA.getTime() < model.timeA.getTime() &&
 					timeB.getTime() > model.timeA.getTime() &&
 					i > thisEventIdx
@@ -363,7 +373,7 @@ export class TravelDiaryEditor {
 	 */
 	public getEventIndex(model: TimelineLineResponseDisplayData, events: TravelDiaryEvent[]): number {
 		for (let x = 0; x < events.length; x++) {
-			if (events[x].meta.model.displayId === model.displayId) {
+			if (events[x].meta.model.identifier === model.identifier) {
 				return x;
 			}
 		}
@@ -383,7 +393,7 @@ export class TravelDiaryEditor {
 			// get users for event
 			let userEvents = events.filter((x) => x.meta.user.id === respondent.id);
 			for (let i = 1; i < userEvents.length - 1; i++) {
-				if (userEvents[i].start >= model.timeA && model.displayId !== userEvents[i].meta.model.displayId) {
+				if (userEvents[i].start >= model.timeA && model.identifier !== userEvents[i].meta.model.identifier) {
 					return userEvents[i];
 				}
 			}
@@ -402,7 +412,7 @@ export class TravelDiaryEditor {
 		for (let i = 0; i < responses.length; i++) {
 			let response = responses[i];
 			let event = this.createBaseEvent(respondent, response.name, response.purpose);
-			event.meta.model = response;
+			event.meta.model = <any>response;
 			event.meta.model.timeA = new Date(response.timeA);
 			event.meta.model.users = [respondent];
 			if (!event.meta.model.mode && i > 0) {
@@ -410,8 +420,12 @@ export class TravelDiaryEditor {
 			} else {
 				event.meta.model.isValid = true;
 			}
+			if (response.identifier) {
+				event.meta.model.identifier = response.identifier;
+			} else {
+				event.meta.model.identifier = uuidv4();
+			}
 
-			event.meta.model.displayId = this.generateId();
 			events.push(event);
 			if (responses.length === 1 && responses[0].purpose.toLowerCase() === 'home') {
 				event.meta.homeAllDay = true;
@@ -430,7 +444,7 @@ export class TravelDiaryEditor {
 		events: TravelDiaryEvent[]
 	) {
 		// find the event
-		let evtIdx = events.findIndex((x) => x.meta.model.displayId === update.displayId);
+		let evtIdx = events.findIndex((x) => x.meta.model.identifier === update.identifier);
 		if (evtIdx > 0) {
 			let evt = events[evtIdx];
 
@@ -439,7 +453,9 @@ export class TravelDiaryEditor {
 			if (laterOverlap) {
 				// need to determine if swap or compress
 				if (update.isUpdateEventSwap) {
-					let swapIdx = events.findIndex((x) => x.meta.model.displayId === laterOverlap.meta.model.displayId);
+					let swapIdx = events.findIndex(
+						(x) => x.meta.model.identifier === laterOverlap.meta.model.identifier
+					);
 
 					this.swapEvents(events, evtIdx, swapIdx, update.timeA);
 
@@ -480,13 +496,25 @@ export class TravelDiaryEditor {
 		// this.reAlignTimeBoundaries(update.users, events, update);
 	}
 
+	/**
+	 *
+	 * @param events
+	 */
 	private sortEvents(events: TravelDiaryEvent[]): void {
-		events = events.sort((x, y) => x.meta.model.timeA - y.meta.model.timeA);
+		events = events.sort((x, y) => x.meta.model.timeA.getTime() - y.meta.model.timeA.getTime());
 		for (let i = 0; i < events.length; i++) {
 			events[i].meta.model.order = i;
+			if (!events[i].meta.model.mode && i > 0) {
+				events[i].meta.model.isValid = false;
+			}
 		}
 	}
 
+	/**
+	 *
+	 * @param modelTarget
+	 * @param modelSource
+	 */
 	public updateModel(
 		modelTarget: TimelineLineResponseDisplayData,
 		modelSource: TimelineLineResponseDisplayData
@@ -559,7 +587,6 @@ export class TravelDiaryEditor {
 				return true;
 			}
 		}
-
 		return false;
 	}
 
@@ -605,7 +632,7 @@ export class TravelDiaryEditor {
 		// realigns time boundaries using the location / timeline model as master
 		for (let user of users) {
 			let events = allEvents.filter((x) => x.meta.user.id === user.id);
-			events = events.sort((a, b) => a.meta.model.timeA - b.meta.model.timeA);
+			events = events.sort((a, b) => a.meta.model.timeA.getTime() - b.meta.model.timeA.getTime());
 			for (let i = 0; i < events.length - 1; i++) {
 				events[i].meta.model.order = i;
 				let displayTime = new Date(events[i].meta.model.timeA);
@@ -613,7 +640,7 @@ export class TravelDiaryEditor {
 				if (i > 0) {
 					events[i].start = displayTime;
 				}
-				if (events[i].meta.model.displayId === updated?.displayId && updated?.hasEndTime) {
+				if (events[i].meta.model.identifier === updated?.identifier && updated?.hasEndTime) {
 					let endTime = new Date(events[i].meta.model.insertedEndTime);
 					endTime.setHours(endTime.getHours() + TIME_DELTA);
 					events[i + 1].start = endTime;
@@ -668,6 +695,7 @@ export class TravelDiaryEditor {
 				model: {
 					address: user.homeAddress,
 					purpose: 'home',
+					identifier: uuidv4(),
 					mode: undefined,
 					timeA: new Date(new Date(this._surveyAccessTime).setHours(0, 0, 0, 0)),
 					timeB: new Date(new Date(this._surveyAccessTime).setHours(23, 59, 0, 0)),
@@ -677,7 +705,6 @@ export class TravelDiaryEditor {
 					order: 0,
 					users: [user],
 					id: undefined,
-					displayId: displayId,
 					isValid: true,
 					displayAddress: null,
 				},
@@ -723,7 +750,7 @@ export class TravelDiaryEditor {
 					order: 0,
 					users: [user],
 					id: undefined,
-					displayId: displayId,
+					identifier: displayId,
 					isValid: false,
 					displayAddress: undefined,
 				},
@@ -740,7 +767,7 @@ export class TravelDiaryEditor {
 	 * @param events
 	 */
 	public findTravelDiaryEvent(event: TimelineLineResponseDisplayData, events: TravelDiaryEvent[]): TravelDiaryEvent {
-		let match = events.find((x) => x.meta.model.displayId === event.displayId);
+		let match = events.find((x) => x.meta.model.identifier === event.identifier);
 		return match;
 	}
 
@@ -750,15 +777,22 @@ export class TravelDiaryEditor {
 	 * @param events
 	 */
 	public deleteEvent(event: TimelineLineResponseDisplayData, events: TravelDiaryEvent[]): void {
-		let idx = events.findIndex((x) => x.meta.model.displayId === event.displayId);
+		let idx = events.findIndex((x) => x.meta.model.identifier === event.identifier);
 		if (idx >= 0) {
 			events.splice(idx, 1);
+		}
+		if (Array.isArray(event.users)) {
 		}
 		this.reAlignTimeBoundaries(event.users, events);
 		this.sortEvents(events);
 		this.updateHomeEvents(events);
 	}
 
+	/**
+	 *
+	 * @param user
+	 * @param events
+	 */
 	public updateIndices(user: SurveyRespondentUser, events: TravelDiaryEvent[]): void {
 		let userEvents = events.filter((x) => x.meta.user.id === user.id);
 		for (let i = 0; i < userEvents.length; i++) {

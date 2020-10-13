@@ -27,10 +27,10 @@
 				</div>
 
 			</div>
-			<div  style="text-align: center">
+			<!--<div  style="text-align: center">
 				<span class="bg-light"><i
 						class="far fa-lock-alt logged-in-icon"></i>{{ (surveyViewerService.surveyAuthenticationMode | async).modeName }}</span>
-			</div>
+			</div> -->
 			<div class="form-group row mt-3 ml-3 ml-xl-0">
 				<div class="col"
 					*ngIf="!(surveyViewerService.isLoggedIn | async) && ((surveyViewerService.surveyAuthenticationMode | async).modeName !== 'ExternalAuthentication')">

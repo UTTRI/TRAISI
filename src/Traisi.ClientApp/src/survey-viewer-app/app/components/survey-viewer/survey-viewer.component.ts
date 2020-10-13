@@ -48,7 +48,7 @@ import { LOCAL_STORAGE, StorageService } from 'ngx-webstorage-service';
 import { NavigationState } from 'app/models/navigation-state.model';
 import { AuthService } from 'shared/services/auth.service';
 import { SurveyViewerProviders } from 'app/providers/survey-viewer.providers';
-
+declare var Modernizr;
 interface SpecialPageDataInput {
 	pageHTML: string;
 	pageThemeInfo: string;
@@ -257,6 +257,10 @@ export class SurveyViewerComponent
 				}, 3000);
 			}
 		});
+
+		if (Modernizr.mq('(max-width: 768px)')) {
+			this.menuToggled = true;
+		}
 	}
 
 	public highlightQuestion(): void {}
@@ -293,7 +297,7 @@ export class SurveyViewerComponent
 	 */
 	private navigationStateChanged(v: NavigationState): void {
 		let saveState = {
-			shortcode: this.session.shortcode ?? this._authService.currentSurveyUser.id,
+			shortcode: this.session.shortcode ?? this._authService.currentSurveyUser.shortcode ?? this._authService.currentUser.id,
 			surveyId: this.surveyId,
 			state: {
 				activeQuestionIndex: v.activeQuestionIndex ?? 0,
@@ -309,7 +313,6 @@ export class SurveyViewerComponent
 			},
 		};
 		this._storage.set(`surveyState:${this.surveyId}`, saveState);
-
 		if (this.previousState) {
 			if (
 				this.previousState.activeRespondentIndex !== v.activeRespondentIndex ||
@@ -473,7 +476,6 @@ export class SurveyViewerComponent
 				// create questionBlocks
 				this._viewerStateService.initialize().subscribe();
 				this.initializeNavigator();
-				console.log(this.viewerState);
 				this.navigator.navigationState$.subscribe(this.navigationStateChanged.bind(this));
 			});
 	}
@@ -486,9 +488,11 @@ export class SurveyViewerComponent
 				state: NavigationState;
 			} = this._storage.get(`surveyState:${this.surveyId}`);
 
+			let user = this._authService.currentSurveyUser
+				? this._authService.currentSurveyUser
+				: this._authService.currentUser;
 			if (
-				restoredState.shortcode ===
-					(this._authService.currentSurveyUser.shortcode ?? this._authService.currentSurveyUser.id) &&
+				restoredState.shortcode === (user['shortcode'] ?? user.id) &&
 				this.session.surveyId === restoredState.surveyId
 			) {
 				this.navigator.initialize(restoredState.state).subscribe((v) => {});

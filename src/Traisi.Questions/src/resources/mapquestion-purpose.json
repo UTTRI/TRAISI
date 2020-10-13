@@ -30,6 +30,11 @@
 		"id": "restaurant"
 	},
 	{
+		"label": "pick up food",
+		"icon": "fas fa-utensils",
+		"id": "pick-up-food"
+	},
+	{
 		"label": "visiting friends, family",
 		"icon": "fas fa-users",
 		"id": "vsiting"

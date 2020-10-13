@@ -516,6 +516,7 @@ namespace Traisi.Services
                         TimeA = responseValue.TimeA,
                         TimeB = responseValue.TimeB,
                         Mode = responseValue.Mode,
+                        Identifier = responseValue.Identifier,
                         Location =
                             new Point(responseValue.Longitude,
                                 responseValue.Latitude)

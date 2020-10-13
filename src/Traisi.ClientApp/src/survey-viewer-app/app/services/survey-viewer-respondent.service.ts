@@ -30,14 +30,12 @@ export class SurveyViewerRespondentService {
 	 */
 	public getSurveyPrimaryRespondent(surveyId: number): Observable<SurveyRespondentViewModel> {
 		let sub = this._respondentClient.getSurveyPrimaryRespondent(surveyId);
-		console.log(sub);
 		sub.pipe(shareReplay(1));
 		let res = sub.subscribe((respondent) => {
 			this._primaryRespondent = respondent;
 			this._state.viewerState.surveyAccessTime = new Date(respondent.surveyAccessTime);
 			this._primaryRespondent.surveyAccessTime = new Date(this._primaryRespondent.surveyAccessTime);
 			// this._primaryRespondent.surveyAccessDateTime = new Date(this._primaryRespondent.surveyAccessDateTime);
-			console.log(this.primaryRespondent);
 		});
 		return sub;
 	}

@@ -7,17 +7,17 @@ traisi-survey-header-display {
 .pace {
 	-webkit-pointer-events: none;
 	pointer-events: none;
-  
+
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	user-select: none;
-  }
-  
-  .pace-inactive {
+}
+
+.pace-inactive {
 	display: none;
-  }
-  
-  .pace .pace-progress {
+}
+
+.pace .pace-progress {
 	background: #29d;
 	position: fixed;
 	z-index: 2000;
@@ -25,8 +25,7 @@ traisi-survey-header-display {
 	right: 100%;
 	width: 100%;
 	height: 2px;
-  }
-  
+}
 
 .highlighted {
 	border: solid 3px #ff8100 !important;
@@ -86,7 +85,7 @@ nav.sidebar {
 	}
 
 	main.survey-container.menuToggled {
-		margin-left: 320px !important;
+		margin-left: 300px !important;
 	}
 
 	.survey-container {
@@ -130,6 +129,13 @@ nav.sidebar {
 	padding-right: 0px;
 }
 
+.heading-question .traisi-question-container-outer {
+	background: none;
+	box-shadow: none;
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+}
+
 .traisi-question-container-outer {
 	box-sizing: content-box;
 	background-color: white;
@@ -141,7 +147,7 @@ nav.sidebar {
 	-moz-box-shadow: 0px 14px 35px -17px rgba(0, 0, 0, 0.4);
 	box-shadow: 0px 14px 35px -17px rgba(0, 0, 0, 0.4);
 	margin-bottom: 40px;
-	width: 100%;
+	// width: 100%;
 	// margin-right: 30px;
 	// margin-left: 30px;
 	position: relative;
@@ -177,6 +183,10 @@ nav.sidebar {
 		//margin-right: auto;
 		//max-width: 1000px;
 		//width: 1000px;
+	}
+	.questions-outer-container {
+		margin-right: 20px;
+		margin-left: 20px;
 	}
 }
 
@@ -405,8 +415,6 @@ nav.sidebar {
 		margin-right: 45px !important;
 	}
 }
-
-
 
 @import 'survey-viewer.component.sm.scss';
 @import 'survey-viewer.component.md.scss';

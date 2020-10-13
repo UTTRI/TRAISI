@@ -56,7 +56,7 @@ namespace Traisi.Helpers
         /// <param name="latitude"></param>
         /// <param name="longitude"></param>
         /// <returns></returns>
-        public async Task<string> ReverseGeocodeAsync(double latitude, double longitude)
+        public Task<string> ReverseGeocodeAsync(double latitude, double longitude)
         {
             throw new NotImplementedException();
         }

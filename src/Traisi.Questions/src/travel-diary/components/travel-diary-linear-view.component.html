@@ -1,0 +1,3 @@
+<div *ngFor="let event of events$ | async" class="event-container">
+	<traisi-travel-diary-linear-view-event-display [event]="event" (click)="onEventClicked(event)" ></traisi-travel-diary-linear-view-event-display>
+</div>

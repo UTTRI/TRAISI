@@ -10,27 +10,25 @@ export class SwitchComponent implements OnInit {
 	public id: number;
 	public questionConfiguration: QuestionConfigurationDefinition;
 
-	public switchValue;
+	public switchValue: boolean;
 
 	constructor() {}
 
-	ngOnInit() {
+	public ngOnInit(): void {
 		if (this.switchValue === undefined) {
 			this.setDefaultValue();
 		}
 	}
 
-	setDefaultValue() {
+	public setDefaultValue() {
 		this.switchValue = this.questionConfiguration.defaultValue === 'true';
-
-		console.log(this.questionConfiguration);
 	}
 
-	getValue() {
-		return JSON.stringify(this.switchValue);
+	public getValue() {
+		return this.switchValue;
 	}
 
-	processPriorValue(last: string) {
-		this.switchValue = JSON.parse(last);
+	public processPriorValue(last: string): void {
+		this.switchValue = JSON.parse(last.toLowerCase());
 	}
 }

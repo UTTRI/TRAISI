@@ -1,16 +1,33 @@
 <div *ngIf="isLoaded | async">
-    <div class="address-header">
-       <span class="purpose">{{purpose}}</span> <span class="origin-address">{{ originAddress}}</span> - <span class="destination-address">{{destinationAddress}}</span>
-    </div>
-	<div *ngFor="let trip of route.trips.Trip; let idx = index" class="route-select-question-container">
-		<label>
-			<input type="radio" name="{{ radioName }}" [value]="idx" [(ngModel)]="selectedIndex" (ngModelChange)="modelChanged($event)" />
-			<traisi-route-display [trip]="trip" class="route-display"></traisi-route-display>
-		</label>
-		<div class="detailed-button" (click)="showTripInfo(trip)">
-			<i class="far fa-info-square"></i>
+	<ng-container *ngIf="!hasError">
+		<div class="address-header">
+			<span class="purpose">{{ purpose }}</span> <span class="origin-address">{{ originAddress }}</span> -
+			<span class="destination-address">{{ destinationAddress }}</span>
 		</div>
-	</div>
+		<div *ngFor="let trip of route.trips.Trip; let idx = index" class="route-select-question-container">
+			<label>
+				<input
+					type="radio"
+					name="{{ radioName }}"
+					[value]="idx"
+					[(ngModel)]="selectedIndex"
+					(ngModelChange)="modelChanged($event)"
+				/>
+				<traisi-route-display [trip]="trip" class="route-display"></traisi-route-display>
+			</label>
+			<div class="detailed-button" (click)="showTripInfo(trip)">
+				<i class="far fa-info-square"></i>
+			</div>
+		</div>
+	</ng-container>
+	<ng-container *ngIf="hasError">
+		<div class="address-header">
+			<span class="purpose">{{ purpose }}</span> <span class="origin-address">{{ originAddress }}</span> -
+			<span class="destination-address">{{ destinationAddress }}</span>
+		</div>
+		<div class="alert alert-warning" role="alert">
+			We were unable to collect routes for this trip, please click next to continue the survey.
+		</div>
+	</ng-container>
 	<traisi-route-detail-dialog #routeDetailDialog></traisi-route-detail-dialog>
-	
 </div>
