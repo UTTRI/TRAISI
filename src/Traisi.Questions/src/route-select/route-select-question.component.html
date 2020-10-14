@@ -19,6 +19,18 @@
 				<i class="far fa-info-square"></i>
 			</div>
 		</div>
+		<div class="my-route-not-shown">
+			<label>
+				<input
+					type="radio"
+					name="{{ radioName }}"
+					[value]="4"
+					[(ngModel)]="selectedIndex"
+					(ngModelChange)="modelChanged($event)"
+				/>
+				<div class="route-display route-missing-message">My route is not in the list</div>
+			</label>
+		</div>
 	</ng-container>
 	<ng-container *ngIf="hasError">
 		<div class="address-header">

@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterContentInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { QuestionConfigurationDefinition } from '../../../models/question-configuration-definition.model';
 import { AlertService, MessageSeverity } from '../../../../../../shared/services/alert.service';
 

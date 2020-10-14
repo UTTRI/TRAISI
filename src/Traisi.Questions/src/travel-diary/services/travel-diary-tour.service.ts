@@ -73,7 +73,7 @@ export class TravelDiaryTourService {
                             <p>This question will collect trip information for you and members of your household.<p>
                             <p>Press next to see instructions on how to enter information about the trips you took on the assigned travel date. If
 							you need to see the instructions again, click the help icon at the bottom of the page.</p>
-							<p>If you need help, please call: <strong>1-647-836-5706</strong></p>`,
+							<p>If you need help, please call: <strong>1-647-836-5706</strong> (9:00AM - 5:00PM).</p>`,
 				},
 
 				{

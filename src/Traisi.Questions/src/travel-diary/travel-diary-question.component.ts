@@ -137,6 +137,7 @@ export class TravelDiaryQuestionComponent extends SurveyQuestion<ResponseTypes.T
 		this._travelDiaryService.resetTravelDiary().subscribe({
 			complete: () => {
 				if (this._travelDiaryService.diaryEvents$.value.length > 0) {
+					console.log(this._travelDiaryService.diaryEvents$.value);
 					if (this._travelDiaryService.diaryEvents$.value[0].meta.model.timeA.getHours() > 2) {
 						// create new home event
 						this.entryDialog.show(DialogMode.CreateHome);

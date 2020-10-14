@@ -18,6 +18,23 @@
 	background-color: #f4f4f4;
 }
 
+.route-missing-message {
+	font-size: 20px;
+	font-weight: bold;
+	align-items: center;
+	
+}
+
+[type='radio']:not(:checked) + .route-missing-message {
+	color: #AAA;
+	border-top: #9361ca solid 2px;
+}
+
+[type='radio']:checked + .route-missing-message {
+	color: #444;
+	border-top: white solid 2px;
+}
+
 .route-display {
 	min-height: 125px;
 	display: flex;

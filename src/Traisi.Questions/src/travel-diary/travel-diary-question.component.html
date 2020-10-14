@@ -41,7 +41,7 @@
 			[autoClose]="false"
 			#dropdownToggle="bs-dropdown"
 		>
-			<button type="button" class="btn btn-primary" (click)="newEvent()">Add Trip</button>
+			<button type="button" class="btn btn-primary new-event-button" (click)="newEvent()">Add Trip</button>
 			<label class="btn btn-primary view-select schedule-view" (click)="setSummaryTavelDiaryView(true)"
 				><input type="radio" name="options" id="scheduleView" checked /><i class="fas fa-calendar-week"></i
 			></label>
@@ -53,7 +53,7 @@
 
 		
 		<span class="reset-links"> <a [routerLink]=""  (click)="resetEvents()">Reset</a> | 
-		<a [routerLink]=""  (click)="clearEvents()">Clear trips </a> </span> | 
+		<a [routerLink]=""  (click)="clearEvents()">Clear </a> </span> | 
 
 		<a [routerLink]="" class="tour" (click)="startTour(true)"> <i class="fas fa-info-circle"></i>Help </a>
 

@@ -50,7 +50,8 @@ export class TravelDiaryEventDisplayComponent implements OnInit {
 
 	public constructor(private _travelDiaryService: TravelDiaryService, 
 		@Inject(TraisiValues.SurveyAccessTime) public surveyAccessTime: Date,
-		@Inject(TraisiValues.SurveyAccessTime) public surveyRespondent: SurveyRespondent) {
+		@Inject(TraisiValues.Respondent) public surveyRespondent: SurveyRespondent) {
+ 
 	}
 
 	public ngOnInit(): void {

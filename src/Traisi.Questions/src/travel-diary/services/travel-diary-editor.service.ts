@@ -179,7 +179,6 @@ export class TravelDiaryEditor {
 			displayId = event.identifier;
 		}
 
-
 		event.identifier = displayId;
 		let u = event.users[0];
 		if (!event.isInserted) {
@@ -254,7 +253,7 @@ export class TravelDiaryEditor {
 						purpose: overlap.meta.purpose,
 						address: overlap.meta.address,
 						user: overlap.meta.user,
-						mode: overlap.meta.mode,
+						mode: undefined,
 						model: Object.assign({}, overlap.meta.model),
 						id: displayId,
 					},
@@ -262,7 +261,8 @@ export class TravelDiaryEditor {
 				};
 				returnEvent.meta.model.identifier = displayId;
 				returnEvent.meta.model.timeA = event.insertedEndTime;
-				returnEvent.meta.model.isValid = overlap.meta.model.isValid;
+				returnEvent.meta.model.isValid = false;
+				returnEvent.meta.model.mode = undefined;
 
 				if (returnEvent.meta.model.purpose === 'home') {
 					returnEvent.end = new Date(new Date().setHours(23, 59, 0, 0));
@@ -291,7 +291,6 @@ export class TravelDiaryEditor {
 				this.deleteEvent(prevEvent.meta.model, events);
 			}
 		}
-
 		return events;
 	}
 
@@ -312,13 +311,17 @@ export class TravelDiaryEditor {
 			let userEvents = events.filter((x) => x.meta.user.id === respondent.id);
 			// find index of this event
 
-			for (let i = 1; i < userEvents.length; i++) {
+			for (let i = 0; i < userEvents.length; i++) {
 				let timeA = new Date(userEvents[i].start);
 				timeA.setHours(timeA.getHours() - TIME_DELTA);
 				let timeB = new Date(userEvents[i].end);
 				timeB.setHours(timeB.getHours() - TIME_DELTA);
 
 				if (userEvents[i].meta.model.identifier === model.identifier) {
+					continue;
+				}
+
+				if (i === 0 && events.length > 1) {
 					continue;
 				}
 
@@ -618,6 +621,10 @@ export class TravelDiaryEditor {
 				}
 			}
 		}
+
+		if (events.length > 1 && events[0].meta.model.purpose.includes('home')) {
+			events[0].meta.homeAllDay = false;
+		}
 	}
 
 	/**
@@ -710,8 +717,8 @@ export class TravelDiaryEditor {
 				},
 				id: Date.now(),
 			},
-			start: new Date(new Date().setHours(0, 0, 0, 0)),
-			end: new Date(new Date().setHours(23, 59, 0, 0)),
+			start: new Date(new Date(this._surveyAccessTime).setHours(0, 0, 0, 0)),
+			end: new Date(new Date(this._surveyAccessTime).setHours(23, 59, 0, 0)),
 		});
 		return events;
 	}

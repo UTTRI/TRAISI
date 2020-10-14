@@ -75,8 +75,7 @@ namespace Traisi.Data.Repositories
                 .Where(r => user.SurveyRespondentGroup.GroupMembers.AsEnumerable().Contains(r.Respondent))
                 .Include(r => r.ResponseValues)
                 .Include(r => r.Respondent)
-                .Include(r => ((SurveyUser)r.SurveyAccessRecord.AccessUser).PrimaryRespondent.SurveyAccessRecords)
-                .Include(r => r.QuestionPart).ThenInclude(q => q.QuestionConfigurations);
+                .Include(r => r.SurveyAccessRecord.Respondent.SurveyAccessRecords);
 
             if (type == QuestionResponseType.Location)
             {
@@ -85,6 +84,11 @@ namespace Traisi.Data.Repositories
             else if (type == QuestionResponseType.Timeline)
             {
                 query = query.Where(r => r.ResponseValues.Any(r2 => EF.Property<int>(r2, "ResponseType") == (int)ResponseTypes.TimelineResponse));
+
+            }
+            else if (type == QuestionResponseType.OptionSelect)
+            {
+                query = query.Where(r => r.ResponseValues.Any(r2 => EF.Property<int>(r2, "ResponseType") == (int)ResponseTypes.OptionSelectResponse));
 
             }
 

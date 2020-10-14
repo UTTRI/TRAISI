@@ -293,7 +293,9 @@ export class TravelDiaryEditDialogComponent implements AfterViewInit {
 	public initTimeInput(model: TimelineLineResponseDisplayData): void {
 		if (!model.timeA) {
 			model.timeA = this.defaultDate;
+			this.onDepartureTimeChange(model.timeA);
 		}
+		
 	}
 
 	public initReturnTimeInput(model: TimelineLineResponseDisplayData): void {

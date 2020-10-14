@@ -107,12 +107,12 @@ export class RouteSelectQuestionComponent extends SurveyQuestion<ResponseTypes.J
 			.subscribe((x) => {
 				this.route = (x as RootObject).Data[0].response;
 				this.isLoaded.next(true);
-				console.log(this.route);
 				if (this.route.Status.Code !== 'OK') {
 					this.hasError = true;
+					this.validationState.emit(ResponseValidationState.VALID);
 				} else {
 					this.hasError = false;
-					this.validationState.emit(ResponseValidationState.VALID);
+					// this.validationState.emit(ResponseValidationState.VALID);
 				}
 				this.savedResponse.subscribe(this.onSavedResponseData);
 			});
