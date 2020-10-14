@@ -1049,8 +1049,8 @@ namespace TRAISI.Export
  */
         public void ResponseListToWorksheet(List<SurveyResponse> surveyResponses, ExcelWorksheet worksheet, Boolean isHouseHold)
         {
-            //Removed Timeline and Travel modes responses. 
-            surveyResponses = surveyResponses.Where(res => res.QuestionPart.Name != "Timeline" && res.QuestionPart.Name != "Travel modes").OrderBy(res => res.Respondent.Id).ToList();
+            //Removed Travel diary and Transit routes responses. 
+            surveyResponses = surveyResponses.Where(res => res.QuestionPart.Name != "Travel diary" && res.QuestionPart.Name != "Transit routes").OrderBy(res => res.Respondent.Id).ToList();
 
             var responseValuesTask = Task.Run(() =>
                 surveyResponses
@@ -1158,9 +1158,9 @@ namespace TRAISI.Export
         List<SurveyRespondent> surveyRespondents,
         ExcelWorksheet worksheet)
         {
-            //Removed Travel modes and Timeline columns
-            surveyResponses = surveyResponses.Where(res => res.QuestionPart.Name != "Timeline" && res.QuestionPart.Name != "Travel modes").ToList();
-            questionParts = questionParts.Where(res => res.Name != "Timeline" && res.Name != "Travel modes").ToList();
+            //Removed Transit routes and Travel diary columns
+            surveyResponses = surveyResponses.Where(res => res.QuestionPart.Name != "Travel diary" && res.QuestionPart.Name != "Transit routes").ToList();
+            questionParts = questionParts.Where(res => res.Name != "Travel diary" && res.Name != "Transit routes").ToList();
 
             // process questions
             // build dictionary of questions and column numbers

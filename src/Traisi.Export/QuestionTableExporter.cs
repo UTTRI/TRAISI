@@ -78,8 +78,8 @@ namespace TRAISI.Export
         /// <param name="worksheet"></param>
         public void BuildQuestionTable(IList<QuestionPartView> questionPartViews, ExcelWorksheet worksheet)
         {
-            //Removed Timeline and Travel modes questions.
-            questionPartViews = questionPartViews.Where(res => res.QuestionPart.Name != "Timeline" && res.QuestionPart.Name != "Travel modes").ToList();                                                    
+            //Removed Travel diary and Transit routes questions.
+            questionPartViews = questionPartViews.Where(res => res.QuestionPart.Name != "Travel diary" && res.QuestionPart.Name != "Transit routes").ToList();                                                    
             
             // inject header
             var headerRow = new List<string[]>()
