@@ -33,7 +33,7 @@ namespace Traisi.Authorization {
 				string mode = section.GetValue<string> ("AuthenticationMode");
 				var options = section.GetSection ("Options");
 
-				var type = Type.GetType (mode);
+				var type = Type.GetType (mode+", Traisi.Models");
 				if (type == null) {
 					continue;
 				}

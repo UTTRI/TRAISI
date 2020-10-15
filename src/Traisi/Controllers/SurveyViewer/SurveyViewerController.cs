@@ -139,7 +139,7 @@ namespace Traisi.Controllers.SurveyViewer
         public async Task<IActionResult> GetSurveyViewPages(int surveyId, [FromQuery] SurveyViewType viewType = SurveyViewType.RespondentView, [FromQuery] string language = "en")
         {
             List<QuestionPartView> pages = await this._viewService.GetSurveyViewPages(surveyId, viewType);
-            var localizedModel = pages.ToLocalizedModel<List<SurveyViewPageViewModel>, QuestionPartView>(_mapper,language);
+            var localizedModel = pages.ToLocalizedModel<List<SurveyViewPageViewModel>, QuestionPartView>(_mapper, language);
             return new ObjectResult(localizedModel);
         }
 
@@ -171,7 +171,7 @@ namespace Traisi.Controllers.SurveyViewer
         {
             var questionOptions = await this._viewService.GetQuestionOptions(questionId);
 
-            var localizedModel = questionOptions.ToLocalizedModel<List<QuestionOptionViewModel>, QuestionOption>(_mapper,language);
+            var localizedModel = questionOptions.ToLocalizedModel<List<QuestionOptionViewModel>, QuestionOption>(_mapper, language);
 
             return new ObjectResult(localizedModel);
         }
@@ -189,7 +189,7 @@ namespace Traisi.Controllers.SurveyViewer
         public async Task<IActionResult> GetDefaultSurveyView(int surveyId, string language = "en")
         {
             var view = await this._viewService.GetDefaultSurveyView(surveyId);
-            return new ObjectResult(view.ToLocalizedModel<SurveyViewerViewModel>(_mapper,language));
+            return new ObjectResult(view.ToLocalizedModel<SurveyViewerViewModel>(_mapper, language));
         }
 
         [HttpGet("styles/{surveyId}")]
@@ -347,7 +347,7 @@ namespace Traisi.Controllers.SurveyViewer
                 return new NotFoundResult();
             }
 
-            return new ObjectResult(result.ToLocalizedModel<SurveyViewPageViewModel>(_mapper,"en"));
+            return new ObjectResult(result.ToLocalizedModel<SurveyViewPageViewModel>(_mapper, "en"));
         }
 
         /// <summary>
@@ -415,10 +415,12 @@ namespace Traisi.Controllers.SurveyViewer
         /// <returns></returns>
         [Route("complete/{surveyId:int}")]
         [HttpPut]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Produces(typeof(void))]
         [Authorize(Policy = Policies.RespondToSurveyPolicy)]
         public async Task<IActionResult> SurveyComplete(int surveyId, [FromHeader(Name = "Shortcode")] string shortcode)
         {
-
             var survey = await this._unitOfWork.Surveys.GetAsync(surveyId);
             if (survey != null)
             {
@@ -433,6 +435,27 @@ namespace Traisi.Controllers.SurveyViewer
                 return new NotFoundResult();
             }
 
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="surveyId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Produces(typeof(string))]
+        [Route("surveys/{surveyId}/completion-link")]
+        [Authorize(Policy = Policies.RespondToSurveyPolicy)]
+        public async Task<IActionResult> GetSurveySuccessLink(int surveyId)
+        {
+            var survey = await this._unitOfWork.Surveys.GetAsync(surveyId);
+            if (survey == null)
+            {
+                return new NotFoundResult();
+            }
+            var currentUser = await _userManager.GetUserAsync(User);
+            var linkResult = await this._viewService.GetSurveySuccessLink(currentUser, survey);
+            return new OkObjectResult(new { successLink = linkResult});
         }
 
     }

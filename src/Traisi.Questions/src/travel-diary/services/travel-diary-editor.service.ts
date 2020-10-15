@@ -41,7 +41,7 @@ export class TravelDiaryEditor {
 		if (homeAllDay) {
 			events = events.concat(this.createHomeAllDayEvent(user));
 			return events;
-		} else if ((workDeparture || schoolDeparture || returnedHome) && homeDeparture) {
+		} else if ((workDeparture || schoolDeparture || returnedHome || homeDeparture) && homeDeparture) {
 			let homeEvent = this.createHomeStartEvent(user);
 			events.push(homeEvent);
 		}

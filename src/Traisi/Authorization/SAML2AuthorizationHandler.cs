@@ -65,10 +65,12 @@ namespace Traisi.Authorization.Extensions
         private void Initialize()
         {
             var authAttribute = _configuration.GetValue<string>("SAML2Authentication:AuthenticationAttribute");
-            if (authAttribute == null) {
+            if (authAttribute == null)
+            {
                 AuthenticationAttribute = DEFAULT_AUTHENTICATION_ATTRIBUTE;
             }
-            else {
+            else
+            {
                 AuthenticationAttribute = authAttribute;
             }
         }
@@ -81,20 +83,23 @@ namespace Traisi.Authorization.Extensions
         private bool IsSurveyAnonymous(string surveyCode)
         {
             var modes = _configuration.GetSection("SurveyAuthenticationModes");
-            foreach (var mode in modes.GetChildren()) {
-                if (mode.GetValue<string>("SurveyCode") == surveyCode) {
-                    if (mode.GetValue<bool>("AllowAnonymous")) {
+            foreach (var mode in modes.GetChildren())
+            {
+                if (mode.GetValue<string>("SurveyCode") == surveyCode)
+                {
+                    if (mode.GetValue<bool>("AllowAnonymous"))
+                    {
                         return true;
                     }
                 }
             }
             return false;
         }
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="surveyCode"></param>
-		/// <returns></returns>
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="surveyCode"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("session/{surveyCode}")]
         public ActionResult Session(string surveyCode)
@@ -112,12 +117,14 @@ namespace Traisi.Authorization.Extensions
         [Route("login/anonymous/{surveyCode}")]
         public async Task<IActionResult> AnonymousLogin(string surveyCode)
         {
-            if (!IsSurveyAnonymous(surveyCode)) {
+            if (!IsSurveyAnonymous(surveyCode))
+            {
                 return Unauthorized();
             }
             var identifier = HashIdentifier(Guid.NewGuid().ToString());
             var survey = await this._unitOfWork.Surveys.GetSurveyByCodeAsync(surveyCode);
-            if (survey == null) {
+            if (survey == null)
+            {
                 return new NotFoundResult();
             }
             Shortcode shortcode = new Shortcode()
@@ -130,7 +137,21 @@ namespace Traisi.Authorization.Extensions
 
             await this._unitOfWork.Shortcodes.AddAsync(shortcode);
             await this._unitOfWork.SaveChangesAsync();
-            return Redirect($"/survey/{surveyCode}/start/{HttpUtility.UrlEncode(shortcode.Code)}");
+
+            var queryString = "";
+            foreach (var param in HttpContext.Request.Query)
+            {
+                queryString += $"{param.Key}={param.Value}&";
+            }
+            if (queryString.Length == 0)
+            {
+                return Redirect($"/survey/{surveyCode}/start/{HttpUtility.UrlEncode(shortcode.Code)}");
+            }
+            else
+            {
+                return Redirect($"/survey/{surveyCode}/start/{HttpUtility.UrlEncode(shortcode.Code)}?{queryString}");
+            }
+
         }
 
 
@@ -149,21 +170,25 @@ namespace Traisi.Authorization.Extensions
             var identifiers = headers[this.AuthenticationAttribute];
             string identifier = "";
 
-            if (identifiers.Count == 0 || string.IsNullOrEmpty(identifiers[0].Trim()) || IsSurveyAnonymous(surveyCode)) {
+            if (identifiers.Count == 0 || string.IsNullOrEmpty(identifiers[0].Trim()) || IsSurveyAnonymous(surveyCode))
+            {
 
                 identifier = Guid.NewGuid().ToString();
             }
-            else {
+            else
+            {
                 identifier = identifiers[0];
             }
             identifier = HashIdentifier(identifier);
 
             var survey = await this._unitOfWork.Surveys.GetSurveyByCodeAsync(surveyCode);
-            if (survey == null) {
+            if (survey == null)
+            {
                 return new NotFoundResult();
             }
             Shortcode shortcode = await this._unitOfWork.Shortcodes.GetShortcodeForSurveyAsync(survey, identifier);
-            if (shortcode == null) {
+            if (shortcode == null)
+            {
 
                 shortcode = new Shortcode()
                 {

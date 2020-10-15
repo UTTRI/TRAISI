@@ -181,7 +181,6 @@ export class TravelDiaryEditDialogComponent implements AfterViewInit {
 		if (this._respondentRef) {
 			users = [].concat(this._respondentRef);
 		}
-		
 
 		this.model = {
 			id: undefined,
@@ -219,7 +218,7 @@ export class TravelDiaryEditDialogComponent implements AfterViewInit {
 
 	public onMembersChanged($event: any) {
 		this.checkTimeOverlaps();
-		if(!this.model.users.some(x => x.id !== this._respondent.id)) {
+		if (!this.model.users.some((x) => x.id !== this._respondent.id)) {
 			this.model.users = [this._respondentRef].concat(this.model.users);
 		}
 	}
@@ -288,6 +287,10 @@ export class TravelDiaryEditDialogComponent implements AfterViewInit {
 			this.insertedIntoEvent = undefined;
 			this.isInsertedDepartureTime = false;
 		}
+
+		if (!insertedEvent) {
+			this.model.isInserted = false;
+		}
 	}
 
 	public initTimeInput(model: TimelineLineResponseDisplayData): void {
@@ -295,7 +298,6 @@ export class TravelDiaryEditDialogComponent implements AfterViewInit {
 			model.timeA = this.defaultDate;
 			this.onDepartureTimeChange(model.timeA);
 		}
-		
 	}
 
 	public initReturnTimeInput(model: TimelineLineResponseDisplayData): void {

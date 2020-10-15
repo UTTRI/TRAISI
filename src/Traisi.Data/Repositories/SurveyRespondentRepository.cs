@@ -47,7 +47,7 @@ namespace Traisi.Data.Repositories
             .ThenInclude(s => s.GroupMembers)
             .Include(s => s.Shortcode)
             .Include(s => s.SurveyAccessRecords)
-            .Include( s => s.Survey)
+            .Include(s => s.Survey)
             .FirstOrDefaultAsync();
 
             if (respondent == null)
@@ -124,6 +124,19 @@ namespace Traisi.Data.Repositories
             var respondent = await this._appContext.PrimaryRespondents.Where(p => p.Survey == survey && p.User == user)
            .FirstOrDefaultAsync();
             return respondent;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="survey"></param>
+        /// <returns></returns>
+        public async Task<List<SurveyAccessRecord>> GetSurveyAccessRecordsAsync(ApplicationUser user, Survey survey)
+        {
+            return await this._appContext.SurveyAccessRecords.Where(r => r.Respondent.User == user && r.Respondent.Survey == survey)
+            .OrderBy(x => x.AccessDateTime)
+          .ToListAsync();
         }
 
 

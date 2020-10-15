@@ -8,12 +8,14 @@ import { TranslateService } from '@ngx-translate/core';
 import { SurveyViewThankYouModel } from '../../models/survey-view-thankyou.model';
 import { flatMap } from 'rxjs/operators';
 import { SurveyViewType } from '../../models/survey-view-type.enum';
+import { SurveyViewerClient } from 'app/services/survey-viewer-api-client.service';
+import { AuthService } from 'shared/services/auth.service';
 
 @Component({
 	selector: 'traisi-survey-thankyou-page',
 	templateUrl: './survey-thankyou-page.component.html',
 	styleUrls: ['./survey-thankyou-page.component.scss'],
-	encapsulation: ViewEncapsulation.None
+	encapsulation: ViewEncapsulation.None,
 })
 export class SurveyThankYouPageComponent implements OnInit {
 	private surveyId: number;
@@ -31,7 +33,9 @@ export class SurveyThankYouPageComponent implements OnInit {
 	 */
 	constructor(
 		@Inject('SurveyViewerService') private _surveyViewerService: SurveyViewerService,
-		private _translate: TranslateService
+		private _viewerClient: SurveyViewerClient,
+		private _translate: TranslateService,
+		private _authService: AuthService
 	) {}
 
 	/**
@@ -42,7 +46,7 @@ export class SurveyThankYouPageComponent implements OnInit {
 	public ngOnInit(): void {
 		this._surveyViewerService.activeSurveyId
 			.pipe(
-				flatMap(id => {
+				flatMap((id) => {
 					this.surveyId = id;
 					return this._surveyViewerService.getSurveyViewerThankYou(
 						this.surveyId,
@@ -52,21 +56,33 @@ export class SurveyThankYouPageComponent implements OnInit {
 				})
 			)
 			.pipe(
-				flatMap(thankyouPageModel => {
+				flatMap((thankyouPageModel) => {
 					this.model = thankyouPageModel;
 					if (this.model.hasSuccessLink) {
-						window.location.href = this.model.successLink;
+						// window.location.href = this.model.successLink;
 						return null;
 					} else {
 						return this._surveyViewerService.pageThemeInfoJson;
 					}
 				})
 			)
-			.subscribe(value => {
-				this.pageThemeInfo = value;
+			.subscribe((value) => {
+				if (value) {
+					this.pageThemeInfo = value;
+				}
+
 				this.finishedLoading = true;
 			});
+
+		this._viewerClient.getSurveySuccessLink(this._surveyViewerService.surveyId).subscribe((x: any) => {
+			if (x.successLink) {
+				window.location.href = x.successLink;
+			}
+		});
+
+		this._viewerClient.surveyComplete(
+			this._surveyViewerService.surveyId,
+			this._authService.currentSurveyUser.shortcode
+		);
 	}
-
-
 }

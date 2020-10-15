@@ -220,9 +220,25 @@ export class SurveyStartPageComponent implements OnInit {
 		}
 	}
 
+	private encodeQueryData(data): string {
+		const ret = [];
+		for (let d in data) {
+			ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(data[d]));
+		}
+		return ret.join('&');
+	}
+
 	private externalStart(): Observable<void> {
-		console.log(this.authMode);
-		window.location.href = this.authMode.authenticationUrl;
+		let paramUrl = this.authMode.authenticationUrl;
+		let paramMap = {};
+		for (let param of this._route.snapshot.queryParamMap.keys) {
+			paramMap[param] = this._route.snapshot.queryParams[param];
+		}
+		const querystring = this.encodeQueryData(paramMap);
+
+		paramUrl = paramUrl + '?' + querystring;
+
+		window.location.href = paramUrl;
 		return EMPTY;
 	}
 

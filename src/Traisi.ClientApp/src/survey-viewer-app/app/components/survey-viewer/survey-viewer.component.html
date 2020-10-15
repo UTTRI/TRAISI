@@ -26,7 +26,7 @@
 					{{ session.surveyTitle }}
 				</div>
 				<traisi-survey-progress></traisi-survey-progress>
-				<div class="shortcode-container text-center" *ngIf="!isAdmin">
+				<div class="shortcode-container text-center" *ngIf="!isAdmin && userShortcode.length < 20">
 					{{ userShortcode }}
 				</div>
 			</div>

@@ -118,5 +118,7 @@ namespace Traisi.Services.Interfaces
         /// <returns></returns>
         Task<List<QuestionPartView>> GetSurveyViewPages(int surveyId, SurveyViewType viewType);
 
+        Task<string> GetSurveySuccessLink(ApplicationUser user, Survey survey);
+
     }
 }

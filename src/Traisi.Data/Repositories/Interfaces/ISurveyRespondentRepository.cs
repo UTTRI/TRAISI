@@ -1,25 +1,28 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Traisi.Data.Models;
 using Traisi.Data.Models.Surveys;
 
 namespace Traisi.Data.Repositories.Interfaces
 {
-	public interface ISurveyRespondentRepository : IRepository<SurveyRespondent>
-	{
+    public interface ISurveyRespondentRepository : IRepository<SurveyRespondent>
+    {
 
-		Task<PrimaryRespondent> GetPrimaryRespondentForUserAsync(ApplicationUser user);
+        Task<PrimaryRespondent> GetPrimaryRespondentForUserAsync(ApplicationUser user);
 
-		Task<SurveyRespondent> GetSubRespondentAsync(int respondentId);
+        Task<SurveyRespondent> GetSubRespondentAsync(int respondentId);
 
-		Task<PrimaryRespondent> CreatePrimaryResponentForUserAsnyc(ApplicationUser user);
+        Task<PrimaryRespondent> CreatePrimaryResponentForUserAsnyc(ApplicationUser user);
 
-		Task<PrimaryRespondent> GetPrimaryRespondentForSurveyAsync(Survey survey);
+        Task<PrimaryRespondent> GetPrimaryRespondentForSurveyAsync(Survey survey);
 
-		Task<SurveyRespondent> GetSurveyRespondentAsync(int respondentId);
+        Task<SurveyRespondent> GetSurveyRespondentAsync(int respondentId);
 
-		Task<PrimaryRespondent> GetPrimaryRespondentForSurveyAndTraisiUserAsync(ApplicationUser user, Survey survey);
+        Task<PrimaryRespondent> GetPrimaryRespondentForSurveyAndTraisiUserAsync(ApplicationUser user, Survey survey);
 
-		
+        Task<List<SurveyAccessRecord>> GetSurveyAccessRecordsAsync(ApplicationUser user, Survey survey);
 
-	}
+
+
+    }
 }

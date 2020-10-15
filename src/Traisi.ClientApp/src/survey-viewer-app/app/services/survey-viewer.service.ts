@@ -86,6 +86,10 @@ export class SurveyViewerService implements OnInit {
 
 	public surveyData: ReplaySubject<SurveyData>;
 
+	public get surveyId(): number {
+		return this._activeSurveyId;
+	}
+
 	public get isLoaded(): Observable<boolean> {
 		return this._isLoaded$;
 	}
