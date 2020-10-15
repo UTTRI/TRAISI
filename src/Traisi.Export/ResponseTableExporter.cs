@@ -194,7 +194,7 @@ namespace TRAISI.Export
 
         }
 
-        private List<Tuple<string, string>> ReadJsonResponse_Mode(SurveyResponse response)
+        /* private List<Tuple<string, string>> ReadJsonResponse_Mode(SurveyResponse response)
         {
             List<Tuple<string, string>> modeDetails = new List<Tuple<string, string>>();
             var responseValues = response.ResponseValues.Cast<JsonResponse>().Select(
@@ -212,6 +212,8 @@ namespace TRAISI.Export
             }
             return modeDetails;
         }
+         */
+        
         /* private string GetValuesFromTripLinxData(JObject objTripLinx, string key, int sectionNumber = 0)
         {
             string returnValue = string.Empty;
@@ -404,15 +406,12 @@ namespace TRAISI.Export
             switch (locationPart)
             {
                 case "_address":
-                    string addressWithPostalCode = (((LocationResponse)surveyResponse.ResponseValues.First()).Address).ToString();
-                    value = addressWithPostalCode.Substring(0, addressWithPostalCode.Length - 6);
-                    value = value.TrimEnd(new char[] { ',', ' ' });
-                    return value;
-
+                    string addressWithPostalCode = (((LocationResponse)surveyResponse.ResponseValues.First()).Address).FormattedAddress;
+                    return addressWithPostalCode;
+                    
                 case "_postalCode":
-                    string addressWithPostalCode1 = (((LocationResponse)surveyResponse.ResponseValues.First()).Address).ToString();
-                    value = addressWithPostalCode1.Substring(addressWithPostalCode1.Length - 6);
-                    return value;
+                    string addressOnlyPostalCode = (((LocationResponse)surveyResponse.ResponseValues.First()).Address).PostalCode;
+                    return addressOnlyPostalCode;
 
                 case "_yLatitude":
                     value = (((LocationResponse)surveyResponse.ResponseValues.First()).Location.Y).ToString();
@@ -490,20 +489,20 @@ namespace TRAISI.Export
                 {
                     continue;
                 }
-                //Timeline
+                //Travel diary
                 var response_timeline = surveyResponses.Where(r => r.Respondent.SurveyRespondentGroup.GroupMembers.Any(y => y == respondent))
                                                             .Where(r => r.Respondent == respondent)
-                                                                .Where(y => y.QuestionPart.Name == "Timeline");
-                //Travel modes
+                                                                .Where(y => y.QuestionPart.Name == "Travel diary");
+                //Transit routes
                 var response_Json = surveyResponses.Where(r => r.Respondent.SurveyRespondentGroup.GroupMembers.Any(y => y == respondent))
                                                         .Where(r => r.Respondent == respondent)
-                                                            .Where(y => y.QuestionPart.Name == "Travel modes");
+                                                            .Where(y => y.QuestionPart.Name == "Transit routes");
 
                 if (response_timeline.Count() == 0)
                     continue;
 
                 //Reading Mode Details 
-                List<Tuple<string, string>> modeDetails = ReadJsonResponse_Mode(response_Json.First());
+                //List<Tuple<string, string>> modeDetails = ReadJsonResponse_Mode(response_Json.First());
 
                 var responseValues_timeline_1 = ReadTimelineResponseList(response_timeline.First());
                 List<dynamic> responseValues_timeline = new List<object>();
@@ -563,15 +562,12 @@ namespace TRAISI.Export
                     worksheet.Cells[rowNumber, 9].Value = response.Name;
 
                     //Address Origin
-                    string value = String.Empty;
-                    string addressWithPostalCode = response.Address.ToString();
-                    value = addressWithPostalCode.Substring(0, addressWithPostalCode.Length - 6);
-                    value = value.TrimEnd(new char[] { ',', ' ' });
-                    worksheet.Cells[rowNumber, 10].Value = value;
+                    string addressWithPostalCode = response.Address.FormattedAddress;
+                    worksheet.Cells[rowNumber, 10].Value = addressWithPostalCode;
 
                     //Postalcode Origin
-                    value = addressWithPostalCode.Substring(addressWithPostalCode.Length - 6);
-                    worksheet.Cells[rowNumber, 11].Value = value;
+                    string addressOnlyPostalCode = response.Address.PostalCode;
+                    worksheet.Cells[rowNumber, 11].Value = addressOnlyPostalCode;
 
                     //TpOrigCTuid 
                     worksheet.Cells[rowNumber, 12].Value = String.Empty;
@@ -604,28 +600,26 @@ namespace TRAISI.Export
                     worksheet.Cells[rowNumber, 21].Value = response_dest.Name;
 
                     //Address Destination
-                    string value_Dest = String.Empty;
-                    string addressWithPostalCode_Dest = response_dest.Address.ToString();
-                    value_Dest = addressWithPostalCode_Dest.Substring(0, addressWithPostalCode_Dest.Length - 6);
-                    value_Dest = value_Dest.TrimEnd(new char[] { ',', ' ' });
-                    worksheet.Cells[rowNumber, 22].Value = value_Dest;
+                    string addressWithPostalCode_Dest = response.Address.FormattedAddress;
+                    worksheet.Cells[rowNumber, 22].Value = addressWithPostalCode_Dest;
 
                     //Postalcode Destination
-                    value_Dest = addressWithPostalCode_Dest.Substring(addressWithPostalCode_Dest.Length - 6);
-                    worksheet.Cells[rowNumber, 23].Value = value_Dest;
+                    string addressOnlyPostalCode_Dest = response.Address.PostalCode;
+                    worksheet.Cells[rowNumber, 23].Value = addressOnlyPostalCode_Dest;
 
                     //CmpMultiModeCatkey 
                     worksheet.Cells[rowNumber, 24].Value = String.Empty;
 
                     //Mode Details
-                    if (modeDetails.Count >= locNumber)
+                    /* if (modeDetails.Count >= locNumber)
                     {
                         //CmpMultiModeCatName 
                         worksheet.Cells[rowNumber, 30].Value = modeDetails[locNumber - 1].Item2;
 
                         //CmpMultiModeCatMainGroup
                         worksheet.Cells[rowNumber, 31].Value = modeDetails[locNumber - 1].Item1;
-                    }
+                    } */
+
                     //TpInclDriv
                     worksheet.Cells[rowNumber, 32].Value = String.Empty;
 
@@ -1181,7 +1175,7 @@ namespace TRAISI.Export
             foreach (var questionPart in questionParts)
             {
                 //Household members
-                if (questionPart.Name == "Household members")
+                if (questionPart.Name == "Household Members")
                     continue;
 
                 questionColumnDict.Add(questionPart, columnNum);
@@ -1314,7 +1308,7 @@ namespace TRAISI.Export
             foreach (var questionPart in questionParts)
             {
                 //Removed Household members column
-                if (questionPart.Name == "Household members")
+                if (questionPart.Name == "Household Members")
                     continue;
 
                 questionColumnDict.Add(questionPart, columnNum);
