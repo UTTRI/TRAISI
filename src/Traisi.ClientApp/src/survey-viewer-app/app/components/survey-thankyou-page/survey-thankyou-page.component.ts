@@ -74,15 +74,16 @@ export class SurveyThankYouPageComponent implements OnInit {
 				this.finishedLoading = true;
 			});
 
-		this._viewerClient.getSurveySuccessLink(this._surveyViewerService.surveyId).subscribe((x: any) => {
-			if (x.successLink) {
-				window.location.href = x.successLink;
-			}
-		});
 
 		this._viewerClient.surveyComplete(
 			this._surveyViewerService.surveyId,
 			this._authService.currentSurveyUser.shortcode
-		);
+		).subscribe( x2=> {
+			this._viewerClient.getSurveySuccessLink(this._surveyViewerService.surveyId).subscribe((x: any) => {
+				if (x.successLink) {
+					window.location.href = x.successLink;
+				}
+			});
+		});
 	}
 }

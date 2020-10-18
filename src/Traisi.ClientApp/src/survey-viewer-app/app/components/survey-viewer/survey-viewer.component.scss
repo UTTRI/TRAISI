@@ -4,6 +4,29 @@ traisi-survey-header-display {
 	position: relative;
 }
 
+.loading-message {
+	width: 300px;
+	margin:auto;
+}
+
+#overlay {
+	position: fixed;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+    /* content: close-quote; */
+    color: white;
+    cursor: pointer;
+  }
+
 .pace {
 	-webkit-pointer-events: none;
 	pointer-events: none;

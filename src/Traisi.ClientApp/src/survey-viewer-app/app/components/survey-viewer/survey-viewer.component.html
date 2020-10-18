@@ -18,6 +18,9 @@
 		</ndc-dynamic> -->
 	</nav>
 </header>
+<div id="overlay" *ngIf="!isLoaded">
+	<h1>Loading, please wait...</h1>
+</div>
 <div class="container-fluid">
 	<div class="row">
 		<nav class="bg-light sidebar" [class.toggled]="menuToggled">
@@ -169,15 +172,14 @@
 				</div> -->
 			</div>
 			<ng-template #loading>
-				Loading
-				<img src="/img/loading-bar.svg" />
+				
 			</ng-template>
 		</main>
 	</div>
 </div>
 <footer class="footer">
 	<div class="container">
-		<traisi-survey-navigator></traisi-survey-navigator>
+		<traisi-survey-navigator [isLoaded]="isLoaded"></traisi-survey-navigator>
 		<ng-template footerTemplate></ng-template>
 		<!-- <ndc-dynamic *ngIf="footerComponent" [ndcDynamicComponent]="footerComponent" [ndcDynamicInputs]="footerInputs">
 		</ndc-dynamic> -->

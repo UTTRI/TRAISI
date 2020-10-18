@@ -102,6 +102,8 @@ export class SurveyViewerComponent
 		}
 	}
 
+	public isLoaded: boolean = false;
+
 	/**
 	 *Creates an instance of SurveyViewerComponent.
 	 * @param {SurveyViewerService} surveyViewerService
@@ -297,7 +299,10 @@ export class SurveyViewerComponent
 	 */
 	private navigationStateChanged(v: NavigationState): void {
 		let saveState = {
-			shortcode: this.session.shortcode ?? this._authService.currentSurveyUser.shortcode ?? this._authService.currentUser.id,
+			shortcode:
+				this.session.shortcode ??
+				this._authService.currentSurveyUser.shortcode ??
+				this._authService.currentUser.id,
 			surveyId: this.surveyId,
 			state: {
 				activeQuestionIndex: v.activeQuestionIndex ?? 0,
@@ -495,14 +500,23 @@ export class SurveyViewerComponent
 				restoredState.shortcode === (user['shortcode'] ?? user.id) &&
 				this.session.surveyId === restoredState.surveyId
 			) {
-				this.navigator.initialize(restoredState.state).subscribe((v) => {});
+				this.navigator.initialize(restoredState.state).subscribe((v) => {
+					this.isLoaded = true;
+				});
 			} else {
-				this.navigator.initialize().subscribe();
+				this.navigator.initialize().subscribe((x) => {
+					this.isLoaded = true;
+				});
 				console.log('previous survey data is invalid, resetting to new state');
 			}
 		} else {
 			console.log('no previous data, using base initialized');
-			this.navigator.initialize().subscribe();
+			this.navigator.initialize().subscribe({
+				complete: () => {
+					console.log('is loaded');
+					this.isLoaded = true;
+				},
+			});
 		}
 	}
 

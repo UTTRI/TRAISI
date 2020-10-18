@@ -8,6 +8,7 @@ import {
 	ViewChild,
 	HostListener,
 	ElementRef,
+	Input,
 } from '@angular/core';
 import { SurveyViewerService } from '../../services/survey-viewer.service';
 import { QuestionLoaderService } from '../../services/question-loader.service';
@@ -37,6 +38,10 @@ export class SurveyNavigatorComponent implements OnInit {
 
 	@ViewChild('navigateNextButton', { read: ElementRef })
 	public navigateNextButtonRef: ElementRef;
+
+
+	@Input()
+	public isLoaded: boolean;
 
 	public invalidQuestions: BehaviorSubject<QuestionInstance[]>;
 

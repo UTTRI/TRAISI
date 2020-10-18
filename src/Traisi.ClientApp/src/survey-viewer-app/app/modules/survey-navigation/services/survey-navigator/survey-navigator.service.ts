@@ -85,7 +85,7 @@ export class SurveyNavigator {
 		};
 		this.navigationState$ = new BehaviorSubject<NavigationState>(initialState);
 		this.previousEnabled$ = new BehaviorSubject<boolean>(false);
-		this.nextEnabled$ = new BehaviorSubject<boolean>(true);
+		this.nextEnabled$ = new BehaviorSubject<boolean>(false);
 		this.navigationStateChanged.next(initialState);
 		this._surveyCompleted$ = new Subject<void>();
 	}
@@ -110,12 +110,14 @@ export class SurveyNavigator {
 						this.previousEnabled$.next(true);
 					}
 					this.navigationState$.next(v);
+					this.nextEnabled$.next(true);
 				})
 			);
 		}
 		return new Observable((obs) => {
 			this.navigateToPage(this._state.viewerState.surveyPages[0].id).subscribe((v) => {
 				obs.complete();
+				this.nextEnabled$.next(true);
 				// this.nextEnabled$.next(false);
 			});
 		});
