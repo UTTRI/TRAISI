@@ -463,10 +463,10 @@ namespace TRAISI.Export
                 "Trip_Incl_PT_Bus", "Trip_Incl_PT_Streetcar", "Trip_Incl_PT_Subway", "Trip_Incl_PT_GO_Bus",
                 "Trip_Incl_PT_GO_Train", "Trip_Orig_Purp", "Trip_Dest_Purp", "Trip_Date_Ext",
                 "Trip_Day_Ext", "Trip_Start_Time_Ext", "Arr_Date", "Arr_Day", "Arr_Time", "Trip_Modes",
-                "Trip_Num_Unique_Modes", "Sing_Trip_Diary_Flag", "Incomp_Diary","Survey_Access_Time" }
+                "Trip_Num_Unique_Modes", "Sing_Trip_Diary_Flag", "Incomp_Diary", "Survey_Access_Date_Time", "Survey_Access_Day" }
             };
-            worksheet.Cells["A1:BC1"].LoadFromArrays(headerRow);
-            worksheet.Cells["A1:BC1"].Style.Font.Bold = true;
+            worksheet.Cells["A1:BE1"].LoadFromArrays(headerRow);
+            worksheet.Cells["A1:BE1"].Style.Font.Bold = true;
 
             // Collecting all relevant respondents
             var Respondents_valid = surveyRespondents.Where(x => surveyResponses.Any(y => y.Respondent == x)).ToList();
@@ -711,14 +711,16 @@ namespace TRAISI.Export
                     //IncompDiary
                     worksheet.Cells[rowNumber, 55].Value = String.Empty;
 
-                    // SurveyAccessTime
+                    // SurveyAccessDateTime
                     if (respondent is PrimaryRespondent primaryRespondent)
                     {
-                        worksheet.Cells[rowNumber, 56].Value = primaryRespondent.SurveyAccessDateTime;
+                        worksheet.Cells[rowNumber, 56].Value = primaryRespondent.SurveyAccessDateTime.DateTime.ToString("yyyy-MM-dd HH:mm:ss tt");;
+                        worksheet.Cells[rowNumber, 57].Value = primaryRespondent.SurveyAccessDateTime.DayOfWeek;
                     }
                     else if (respondent is SubRespondent subRespondent)
                     {
-                        worksheet.Cells[rowNumber, 56].Value = subRespondent.PrimaryRespondent.SurveyAccessDateTime;
+                        worksheet.Cells[rowNumber, 56].Value = subRespondent.PrimaryRespondent.SurveyAccessDateTime.DateTime.ToString("yyyy-MM-dd HH:mm:ss tt");
+                        worksheet.Cells[rowNumber, 57].Value = subRespondent.PrimaryRespondent.SurveyAccessDateTime.DayOfWeek;
                     }
                 }
             }
