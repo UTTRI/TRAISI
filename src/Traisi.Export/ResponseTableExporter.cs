@@ -463,7 +463,7 @@ namespace TRAISI.Export
                 "Trip_Incl_PT_Bus", "Trip_Incl_PT_Streetcar", "Trip_Incl_PT_Subway", "Trip_Incl_PT_GO_Bus",
                 "Trip_Incl_PT_GO_Train", "Trip_Orig_Purp", "Trip_Dest_Purp", "Trip_Date_Ext",
                 "Trip_Day_Ext", "Trip_Start_Time_Ext", "Arr_Date", "Arr_Day", "Arr_Time", "Trip_Modes",
-                "Trip_Num_Unique_Modes", "Sing_Trip_Diary_Flag", "Incomp_Diary" }
+                "Trip_Num_Unique_Modes", "Sing_Trip_Diary_Flag", "Incomp_Diary","Survey_Access_Time" }
             };
             worksheet.Cells["A1:BC1"].LoadFromArrays(headerRow);
             worksheet.Cells["A1:BC1"].Style.Font.Bold = true;
@@ -711,6 +711,15 @@ namespace TRAISI.Export
                     //IncompDiary
                     worksheet.Cells[rowNumber, 55].Value = String.Empty;
 
+                    // SurveyAccessTime
+                    if (respondent is PrimaryRespondent primaryRespondent)
+                    {
+                        worksheet.Cells[rowNumber, 56].Value = primaryRespondent.SurveyAccessDateTime;
+                    }
+                    else if (respondent is SubRespondent subRespondent)
+                    {
+                        worksheet.Cells[rowNumber, 56].Value = subRespondent.PrimaryRespondent.SurveyAccessDateTime;
+                    }
                 }
             }
         }
@@ -1046,7 +1055,7 @@ namespace TRAISI.Export
              }
          }
 
-  */
+    */
         public void ResponseListToWorksheet(List<SurveyResponse> surveyResponses, ExcelWorksheet worksheet, Boolean isHouseHold)
         {
             //Removed Travel diary and Transit routes responses. 
