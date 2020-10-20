@@ -613,7 +613,7 @@ namespace TRAISI.Export
                     worksheet.Cells[rowNumber, 24].Value = String.Empty;
 
                     //CmpMultiModeCatName
-                    worksheet.Cells[rowNumber, 30].Value = response.Mode;
+                    worksheet.Cells[rowNumber, 30].Value = response_dest.Mode;
 
                     //Mode Details
                     /* if (modeDetails.Count >= locNumber)
