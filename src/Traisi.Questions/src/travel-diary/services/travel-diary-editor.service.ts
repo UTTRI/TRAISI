@@ -265,7 +265,7 @@ export class TravelDiaryEditor {
 				returnEvent.meta.model.mode = undefined;
 
 				if (returnEvent.meta.model.purpose === 'home') {
-					returnEvent.end = new Date(new Date().setHours(23, 59, 0, 0));
+					returnEvent.end = new Date(new Date(this._surveyAccessTime).setHours(23, 59, 0, 0));
 				}
 
 				insertedEvent.meta.model.isValid = true;

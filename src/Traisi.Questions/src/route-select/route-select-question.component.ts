@@ -54,12 +54,14 @@ export class RouteSelectQuestionComponent extends SurveyQuestion<ResponseTypes.J
 	public routeDetailDialog: RouteDetailDialogComponent;
 
 	public modelChanged(event: number) {
-		this.response.next([
+		let route = [
 			{
 				routes: this.route.trips.Trip[event],
 				routeIndex: event,
 			},
-		]);
+		];
+		this.response.next(route);
+		console.log(route);
 		this.validationState.emit(ResponseValidationState.VALID);
 	}
 
@@ -127,6 +129,7 @@ export class RouteSelectQuestionComponent extends SurveyQuestion<ResponseTypes.J
 				let jsonObj = JSON.parse(jsonResponse.value);
 				this.selectedIndex = jsonObj[0].routeIndex;
 			}
+			console.log(jsonResponse);
 			this.validationState.emit(ResponseValidationState.VALID);
 		}
 
