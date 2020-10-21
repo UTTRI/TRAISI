@@ -463,7 +463,8 @@ namespace TRAISI.Export
                 "Trip_Incl_PT_Bus", "Trip_Incl_PT_Streetcar", "Trip_Incl_PT_Subway", "Trip_Incl_PT_GO_Bus",
                 "Trip_Incl_PT_GO_Train", "Trip_Orig_Purp", "Trip_Dest_Purp", "Trip_Date_Ext",
                 "Trip_Day_Ext", "Trip_Start_Time_Ext", "Arr_Date", "Arr_Day", "Arr_Time", "Trip_Modes",
-                "Trip_Num_Unique_Modes", "Sing_Trip_Diary_Flag", "Incomp_Diary", "Survey_Access_Date_Time", "Survey_Access_Day" }
+                "Trip_Num_Unique_Modes", "Sing_Trip_Diary_Flag", "Incomp_Diary", "Survey_Access_Date_Time",
+                "Survey_Access_Day" }
             };
             worksheet.Cells["A1:BE1"].LoadFromArrays(headerRow);
             worksheet.Cells["A1:BE1"].Style.Font.Bold = true;
@@ -668,7 +669,7 @@ namespace TRAISI.Export
                     worksheet.Cells[rowNumber, 45].Value = response_dest.Purpose;
 
                     //Departure columns 
-                    string timeA = response.TimeA.ToString();
+                    string timeA = response_dest.TimeA.ToString();
                     if (Regex.IsMatch(timeA, @"([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))", RegexOptions.IgnoreCase))
                     {
                         //Departure Date 
@@ -684,7 +685,7 @@ namespace TRAISI.Export
                         worksheet.Cells[rowNumber, 48].Value = Convert.ToString(tA.Value);
                     }
                     //Arrival columns 
-                    string timeB = response.TimeB.ToString();
+                    string timeB = response_dest.TimeB.ToString();
                     if (Regex.IsMatch(timeB, @"((20|20)\d\d-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))", RegexOptions.IgnoreCase))
                     {
                         //Arrival Date
@@ -722,7 +723,11 @@ namespace TRAISI.Export
                         worksheet.Cells[rowNumber, 56].Value = subRespondent.PrimaryRespondent.SurveyAccessDateTime.DateTime.ToString("yyyy-MM-dd HH:mm:ss tt");
                         worksheet.Cells[rowNumber, 57].Value = subRespondent.PrimaryRespondent.SurveyAccessDateTime.DayOfWeek;
                     }
-                }
+                    //Complete and Incomplete Samples Flag
+                    //, "Survey_Complete_Flag"
+                    //worksheet.Cells[rowNumber, 58].Value = String.Empty;
+    
+                } 
             }
         }
 
