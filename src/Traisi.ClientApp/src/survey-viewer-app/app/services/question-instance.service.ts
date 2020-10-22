@@ -60,6 +60,7 @@ export class QuestionInstanceState {
 		this._questionInstance.respondent = respondent;
 		this.validationState$ = new BehaviorSubject<SurveyViewerValidationStateViewModel>({
 			isValid: false,
+			isPartial: false,
 			clientValidationState: ResponseValidationState.PRISTINE,
 			questionValidationState: {
 				errorMessages: [],
@@ -100,12 +101,14 @@ export class QuestionInstanceState {
 	private onSaveResponse = (response: ResponseData<ResponseTypes>[] | ResponseData<ResponseTypes>[]): void => {
 		// submit the response, convert it to single element
 		// array if not done so
+
 		this._responseService
 			.saveResponse(
 				this._questionModel,
 				this._respondent,
 				this._repeatIndex,
-				Array.isArray(response) ? response : [response]
+				Array.isArray(response) ? response : [response],
+				false
 			)
 			.subscribe(this.onResponseSaved);
 	};
@@ -118,14 +121,17 @@ export class QuestionInstanceState {
 	private onSaveResponseWithRespondent = (response: {
 		respondent: SurveyRespondent;
 		response: ResponseData<ResponseTypes>[];
+		isPartial?: boolean;
 	}): void => {
+		let x = Array.isArray(response.response) ? response.response : [response.response];
 		if (this.respondent.id === response.respondent.id) {
 			this._responseService
 				.saveResponse(
 					this._questionModel,
 					response.respondent,
 					this._repeatIndex,
-					Array.isArray(response.response) ? response.response : [response.response]
+					Array.isArray(response.response) ? response.response : [response.response],
+					response.isPartial ?? false
 				)
 				.subscribe(this.onResponseSaved);
 		} else {
@@ -134,7 +140,8 @@ export class QuestionInstanceState {
 					this._questionModel,
 					response.respondent,
 					this._repeatIndex,
-					Array.isArray(response.response) ? response.response : [response.response]
+					Array.isArray(response.response) ? response.response : [response.response],
+					response.isPartial ?? false
 				)
 				.subscribe();
 		}
@@ -145,9 +152,9 @@ export class QuestionInstanceState {
 	 * @param result
 	 */
 	private onResponseSaved = (result: SurveyViewerValidationStateViewModel): void => {
-		if (result.isValid) {
+		if (result.isValid && !result.isPartial) {
 			result.clientValidationState = ResponseValidationState.VALID;
-		} else {
+		} else if (!result.isValid) {
 			result.clientValidationState = ResponseValidationState.INVALID;
 		}
 		this.validationState$.next(result);
@@ -169,6 +176,7 @@ export class QuestionInstanceState {
 			if (responseState === ResponseValidationState.VALID) {
 				this._navigator.updateQuestionValidationState(this, {
 					isValid: true,
+					isPartial: false,
 					clientValidationState: ResponseValidationState.VALID,
 					questionValidationState: {
 						errorMessages: [],
@@ -180,9 +188,9 @@ export class QuestionInstanceState {
 					},
 				});
 			} else if (responseState === ResponseValidationState.INVALID) {
-				
 				this._navigator.updateQuestionValidationState(this, {
 					isValid: false,
+					isPartial: false,
 					clientValidationState: ResponseValidationState.INVALID,
 					questionValidationState: {
 						errorMessages: [],

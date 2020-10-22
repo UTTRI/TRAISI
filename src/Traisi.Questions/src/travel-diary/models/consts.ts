@@ -41,6 +41,7 @@ export type TimelineLineResponseDisplayData = TimelineResponseData & {
 	isUpdateEventSwap?: boolean;
 	isRequireDepartureConfirm?: boolean;
 	isFirstEvent?: boolean;
+	isUsingTemporaryTime?: boolean;
 };
 
 // export type TravelDiaryEvent = CalendarEvent & { meta: TravelDiaryMeta };
@@ -52,4 +53,5 @@ export interface TravelDiaryEvent extends CalendarEvent {
 export interface TravelDiaryMeta {
 	[x: string]: any;
 	model: TimelineLineResponseDisplayData;
+
 }

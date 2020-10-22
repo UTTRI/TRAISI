@@ -55,11 +55,15 @@ export class TravelDiaryLinearViewEventDisplayComponent implements OnInit {
 		}
 	}
 
+	public isMultiRespondentEvent: boolean;
+
 	public constructor(
 		private _travelDiaryService: TravelDiaryService,
 		@Inject(TraisiValues.SurveyAccessTime) public surveyAccessTime: Date,
 		@Inject(TraisiValues.Respondent) public surveyRespondent: SurveyRespondent
 	) {}
 
-	public ngOnInit(): void {}
+	public ngOnInit(): void {
+		this.isMultiRespondentEvent = this._travelDiaryService.isMultiRespondentEvent(this.model);
+	}
 }

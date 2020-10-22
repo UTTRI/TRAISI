@@ -431,6 +431,9 @@ export class TravelDiaryEditDialogComponent implements AfterViewInit {
 			);
 			let users = this._travelDiaryService.getUsersForEvent(model);
 			this.model.users = users;
+			if (!this.model.isValid && this.model.isUsingTemporaryTime) {
+				this.model.timeA = undefined;
+			}
 		}
 
 		this.isFirstEventInDay = this.model.order > 0 ? false : true;

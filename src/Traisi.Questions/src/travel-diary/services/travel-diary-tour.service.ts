@@ -21,7 +21,7 @@ export class TravelDiaryTourService {
 		let invalidEvents = document.querySelectorAll('.invalid-event');
 
 		if (invalidEvents.length === 0) {
-			let events = document.querySelectorAll('.cal-event-container');
+			let events = document.querySelectorAll('.event-container');
 			this._lastEvent = events[events.length - 1];
 		} else {
 			this._lastEvent = invalidEvents[invalidEvents.length - 1];
@@ -58,8 +58,9 @@ export class TravelDiaryTourService {
 
 	public initialize(popover: BsDropdownDirective): void {
 		this._popover = popover;
-		let events = document.querySelectorAll('.cal-event-container');
+		let events = document.querySelectorAll('.event-container');
 		this._lastEvent = events[events.length - 1];
+		console.log(events);
 		this._tour.onbeforechange(this.onBeforeChange);
 		this._tour.onexit(this.onExit);
 		// this._tour.on

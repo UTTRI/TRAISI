@@ -48,6 +48,8 @@ export class TravelDiaryEventDisplayComponent implements OnInit {
 		return this._travelDiaryService.purposeMap[this.model.purpose];
 	}
 
+	public isMultiRespondentEvent: boolean;
+
 	public constructor(private _travelDiaryService: TravelDiaryService, 
 		@Inject(TraisiValues.SurveyAccessTime) public surveyAccessTime: Date,
 		@Inject(TraisiValues.Respondent) public surveyRespondent: SurveyRespondent) {
@@ -60,5 +62,6 @@ export class TravelDiaryEventDisplayComponent implements OnInit {
 		} else if (this.timeEvent.event.meta.homeAllDay) {
 			this.class = 'event-home-all-day';
 		}
+		this.isMultiRespondentEvent = this._travelDiaryService.isMultiRespondentEvent(this.model);
 	}
 }

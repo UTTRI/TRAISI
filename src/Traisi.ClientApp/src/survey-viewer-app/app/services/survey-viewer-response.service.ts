@@ -161,7 +161,8 @@ export class SurveyViewerResponseService extends SurveyResponseService {
 		question: SurveyViewQuestion,
 		respondent: SurveyRespondent,
 		repeat: number = 0,
-		responseData: Array<ResponseData<ResponseTypes>>
+		responseData: Array<ResponseData<ResponseTypes>>,
+		isPartial: boolean,
 	): Observable<SurveyViewerValidationStateViewModel> {
 		return new Observable((obs) => {
 			this._responseClient
@@ -172,7 +173,7 @@ export class SurveyViewerResponseService extends SurveyResponseService {
 					repeat,
 					this._session.language,
 					false,
-					false,
+					isPartial,
 					responseData,
 				)
 				.subscribe((result) => {

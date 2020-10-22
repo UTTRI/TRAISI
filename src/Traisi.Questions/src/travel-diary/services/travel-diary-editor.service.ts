@@ -89,7 +89,7 @@ export class TravelDiaryEditor {
 	private createHomeStartEvent(user: SurveyRespondentUser): TravelDiaryEvent {
 		let homeEvent = this.createBaseEvent(user, 'At Home', 'home');
 		homeEvent.end = new Date(new Date(this._surveyAccessTime).setHours(9 + TIME_DELTA, 0, 0, 0));
-		homeEvent.meta.model.timeA = new Date(new Date(this._surveyAccessTime).setHours(0, 1, 0, 0));
+		homeEvent.meta.model.timeA = new Date(new Date(this._surveyAccessTime).setHours(0, 0, 0, 0));
 		homeEvent.meta.model.isValid = true;
 		homeEvent.meta.model.order = 0;
 		homeEvent.meta.model.address = user.homeAddress ?? {};
@@ -100,11 +100,12 @@ export class TravelDiaryEditor {
 
 	private createHomeEndEvent(user: SurveyRespondentUser): TravelDiaryEvent {
 		let returnHomeEvent = this.createBaseEvent(user, 'Return Home', 'home');
-		returnHomeEvent.start = new Date(new Date(this._surveyAccessTime).setHours(23 + TIME_DELTA, 59, 0, 0));
-		returnHomeEvent.end = new Date(new Date(this._surveyAccessTime).setHours(23, 59, 0, 0));
+		returnHomeEvent.start = new Date(new Date(this._surveyAccessTime).setHours(17 + TIME_DELTA, 0, 0, 0));
+		returnHomeEvent.end = new Date(new Date(this._surveyAccessTime).setHours(23, 59, 59, 0));
 		returnHomeEvent.meta.model.timeA = new Date(new Date(this._surveyAccessTime).setHours(23, 1, 0, 0));
 		returnHomeEvent.meta.model.isValid = false;
 		returnHomeEvent.meta.model.order = 2;
+		returnHomeEvent.meta.model.isUsingTemporaryTime = true;
 		returnHomeEvent.meta.model.address = user.homeAddress ?? {};
 		returnHomeEvent.meta.model.latitude = user.homeLatitude;
 		returnHomeEvent.meta.model.longitude = user.homeLongitude;
@@ -119,7 +120,7 @@ export class TravelDiaryEditor {
 		startAtHome: boolean
 	): TravelDiaryEvent {
 		let workEvent = this.createBaseEvent(user, 'Work (Not Home)', 'work');
-		workEvent.start = new Date(new Date(this._surveyAccessTime).setHours(9 + TIME_DELTA, 1, 0, 0));
+		workEvent.start = new Date(new Date(this._surveyAccessTime).setHours(9 + TIME_DELTA, 0, 0, 0));
 		workEvent.end = new Date(
 			new Date(this._surveyAccessTime).setHours(hasSchoolTrip ? 12 + TIME_DELTA : 17 + TIME_DELTA, 0, 0, 0)
 		);
@@ -127,6 +128,7 @@ export class TravelDiaryEditor {
 		workEvent.meta.model.timeB = new Date(
 			new Date(this._surveyAccessTime).setHours(hasSchoolTrip ? 12 : 17, 0, 0, 0)
 		);
+		workEvent.meta.model.isUsingTemporaryTime = true;
 
 		if (workLocation) {
 			workEvent.meta.model.address = workLocation.address;
@@ -155,6 +157,7 @@ export class TravelDiaryEditor {
 		workEvent.meta.model.timeA = new Date(
 			new Date(this._surveyAccessTime).setHours(hasWorkTrip ? 12 + TIME_DELTA : 9 + TIME_DELTA, 1, 0, 1)
 		);
+		workEvent.meta.model.isUsingTemporaryTime = true;
 		workEvent.meta.model.timeB = new Date(new Date(this._surveyAccessTime).setHours(17 + TIME_DELTA, 0, 0, 0));
 		workEvent.meta.model.address = schoolLocation.address;
 		workEvent.meta.model.latitude = schoolLocation.latitude;
@@ -357,6 +360,7 @@ export class TravelDiaryEditor {
 				timeB.setHours(timeB.getHours() - TIME_DELTA);
 
 				if (
+					model.timeA && 
 					userEvents[i].meta.model.identifier !== model.identifier &&
 					timeA.getTime() < model.timeA.getTime() &&
 					timeB.getTime() > model.timeA.getTime() &&
@@ -420,6 +424,7 @@ export class TravelDiaryEditor {
 			event.meta.model.users = [respondent];
 			if (!event.meta.model.mode && i > 0) {
 				event.meta.model.isValid = false;
+				event.meta.model.isUsingTemporaryTime = true;
 			} else {
 				event.meta.model.isValid = true;
 			}
@@ -430,7 +435,7 @@ export class TravelDiaryEditor {
 			}
 
 			events.push(event);
-			if (responses.length === 1 && responses[0].purpose.toLowerCase() === 'home') {
+			if (responses.length === 1 && responses[0].purpose?.toLowerCase() === 'home') {
 				event.meta.homeAllDay = true;
 			}
 		}
@@ -550,6 +555,7 @@ export class TravelDiaryEditor {
 		event1.end = new Date(event2.end);
 
 		event2.meta.model.timeA = new Date(timeATemp);
+		event2.meta.model.isUsingTemporaryTime = true;
 		event2.start = timeStartTemp;
 		event2.end = timeEndTemp;
 		event2.meta.model.isRequireDepartureConfirm = true;

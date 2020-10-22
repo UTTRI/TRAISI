@@ -6,7 +6,7 @@ namespace Traisi.ViewModels.SurveyViewer
 {
     public class SurveyViewerValidationStateViewModel
     {
-
+        public bool IsPartial {get;set;}
         public bool IsValid { get; set; }
         public ValidationStateViewModel QuestionValidationState { get; set; }
         public ValidationStateViewModel SurveyLogicValidationState { get; set; }

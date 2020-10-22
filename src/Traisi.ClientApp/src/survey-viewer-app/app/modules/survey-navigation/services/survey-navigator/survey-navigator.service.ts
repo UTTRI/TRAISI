@@ -614,7 +614,7 @@ export class SurveyNavigator {
 			return false;
 		}
 		for (let instance of state.activeQuestionInstances) {
-			if (!instance.validationState.isValid && !instance.model.isOptional) {
+			if (!instance.validationState.isValid && !instance.model.isOptional || instance.validationState.isPartial) {
 				allValid = false;
 				break;
 			}
@@ -632,6 +632,7 @@ export class SurveyNavigator {
 				!instance.validationState.isValid &&
 				!instance.model.isOptional &&
 				instance.model.questionType !== 'heading'
+				|| instance.validationState.isPartial
 			) {
 				invalidQuestions.push(instance);
 				instance.validationErrors = [].concat((<SurveyQuestion<any>>instance.component).reportErrors());

@@ -73,7 +73,7 @@ export class TravelDiaryQuestionComponent extends SurveyQuestion<ResponseTypes.T
 
 	public modalRef: BsModalRef | null;
 
-	public isSummaryTravelDiaryView: boolean = true;
+	public isSummaryTravelDiaryView: boolean = false;
 
 	public constructor(
 		private _travelDiaryService: TravelDiaryService,
@@ -137,7 +137,6 @@ export class TravelDiaryQuestionComponent extends SurveyQuestion<ResponseTypes.T
 		this._travelDiaryService.resetTravelDiary().subscribe({
 			complete: () => {
 				if (this._travelDiaryService.diaryEvents$.value.length > 0) {
-					console.log(this._travelDiaryService.diaryEvents$.value);
 					if (this._travelDiaryService.diaryEvents$.value[0].meta.model.timeA.getHours() > 2) {
 						// create new home event
 						this.entryDialog.show(DialogMode.CreateHome);
@@ -200,6 +199,8 @@ export class TravelDiaryQuestionComponent extends SurveyQuestion<ResponseTypes.T
 
 			if (isValid) {
 				this.saveTravelDiary();
+			} else {
+				this.saveTemporaryTravelDiary();
 			}
 			if (this._travelDiaryService.isLoaded.value && isValid) {
 				this.validationState.emit(ResponseValidationState.VALID);
@@ -232,6 +233,19 @@ export class TravelDiaryQuestionComponent extends SurveyQuestion<ResponseTypes.T
 					respondent: r,
 					response: this._travelDiaryService.getTimelineResponseDataForRespondent(r),
 				});
+			}
+		}
+	}
+
+	public saveTemporaryTravelDiary(): void {
+		if (this._travelDiaryService.isLoaded.value) {
+			for (let r of this._travelDiaryService.activeRespondents) {
+				let response = {
+					respondent: r,
+					response: this._travelDiaryService.getTimelineResponseDataForRespondent(r),
+					isPartial: true,
+				};
+				this.responseWithRespondent.emit(response);
 			}
 		}
 	}
@@ -284,6 +298,7 @@ export class TravelDiaryQuestionComponent extends SurveyQuestion<ResponseTypes.T
 	}
 
 	public reportErrors(): ValidationError[] {
+		console.log('in reoprt errors');
 		return this._travelDiaryService.reportErrors();
 	}
 

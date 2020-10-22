@@ -40,7 +40,7 @@
 				Please choose a location.
 			</span>
 		</div>
-		<div class="event-time" *ngIf="!isFirstEvent && model.order > 0">
+		<div class="event-time" *ngIf="!isFirstEvent && model.order > 0 && !model.isUsingTemporaryTime">
 			<i class="fas fa-clock"></i>
 			{{ timeEvent.event.meta.model?.timeA | date: 'shortTime' }}
 		</div>

@@ -19,6 +19,10 @@
 	color: #676767;
 }
 
+.event-time {
+	color: #1e90ff;
+}
+
 
 :host.event-home-all-day {
 	background-image: linear-gradient(
@@ -74,4 +78,110 @@
 	border-radius: 5px;
 	margin-bottom: 16px;
 	cursor: pointer;
+}
+
+.invalid-event traisi-travel-diary-event-display {
+	border-color: #de4c4c;
+}
+
+.cal-event {
+	border-right: solid 1px #ddd !important;
+	border-top: solid 1px #ddd !important;
+	border-bottom: solid 1px #ddd !important;
+	border-left-width: 4px !important;
+	background: white !important;
+	background-color: rgb(209, 232, 255);
+	padding: 20px;
+	display: flex;
+
+	-webkit-box-shadow: 10px 10px 24px -21px rgba(0, 0, 0, 0.75);
+	-moz-box-shadow: 10px 10px 24px -21px rgba(0, 0, 0, 0.75);
+	box-shadow: 10px 10px 24px -21px rgba(0, 0, 0, 0.75);
+	border-radius: 5px;
+}
+
+.cal-event-title {
+	font-size: 18px;
+}
+mwl-calendar-event-title {
+	display: flex;
+}
+
+.cal-week-view .cal-time-events .cal-event {
+	width: 94%;
+	position: relative;
+	left: 10px;
+}
+
+.cal-hour .cal-time {
+	font-size: 12px;
+	background: white;
+}
+
+.cal-time-label-column .cal-hour-segment {
+	border: none !important;
+}
+
+.cal-time-label-column .cal-hour-segment {
+	border: none;
+}
+
+.cal-event-container {
+	width: calc(100% - 40px);
+}
+
+.customt-event-title {
+	.event-title-group {
+		margin-bottom: 5px;
+	}
+	i {
+		color: #de4c4c;
+	}
+	margin: 16px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	.event-purpose {
+		text-transform: uppercase;
+		// flex-grow: 1;
+		color: #333;
+		font-size: 16px;
+		font-weight: bold;
+	}
+	.event-name {
+		//flex-grow: 1;
+		font-size: 22px;
+		font-weight: bold;
+		color: #333;
+	}
+	.event-address {
+		// flex-grow: 1;
+		color: #333;
+		font-size: 16px;
+	}
+	.event-mode {
+		font-size: 18px;
+		color: #99a;
+	}
+}
+
+.cal-event.invalid-event {
+	border: dashed 4px #ff8b13 !important;
+}
+
+
+.edit-icon {
+    position: absolute;
+    right: 100px;
+	top: 50px;
+	font-size: 24px;
+	float: right;
+	display: none;
+}
+
+.linear-event-display:hover {
+	background: #f2f8ff;
+	.edit-icon {
+		display: block;
+	}
 }

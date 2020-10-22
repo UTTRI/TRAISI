@@ -101,7 +101,7 @@
 					<div class="form-group row" *ngIf="!isFirstEventInDay">
 						<div class="col-12">
 							<label for="timeA" class="col-form-label">Departure time for the trip </label>
-							<div class="input-group">
+							<div class="input-group" [class.ng-invalid]="!model.timeA">
 								<div class="input-group-prepend">
 									<span class="input-group-text" id="inputGroupPrepend2"
 										><i class="far fa-clock"></i

@@ -19,6 +19,7 @@ export abstract class SurveyResponseService {
     respondent: SurveyRespondent,
     repeat: number,
     responseData: Array<ResponseData<ResponseTypes>>,
+    isPartial: boolean
   ): Observable<SurveyViewerValidationStateViewModel>
 
   abstract loadSavedResponsesForRespondents(

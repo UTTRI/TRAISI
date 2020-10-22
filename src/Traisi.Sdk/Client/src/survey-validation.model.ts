@@ -8,7 +8,8 @@ export interface ValidationStateViewModel {
 }
 
 export interface SurveyViewerValidationStateViewModel {
-  isValid: boolean
+  isValid: boolean;
+  isPartial?: boolean;
   clientValidationState?: ResponseValidationState
   questionValidationState: ValidationStateViewModel | undefined
   surveyLogicValidationState: ValidationStateViewModel | undefined

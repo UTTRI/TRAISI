@@ -68,6 +68,7 @@ namespace Traisi.Controllers.SurveyViewer
             {
                 opts.Items["Language"] = language;
             });
+            mappedState.IsPartial = isPartial;
             return new OkObjectResult(mappedState);
         }
 

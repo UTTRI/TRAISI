@@ -26,6 +26,7 @@ export abstract class SurveyQuestion<
   public readonly responseWithRespondent: EventEmitter<{
     respondent: SurveyRespondent
     response: ResponseData<T>
+    isPartial?: boolean
   }>
 
   @Output()
