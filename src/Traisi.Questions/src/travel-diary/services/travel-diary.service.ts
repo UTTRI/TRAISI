@@ -151,7 +151,8 @@ export class TravelDiaryService {
 						this._edtior.createDiaryFromResponseData(
 							this.userMap[result.respondent.id],
 							result.responseValues as TimelineResponseData[],
-							this.userTravelDiaries[result.respondent.id]
+							this.userTravelDiaries[result.respondent.id],
+							this.activeUser.id === this._primaryRespondent.id
 						);
 						this._edtior.reAlignTimeBoundaries(
 							[this.userMap[result.respondent.id]],

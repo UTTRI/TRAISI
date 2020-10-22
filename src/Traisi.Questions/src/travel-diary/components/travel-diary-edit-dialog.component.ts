@@ -314,6 +314,7 @@ export class TravelDiaryEditDialogComponent implements AfterViewInit {
 		if (!$event) {
 			return;
 		}
+		this.model.isUsingTemporaryTime = false;
 		$event.setFullYear(this.defaultDate.getFullYear());
 		$event.setMonth(this.defaultDate.getMonth());
 		$event.setDate(this.defaultDate.getDate());

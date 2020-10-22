@@ -60,7 +60,6 @@ export class TravelDiaryTourService {
 		this._popover = popover;
 		let events = document.querySelectorAll('.event-container');
 		this._lastEvent = events[events.length - 1];
-		console.log(events);
 		this._tour.onbeforechange(this.onBeforeChange);
 		this._tour.onexit(this.onExit);
 		// this._tour.on

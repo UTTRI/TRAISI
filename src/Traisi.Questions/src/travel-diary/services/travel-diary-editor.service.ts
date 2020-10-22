@@ -360,7 +360,7 @@ export class TravelDiaryEditor {
 				timeB.setHours(timeB.getHours() - TIME_DELTA);
 
 				if (
-					model.timeA && 
+					model.timeA &&
 					userEvents[i].meta.model.identifier !== model.identifier &&
 					timeA.getTime() < model.timeA.getTime() &&
 					timeB.getTime() > model.timeA.getTime() &&
@@ -414,7 +414,8 @@ export class TravelDiaryEditor {
 	public createDiaryFromResponseData(
 		respondent: SurveyRespondentUser,
 		responses: TimelineResponseData[],
-		events: TravelDiaryEvent[]
+		events: TravelDiaryEvent[],
+		isPrimaryRespondent: boolean = true
 	) {
 		for (let i = 0; i < responses.length; i++) {
 			let response = responses[i];
@@ -424,7 +425,9 @@ export class TravelDiaryEditor {
 			event.meta.model.users = [respondent];
 			if (!event.meta.model.mode && i > 0) {
 				event.meta.model.isValid = false;
-				event.meta.model.isUsingTemporaryTime = true;
+				if (isPrimaryRespondent) {
+					event.meta.model.isUsingTemporaryTime = true;
+				}
 			} else {
 				event.meta.model.isValid = true;
 			}
