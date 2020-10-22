@@ -102,7 +102,7 @@ export class TravelDiaryEditor {
 		let returnHomeEvent = this.createBaseEvent(user, 'Return Home', 'home');
 		returnHomeEvent.start = new Date(new Date(this._surveyAccessTime).setHours(17 + TIME_DELTA, 0, 0, 0));
 		returnHomeEvent.end = new Date(new Date(this._surveyAccessTime).setHours(23, 59, 59, 0));
-		returnHomeEvent.meta.model.timeA = new Date(new Date(this._surveyAccessTime).setHours(23, 1, 0, 0));
+		returnHomeEvent.meta.model.timeA = new Date(new Date(this._surveyAccessTime).setHours(23, 0, 0, 1));
 		returnHomeEvent.meta.model.isValid = false;
 		returnHomeEvent.meta.model.order = 2;
 		returnHomeEvent.meta.model.isUsingTemporaryTime = true;
@@ -124,7 +124,7 @@ export class TravelDiaryEditor {
 		workEvent.end = new Date(
 			new Date(this._surveyAccessTime).setHours(hasSchoolTrip ? 12 + TIME_DELTA : 17 + TIME_DELTA, 0, 0, 0)
 		);
-		workEvent.meta.model.timeA = new Date(new Date(this._surveyAccessTime).setHours(9, 1, 0, 0));
+		workEvent.meta.model.timeA = new Date(new Date(this._surveyAccessTime).setHours(9, 0, 0, 1));
 		workEvent.meta.model.timeB = new Date(
 			new Date(this._surveyAccessTime).setHours(hasSchoolTrip ? 12 : 17, 0, 0, 0)
 		);
@@ -155,7 +155,7 @@ export class TravelDiaryEditor {
 		workEvent.end = new Date(new Date(this._surveyAccessTime).setHours(17 + TIME_DELTA, 0, 0, 0));
 
 		workEvent.meta.model.timeA = new Date(
-			new Date(this._surveyAccessTime).setHours(hasWorkTrip ? 12 + TIME_DELTA : 9 + TIME_DELTA, 1, 0, 1)
+			new Date(this._surveyAccessTime).setHours(hasWorkTrip ? 12 + TIME_DELTA : 9 + TIME_DELTA, 0, 0, 1)
 		);
 		workEvent.meta.model.isUsingTemporaryTime = true;
 		workEvent.meta.model.timeB = new Date(new Date(this._surveyAccessTime).setHours(17 + TIME_DELTA, 0, 0, 0));
@@ -425,7 +425,7 @@ export class TravelDiaryEditor {
 			event.meta.model.users = [respondent];
 			if (!event.meta.model.mode && i > 0) {
 				event.meta.model.isValid = false;
-				if (isPrimaryRespondent) {
+				if (event.meta.model.timeA && event.meta.model.timeA.getMilliseconds() === 1) {
 					event.meta.model.isUsingTemporaryTime = true;
 				}
 			} else {
@@ -556,13 +556,19 @@ export class TravelDiaryEditor {
 		event1.meta.model.timeA = new Date(newStartTime);
 		event1.start = new Date(newStartTime);
 		event1.end = new Date(event2.end);
+		event1.meta.model.isValid = true;
+		event1.meta.model.isUsingTemporaryTime = false;
+		event1.meta.model.timeA.setMilliseconds(1);
 
 		event2.meta.model.timeA = new Date(timeATemp);
+		event2.meta.model.timeA.setMilliseconds(0);
 		event2.meta.model.isUsingTemporaryTime = true;
 		event2.start = timeStartTemp;
 		event2.end = timeEndTemp;
-		event2.meta.model.isRequireDepartureConfirm = true;
+		event2.meta.model.isUsingTemporaryTime = true;
 		event2.meta.model.isValid = false;
+
+
 	}
 	/**
 	 * Compresses the events within the index to all align between the start time of the first event and end at the

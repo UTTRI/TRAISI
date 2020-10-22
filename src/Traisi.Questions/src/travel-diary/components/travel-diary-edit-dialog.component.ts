@@ -162,6 +162,7 @@ export class TravelDiaryEditDialogComponent implements AfterViewInit {
 		this._defaultDate.setHours(12);
 		this._defaultDate.setMinutes(0);
 		this._defaultDate.setSeconds(0);
+		this._defaultDate.setMilliseconds(0);
 		this.resetModel();
 	}
 
@@ -318,6 +319,7 @@ export class TravelDiaryEditDialogComponent implements AfterViewInit {
 		$event.setFullYear(this.defaultDate.getFullYear());
 		$event.setMonth(this.defaultDate.getMonth());
 		$event.setDate(this.defaultDate.getDate());
+		$event.setMilliseconds(0);
 		if ($event.getHours() < 4 && $event.getHours() >= 0) {
 			// this needs to be adjusted
 			$event.setDate($event.getDate() + 1);
