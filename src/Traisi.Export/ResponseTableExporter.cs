@@ -29,7 +29,7 @@ namespace TRAISI.Export
         String locationPart = "";
 
         //Data Guide Transit Codes
-        /*  Dictionary<string, string> data_guide_codes = new Dictionary<string, string>()
+        Dictionary<string, string> data_guide_codes = new Dictionary<string, string>()
          {
              {"TTCBUS", "T"},
              {"TTCTRAMWAY", "T"},
@@ -62,9 +62,9 @@ namespace TRAISI.Export
              {"YRTBUS", "Y"},
              {"UPEXPRESSTRAIN", "GT10"}
          };
-  */
+ 
         //Mapping Transit Numbers with Data Guide Transit Codes
-        /* Dictionary<string, string> dg_codes_replacement = new Dictionary<string, string>()
+        Dictionary<string, string> dg_codes_replacement = new Dictionary<string, string>()
         {
             {"LW", "GT01"},
             {"ML", "GT02"},
@@ -97,7 +97,7 @@ namespace TRAISI.Export
             {"8B", "BA116"},
             {"057A","Y057"}
         };
- */
+
 
         /// <summary>
         /// Initializer for helper object
@@ -194,7 +194,7 @@ namespace TRAISI.Export
 
         }
 
-        /* private List<Tuple<string, string>> ReadJsonResponse_Mode(SurveyResponse response)
+      /*  private List<Tuple<string, string>> ReadJsonResponse_Mode(SurveyResponse response)
         {
             List<Tuple<string, string>> modeDetails = new List<Tuple<string, string>>();
             var responseValues = response.ResponseValues.Cast<JsonResponse>().Select(
@@ -211,10 +211,10 @@ namespace TRAISI.Export
                 modeDetails.Add(new Tuple<string, string>(modeName, modeCat));
             }
             return modeDetails;
-        }
-         */
+        } */
+       
 
-        /* private string GetValuesFromTripLinxData(JObject objTripLinx, string key, int sectionNumber = 0)
+        private string GetValuesFromTripLinxData(JObject objTripLinx, string key, int sectionNumber = 0)
         {
             string returnValue = string.Empty;
             bool strPTRide = true;
@@ -222,7 +222,7 @@ namespace TRAISI.Export
             {
                 try
                 {
-                    strPTRide = objTripLinx["response"]["trips"]["Trip"][0]["sections"]["Section"][sectionNumber]["PTRide"].HasValues;
+                    strPTRide = objTripLinx[0]["routes"]["sections"]["Section"][sectionNumber]["PTRide"].HasValues;
                 }
                 catch
                 {
@@ -231,94 +231,94 @@ namespace TRAISI.Export
                 switch (key)
                 {
                     case "Mode_Accs":
-                        returnValue = (string)objTripLinx["response"]["trips"]["Trip"][0]["sections"]["Section"][0]["Leg"]["TransportMode"];
+                        returnValue = (string)objTripLinx[0]["routes"]["sections"]["Section"][0]["Leg"]["TransportMode"];
                         break;
 
                     case "Egrs_Mode":
-                        returnValue = (string)objTripLinx["response"]["trips"]["Trip"][0]["sections"]["Section"][2]["Leg"]["TransportMode"];
+                        returnValue = (string)objTripLinx[0]["routes"]["sections"]["Section"][2]["Leg"]["TransportMode"];
                         break;
 
                     //Route details 
                     case "Route_Accs_Stn_Num":
-                        returnValue = (string)objTripLinx["response"]["trips"]["Trip"][0]["sections"]["Section"][sectionNumber]["PTRide"]["Departure"]["StopPlace"]["importId"];
+                        returnValue = (string)objTripLinx[0]["routes"]["sections"]["Section"][sectionNumber]["PTRide"]["Departure"]["StopPlace"]["importId"];
                         break;
 
                     case "Route_Accs_Stn_Name":
-                        returnValue = (string)objTripLinx["response"]["trips"]["Trip"][0]["sections"]["Section"][sectionNumber]["PTRide"]["Departure"]["StopPlace"]["Name"];
+                        returnValue = (string)objTripLinx[0]["routes"]["sections"]["Section"][sectionNumber]["PTRide"]["Departure"]["StopPlace"]["Name"];
                         break;
 
                     case "Route_Accs_Stn_Lat":
                         if (!strPTRide)
                         {
-                            returnValue = (string)objTripLinx["response"]["trips"]["Trip"][0]["sections"]["Section"][sectionNumber]["Leg"]["Departure"]["Site"]["Position"]["Lat"];
+                            returnValue = (string)objTripLinx[0]["routes"]["sections"]["Section"][sectionNumber]["Leg"]["Departure"]["Site"]["Position"]["Lat"];
                         }
                         else
                         {
-                            returnValue = (string)objTripLinx["response"]["trips"]["Trip"][0]["sections"]["Section"][sectionNumber]["PTRide"]["Departure"]["StopPlace"]["Position"]["Lat"];
+                            returnValue = (string)objTripLinx[0]["routes"]["sections"]["Section"][sectionNumber]["PTRide"]["Departure"]["StopPlace"]["Position"]["Lat"];
                         }
                         break;
 
                     case "Route_Accs_Stn_Lng":
                         if (!strPTRide)
                         {
-                            returnValue = (string)objTripLinx["response"]["trips"]["Trip"][0]["sections"]["Section"][sectionNumber]["Leg"]["Departure"]["Site"]["Position"]["Long"];
+                            returnValue = (string)objTripLinx[0]["routes"]["sections"]["Section"][sectionNumber]["Leg"]["Departure"]["Site"]["Position"]["Long"];
                         }
                         else
                         {
-                            returnValue = (string)objTripLinx["response"]["trips"]["Trip"][0]["sections"]["Section"][sectionNumber]["PTRide"]["Departure"]["StopPlace"]["Position"]["Long"];
+                            returnValue = (string)objTripLinx[0]["routes"]["sections"]["Section"][sectionNumber]["PTRide"]["Departure"]["StopPlace"]["Position"]["Long"];
                         }
                         break;
 
                     case "Route_Egrs_Stn_Num":
-                        returnValue = (string)objTripLinx["response"]["trips"]["Trip"][0]["sections"]["Section"][sectionNumber]["PTRide"]["Arrival"]["StopPlace"]["importId"];
+                        returnValue = (string)objTripLinx[0]["routes"]["sections"]["Section"][sectionNumber]["PTRide"]["Arrival"]["StopPlace"]["importId"];
                         break;
 
                     case "Route_Egrs_Stn_Name":
-                        returnValue = (string)objTripLinx["response"]["trips"]["Trip"][0]["sections"]["Section"][sectionNumber]["PTRide"]["Arrival"]["StopPlace"]["Name"];
+                        returnValue = (string)objTripLinx[0]["routes"]["sections"]["Section"][sectionNumber]["PTRide"]["Arrival"]["StopPlace"]["Name"];
                         break;
 
                     case "Route_Egrs_Stn_Lat":
                         if (!strPTRide)
                         {
-                            returnValue = (string)objTripLinx["response"]["trips"]["Trip"][0]["sections"]["Section"][sectionNumber]["Leg"]["Arrival"]["Site"]["Position"]["Lat"];
+                            returnValue = (string)objTripLinx[0]["routes"]["sections"]["Section"][sectionNumber]["Leg"]["Arrival"]["Site"]["Position"]["Lat"];
                         }
                         else
                         {
-                            returnValue = (string)objTripLinx["response"]["trips"]["Trip"][0]["sections"]["Section"][sectionNumber]["PTRide"]["Arrival"]["StopPlace"]["Position"]["Lat"];
+                            returnValue = (string)objTripLinx[0]["routes"]["sections"]["Section"][sectionNumber]["PTRide"]["Arrival"]["StopPlace"]["Position"]["Lat"];
                         }
                         break;
 
                     case "Route_Egrs_Stn_Lng":
                         if (!strPTRide)
                         {
-                            returnValue = (string)objTripLinx["response"]["trips"]["Trip"][0]["sections"]["Section"][sectionNumber]["Leg"]["Arrival"]["Site"]["Position"]["Long"];
+                            returnValue = (string)objTripLinx[0]["routes"]["sections"]["Section"][sectionNumber]["Leg"]["Arrival"]["Site"]["Position"]["Long"];
                         }
                         else
                         {
-                            returnValue = (string)objTripLinx["response"]["trips"]["Trip"][0]["sections"]["Section"][sectionNumber]["PTRide"]["Arrival"]["StopPlace"]["Position"]["Long"];
+                            returnValue = (string)objTripLinx[0]["routes"]["sections"]["Section"][sectionNumber]["PTRide"]["Arrival"]["StopPlace"]["Position"]["Long"];
                         }
                         break;
 
                     case "Route_Oper_Code":
-                        returnValue = (string)objTripLinx["response"]["trips"]["Trip"][0]["sections"]["Section"][sectionNumber]["PTRide"]["Operator"]["Code"];
+                        returnValue = (string)objTripLinx[0]["routes"]["sections"]["Section"][sectionNumber]["PTRide"]["Operator"]["Code"];
                         break;
 
                     case "Route_Trans_Num":
-                        returnValue = (string)objTripLinx["response"]["trips"]["Trip"][0]["sections"]["Section"][sectionNumber]["PTRide"]["Line"]["Number"];
+                        returnValue = (string)objTripLinx[0]["routes"]["sections"]["Section"][sectionNumber]["PTRide"]["Line"]["Number"];
                         break;
 
                     case "Route_Trans_Name":
-                        returnValue = (string)objTripLinx["response"]["trips"]["Trip"][0]["sections"]["Section"][sectionNumber]["PTRide"]["Line"]["Name"];
+                        returnValue = (string)objTripLinx[0]["routes"]["sections"]["Section"][sectionNumber]["PTRide"]["Line"]["Name"];
                         break;
 
                     case "Route_Trans_Mode":
                         if (!strPTRide)
                         {
-                            returnValue = (string)objTripLinx["response"]["trips"]["Trip"][0]["sections"]["Section"][sectionNumber]["Leg"]["TransportMode"];
+                            returnValue = (string)objTripLinx[0]["routes"]["sections"]["Section"][sectionNumber]["Leg"]["TransportMode"];
                         }
                         else
                         {
-                            returnValue = (string)objTripLinx["response"]["trips"]["Trip"][0]["sections"]["Section"][sectionNumber]["PTRide"]["TransportMode"];
+                            returnValue = (string)objTripLinx[0]["routes"]["sections"]["Section"][sectionNumber]["PTRide"]["TransportMode"];
                         }
                         break;
 
@@ -332,7 +332,7 @@ namespace TRAISI.Export
             }
             return returnValue;
         }
- */
+
         private string ReadPathResponse(SurveyResponse surveyResponse) => throw new NotImplementedException();//return null;
 
         private string ReadTimelineResponse(ISurveyResponse surveyResponse)
@@ -381,7 +381,6 @@ namespace TRAISI.Export
             return locationJson;
         }
 
-
         /*     /// <summary>
             /// TODO: REIMPLEMENT TRIPLIINX CALL
             /// </summary>
@@ -393,12 +392,12 @@ namespace TRAISI.Export
             /// <param name="transitModes"></param>
             /// <param name="date"></param>
             /// <returns></returns> */
+
         /* private async Task<JObject> ReadTripLinxData(double lato, double lngo, double latd, double lngd, string mode, string transitModes, DateTime date)
         {
-
-            //JObject jo = JObject.Parse(await this._geocontroller.GetTripLinxRoutePlanner(lato, lngo, latd, lngd, mode, transitModes, date));
-           // return jo;
-            return null;
+	        //JObject jo = JObject.Parse(await this._geocontroller.GetTripLinxRoutePlanner(lato, lngo, latd, lngd, mode, transitModes, date));
+            // return jo;
+	        return null;
         } */
 
         private string ReadSplitLocation(ISurveyResponse surveyResponse, String locationPart)
@@ -731,7 +730,7 @@ namespace TRAISI.Export
             }
         }
 
-        /*  public void ResponsesPivot_TransitRoutes(
+        public void ResponsesPivot_TransitRoutes(
              List<QuestionPart> questionParts,
              List<SurveyResponse> surveyResponses,
              List<SurveyRespondent> surveyRespondents,
@@ -809,20 +808,20 @@ namespace TRAISI.Export
                  {
                      continue;
                  }
-                 //Timeline
+                 //Travel diary
                  var response_timeline = surveyResponses.Where(r => r.Respondent.SurveyRespondentGroup.GroupMembers.Any(y => y == respondent))
-                                                             .Where(r => r.Respondent == respondent)
-                                                                 .Where(y => y.QuestionPart.Name == "Timeline");
-                 //Travel modes
+                                                            .Where(r => r.Respondent == respondent)
+                                                                .Where(y => y.QuestionPart.Name == "Travel diary");
+                 //Transit routes
                  var response_Json = surveyResponses.Where(r => r.Respondent.SurveyRespondentGroup.GroupMembers.Any(y => y == respondent))
-                                                         .Where(r => r.Respondent == respondent)
-                                                             .Where(y => y.QuestionPart.Name == "Travel modes");
+                                                        .Where(r => r.Respondent == respondent)
+                                                            .Where(y => y.QuestionPart.Name == "Transit routes");
 
                  if (response_timeline.Count() == 0)
                      continue;
 
                  //Reading Mode Details 
-                 List<Tuple<string, string>> modeDetails = ReadJsonResponse_Mode(response_Json.First());
+                 //List<Tuple<string, string>> modeDetails = ReadJsonResponse_Mode(response_Json.First());
 
                  var responseValues_timeline_1 = ReadTimelineResponseList(response_timeline.First());
                  List<dynamic> responseValues_timeline = new List<object>();
@@ -843,23 +842,24 @@ namespace TRAISI.Export
                      //Destination
                      var response_dest = responseValues_timeline[i + 1];
 
-                     //TripLinx Data
-                     string jsonTripLinx = string.Empty;
-                     JObject objTripLinx = null;
+                    //TripLinx Data
+                   
+                    JObject objTripLinx = null;
 
-                     try
+                    try
                      {
-                         Task<JObject> TaskObjTripLinks = ReadTripLinxData(response.Y, response.X, response_dest.Y, response_dest.X, "PT", "", DateTime.Now);
-                         objTripLinx = TaskObjTripLinks.Result;
-                         objTripLinx = (JObject)objTripLinx["Data"][0];
+                         JObject jsonResponseValues = response.Value;
+                         objTripLinx = (JObject)objTripLinx[0]["routes"];
                      }
                      catch (System.Exception)
                      {
                          objTripLinx = null;
                      }
-
-                     if (objTripLinx == null || modeDetails[locNumber - 1].Item1 != "transit-all-way")
-                         continue;
+ 
+                     /*if (objTripLinx == null || modeDetails[locNumber - 1].Item1 != "transit-all-way")
+                        continue;*/
+                      if(response.Mode != "transit-all-way")   
+                        continue; 
                      rowNumber++;
 
                      // Respondent ID (Unique)          
@@ -1062,7 +1062,7 @@ namespace TRAISI.Export
              }
          }
 
-    */
+  
         public void ResponseListToWorksheet(List<SurveyResponse> surveyResponses, ExcelWorksheet worksheet, Boolean isHouseHold)
         {
             //Removed Travel diary and Transit routes responses. 
