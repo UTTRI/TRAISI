@@ -15,7 +15,7 @@
 			<ng-container *ngFor="let section of page.sections">
 				<p class="progress__info" [ngClass]="{ 'section--active': state.activeSection?.id === section.id }">
 					{{ section.label }}
-					<i class="fad fa-users section-icon" *ngIf="section.isHousehold"></i>
+					<i class="fas fa-users section-icon" *ngIf="section.isHousehold"></i>
 				</p>
 				<ng-container *ngIf="state.activeSection?.id === section.id">
 					<a

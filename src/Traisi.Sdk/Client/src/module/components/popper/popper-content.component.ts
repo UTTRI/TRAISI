@@ -11,7 +11,6 @@ export class PopperContentComponent implements AfterContentInit {
 	@Input()
 	public target!: HTMLElement;
 	public constructor(private _element: ElementRef) {
-		console.log(this);
 	}
 
 	public ngAfterContentInit(): void {

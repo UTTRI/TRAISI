@@ -12,7 +12,7 @@
 		"baseUrl": "./",
 		"target": "es2015",
 		"module": "es6",
-		"types": ["node", "jquery", "jasmine"],
+		"types": ["node", "jquery", "jasmine","google.analytics"],
 		"paths": {
 			"app/*": ["app/*"],
 			"shared/*": ["../shared/*"],

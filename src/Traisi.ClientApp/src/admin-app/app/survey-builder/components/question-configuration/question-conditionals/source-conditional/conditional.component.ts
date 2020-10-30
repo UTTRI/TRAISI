@@ -167,7 +167,6 @@ export class SourceConditionalComponent implements OnInit, AfterViewInit {
 			this.dateRange = JSON.parse(this.sourceGroup.value);
 		}
 		this.changeDetectRef.detectChanges();
-		console.log(this.sourceGroup);
 	}
 
 	/**
@@ -245,13 +244,6 @@ export class SourceConditionalComponent implements OnInit, AfterViewInit {
 		) {
 			this.dropDownListItems = ["Is Any Of", "Is All Of"];
 			this.copiedOptionList = [];
-			/*for(let option of this.questionOptionsList) {
-				this.copiedOptionList.push({
-					'label': option.optionLabel.value
-				})
-			}
-			// this.copiedOptionList = this.sourceQuestion.questionPartViewChildren ?? [];
-			// console.log(this); */
 		} else if (this.responseType === QuestionResponseType.DateTime) {
 			this.dropDownListItems = ["In Range", "Outside Range"];
 		}

@@ -10,5 +10,6 @@ export enum TraisiValues {
   SurveyQuestion = 'SURVEYQUESTION',
   RepeatSource = 'REPEATSOURCE',
   RepeatValue = 'REPEATVALUE',
-  SurveyAccessTime = 'SURVEYACCESSTIME'
+  SurveyAccessTime = 'SURVEYACCESSTIME',
+  SurveyAnalytics = 'SURVEYANALYTICS'
 }

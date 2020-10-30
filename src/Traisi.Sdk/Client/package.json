@@ -28,7 +28,7 @@
 		"@angular/compiler": "^9.1.9",
 		"@angular/core": "^9.1.9",
 		"@angular/forms": "^9.1.9",
-		"rxjs": "^6.6.2"
+		"rxjs": "^6.6.3"
 	},
 	"ngPackage": {
 		"lib": {

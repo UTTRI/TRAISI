@@ -4,16 +4,23 @@ import * as introJs from 'intro.js';
 import { BsDropdownDirective } from 'ngx-bootstrap/dropdown';
 import { PopoverDirective } from 'ngx-bootstrap/popover';
 import { Subject } from 'rxjs';
+import { TraisiValues, SurveyAnalyticsService } from 'traisi-question-sdk';
 
 @Injectable()
 export class TravelDiaryTourService {
 	private _tour = introJs();
 	private _popover: BsDropdownDirective;
 	private _lastEvent;
-
 	public tourEnded: Subject<any> = new Subject<any>();
 
-	public constructor(@Inject(DOCUMENT) private _document: Document) {}
+	public constructor(
+		@Inject(DOCUMENT) private _document: Document,
+		@Inject(TraisiValues.SurveyAnalytics) private _analytics: SurveyAnalyticsService
+	) {}
+
+	private _tourStart: number;
+
+	private _tourActive: boolean;
 
 	public initializeSubTour(popover: BsDropdownDirective): void {
 		this._popover = popover;
@@ -28,8 +35,11 @@ export class TravelDiaryTourService {
 		}
 
 		this._tour.onbeforechange(this.onBeforeChange);
-		this._tour.onexit(this.onExit);
+		this._tour.onexit(this.onSubTourExit);
+		this._tour.oncomplete(this.onTourComplete);
+		this._tourStart = new Date().getTime();
 		introJs().refresh();
+		this._tourActive = true;
 		// this._tour.on
 		this._tour.setOptions({
 			scrollToElement: true,
@@ -62,7 +72,9 @@ export class TravelDiaryTourService {
 		this._lastEvent = events[events.length - 1];
 		this._tour.onbeforechange(this.onBeforeChange);
 		this._tour.onexit(this.onExit);
-		// this._tour.on
+		this._tour.oncomplete(this.onTourComplete);
+		this._tourStart = new Date().getTime();
+		this._tourActive = true;
 		this._tour.setOptions({
 			scrollToElement: true,
 			keyboardNavigation: false,
@@ -97,7 +109,7 @@ export class TravelDiaryTourService {
 				{
 					element: this._document.querySelector('.schedule-view'),
 					intro: `<h3>Travel Diary - Schedule View</h3>
-							<p>Click this button to view your travel diary in a daily schedule format.</p>`
+							<p>Click this button to view your travel diary in a daily schedule format.</p>`,
 				},
 				{
 					element: this._document.querySelector('.linear-view'),
@@ -116,10 +128,12 @@ export class TravelDiaryTourService {
 
 	public startTour(): void {
 		introJs().refresh();
+		this._tourActive = true;
 		this._tour.start().goToStep(1);
 	}
 
 	public stopTour(): void {
+		this._tourActive = false;
 		this._tour.exit(true);
 	}
 
@@ -131,8 +145,45 @@ export class TravelDiaryTourService {
 		}
 	};
 
+	public onTourComplete = () => {
+		if (this._tourActive) {
+			this._analytics.sendTiming(
+				'tour_active_complete',
+				new Date().getTime() - this._tourStart,
+				'Travel Diary Timing'
+			);
+		}
+		this._tourActive = false;
+	};
+	/**
+	 *
+	 */
 	public onExit = () => {
 		this._popover.toggle(false);
+		if (this._tourActive) {
+			this._analytics.sendTiming(
+				'tour_active_incomplete',
+				new Date().getTime() - this._tourStart,
+				'Travel Diary Timing'
+			);
+		}
+		this._tourActive = false;
+		this.tourEnded.next();
+	};
+
+	/**
+	 *
+	 */
+	public onSubTourExit = () => {
+		this._popover.toggle(false);
+		if (this._tourActive) {
+			this._analytics.sendTiming(
+				'tour_active_incomplete',
+				new Date().getTime() - this._tourStart,
+				'Travel Diary Timing'
+			);
+		}
+		this._tourActive = false;
 		this.tourEnded.next();
 	};
 }

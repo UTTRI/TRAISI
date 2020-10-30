@@ -36,7 +36,6 @@ export class Footer1Component implements OnInit {
 		if (!('footerColour' in this.pageThemeInfo)) {
 			this.pageThemeInfo.footerColour = 'rgb(36,36,36)';
 		}
-		console.log(this);
 		this.footerTextColour = Utilities.whiteOrBlackText(this.pageThemeInfo.footerColour);
 		this.traisiLogoUrl = this.traisiLogo();
 	}

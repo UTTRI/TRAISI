@@ -104,8 +104,6 @@ export class SurveyGroupcodePageComponent implements OnInit {
 					invalid: true
 				});
 
-				console.log(this.groupcodeFormGroup);
-				// show error message
 			}
 		});
 		//

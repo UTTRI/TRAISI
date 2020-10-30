@@ -127,12 +127,11 @@ export class QuestionConditionalsComponent implements OnInit, AfterViewInit {
 	) {}
 
 	public ngOnInit(): void {
-		console.log(this.conditionals);
 		this.conditionalCount = this.conditionals.length;
 		if (this.conditionals.length > 0 && this.conditionals[0].rhs !== null) {
 			this.conditionalCount++;
 		}
-		console.log(this);
+
 	}
 
 	public operatorTypes = [

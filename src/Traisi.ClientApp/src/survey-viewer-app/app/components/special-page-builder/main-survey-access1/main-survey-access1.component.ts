@@ -113,11 +113,10 @@ export class MainSurveyAccess1Component
 		this.accessCode = '';
 		this.surveyViewerService.isLoggedIn.subscribe(
 			(val) => {
-				console.log('logged in: ' + val);
+				console.debug('logged in: ' + val);
 			},
 			(error) => {},
 			() => {
-				console.log('complete');
 			}
 		);
 

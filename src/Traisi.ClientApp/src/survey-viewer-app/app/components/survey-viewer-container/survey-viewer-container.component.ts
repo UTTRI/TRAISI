@@ -5,6 +5,8 @@ import { SurveyStartPageComponent } from '../survey-start-page/survey-start-page
 import { ToastrService } from 'ngx-toastr';
 import { Title } from '@angular/platform-browser';
 import { SurveyViewerSession } from 'app/services/survey-viewer-session.service';
+import { NavigationEnd, Router, RouterEvent } from '@angular/router';
+import { TraisiValues, SurveyAnalyticsService } from 'traisi-question-sdk';
 declare var Modernizr;
 @Component({
 	encapsulation: ViewEncapsulation.None,
@@ -28,7 +30,9 @@ export class SurveyViewerContainerComponent implements OnInit {
 		public surveySession: SurveyViewerSession,
 		private _titleService: Title,
 		private _toastr: ToastrService,
-		public surveyViewer: SurveyViewerService
+		public surveyViewer: SurveyViewerService,
+		private _router: Router,
+		@Inject(TraisiValues.SurveyAnalytics) private _analytics: SurveyAnalyticsService
 	) {
 		this.hasGeneratedShortcode = false;
 	}
@@ -40,6 +44,16 @@ export class SurveyViewerContainerComponent implements OnInit {
 		this.surveySession.data.subscribe((data) => {
 			this._titleService.setTitle('TRAISI - ' + data.surveyTitle);
 		});
-		
+		this._router.events.subscribe(this._onRouterEvent);
 	}
+
+	/**
+	 *
+	 * @param event
+	 */
+	private _onRouterEvent = (event: RouterEvent): void => {
+		if (event instanceof NavigationEnd) {
+			this._analytics.setPage(this._titleService.getTitle(), event.urlAfterRedirects, undefined);
+		}
+	};
 }

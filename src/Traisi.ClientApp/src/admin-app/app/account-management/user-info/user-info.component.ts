@@ -183,7 +183,6 @@ export class UserInfoComponent implements OnInit, AfterViewInit {
 
 			this.isEditingSelf = this.accountService.currentUser ? this.userEdit.id === this.accountService.currentUser.id : false;
 		}
-		console.log(this.userEdit);
 		this.isEditMode = true;
 		this.showValidationErrors = true;
 		this.isChangePassword = false;

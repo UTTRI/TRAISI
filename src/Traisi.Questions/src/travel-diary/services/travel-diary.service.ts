@@ -1,6 +1,6 @@
 import { Injectable, Inject, Injector } from '@angular/core';
 import { CalendarEvent } from 'angular-calendar';
-import { Subject, BehaviorSubject, Observable, concat, of, forkJoin } from 'rxjs';
+import { Subject, BehaviorSubject, Observable, concat, of, forkJoin, from } from 'rxjs';
 import { TravelDiaryConfiguration, TravelMode } from '../models/travel-diary-configuration.model';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { catchError, debounceTime, distinctUntilChanged, switchMap, tap, map } from 'rxjs/operators';
@@ -19,6 +19,7 @@ import {
 	TimelineResponseData,
 	SurveyResponseViewModel,
 	ValidationError,
+	SurveyAnalyticsService,
 } from 'traisi-question-sdk';
 import { Console } from 'console';
 import { TravelDiaryEditDialogComponent } from '../components/travel-diary-edit-dialog.component';
@@ -29,6 +30,7 @@ import { NumberQuestionConfiguration } from 'general/viewer/number-question/numb
 import { TravelDiaryEditor } from './travel-diary-editor.service';
 import { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } from 'constants';
 import { eventNames } from 'process';
+import { TravelDiaryTripState } from 'travel-diary/models/travel-diary-trip-state.model';
 
 @Injectable()
 export class TravelDiaryService {
@@ -70,6 +72,8 @@ export class TravelDiaryService {
 
 	public responseData: { [userId: number]: ResponseTypes.Location };
 
+	public userTripState: { [userId: number]: TravelDiaryTripState } = {};
+
 	private _diaryEvents: TravelDiaryEvent[] = [];
 
 	private _inactiveDiaryEvents: TravelDiaryEvent[] = [];
@@ -97,6 +101,7 @@ export class TravelDiaryService {
 		@Inject(TraisiValues.PrimaryRespondent) private _primaryRespondent: SurveyRespondent,
 		@Inject(TraisiValues.SurveyQuestion) private _question: SurveyViewQuestion,
 		@Inject(TraisiValues.SurveyAccessTime) private _surveyAccessTime: Date,
+		@Inject(TraisiValues.SurveyAnalytics) private _analytics: SurveyAnalyticsService,
 		private _injector: Injector
 	) {
 		this.diaryEvents$ = new BehaviorSubject<TravelDiaryEvent[]>([]);
@@ -116,7 +121,6 @@ export class TravelDiaryService {
 		this.configuration.purpose = this._configuration.purpose ?? [];
 		this.configuration.mode = this._configuration.mode ?? [];
 		this._initializeConfigurationMaps();
-		this.loadAddresses();
 		this._respondentService.getSurveyGroupMembers(this._respondent).subscribe((respondents) => {
 			let primaryHomeAddress: any = {};
 			let primaryHomeLat = 0;
@@ -146,7 +150,6 @@ export class TravelDiaryService {
 			this.userTravelDiaries[this.activeUser.id] = this._diaryEvents;
 			this.loadSavedResponses().subscribe({
 				next: (v: SurveyResponseViewModel[]) => {
-					console.log(v);
 					for (let result of v) {
 						this._edtior.createDiaryFromResponseData(
 							this.userMap[result.respondent.id],
@@ -162,13 +165,16 @@ export class TravelDiaryService {
 
 					// find respondents with 0 events
 					let respondentsToLoad = [];
+					let respondentsLoadNoFill = [];
 					for (let r of this.respondents) {
 						if (!this._diaryEvents.some((x) => x.meta.user.id === r.id)) {
 							respondentsToLoad.push(r);
+						} else {
+							respondentsLoadNoFill.push(r);
 						}
 					}
 					if (respondentsToLoad.length > 0) {
-						this.loadPriorResponseData(respondentsToLoad).subscribe({
+						this.loadPriorResponseData(respondentsToLoad, respondentsLoadNoFill).subscribe({
 							complete: () => {
 								// this._diaryEvents = [].concat(this._diaryEvents);
 								this.isLoaded.next(true);
@@ -258,7 +264,43 @@ export class TravelDiaryService {
 		return !this._diaryEvents.some((x) => x.meta.model.isValid === false);
 	}
 
-	public reportErrors(): ValidationError[] {
+	public checkHasAtLeastOneTrip(): boolean {
+		let state = this.userTripState[this.activeUser.id];
+		if (state.homeAllDay && this._diaryEvents.length === 1) {
+			return true;
+		}
+		if ((state.otherTrip || state.schoolTrip || state.workTrip) && this._diaryEvents.length === 1) {
+			return false;
+		}
+		if (this._diaryEvents.length === 1 && !state.homeAllDay) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Determines if a return home trip is missing but required in the travel diary
+	 */
+	public checkHasRequiredReturnHome(): boolean {
+		let state = this.userTripState[this.activeUser.id];
+		let isLastTripHome: boolean = true;
+		let events = this._diaryEvents.sort((v1, v2) => v1.start.getTime() - v2.start.getTime());
+
+		if(events.length === 1 && !state.homeAllDay && this._diaryEvents[0].meta.model.purpose !== 'home') {
+			return false;
+		}
+		if (events.length > 1 && events[events.length - 1].meta.model.purpose !== 'home') {
+			isLastTripHome = false;
+		}
+
+		if (state.returnHome && !isLastTripHome) {
+			console.log('false here');
+			return false;
+		}
+		return true;
+	}
+
+	public reportErrors(): Observable<ValidationError[]> {
 		let errors: ValidationError[] = [];
 
 		//for (let r of this.respondents) {
@@ -281,14 +323,18 @@ export class TravelDiaryService {
 		}
 		for (let i = 0; i < filter.length; i++) {
 			let event = filter[i];
-			if (event.meta.model.mode === undefined && i > 0) {
+			if (!event.meta.model.mode && i > 0) {
 				errors.push({
 					message: `Activity <strong>${event.meta.model.name}</strong> has no mode assigned.`,
 				});
+			} else if (!event.meta.model.isValid) {
+				errors.push({
+					message: `Activity <strong>${event.meta.model.name}</strong> is missing information.`,
+				});
 			}
 		}
-		//}
-		return errors;
+		console.log(errors);
+		return of(errors);
 	}
 
 	/**
@@ -333,7 +379,7 @@ export class TravelDiaryService {
 	public resetTravelDiary(): Observable<void> {
 		this._diaryEvents.splice(0, this._diaryEvents.length);
 		return new Observable((obs) => {
-			this.loadPriorResponseData([this.activeUser]).subscribe({
+			this.loadPriorResponseData([this.activeUser], []).subscribe({
 				complete: () => {
 					obs.complete();
 				},
@@ -353,7 +399,6 @@ export class TravelDiaryService {
 	 */
 	public resetAddressQuery(): void {
 		this.addressInput$.next('');
-		this.loadAddresses();
 	}
 
 	public loadPreviousLocations(): void {
@@ -368,7 +413,10 @@ export class TravelDiaryService {
 	/**
 	 * Loads prior response data for questions for initializing timeline
 	 */
-	private loadPriorResponseData(respondents: SurveyRespondentUser[]): Observable<void> {
+	private loadPriorResponseData(
+		respondents: SurveyRespondentUser[],
+		respondentsNoFill: SurveyRespondentUser[]
+	): Observable<void> {
 		return new Observable((obs) => {
 			let questionIds: SurveyViewQuestion[] = [];
 			let homeAllDayId = 0;
@@ -454,6 +502,7 @@ export class TravelDiaryService {
 			this._responseService.loadSavedResponsesForRespondents(questionIds, this.respondents).subscribe((res) => {
 				this._initializeSmartFill(
 					respondents,
+					respondentsNoFill,
 					res,
 					homeAllDayId,
 					homeDepartureId,
@@ -477,6 +526,7 @@ export class TravelDiaryService {
 	 */
 	private _initializeSmartFill(
 		respondents: SurveyRespondentUser[],
+		respondentsNoFill: SurveyRespondentUser[],
 		res: SurveyResponseViewModel[],
 		homeAllDayId: number,
 		homeDepartureId: number,
@@ -489,7 +539,7 @@ export class TravelDiaryService {
 		let toRemove = [];
 		let added = [];
 
-		for (let r of respondents) {
+		for (let r of respondents.concat(respondentsNoFill)) {
 			let responseMatches = res.filter((x) => x.respondent.id === r.id);
 
 			// responses belonging to a specific user
@@ -514,6 +564,14 @@ export class TravelDiaryService {
 			const workLocation = responseMatches.find((x) => x.questionId === workLocationId)?.responseValues[0];
 			const schoolLocation = responseMatches.find((x) => x.questionId === schoolLocationId)?.responseValues[0];
 
+			this.userTripState[r.id] = {
+				homeAllDay: isHomeAllDay,
+				returnHome: homeReturn,
+				schoolTrip: schoolDeparture,
+				workTrip: workDeparture,
+				otherTrip: homeDeparture,
+			};
+
 			if (responseMatches.length === 0) {
 				toRemove.push(r);
 				break;
@@ -530,7 +588,10 @@ export class TravelDiaryService {
 				workLocation, // work loc,
 				schoolLocation //school loc
 			);
-			if (this.activeRespondents.some((x) => x.id === r.id)) {
+
+			let shouldAdd: boolean = !respondentsNoFill.some((x) => x.id === r.id);
+
+			if (this.activeRespondents.some((x) => x.id === r.id) && shouldAdd) {
 				this.addEvents(events.sort((x1, x2) => x1.start.getTime() - x2.start.getTime()));
 			} else {
 				this.addInactiveEvents(
@@ -555,43 +616,9 @@ export class TravelDiaryService {
 		this.respondents = this.respondents;
 	}
 
-	/**
-	 * Loads addresses
-	 */
-	public loadAddresses(): void {
-		this.addresses$ = <any>concat(
-			of(null), // default items
-			this.addressInput$.pipe(
-				distinctUntilChanged(),
-				debounceTime(500),
-				tap(() => (this.addressesLoading = true)),
-				switchMap((term) =>
-					this.queryAddresses(term).pipe(
-						map((v) => {
-							return v['features'];
-						}),
-						catchError(() => of([])), // empty list on error
-						tap((v) => {
-							this.addressesLoading = false;
-						})
-					)
-				)
-			)
-		);
-	}
-
 	///geocoding/v5/{endpoint}/{search_text}.json
 	private queryAddresses(input: string): Observable<Object> {
-		const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${input}.json`;
-		const options = {
-			params: new HttpParams()
-				.set(
-					'access_token',
-					'pk.eyJ1IjoiYnJlbmRhbmJlbnRpbmciLCJhIjoiY2s4Y3IwN3U3MG1obzNsczJjMGhoZWc4MiJ9.OCDfSypjueUF_gKejRr6Og'
-				)
-				.set('country', 'ca'),
-		};
-		return this._http.get(url, options);
+		return null;
 	}
 
 	public get diaryEvents(): TravelDiaryEvent[] {
@@ -625,6 +652,12 @@ export class TravelDiaryService {
 			}
 		}
 		this.diaryEvents$.next(this._diaryEvents);
+
+		if (events.length > 1) {
+			this._analytics.sendEvent('Travel Diary Events', 'new_event_multiple_people');
+		} else {
+			this._analytics.sendEvent('Travel Diary Events', 'new_event_single_person');
+		}
 	}
 
 	/**
@@ -690,6 +723,11 @@ export class TravelDiaryService {
 		}
 
 		// determine which respondents were removed
+		if (events.length > 1) {
+			this._analytics.sendEvent('Travel Diary Events', 'edit_event_multiple_people');
+		} else {
+			this._analytics.sendEvent('Travel Diary Events', 'edit_event_single_person');
+		}
 
 		this.diaryEvents$.next(this._diaryEvents);
 	}

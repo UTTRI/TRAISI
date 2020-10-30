@@ -8,6 +8,7 @@ import {
 	ValidationError,
 	SurveyRespondent,
 	TraisiValues,
+	SurveyAnalyticsService,
 } from 'traisi-question-sdk';
 import {
 	Component,
@@ -19,6 +20,7 @@ import {
 	TemplateRef,
 	Injector,
 	Inject,
+	OnDestroy,
 } from '@angular/core';
 import { setHours, isSameMonth, setMinutes, addHours } from 'date-fns';
 import templateString from './travel-diary-question.component.html';
@@ -28,7 +30,7 @@ import { TravelDiaryService } from './services/travel-diary.service';
 import { CalendarEvent, CalendarView, CalendarDayViewComponent } from 'angular-calendar';
 import { TravelDiaryEditDialogComponent } from './components/travel-diary-edit-dialog.component';
 import { DayViewSchedulerComponent } from './components/day-view-scheduler.component';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of, Subscriber } from 'rxjs';
 import {
 	colors,
 	DialogMode,
@@ -51,7 +53,7 @@ import { BsDropdownDirective } from 'ngx-bootstrap/dropdown';
 	styles: ['' + styleString],
 })
 export class TravelDiaryQuestionComponent extends SurveyQuestion<ResponseTypes.Timeline>
-	implements OnInit, AfterViewInit, OnVisibilityChanged {
+	implements OnInit, AfterViewInit, OnVisibilityChanged, OnDestroy {
 	public viewHeight: number = 100;
 
 	@ViewChild('schedule')
@@ -69,12 +71,36 @@ export class TravelDiaryQuestionComponent extends SurveyQuestion<ResponseTypes.T
 	@ViewChild('activitySwap', { read: TemplateRef })
 	public activitySwapTemplate: TemplateRef<any>;
 
+	@ViewChild('confirmNoReturnHome', { read: TemplateRef })
+	public confirmNoReturnHomeTemplate: TemplateRef<any>;
+
+	@ViewChild('confirmSingleTrip', { read: TemplateRef })
+	public confirmSingleTripTemplate: TemplateRef<any>;
+
 	private _isValid: boolean = false;
 
 	public modalRef: BsModalRef | null;
 
 	public isSummaryTravelDiaryView: boolean = false;
 
+	public navigateNextEnabled: boolean = false;
+
+	private _navigateObs: Subscriber<{ cancel: boolean }>;
+
+	private _startTime: number;
+
+	/**
+	 *
+	 * @param _travelDiaryService
+	 * @param _modalService
+	 * @param _elementRef
+	 * @param _injector
+	 * @param _tour
+	 * @param modalService
+	 * @param _respondent
+	 * @param _primaryRespondent
+	 * @param _analytics
+	 */
 	public constructor(
 		private _travelDiaryService: TravelDiaryService,
 		private _modalService: BsModalService,
@@ -83,7 +109,8 @@ export class TravelDiaryQuestionComponent extends SurveyQuestion<ResponseTypes.T
 		private _tour: TravelDiaryTourService,
 		private modalService: BsModalService,
 		@Inject(TraisiValues.Respondent) private _respondent: SurveyRespondent,
-		@Inject(TraisiValues.PrimaryRespondent) private _primaryRespondent: SurveyRespondent
+		@Inject(TraisiValues.PrimaryRespondent) private _primaryRespondent: SurveyRespondent,
+		@Inject(TraisiValues.SurveyAnalytics) private _analytics: SurveyAnalyticsService
 	) {
 		super();
 		this.isFillVertical = true;
@@ -109,6 +136,10 @@ export class TravelDiaryQuestionComponent extends SurveyQuestion<ResponseTypes.T
 		return this._travelDiaryService.viewDate;
 	}
 
+	public get respondentName(): string {
+		return this._respondent.name;
+	}
+
 	public get isTravelDiaryCollectionDisabled(): boolean {
 		return this._travelDiaryService.isActiveUserDisabled;
 	}
@@ -119,18 +150,17 @@ export class TravelDiaryQuestionComponent extends SurveyQuestion<ResponseTypes.T
 	}
 
 	public newEntrySaved(event: TimelineLineResponseDisplayData) {
-		// if (event.isReturnHomeSplit) {
-		// 	this.openModal(this.template);
-		// }
 		this._travelDiaryService.newEvent(event);
 	}
 
 	public eventSaved(event: { oldData: TimelineLineResponseDisplayData; newData: TimelineLineResponseDisplayData }) {
 		this._travelDiaryService.updateEvent(event.newData, event.oldData);
+		this._analytics.sendEvent('Travel Diary Events', 'travel_diary_event_saved');
 	}
 
 	public eventDeleted(event: TimelineLineResponseDisplayData): void {
 		this._travelDiaryService.deleteEvent(event);
+		this._analytics.sendEvent('Travel Diary Events', 'travel_diary_event_deleted');
 	}
 
 	public resetEvents(): void {
@@ -144,11 +174,13 @@ export class TravelDiaryQuestionComponent extends SurveyQuestion<ResponseTypes.T
 				}
 			},
 		});
+		this._analytics.sendEvent('Travel Diary Events', 'travel_diary_events_reset');
 	}
 
 	public clearEvents(): void {
 		this._travelDiaryService.clearTravelDiary();
 		this.entryDialog.show(DialogMode.CreateHome);
+		this._analytics.sendEvent('Travel Diary Events', 'travel_diary_events_cleared');
 	}
 
 	public ngOnInit(): void {
@@ -159,8 +191,6 @@ export class TravelDiaryQuestionComponent extends SurveyQuestion<ResponseTypes.T
 
 		this._travelDiaryService.isLoaded.subscribe((v) => {
 			if (v) {
-				// console.log(this.isTravelDiaryCollectionDisabled);
-				//this._tour.initialize(this.dropdownToggle);
 				setTimeout(() => this.startTour());
 			} else {
 				//this._tour.initializeSubTour(this.dropdownToggle);
@@ -237,6 +267,9 @@ export class TravelDiaryQuestionComponent extends SurveyQuestion<ResponseTypes.T
 		}
 	}
 
+	/**
+	 *
+	 */
 	public saveTemporaryTravelDiary(): void {
 		if (this._travelDiaryService.isLoaded.value) {
 			for (let r of this._travelDiaryService.activeRespondents) {
@@ -250,8 +283,16 @@ export class TravelDiaryQuestionComponent extends SurveyQuestion<ResponseTypes.T
 		}
 	}
 
+	/**
+	 *
+	 * @param value
+	 */
 	public setSummaryTavelDiaryView(value: boolean): void {
 		this.isSummaryTravelDiaryView = value;
+		this._analytics.sendEvent(
+			'Travel Diary Events',
+			value ? 'travel_diary_activated_summary_view' : 'travel_diary_activated_linear_view'
+		);
 	}
 
 	/**
@@ -285,24 +326,88 @@ export class TravelDiaryQuestionComponent extends SurveyQuestion<ResponseTypes.T
 			}
 			this._tour.startTour();
 		}
+		this._analytics.sendEvent('Travel Diary Events', 'travel_diary_manual_start_tour');
 	}
 
 	public ngAfterViewInit(): void {}
 	public onQuestionShown(): void {}
 	public onQuestionHidden(): void {}
 
-	public traisiOnInit(): void {}
+	public ngOnDestroy(): void {
+		this._analytics.sendTiming(
+			'travel_diary_user_view_active',
+			new Date().getTime() - this._startTime,
+			'Travel Diary Timing'
+		);
+	}
 
 	public get isComponentLoaded(): BehaviorSubject<boolean> {
 		return this._travelDiaryService.isLoaded;
 	}
 
-	public reportErrors(): ValidationError[] {
-		console.log('in reoprt errors');
+	public reportErrors(): Observable<ValidationError[]> {
 		return this._travelDiaryService.reportErrors();
 	}
 
+	/**
+	 *
+	 */
+	public onWillNavigateNext(): Observable<{ cancel: boolean }> {
+		if (!this._travelDiaryService.isTravelDiaryValid) {
+			return of({ cancel: false });
+		} else if (
+			this._travelDiaryService.checkHasRequiredReturnHome() &&
+			this._travelDiaryService.checkHasAtLeastOneTrip()
+		) {
+			return of({ cancel: false });
+		}
+
+		let s = this.modalService.onHidden.subscribe(() => {
+			if (this._navigateObs) {
+				this._navigateObs.next({ cancel: true });
+				this._navigateObs.complete();
+				s.unsubscribe();
+			}
+		});
+
+		this.navigateNextEnabled = false;
+		setTimeout(() => {
+			this.navigateNextEnabled = true;
+		}, 4000);
+		if (!this._travelDiaryService.checkHasRequiredReturnHome()) {
+			this.openModal(this.confirmNoReturnHomeTemplate);
+		} else if (!this._travelDiaryService.checkHasAtLeastOneTrip()) {
+			this.openModal(this.confirmSingleTripTemplate);
+		}
+
+		return new Observable((obs) => {
+			this._navigateObs = obs;
+		});
+	}
+
+	/**
+	 *
+	 * @param template
+	 */
 	public openModal(template: TemplateRef<any>): void {
 		this.modalRef = this.modalService.show(template, { class: 'modal-dialog-centered' });
+	}
+
+	public confirm(): void {
+		this._navigateObs.next({ cancel: false });
+		this._navigateObs.complete();
+		this._navigateObs = undefined;
+		this.modalRef.hide();
+	}
+
+	public decline(): void {
+		this._navigateObs.next({ cancel: true });
+		this._navigateObs.complete();
+		this._navigateObs = undefined;
+		this.modalRef.hide();
+	}
+
+	public traisiOnInit(): void {
+		this._startTime = new Date().getTime();
 	}
 }

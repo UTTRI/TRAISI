@@ -5,6 +5,7 @@ import {
 	TimelineResponseData,
 	TraisiValues,
 	SurveyRespondent,
+	SurveyAnalyticsService,
 } from 'traisi-question-sdk';
 import {
 	Component,
@@ -110,6 +111,8 @@ export class TravelDiaryEditDialogComponent implements AfterViewInit {
 
 	private _defaultDate: Date;
 
+	private _dialogOpenTime: number;
+
 	public get defaultDate(): Date {
 		return this._defaultDate;
 	}
@@ -152,7 +155,8 @@ export class TravelDiaryEditDialogComponent implements AfterViewInit {
 		@Inject(TraisiValues.QuestionLoader) private _questionLoaderService,
 		@Inject(TraisiValues.SurveyAccessTime) private _surveyAccessTime: Date,
 		@Inject(TraisiValues.Respondent) private _respondent: SurveyRespondent,
-		@Inject(TraisiValues.PrimaryRespondent) private _primaryRespondent: SurveyRespondent
+		@Inject(TraisiValues.PrimaryRespondent) private _primaryRespondent: SurveyRespondent,
+		@Inject(TraisiValues.SurveyAnalytics) private _analytics: SurveyAnalyticsService
 	) {
 		this._initialize();
 	}
@@ -214,7 +218,6 @@ export class TravelDiaryEditDialogComponent implements AfterViewInit {
 	}
 
 	public eventInputChanges($event): void {
-		// console.log(this.eventInputChanges);
 	}
 
 	public onMembersChanged($event: any) {
@@ -244,16 +247,6 @@ export class TravelDiaryEditDialogComponent implements AfterViewInit {
 				this._travelDiaryService.diaryEvents$.value
 			);
 			this.swapEvent = laterEvent;
-
-			//console.log(laterEvent);
-			//if (laterEvent && insertedEvent) {
-			//		this.model.hasEndTime = true;
-
-			//	this.isRequiresEndTime = true;
-			//} else {
-			//		this.model.hasEndTime = false;
-			//	this.isRequiresEndTime = false;
-			//}
 
 			let laterOverlap = this._editorService.getOverlappingLaterDeparture(
 				this.model,
@@ -365,12 +358,32 @@ export class TravelDiaryEditDialogComponent implements AfterViewInit {
 		) {
 			this.confirmModalRef = this._modalService.show(this.allDayHomeTemplate, { class: 'modal-dialog-centered' });
 		} else {
-			this.hide();
+			this.modal.hide();
 			if (this.dialogMode === DialogMode.New || this.dialogMode == DialogMode.CreateHome) {
 				this.newEventSaved.emit(this.model);
 			} else {
 				this.eventSaved.emit({ newData: this.model, oldData: this._oldModel });
 			}
+		}
+
+		if (this.dialogMode === DialogMode.New) {
+			this._analytics.sendTiming(
+				'dialog_open_for_new_event',
+				new Date().getTime() - this._dialogOpenTime,
+				'Travel Diary Timing'
+			);
+		} else if (this.dialogMode === DialogMode.Edit) {
+			this._analytics.sendTiming(
+				'dialog_open_for_edit_event',
+				new Date().getTime() - this._dialogOpenTime,
+				'Travel Diary Timing'
+			);
+		} else if (this.dialogMode === DialogMode.CreateHome) {
+			this._analytics.sendTiming(
+				'dialog_open_for_create_home',
+				new Date().getTime() - this._dialogOpenTime,
+				'Travel Diary Timing'
+			);
 		}
 	}
 
@@ -384,21 +397,32 @@ export class TravelDiaryEditDialogComponent implements AfterViewInit {
 
 	public hide(): void {
 		this.modal.hide();
+		this._analytics.sendTiming(
+			'dialog_open_for_hide',
+			new Date().getTime() - this._dialogOpenTime,
+			'Travel Diary Timing'
+		);
 	}
 
 	public delete(): void {
 		this.eventDeleted.emit(this.model);
 		this.modal.hide();
 		this.resetModel();
+		this._analytics.sendTiming(
+			'dialog_open_for_delete',
+			new Date().getTime() - this._dialogOpenTime,
+			'Travel Diary Timing'
+		);
 	}
 
 	/**
-	 * Show a new model
 	 *
+	 * @param mode
+	 * @param model
 	 */
 	public show(mode: DialogMode, model?: TimelineLineResponseDisplayData): void {
 		this.dialogMode = mode;
-
+		this._dialogOpenTime = new Date().getTime();
 		if (mode === DialogMode.New) {
 			this.resetModel();
 			this.eventForm.form.markAsPristine();

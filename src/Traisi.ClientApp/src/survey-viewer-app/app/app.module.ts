@@ -78,6 +78,7 @@ import {
 } from 'angular-calendar';
 import { SurveyViewerProviders } from './providers/survey-viewer.providers';
 import { SurveyNavigatorComponent } from './components/survey-navigator/survey-navigator.component';
+import { GoogleAnalyticsService } from './services/google-analytics.service';
 export const calendarProps = {
 	provide: DateAdapter,
 	useFactory: adapterFactory,
@@ -92,6 +93,11 @@ export const STORAGE_TOKEN = new InjectionToken<StorageService>('STORAGE_TOKEN')
 		AppComponent,
 		SurveyViewerContainerComponent,
 		SurveyErrorComponent,
+		TextBlock1Component,
+		Header1Component,
+		Header2Component,
+		MainSurveyAccess1Component,
+		Footer1Component,
 		SurveyStartPageComponent,
 		QuestionContainerComponent,
 		QuestionPlaceholderComponent,
@@ -101,18 +107,13 @@ export const STORAGE_TOKEN = new InjectionToken<StorageService>('STORAGE_TOKEN')
 		SurveyShortcodeDisplayPageComponent,
 		SpecialPageBuilderComponent,
 		PrivacyConfirmationComponent,
-		Header1Component,
-		Header2Component,
 		SurveyInternalViewDirective,
 		Saml2AuthorizationComponent,
 		SurveyScreeningPageComponent,
-		MainSurveyAccess1Component,
-		TextBlock1Component,
 		AdminToolbarComponent,
 		SurveyThankYouPageComponent,
 		SurveyGroupcodePageComponent,
 		SurveyShortcodePageComponent,
-		Footer1Component,
 		SurveyProgressComponent,
 		SurveyNavigatorComponent,
 	],
@@ -170,6 +171,7 @@ export const STORAGE_TOKEN = new InjectionToken<StorageService>('STORAGE_TOKEN')
 		SurveyResponderEndpointService,
 		BsModalRef,
 		{ provide: TraisiValues.QuestionLoader, useClass: QuestionLoaderService },
+		{ provide: TraisiValues.SurveyAnalytics, useClass: GoogleAnalyticsService },
 		{ provide: 'CONFIG_SERVICE', useExisting: QuestionConfigurationService },
 		{ provide: Config, useExisting: QuestionConfigurationService },
 		SurveyDataResolver,

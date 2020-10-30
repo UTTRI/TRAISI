@@ -8,10 +8,11 @@ import { forkJoin, combineLatest, zip } from 'rxjs';
 import { SurveyViewScreening } from 'app/models/survey-view-screening.model';
 import { SurveyViewerSessionData } from 'app/models/survey-viewer-session-data.model';
 import { SurveyViewerSession } from 'app/services/survey-viewer-session.service';
+import { Title } from '@angular/platform-browser';
 @Component({
 	selector: 'app-survey-terms-page',
 	templateUrl: './survey-terms-page.component.html',
-	styleUrls: ['./survey-terms-page.component.scss']
+	styleUrls: ['./survey-terms-page.component.scss'],
 })
 export class SurveyTermsPageComponent implements OnInit {
 	private surveyName: string;
@@ -41,7 +42,8 @@ export class SurveyTermsPageComponent implements OnInit {
 		private router: Router,
 		private translate: TranslateService,
 		private elementRef: ElementRef,
-		private _surveySession: SurveyViewerSession
+		private _surveySession: SurveyViewerSession,
+		private _titleService: Title
 	) {
 		this.model = {} as SurveyViewTermsModel;
 	}
@@ -77,7 +79,6 @@ export class SurveyTermsPageComponent implements OnInit {
 				// this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor = this.pageThemeInfo.pageBackgroundColour;
 				this.finishedLoading = true;
 				this.surveyName = value[0].surveyCode;
-				console.log(this.model);
 			},
 			(error) => {
 				console.log(error);

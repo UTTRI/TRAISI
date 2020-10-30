@@ -11,7 +11,7 @@
 		"target": "es2015",
 		"module": "es6",
 		"moduleResolution": "node",
-		"types": ["node", "jquery"],
+		"types": ["node", "jquery","google.analytics"],
 		"lib": ["es2015", "dom", "esnext"],
 		"paths": {
 			"app/*": ["app/*"],

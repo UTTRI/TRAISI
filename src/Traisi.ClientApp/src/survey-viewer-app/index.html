@@ -15,7 +15,13 @@
 			}
 			gtag('js', new Date());
 
-			gtag('config', 'G-BF2WNTEPHF');
+			gtag('config', 'G-BF2WNTEPHF', {
+				send_page_view: false,
+			});
+
+			if (location.hostname == 'localhost') {
+				gtag('set', 'sendHitTask', null);
+			}
 		</script>
 		<link href="https://fonts.googleapis.com/css?family=Fira+Sans&display=swap" rel="stylesheet" />
 		<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet" />

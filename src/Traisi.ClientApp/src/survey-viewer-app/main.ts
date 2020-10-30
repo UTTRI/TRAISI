@@ -6,12 +6,10 @@ import { environment } from 'environments/environment';
 import { jsModule as moduleSupport } from 'environments/module';
 
 if (environment.production) {
-  enableProdMode();
+	enableProdMode();
+	console.debug = function () {};
 }
 
-platformBrowserDynamic().bootstrapModule(AppModule)
-  .catch(err => console.log(err));
-
-
-  console.log(environment);
-  console.log(moduleSupport);
+platformBrowserDynamic()
+	.bootstrapModule(AppModule)
+	.catch((err) => console.log(err));

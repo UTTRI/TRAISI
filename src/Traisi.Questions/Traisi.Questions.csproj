@@ -17,10 +17,7 @@
 		<OutputFile Include="$(OutDir)/Traisi.Questions.dll" />
 		<None Remove="node_modules/**" />
 		<Compile Remove="node_modules/**" />
-		<EmbeddedResource Include="dist/**" />
-		<EmbeddedResource Include="src\locales.json">
-			<LogicalName>locales</LogicalName>
-		</EmbeddedResource>
+		
 	</ItemGroup>
 	<Target Name="PreBuild" BeforeTargets="Compile" Condition="$(Configuration) == 'Debug'">
 		<Exec Command="npm run build" />
@@ -35,13 +32,22 @@
 
 	</Target>
 
-	<Target Name="PreBuild" BeforeTargets="Compile" Condition="$(Configuration) == 'Release'">
+	<Target Name="PreBuild" BeforeTargets="ResolveReferences" Condition="$(Configuration) == 'Release'">
 	 <Message Text="Installing node package dependencies for Traisi.Questions.." Importance="High" />
-		<Exec Command="npm install"  StandardOutputImportance="low" StandardErrorImportance="low"/>
+		<Exec Command="npm install --no-audit"  StandardOutputImportance="low" StandardErrorImportance="low"/>
 		 <Message Text="Building Traisi.Questions client and server module..." Importance="High" />
-		<Exec Command="npm run aot" StandardOutputImportance="high" StandardErrorImportance="low"/>
+		<Exec Command="npm run aot" StandardOutputImportance="low" StandardErrorImportance="High"/>
 		 <Message Text="Complete." Importance="High" />
 
+	</Target>
+
+	<Target Name="ResourceBuild" BeforeTargets="ResolveReferences">
+	<ItemGroup>
+	<EmbeddedResource Include="dist/**" />
+		<EmbeddedResource Include="src\locales.json">
+			<LogicalName>locales</LogicalName>
+		</EmbeddedResource>
+	</ItemGroup>
 	</Target>
 
 

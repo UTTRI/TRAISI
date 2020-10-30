@@ -97,7 +97,7 @@
 		<Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
 		<!--	<Exec WorkingDirectory="$(SpaRoot)" Command="npm link traisi-question-sdk" /> -->
 	</Target>
-	<Target Name="DeleteDist" BeforeTargets="ComputeFilesToPublish" Condition="'$(Configuration)' == 'Release'">
+	<Target Name="DeleteDist" BeforeTargets="BeforeBuild" Condition="'$(Configuration)' == 'Release'">
 
 		<RemoveDir Directories="$(SpaRoot)dist" />
 		<RemoveDir Directories="$(OutDir)/publish" />
@@ -122,14 +122,16 @@
 	</ItemGroup>
 
 	<Target Name="BuildRunWebpack" BeforeTargets="BeforeBuild" Condition="'$(Configuration)' == 'Release'">
+	<Message Text="Installing node package dependencies for main client app..." Importance="high" />
+		<Exec WorkingDirectory="$(SpaRoot)" Command="npm install --no-audit" StandardOutputImportance="low" StandardErrorImportance="low" />
 		<Message Text="Building admin angular app..." Importance="high" />
-		<Exec WorkingDirectory="$(SpaRoot)" Command="npm run build -- --prod  --source-map" StandardOutputImportance="low" StandardErrorImportance="low" />
+		<Exec WorkingDirectory="$(SpaRoot)" Command="npm run build -- --prod" StandardOutputImportance="low" StandardErrorImportance="low" />
 		<Message Text="Building survey viewer angular app..." Importance="high" />
-		<Exec WorkingDirectory="$(SpaRoot)" Command="npm run build -- survey-viewer-app --aot=true --build-optimizer=true --source-map --prod=true" StandardOutputImportance="low" StandardErrorImportance="low" />
+		<Exec WorkingDirectory="$(SpaRoot)" Command="env NG_BUILD_MANGLE=false NG_BUILD_MINIFY=true npm run build -- survey-viewer-app --aot=false --build-optimizer=false --optimization=true --prod=true" StandardOutputImportance="low" StandardErrorImportance="low" />
 		<Message Text="Finished building client side components." Importance="high" />
 	</Target>
 
-	<Target Name="BuildTraisiClientSdk" AfterTargets="Build">
+	<Target Name="BuildTraisiClientSdk" BeforeTargets="BeforeBuild">
 		<Exec WorkingDirectory="..\Traisi.Sdk\Client" Command="npm run build" StandardOutputImportance="low" StandardErrorImportance="low" />
 		<Message Text="Building Traisi.Sdk client module" Importance="high" />
 	</Target>
@@ -142,16 +144,10 @@
 		</ItemGroup>
 		<Copy SourceFiles="@(_CopyItems)" DestinationFolder="$(OutputPath)\Traisi.ClientApp\dist\%(_CopyItems.RecursiveDir)" />
 	</Target>
-
 	<Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
 		<!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
-
-		<Message Text="Installing node package dependencies for main client app..." Importance="high" />
-		<Exec WorkingDirectory="$(SpaRoot)" Command="npm install --no-audit" StandardOutputImportance="low" StandardErrorImportance="low" />
-		<Message Text="Building admin angular app..." Importance="high" />
-		<Exec WorkingDirectory="$(SpaRoot)" Command="npm run build -- --prod  " StandardOutputImportance="low" StandardErrorImportance="low" />
-		<Message Text="Building survey viewer angular app..." Importance="high" />
-		<Exec WorkingDirectory="$(SpaRoot)" Command="npm run build -- survey-viewer-app --prod --aot=false --build-optimizer=false" StandardOutputImportance="low" StandardErrorImportance="low" />
+		
+		
 
 		<!--<Exec WorkingDirectory="$(SpaRoot)" Command="npm run build:ssr -/- -/-prod" Condition=" '$(BuildServerSideRenderer)' == 'true' " />
 		<Exec WorkingDirectory="$(SpaRoot)" Command="npm run build:ssr -/- survey-viewer-app -/-prod -/-aot=false -/-build-optimizer=false" Condition=" '$(BuildServerSideRenderer)' == 'true' " />
@@ -173,8 +169,8 @@
 	</Target>
 	<Target Name="CopyTraisiClientApp" AfterTargets="ComputeFilesToPublish">
 		<ItemGroup>
-			<DistFiles Include="..\Traisi.ClientApp\dist\admin\**;..\Traisi.ClientApp\dist\survey\**;" />
-			<ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
+			<DistFiles Include="$(SpaRoot)dist\admin\**;$(SpaRoot)dist\survey\**;" />
+			<ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" >
 				<RelativePath>publish/%(DistFiles.Identity)</RelativePath>
 				<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 			</ResolvedFileToPublish>

@@ -446,7 +446,6 @@ export class SurveyViewerService implements OnInit {
 	 * @param shortcode
 	 */
 	public surveyStart(surveyId: number, shortcode: string, queryParams?: Params): Observable<{}> {
-		console.log('in survey start ');
 		let result = this._surveyViewerEndpointService.getSurveyViewerStartSurveyEndpoint(
 			surveyId,
 			shortcode,

@@ -246,19 +246,16 @@
             "styles": [
               "src/survey-viewer-app/styles.scss",
               "src/shared/assets/scss/application.scss",
-              "node_modules/animate.css/animate.min.css",
               "node_modules/bootstrap-select/dist/css/bootstrap-select.min.css",
               "node_modules/ngx-bootstrap/datepicker/bs-datepicker.css",
               "node_modules/quill/dist/quill.core.css",
               "node_modules/quill/dist/quill.snow.css",
               "node_modules/quill/dist/quill.bubble.css",
               "node_modules/simplebar/dist/simplebar.css",
-              "node_modules/@fortawesome/fontawesome-pro/css/duotone.min.css",
               "node_modules/@fortawesome/fontawesome-pro/css/regular.min.css",
               "node_modules/@fortawesome/fontawesome-pro/css/solid.min.css"
             ],
             "scripts": [
-              "node_modules/promise-polyfill/dist/polyfill.js",
               "src/shared/systemjs/system.js",
               "src/shared/lib/modernizr.js",
               "node_modules/jquery/dist/jquery.min.js",
@@ -304,15 +301,15 @@
                   "with": "src/survey-viewer-app/environments/environment.prod.ts"
                 }
               ],
-              "optimization": false,
+              "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
               "extractCss": true,
               "namedChunks": false,
-              "aot": true,
+              "aot": false,
               "extractLicenses": true,
               "vendorChunk": false,
-              "buildOptimizer": true
+              "buildOptimizer": false
             },
             "serve": {
               

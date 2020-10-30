@@ -27,6 +27,7 @@ import {
 	TraisiValues,
 	SurveyViewPage,
 	SurveyViewQuestion,
+	SurveyAnalyticsService,
 } from 'traisi-question-sdk';
 import { SurveyViewGroupMember } from '../../models/survey-view-group-member.model';
 import { SurveyViewerState } from '../../models/survey-viewer-state.model';
@@ -91,6 +92,8 @@ export class SurveyViewerComponent
 
 	private previousState: NavigationState;
 
+	private _startTime: Date;
+
 	/**
 	 * Gets whether is admin
 	 */
@@ -130,9 +133,11 @@ export class SurveyViewerComponent
 		private _authService: AuthService,
 		@Inject(TraisiValues.SurveyRespondentService) private _respondentService: SurveyViewerRespondentService,
 		@Inject(LOCAL_STORAGE) private _storage: StorageService,
-		private _cd: ChangeDetectorRef
+		private _cd: ChangeDetectorRef,
+		@Inject(TraisiValues.SurveyAnalytics) private _analytics: SurveyAnalyticsService
 	) {
 		this.ref = this;
+		this._startTime = new Date();
 	}
 
 	public surveyId: number;
@@ -502,24 +507,33 @@ export class SurveyViewerComponent
 			) {
 				this.navigator.initialize(restoredState.state).subscribe((v) => {
 					this.isLoaded = true;
+					this._sendLoadCompleteEvent();
 				});
 			} else {
 				this.navigator.initialize().subscribe((x) => {
 					this.isLoaded = true;
+					this._sendLoadCompleteEvent();
 				});
-				console.log('previous survey data is invalid, resetting to new state');
+				console.debug('previous survey data is invalid, resetting to new state');
 			}
 		} else {
-			console.log('no previous data, using base initialized');
+			console.debug('no previous data, using base initialized');
 			this.navigator.initialize().subscribe({
 				next: (v) => {
 					this.isLoaded = true;
+					this._sendLoadCompleteEvent();
 				},
 				complete: () => {
 					this.isLoaded = true;
+					this._sendLoadCompleteEvent();
 				},
 			});
 		}
+	}
+
+	private _sendLoadCompleteEvent(): void {
+		let duration = new Date().getTime() - this._startTime.getTime();
+		this._analytics.sendTiming('viewer_load', duration, 'Survey Loading');
 	}
 
 	public trackById(index: number, item: QuestionInstance): string {

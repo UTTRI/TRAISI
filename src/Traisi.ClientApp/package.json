@@ -150,6 +150,7 @@
     "@angular/language-service": "^9.1.4",
     "@ngtools/webpack": "^9.1.4",
     "@types/echarts": "^4.6.0",
+    "@types/google.analytics": "0.0.40",
     "@types/jasmine": "^2.8.16",
     "@types/jquery": "^3.3.33",
     "@types/mapbox-gl": "^1.9.1",

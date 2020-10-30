@@ -403,7 +403,6 @@ export class SurveyBuilderComponent implements OnInit, OnDestroy {
 			this.surveyPage.currentPage = new QuestionPartView();
 		}
 		if (pageName === 'builder' && this.allPages.length > 0) {
-			console.log(this.allPages);
 			this.switchSurveyPage(this.allPages[0].id);
 		} else if (pageName === 'logic') {
 			this._editorData.updateSurveyStructure().subscribe();

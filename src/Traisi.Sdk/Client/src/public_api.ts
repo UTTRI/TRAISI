@@ -3,6 +3,7 @@ export { QuestionConfiguration } from './question-configuration'
 export { SurveyViewer } from './survey-viewer'
 export { SurveyResponseService } from './survey-response.service'
 export { SurveyRespondentService } from './survey-respondent.service'
+export { SurveyAnalyticsService } from './survey-analytics.service';
 export { QuestionOption } from './question-option'
 export {
   OnVisibilityChanged,
