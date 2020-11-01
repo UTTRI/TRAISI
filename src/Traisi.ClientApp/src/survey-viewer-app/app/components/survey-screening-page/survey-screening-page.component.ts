@@ -9,6 +9,8 @@ import { SurveyViewScreening } from 'app/models/survey-view-screening.model';
 import { NgForm, FormGroup, FormControl } from '@angular/forms';
 import { SurveyViewerSessionData } from 'app/models/survey-viewer-session-data.model';
 import { SurveyViewerSession } from 'app/services/survey-viewer-session.service';
+import { SurveyViewerClient } from 'app/services/survey-viewer-api-client.service';
+import { AuthService } from 'shared/services/auth.service';
 
 /**
  *
@@ -21,7 +23,7 @@ import { SurveyViewerSession } from 'app/services/survey-viewer-session.service'
 	selector: 'survey-screening-page',
 	templateUrl: './survey-screening-page.component.html',
 	styleUrls: ['./survey-screening-page.component.scss'],
-	encapsulation: ViewEncapsulation.None
+	encapsulation: ViewEncapsulation.None,
 })
 export class SurveyScreeningPageComponent implements OnInit {
 	public screeningQuestions: SurveyViewScreening;
@@ -54,7 +56,9 @@ export class SurveyScreeningPageComponent implements OnInit {
 		private _router: Router,
 		private _translate: TranslateService,
 		private _elementRef: ElementRef,
-		private _surveySession: SurveyViewerSession
+		private _surveySession: SurveyViewerSession,
+		private _viewerClient: SurveyViewerClient,
+		private _authService: AuthService
 	) {}
 
 	/**
@@ -87,9 +91,7 @@ export class SurveyScreeningPageComponent implements OnInit {
 	}
 
 	/**
-	 *
-	 *
-	 * @memberof SurveyScreeningPageComponent
+	 * 
 	 */
 	public onSubmitScreeningQuestions(): void {
 		if (this.formGroup.submitted && this.formGroup.valid) {
@@ -107,11 +109,21 @@ export class SurveyScreeningPageComponent implements OnInit {
 				return;
 			} else {
 				// navigate to rejection link
-				if (this.screeningQuestions.rejectionLink !== undefined || this.screeningQuestions.rejectionLink.trim() !== '') {
-					window.location.href = this.screeningQuestions.rejectionLink;
-				} else {
-					this._router.navigate([this._session.surveyCode, 'complete']);
-				}
+				this._viewerClient
+					.surveyReject(this._surveyViewerService.surveyId, this._authService.currentSurveyUser.shortcode)
+					.subscribe(() => {
+						this._viewerClient
+							.getSurveyRejectionLink(this._surveyViewerService.surveyId)
+							.subscribe((x: any) => {
+								if (x.successLink) {
+									setTimeout(() => {
+										window.location.href = x.successLink;
+									});
+								} else {
+									// this._router.navigate([this._session.surveyCode, 'thankyou']);
+								}
+							});
+					});
 			}
 		}
 	}

@@ -72,6 +72,7 @@ export class SurveyTermsPageComponent implements OnInit {
 			this.surveyViewerService.pageThemeInfoJson
 		).subscribe(
 			(value: [SurveyViewerSessionData, SurveyViewTermsModel, SurveyViewScreening, any]) => {
+				console.log(value);
 				this.surveyId = value[0].surveyId;
 				this.model = value[1];
 				this.hasScreeningQuestions = value[2].questionsList.length > 0;

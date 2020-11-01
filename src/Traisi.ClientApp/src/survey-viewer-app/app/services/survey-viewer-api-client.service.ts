@@ -1760,6 +1760,62 @@ export class SurveyViewerClient {
         return _observableOf<void>(<any>null);
     }
 
+    /**
+     * @param shortcode (optional) 
+     * @return or
+     */
+    surveyReject(surveyId: number, shortcode: string | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/SurveyViewer/reject/{surveyId}";
+        if (surveyId === undefined || surveyId === null)
+            throw new Error("The parameter 'surveyId' must be defined.");
+        url_ = url_.replace("{surveyId}", encodeURIComponent("" + surveyId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Shortcode": shortcode !== undefined && shortcode !== null ? "" + shortcode : "",
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSurveyReject(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSurveyReject(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSurveyReject(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("A server side error occurred.", status, _responseText, _headers);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
     getSurveySuccessLink(surveyId: number): Observable<string> {
         let url_ = this.baseUrl + "/api/SurveyViewer/surveys/{surveyId}/completion-link";
         if (surveyId === undefined || surveyId === null)
@@ -1790,6 +1846,56 @@ export class SurveyViewerClient {
     }
 
     protected processGetSurveySuccessLink(response: HttpResponseBase): Observable<string> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : <string>JSON.parse(_responseText, this.jsonParseReviver);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<string>(<any>null);
+    }
+
+    getSurveyRejectionLink(surveyId: number): Observable<string> {
+        let url_ = this.baseUrl + "/api/SurveyViewer/surveys/{surveyId}/rejection-link";
+        if (surveyId === undefined || surveyId === null)
+            throw new Error("The parameter 'surveyId' must be defined.");
+        url_ = url_.replace("{surveyId}", encodeURIComponent("" + surveyId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetSurveyRejectionLink(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetSurveyRejectionLink(<any>response_);
+                } catch (e) {
+                    return <Observable<string>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<string>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetSurveyRejectionLink(response: HttpResponseBase): Observable<string> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1964,6 +2070,7 @@ export interface Shortcode {
     isTest?: boolean;
     createdDate?: Date;
     surveyCompleted?: boolean;
+    surveyRejected?: boolean;
 }
 
 export interface ExtensionConfiguration {

@@ -1504,12 +1504,81 @@
         }
       }
     },
+    "/api/SurveyViewer/reject/{surveyId}": {
+      "put": {
+        "tags": [
+          "SurveyViewer"
+        ],
+        "operationId": "SurveyViewer_SurveyReject",
+        "parameters": [
+          {
+            "name": "surveyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "Shortcode",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "\nor\n"
+          },
+          "404": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/api/SurveyViewer/surveys/{surveyId}/completion-link": {
       "get": {
         "tags": [
           "SurveyViewer"
         ],
         "operationId": "SurveyViewer_GetSurveySuccessLink",
+        "parameters": [
+          {
+            "name": "surveyId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/SurveyViewer/surveys/{surveyId}/rejection-link": {
+      "get": {
+        "tags": [
+          "SurveyViewer"
+        ],
+        "operationId": "SurveyViewer_GetSurveyRejectionLink",
         "parameters": [
           {
             "name": "surveyId",
@@ -1623,6 +1692,9 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
+          "isPartial": {
+            "type": "boolean"
+          },
           "isValid": {
             "type": "boolean"
           },
@@ -2243,6 +2315,9 @@
             "format": "date-time"
           },
           "surveyCompleted": {
+            "type": "boolean"
+          },
+          "surveyRejected": {
             "type": "boolean"
           }
         }

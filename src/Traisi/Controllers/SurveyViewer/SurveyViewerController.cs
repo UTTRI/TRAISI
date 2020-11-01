@@ -425,8 +425,12 @@ namespace Traisi.Controllers.SurveyViewer
             if (survey != null)
             {
                 var shortcodeObj = await this._unitOfWork.Shortcodes.GetShortcodeForSurveyAsync(survey, shortcode);
-                shortcodeObj.SurveyCompleted = true;
-                await this._unitOfWork.SaveChangesAsync();
+                if (shortcodeObj != null)
+                {
+                    shortcodeObj.SurveyCompleted = true;
+                    await this._unitOfWork.SaveChangesAsync();
+                }
+
                 return new OkResult();
 
             }
@@ -436,6 +440,41 @@ namespace Traisi.Controllers.SurveyViewer
             }
 
         }
+
+        /// <summary>
+        /// Sets the surey to complete for the current user (shortcode).
+        /// </summary>
+        /// <param name="surveyId"></param>
+        /// <param name="(Name"></param>
+        /// <returns></returns>
+        [Route("reject/{surveyId:int}")]
+        [HttpPut]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Produces(typeof(void))]
+        [Authorize(Policy = Policies.RespondToSurveyPolicy)]
+        public async Task<IActionResult> SurveyReject(int surveyId, [FromHeader(Name = "Shortcode")] string shortcode)
+        {
+            var survey = await this._unitOfWork.Surveys.GetAsync(surveyId);
+            if (survey != null)
+            {
+                var shortcodeObj = await this._unitOfWork.Shortcodes.GetShortcodeForSurveyAsync(survey, shortcode);
+                if (shortcodeObj != null)
+                {
+                    shortcodeObj.SurveyRejected = true;
+                    await this._unitOfWork.SaveChangesAsync();
+                }
+
+                return new OkResult();
+
+            }
+            else
+            {
+                return new NotFoundResult();
+            }
+
+        }
+
 
         /// <summary>
         /// 
@@ -455,7 +494,28 @@ namespace Traisi.Controllers.SurveyViewer
             }
             var currentUser = await _userManager.GetUserAsync(User);
             var linkResult = await this._viewService.GetSurveySuccessLink(currentUser, survey);
-            return new OkObjectResult(new { successLink = linkResult});
+            return new OkObjectResult(new { successLink = linkResult });
+        }
+
+        /// <summary>
+        /// Retrieves the rejection link for the survey, interpolated  with any query params passed at the start of the survey.
+        /// </summary>
+        /// <param name="surveyId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Produces(typeof(string))]
+        [Route("surveys/{surveyId}/rejection-link")]
+        [Authorize(Policy = Policies.RespondToSurveyPolicy)]
+        public async Task<IActionResult> GetSurveyRejectionLink(int surveyId)
+        {
+            var survey = await this._unitOfWork.Surveys.GetAsync(surveyId);
+            if (survey == null)
+            {
+                return new NotFoundResult();
+            }
+            var currentUser = await _userManager.GetUserAsync(User);
+            var linkResult = await this._viewService.GetSurveyRejectionLink(currentUser, survey);
+            return new OkObjectResult(new { successLink = linkResult });
         }
 
     }

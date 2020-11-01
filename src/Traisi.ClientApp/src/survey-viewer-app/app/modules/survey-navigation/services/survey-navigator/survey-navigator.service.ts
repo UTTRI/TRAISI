@@ -694,10 +694,9 @@ export class SurveyNavigator {
 				obs.complete();
 			} else {
 				forkJoin(invalidLoad).subscribe((instances: QuestionInstance[]) => {
-					console.log(instances);
 					let invalidInstances = [];
 					for (let instance of instances) {
-						if (instance.validationErrors.length > 0) {
+						if (instance.validationErrors.length > 0 || !instance.validationState.isValid) {
 							invalidInstances.push(instance);
 						}
 					}

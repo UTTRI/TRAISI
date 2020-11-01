@@ -198,6 +198,7 @@ export class SurveyViewerService implements OnInit {
 					this.screeningQuestions = screeningQuestions;
 					if (screeningQuestions['screeningQuestionLabels'] !== undefined) {
 						let screeningModel = this.parseScreeningQuestionsModel(screeningQuestions);
+						console.log(screeningModel);
 						this.screeningQuestionsModel.next(screeningModel);
 					} else {
 						this.screeningQuestionsModel.next({
@@ -248,10 +249,11 @@ export class SurveyViewerService implements OnInit {
 	 * @memberof SurveyViewerService
 	 */
 	private parseScreeningQuestionsModel(result: any): SurveyViewScreening {
+		console.log(result);
 		if (
-			result.screenignQuestionLabels === null ||
-			result.screenignQuestionLabels === undefined ||
-			result.screenignQuestionLabels.length === 0
+			result.screeningQuestionLabels === null ||
+			result.screeningQuestionLabels === undefined ||
+			result.screeningQuestionLabels.length === 0
 		) {
 			return {
 				questionsList: [],

@@ -427,9 +427,33 @@ namespace Traisi.Services
 
             return link;
 
+        }
 
+         public async Task<string> GetSurveyRejectionLink(ApplicationUser user, Survey survey)
+        {
+            string link = survey.RejectionLink;
+
+            var records = await this._unitOfWork.SurveyRespondents.GetSurveyAccessRecordsAsync(user, survey);
+
+            if (records == null || records.Count == 0)
+            {
+                return null;
+            }
+
+            var firstRecord = records.First();
+
+            var queryParamObj = JObject.Parse(firstRecord.QueryParams);
+
+            foreach(var param in queryParamObj) {
+                
+                //jey vakyue
+                link = link.Replace($"{{{{{param.Key}}}}}",param.Value.Value<string>());
+            }
+
+            return link;
 
         }
+
 
         /// <summary>
         /// 
