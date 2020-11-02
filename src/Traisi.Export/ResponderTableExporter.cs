@@ -30,6 +30,7 @@ namespace TRAISI.Export
                 .OrderBy(sr => sr.Shortcode)
                 .Include(sr => sr.SurveyRespondentGroup)
                 .ThenInclude(srg => srg.GroupMembers)
+                .Include(r => r.SurveyAccessRecords)
                 .ToList();
 
             var subRespondents = primaryRespondents.SelectMany(pr => pr.SurveyRespondentGroup.GroupMembers);
