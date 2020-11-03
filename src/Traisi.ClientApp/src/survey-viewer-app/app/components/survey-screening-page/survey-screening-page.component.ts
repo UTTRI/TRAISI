@@ -11,6 +11,7 @@ import { SurveyViewerSessionData } from 'app/models/survey-viewer-session-data.m
 import { SurveyViewerSession } from 'app/services/survey-viewer-session.service';
 import { SurveyViewerClient } from 'app/services/survey-viewer-api-client.service';
 import { AuthService } from 'shared/services/auth.service';
+import { TraisiValues, SurveyAnalyticsService } from 'traisi-question-sdk';
 
 /**
  *
@@ -58,7 +59,8 @@ export class SurveyScreeningPageComponent implements OnInit {
 		private _elementRef: ElementRef,
 		private _surveySession: SurveyViewerSession,
 		private _viewerClient: SurveyViewerClient,
-		private _authService: AuthService
+		private _authService: AuthService,
+		@Inject(TraisiValues.SurveyAnalytics) private _analytics: SurveyAnalyticsService
 	) {}
 
 	/**
@@ -91,7 +93,7 @@ export class SurveyScreeningPageComponent implements OnInit {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public onSubmitScreeningQuestions(): void {
 		if (this.formGroup.submitted && this.formGroup.valid) {
@@ -109,21 +111,28 @@ export class SurveyScreeningPageComponent implements OnInit {
 				return;
 			} else {
 				// navigate to rejection link
-				this._viewerClient
-					.surveyReject(this._surveyViewerService.surveyId, this._authService.currentSurveyUser.shortcode)
-					.subscribe(() => {
+				this._analytics.sendEvent('Survey Navigation Event', 'survey_rejected', undefined).subscribe({
+					complete: () => {
 						this._viewerClient
-							.getSurveyRejectionLink(this._surveyViewerService.surveyId)
-							.subscribe((x: any) => {
-								if (x.successLink) {
-									setTimeout(() => {
-										window.location.href = x.successLink;
+							.surveyReject(
+								this._surveyViewerService.surveyId,
+								this._authService.currentSurveyUser.shortcode
+							)
+							.subscribe(() => {
+								this._viewerClient
+									.getSurveyRejectionLink(this._surveyViewerService.surveyId)
+									.subscribe((x: any) => {
+										if (x.successLink) {
+											setTimeout(() => {
+												window.location.href = x.successLink;
+											});
+										} else {
+											// this._router.navigate([this._session.surveyCode, 'thankyou']);
+										}
 									});
-								} else {
-									// this._router.navigate([this._session.surveyCode, 'thankyou']);
-								}
 							});
-					});
+					},
+				});
 			}
 		}
 	}
