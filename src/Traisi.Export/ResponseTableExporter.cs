@@ -366,7 +366,7 @@ namespace TRAISI.Export
                     t.Location.X,
                     t.Location.Y
                 });
-            return locations;
+            return locations.ToList();
         }
 
         private string ReadLocationResponse(ISurveyResponse surveyResponse)
@@ -722,7 +722,7 @@ namespace TRAISI.Export
                 }
             }
         }
- 
+
         public void ResponsesPivot_OneLocationTravelDiary(
                    List<QuestionPart> questionParts,
                    List<SurveyResponse> surveyResponses,
@@ -770,14 +770,14 @@ namespace TRAISI.Export
                 //Location number
                 locNumber = 0;
 
-                if (responses.Count() >= 2)
-                {
-                    continue;
-                }
+
                 //Travel diary
                 var response_timeline = surveyResponses.Where(r => r.Respondent.SurveyRespondentGroup.GroupMembers.Any(y => y == respondent))
                                                             .Where(r => r.Respondent == respondent)
                                                                 .Where(y => y.QuestionPart.Name == "Travel diary");
+
+
+
                 //Transit routes
                 var response_Json = surveyResponses.Where(r => r.Respondent.SurveyRespondentGroup.GroupMembers.Any(y => y == respondent))
                                                         .Where(r => r.Respondent == respondent)
@@ -789,11 +789,16 @@ namespace TRAISI.Export
                 var responseValues_timeline_1 = ReadTimelineResponseList(response_timeline.FirstOrDefault());
                 List<dynamic> responseValues_timeline = new List<object>();
 
+               
                 foreach (var item in responseValues_timeline_1)
                 {
                     responseValues_timeline.Add(item);
                 }
 
+                if (responseValues_timeline.Count() >= 2)
+                {
+                    continue;
+                }
                 for (int i = 0; i < responseValues_timeline.Count(); i++)
                 {
                     //Origin
@@ -807,7 +812,7 @@ namespace TRAISI.Export
                     {
                         Location_Identification.Add(new Tuple<double, double>(response.X, response.Y), Location_Identification.Count() + 1);
                     }
-                    
+
                     // Respondent ID (Unique)          
                     worksheet.Cells[rowNumber, 1].Value = (responses.Where(r => r.Respondent == respondent)
                                                             .Select(r => r.Respondent.Id)).First().ToString();
@@ -817,7 +822,7 @@ namespace TRAISI.Export
                     //Person ID 
                     worksheet.Cells[rowNumber, 3].Value = (responses.Where(r => r.Respondent == respondent)
                                                             .Select(r => r.Respondent.SurveyRespondentGroup.GroupMembers.IndexOf(respondent) + 1)).First().ToString();
-                   
+
                     //Trip Origin Latitude 
                     worksheet.Cells[rowNumber, 4].Value = response.Y.ToString();
 
