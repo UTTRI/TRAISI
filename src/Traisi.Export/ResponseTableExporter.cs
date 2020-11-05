@@ -503,9 +503,6 @@ namespace TRAISI.Export
                 if (response_timeline.Count() == 0)
                     continue;
 
-                //Reading Mode Details 
-                //List<Tuple<string, string>> modeDetails = ReadJsonResponse_Mode(response_Json.First());
-
                 var responseValues_timeline_1 = ReadTimelineResponseList(response_timeline.First());
                 List<dynamic> responseValues_timeline = new List<object>();
 
@@ -615,15 +612,8 @@ namespace TRAISI.Export
                     //CmpMultiModeCatName
                     worksheet.Cells[rowNumber, 30].Value = response_dest.Mode;
 
-                    //Mode Details
-                    /* if (modeDetails.Count >= locNumber)
-                    {
-                        //CmpMultiModeCatName 
-                        worksheet.Cells[rowNumber, 30].Value = modeDetails[locNumber - 1].Item2;
-
-                        //CmpMultiModeCatMainGroup
-                        worksheet.Cells[rowNumber, 31].Value = modeDetails[locNumber - 1].Item1;
-                    } */
+                    //CmpMultiModeCatMainGroup
+                    worksheet.Cells[rowNumber, 31].Value = String.Empty;
 
                     //TpInclDriv
                     worksheet.Cells[rowNumber, 32].Value = String.Empty;
@@ -706,7 +696,10 @@ namespace TRAISI.Export
                     worksheet.Cells[rowNumber, 53].Value = String.Empty;
 
                     //SingTripdiaryFlag
-                    worksheet.Cells[rowNumber, 54].Value = String.Empty;
+                    int singleTripValue = 1;
+                    var res = responses.Where(r => r.Respondent == respondent).ToList();
+                    singleTripValue = res.Count > 1 ? 0 : 1;
+                    worksheet.Cells[rowNumber, 54].Value = singleTripValue;
 
                     //IncompDiary
                     worksheet.Cells[rowNumber, 55].Value = String.Empty;
@@ -726,6 +719,249 @@ namespace TRAISI.Export
                     //, "Survey_Complete_Flag"
                     //worksheet.Cells[rowNumber, 58].Value = String.Empty;
 
+                }
+            }
+        }
+ 
+        public void ResponsesPivot_OneLocationTravelDiary(
+                   List<QuestionPart> questionParts,
+                   List<SurveyResponse> surveyResponses,
+                   List<SurveyRespondent> surveyRespondents,
+                   ExcelWorksheet worksheet)
+        {
+            var responseValuesTask = Task.Run(() =>
+                surveyResponses
+                    .AsParallel()
+                    .WithExecutionMode(ParallelExecutionMode.ForceParallelism)
+                    .Select(ReadSingleResponse)
+                    .ToList()
+                );
+            // Place headers
+            // inject header
+            var headerRow = new List<string[]>()
+            {
+                new string[] {"RespId_Num", "HhId_Num", "Pers_Num", "Trip_Orig_Lat", "Trip_Orig_Lng",
+                "Loc_Num_Orig","Loc_Ident_Orig", "Loc_Name_Orig", "Addr_Orig", "Post_Code_Orig", "Trip_Orig_CTuid",
+                "Trip_Orig_CSDuid", "Trip_Orig_TTS2021", "Trip_Orig_PD", "Trip_Orig_Region", "Cmp_Multi_Mode_Cat_key",
+                "Cmp_Multi_Mode_Cat_Name", "Cmp_Multi_Mode_Cat_Main_Group", "Trip_Incl_Driv", "Trip_Incl_Pass",
+                "Trip_Incl_PT", "Trip_Incl_Walk", "Trip_Incl_Bike", "Trip_Incl_Other_Mode", "Trip_Main_Pt_Mode",
+                "Trip_Incl_PT_Bus", "Trip_Incl_PT_Streetcar", "Trip_Incl_PT_Subway", "Trip_Incl_PT_GO_Bus",
+                "Trip_Incl_PT_GO_Train", "Trip_Orig_Purp", "Trip_Date_Ext", "Trip_Day_Ext", "Trip_Start_Time_Ext",
+                "Act_Date", "Act_Day", "Act_End_Time", "Trip_Modes", "Trip_Num_Unique_Modes", "Sing_Trip_Diary_Flag",
+                "Incomp_Diary", "Survey_Access_Date_Time", "Survey_Access_Day" }
+            };
+            worksheet.Cells["A1:AQ1"].LoadFromArrays(headerRow);
+            worksheet.Cells["A1:AQ1"].Style.Font.Bold = true;
+
+            // Collecting all relevant respondents
+            var Respondents_valid = surveyRespondents.Where(x => surveyResponses.Any(y => y.Respondent == x)).ToList();
+            var subRespondents = Respondents_valid.SelectMany(pr => pr.SurveyRespondentGroup.GroupMembers).ToList();
+
+            int locNumber = 0;
+            int rowNumber = 1;
+
+            //Location Identifier
+            Dictionary<Tuple<double, double>, int> Location_Identification = new Dictionary<Tuple<double, double>, int>();
+
+            foreach (var respondent in subRespondents)
+            {
+                var responses = surveyResponses.Where(r => r.Respondent.SurveyRespondentGroup.GroupMembers.Any(y => y == respondent)).ToList();
+
+                //Location number
+                locNumber = 0;
+
+                if (responses.Count() >= 2)
+                {
+                    continue;
+                }
+                //Travel diary
+                var response_timeline = surveyResponses.Where(r => r.Respondent.SurveyRespondentGroup.GroupMembers.Any(y => y == respondent))
+                                                            .Where(r => r.Respondent == respondent)
+                                                                .Where(y => y.QuestionPart.Name == "Travel diary");
+                //Transit routes
+                var response_Json = surveyResponses.Where(r => r.Respondent.SurveyRespondentGroup.GroupMembers.Any(y => y == respondent))
+                                                        .Where(r => r.Respondent == respondent)
+                                                            .Where(y => y.QuestionPart.Name == "Transit routes");
+
+                if (response_timeline.Count() == 0)
+                    continue;
+
+                var responseValues_timeline_1 = ReadTimelineResponseList(response_timeline.FirstOrDefault());
+                List<dynamic> responseValues_timeline = new List<object>();
+
+                foreach (var item in responseValues_timeline_1)
+                {
+                    responseValues_timeline.Add(item);
+                }
+
+                for (int i = 0; i < responseValues_timeline.Count(); i++)
+                {
+                    //Origin
+                    var response = responseValues_timeline[i];
+
+                    rowNumber++;
+                    locNumber++;
+
+                    //Origin
+                    if (!Location_Identification.ContainsKey(new Tuple<double, double>(response.X, response.Y)))
+                    {
+                        Location_Identification.Add(new Tuple<double, double>(response.X, response.Y), Location_Identification.Count() + 1);
+                    }
+                    
+                    // Respondent ID (Unique)          
+                    worksheet.Cells[rowNumber, 1].Value = (responses.Where(r => r.Respondent == respondent)
+                                                            .Select(r => r.Respondent.Id)).First().ToString();
+                    // Household ID        
+                    worksheet.Cells[rowNumber, 2].Value = (responses.Where(r => r.Respondent.SurveyRespondentGroup.GroupMembers.Any(y => y == respondent))
+                                                            .Select(r => r.Respondent.SurveyRespondentGroup.Id)).First().ToString();
+                    //Person ID 
+                    worksheet.Cells[rowNumber, 3].Value = (responses.Where(r => r.Respondent == respondent)
+                                                            .Select(r => r.Respondent.SurveyRespondentGroup.GroupMembers.IndexOf(respondent) + 1)).First().ToString();
+                   
+                    //Trip Origin Latitude 
+                    worksheet.Cells[rowNumber, 4].Value = response.Y.ToString();
+
+                    //Trip Origin Longitude 
+                    worksheet.Cells[rowNumber, 5].Value = response.X.ToString();
+
+                    //Location Number Origin
+                    worksheet.Cells[rowNumber, 6].Value = locNumber.ToString();
+
+                    //Location Identifier Origin
+                    worksheet.Cells[rowNumber, 7].Value = Convert.ToString(Location_Identification[new Tuple<double, double>(response.X, response.Y)]);
+
+                    //Location Name Origin
+                    worksheet.Cells[rowNumber, 8].Value = response.Name;
+
+                    //Address Origin
+                    string addressWithPostalCode = response.Address.FormattedAddress;
+                    worksheet.Cells[rowNumber, 9].Value = addressWithPostalCode;
+
+                    //Postalcode Origin
+                    string addressOnlyPostalCode = response.Address.PostalCode;
+                    worksheet.Cells[rowNumber, 10].Value = addressOnlyPostalCode;
+
+                    //TpOrigCTuid 
+                    worksheet.Cells[rowNumber, 11].Value = String.Empty;
+
+                    //TpOrigCSDuid
+                    worksheet.Cells[rowNumber, 12].Value = String.Empty;
+
+                    //TpOrigTTS2021 
+                    worksheet.Cells[rowNumber, 13].Value = String.Empty;
+
+                    //TpOrigPD
+                    worksheet.Cells[rowNumber, 14].Value = String.Empty;
+
+                    //TpOrigRegion
+                    worksheet.Cells[rowNumber, 15].Value = String.Empty;
+
+                    //CmpMultiModeCatkey 
+                    worksheet.Cells[rowNumber, 16].Value = String.Empty;
+
+                    //CmpMultiModeCatName
+                    worksheet.Cells[rowNumber, 17].Value = response.Mode;
+
+                    //CmpMultiModeCatMainGroup
+                    worksheet.Cells[rowNumber, 18].Value = String.Empty;
+
+                    //TpInclDriv
+                    worksheet.Cells[rowNumber, 19].Value = String.Empty;
+
+                    //TpInclPass
+                    worksheet.Cells[rowNumber, 20].Value = String.Empty;
+
+                    //TpInclPT
+                    worksheet.Cells[rowNumber, 21].Value = String.Empty;
+
+                    //TpInclWalk
+                    worksheet.Cells[rowNumber, 22].Value = String.Empty;
+
+                    //TpInclBike 
+                    worksheet.Cells[rowNumber, 23].Value = String.Empty;
+
+                    //TpInclOtherMode 
+                    worksheet.Cells[rowNumber, 24].Value = String.Empty;
+
+                    //TpMainPtMode 
+                    worksheet.Cells[rowNumber, 25].Value = String.Empty;
+
+                    //TpInclPTBus
+                    worksheet.Cells[rowNumber, 26].Value = String.Empty;
+
+                    //TpInclPTStreetcar
+                    worksheet.Cells[rowNumber, 27].Value = String.Empty;
+
+                    //TpInclPTSubway
+                    worksheet.Cells[rowNumber, 28].Value = String.Empty;
+
+                    //TpInclPTGOBus
+                    worksheet.Cells[rowNumber, 29].Value = String.Empty;
+
+                    //TpInclPTGOTrain
+                    worksheet.Cells[rowNumber, 30].Value = String.Empty;
+
+                    //Trip Origin Purpose
+                    worksheet.Cells[rowNumber, 31].Value = response.Purpose;
+
+                    //Departure columns 
+                    string timeA = response.TimeA.ToString();
+                    if (Regex.IsMatch(timeA, @"([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))", RegexOptions.IgnoreCase))
+                    {
+                        //Departure Date 
+                        Match dA = Regex.Match(timeA, @"([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))", RegexOptions.IgnoreCase);
+                        Match tA = Regex.Match(timeA, @"(1[0-2]|0?[1-9]):(?:[012345]\d):(?:[012345]\d) ([AaPp][Mm])", RegexOptions.IgnoreCase);
+                        worksheet.Cells[rowNumber, 32].Value = Convert.ToString(dA.Value);
+
+                        //Departure Day 
+                        DateTime dtA = DateTime.Parse(dA.Value);
+                        worksheet.Cells[rowNumber, 33].Value = Convert.ToString(dtA.DayOfWeek);
+
+                        //Departure Time
+                        worksheet.Cells[rowNumber, 34].Value = Convert.ToString(tA.Value);
+                    }
+                    //Arrival columns 
+                    string timeB = response.TimeB.ToString();
+                    if (Regex.IsMatch(timeB, @"((20|20)\d\d-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))", RegexOptions.IgnoreCase))
+                    {
+                        //Arrival Date
+                        Match dB = Regex.Match(timeB, @"((20|20)\d\d-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))", RegexOptions.IgnoreCase);
+                        Match tB = Regex.Match(timeB, @"(1[0-2]|0?[1-9]):(?:[012345]\d):(?:[012345]\d) ([AaPp][Mm])", RegexOptions.IgnoreCase);
+                        worksheet.Cells[rowNumber, 35].Value = Convert.ToString(dB.Value);
+
+                        //Arrival Day 
+                        DateTime dtB = DateTime.Parse(dB.Value);
+                        worksheet.Cells[rowNumber, 36].Value = Convert.ToString(dtB.DayOfWeek);
+
+                        //Arrival Time 
+                        worksheet.Cells[rowNumber, 37].Value = Convert.ToString(tB.Value);
+                    }
+                    //TpModes
+                    worksheet.Cells[rowNumber, 38].Value = String.Empty;
+
+                    //TpNumUniqueModes
+                    worksheet.Cells[rowNumber, 39].Value = String.Empty;
+
+                    //SingTripdiaryFlag
+                    int singleTripValue = 0;
+                    var res = responses.Where(r => r.Respondent == respondent).ToList();
+                    singleTripValue = res.Count > 0 ? 1 : 0;
+                    worksheet.Cells[rowNumber, 40].Value = singleTripValue;
+
+                    //IncompDiary
+                    worksheet.Cells[rowNumber, 41].Value = String.Empty;
+
+                    // SurveyAccessDateTime
+                    if (respondent is PrimaryRespondent primaryRespondent)
+                    {
+                        worksheet.Cells[rowNumber, 42].Value = primaryRespondent.SurveyAccessDateTime.DateTime.ToString("yyyy-MM-dd HH:mm:ss tt");
+                        worksheet.Cells[rowNumber, 43].Value = primaryRespondent.SurveyAccessDateTime.DayOfWeek;
+                    }
+                    else if (respondent is SubRespondent subRespondent)
+                    {
+                        worksheet.Cells[rowNumber, 42].Value = subRespondent.PrimaryRespondent.SurveyAccessDateTime.DateTime.ToString("yyyy-MM-dd HH:mm:ss tt");
+                        worksheet.Cells[rowNumber, 43].Value = subRespondent.PrimaryRespondent.SurveyAccessDateTime.DayOfWeek;
+                    }
                 }
             }
         }
@@ -820,9 +1056,6 @@ namespace TRAISI.Export
                 if (response_timeline.Count() == 0)
                     continue;
 
-                //Reading Mode Details 
-                //List<Tuple<string, string>> modeDetails = ReadJsonResponse_Mode(response_Json.First());
-
                 var responseValues_timeline_1 = ReadTimelineResponseList(response_timeline.First());
                 List<dynamic> responseValues_timeline = new List<object>();
 
@@ -848,7 +1081,7 @@ namespace TRAISI.Export
 
                     try
                     {
-                        JObject jsonResponseValues = response.Value;
+                        JObject jsonResponseValues = JObject.Parse(response.Value);
                         objTripLinx = (JObject)objTripLinx[0]["routes"];
                     }
                     catch (System.Exception)
@@ -1061,7 +1294,6 @@ namespace TRAISI.Export
 
             }
         }
-
 
         public void ResponseListToWorksheet(List<SurveyResponse> surveyResponses, ExcelWorksheet worksheet, Boolean isHouseHold)
         {

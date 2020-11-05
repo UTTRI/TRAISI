@@ -184,6 +184,9 @@ namespace TRAISI.Export
                 Console.WriteLine("Writing Travel Diary Response sheet");
                 var travelDiarySheet = workbook.Worksheets.Add("Travel Diary Responses");
                 responseTableExporter.ResponsesPivot_TravelDiary(questionParts_personal, responses_personal, respondents, travelDiarySheet);
+                Console.WriteLine("Writing One Location Travel Diary Response sheet");
+                var oneLocationTravelDiarySheet = workbook.Worksheets.Add("One Location Diary Responses");
+                responseTableExporter.ResponsesPivot_OneLocationTravelDiary(questionParts_personal, responses_personal, respondents, oneLocationTravelDiarySheet);
                 eXp.Save();
             }
 
