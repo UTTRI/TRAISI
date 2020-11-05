@@ -10,7 +10,7 @@
 			<div class="modal-header">
 				<h4 class="modal-title pull-left" *ngIf="dialogMode === dialogModeNew">New Trip</h4>
 				<h4 class="modal-title pull-left" *ngIf="dialogMode === dialogModeEdit">Edit Trip</h4>
-				<h4 class="modal-title pull-left" *ngIf="dialogMode === dialogModeCreateHome">{{respondent.name}} was not at home at 4:00 am on the diary day, please tell us his/her activity at the beginning of the diary day.</h4>
+				<h4 class="modal-title pull-left" *ngIf="dialogMode === dialogModeCreateHome">Please tell us where {{respondent.name}} was at 4:00 am the morning of the specified collection date.</h4>
 				<button type="button" class="close pull-right" aria-label="Close" (click)="hide()">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -32,7 +32,7 @@
 							/>
 						</div>
 					</div>
-					<div class="form-group row">
+					<div class="form-group row" *ngIf="isAllowChangePurpose">
 						<div class="col-12">
 							<label for="purpose" class="col-form-label">Purpose of the activity</label>
 							<ng-select

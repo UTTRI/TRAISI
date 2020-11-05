@@ -113,6 +113,13 @@ export class TravelDiaryEditDialogComponent implements AfterViewInit {
 
 	private _dialogOpenTime: number;
 
+	public get isAllowChangePurpose(): boolean {
+		if(this.displayIndex <= 0 && this._travelDiaryService.userTripState[this._respondent.id]?.startAtHome) {
+			return false;
+		}
+		return true;
+	}
+
 	public get defaultDate(): Date {
 		return this._defaultDate;
 	}
@@ -440,8 +447,12 @@ export class TravelDiaryEditDialogComponent implements AfterViewInit {
 			this.eventForm.form.reset();
 			this.eventForm.reset();
 			this.model.isFirstEvent = true;
+			this.displayIndex = -1;
 			this.isFirstEventInDay = true;
 			this.model.users = [].concat(this._respondentRef);
+			if(this._travelDiaryService.userTripState[this._respondent.id]?.startAtHome){
+				this.model.purpose = this._travelDiaryService.configuration.purpose.find( x=> x.id==='home').id;
+			}
 		} else {
 			this.eventForm.form.markAllAsTouched();
 			this.eventForm.form.updateValueAndValidity();
@@ -451,6 +462,7 @@ export class TravelDiaryEditDialogComponent implements AfterViewInit {
 			this.model.isReturnHomeSplit = false;
 			this.model.isUpdateEventSwap = undefined;
 			this.isFirstEventInDay = false;
+			this.displayIndex = 1;
 			this.model.isRequireDepartureConfirm = false;
 			this.displayIndex = this._editorService.getEventIndex(
 				this.model,

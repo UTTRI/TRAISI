@@ -318,7 +318,7 @@ export class TravelDiaryService {
 		}
 		if (!this._validateConsecutiveHomeEvents(filter)) {
 			errors.push({
-				message: 'You cannot have two home events in a row.',
+				message: 'You cannot have two home events in a row. Please make sure to <strong>add</strong> a new trip separating your home events.',
 			});
 		}
 		for (let i = 0; i < filter.length; i++) {
@@ -565,6 +565,7 @@ export class TravelDiaryService {
 			const schoolLocation = responseMatches.find((x) => x.questionId === schoolLocationId)?.responseValues[0];
 
 			this.userTripState[r.id] = {
+				startAtHome: homeDeparture,
 				homeAllDay: isHomeAllDay,
 				returnHome: homeReturn,
 				schoolTrip: schoolDeparture,

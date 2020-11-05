@@ -146,7 +146,13 @@ export class TravelDiaryQuestionComponent extends SurveyQuestion<ResponseTypes.T
 
 	public newEvent(): void {
 		this._tour.stopTour();
-		this.entryDialog.show(DialogMode.New);
+		if(this._travelDiaryService.diaryEvents$.value.length === 0) {
+			this.entryDialog.show(DialogMode.CreateHome);
+		}
+		else {
+			this.entryDialog.show(DialogMode.New);
+		}
+		
 	}
 
 	public newEntrySaved(event: TimelineLineResponseDisplayData) {
@@ -164,6 +170,7 @@ export class TravelDiaryQuestionComponent extends SurveyQuestion<ResponseTypes.T
 	}
 
 	public resetEvents(): void {
+		
 		this._travelDiaryService.resetTravelDiary().subscribe({
 			complete: () => {
 				if (this._travelDiaryService.diaryEvents$.value.length > 0) {
@@ -178,6 +185,7 @@ export class TravelDiaryQuestionComponent extends SurveyQuestion<ResponseTypes.T
 	}
 
 	public clearEvents(): void {
+		this._tour.stopTour();
 		this._travelDiaryService.clearTravelDiary();
 		this.entryDialog.show(DialogMode.CreateHome);
 		this._analytics.sendEvent('Travel Diary Events', 'travel_diary_events_cleared');
@@ -310,10 +318,12 @@ export class TravelDiaryQuestionComponent extends SurveyQuestion<ResponseTypes.T
 	}
 
 	public eventClicked({ event }: { event: CalendarEvent }): void {
+		this._tour.stopTour();
 		this.entryDialog.show(DialogMode.Edit, event.meta.model);
 	}
 
 	public linearViewEventClicked(event: TravelDiaryEvent): void {
+		this._tour.stopTour();
 		this.entryDialog.show(DialogMode.Edit, event.meta.model);
 	}
 
