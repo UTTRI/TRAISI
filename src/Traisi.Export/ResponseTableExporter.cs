@@ -839,11 +839,11 @@ namespace TRAISI.Export
                     worksheet.Cells[rowNumber, 8].Value = response.Name;
 
                     //Address Origin
-                    string addressWithPostalCode = response.Address.FormattedAddress;
+                    string addressWithPostalCode = response?.Address?.FormattedAddress;
                     worksheet.Cells[rowNumber, 9].Value = addressWithPostalCode;
 
                     //Postalcode Origin
-                    string addressOnlyPostalCode = response.Address.PostalCode;
+                    string addressOnlyPostalCode = response?.Address?.PostalCode;
                     worksheet.Cells[rowNumber, 10].Value = addressOnlyPostalCode;
 
                     //TpOrigCTuid 
@@ -971,7 +971,7 @@ namespace TRAISI.Export
             }
         }
 
-        public void ResponsesPivot_TransitRoutes(
+       /*  public void ResponsesPivot_TransitRoutes(
              List<QuestionPart> questionParts,
              List<SurveyResponse> surveyResponses,
              List<SurveyRespondent> surveyRespondents,
@@ -1094,8 +1094,8 @@ namespace TRAISI.Export
                         objTripLinx = null;
                     }
 
-                    /*if (objTripLinx == null || modeDetails[locNumber - 1].Item1 != "transit-all-way")
-                       continue;*/
+                    if (objTripLinx == null || modeDetails[locNumber - 1].Item1 != "transit-all-way")
+                       continue;
                     if (response.Mode != "transit-all-way")
                         continue;
                     rowNumber++;
@@ -1299,7 +1299,8 @@ namespace TRAISI.Export
 
             }
         }
-
+ */
+        
         public void ResponseListToWorksheet(List<SurveyResponse> surveyResponses, ExcelWorksheet worksheet, Boolean isHouseHold)
         {
             //Removed Travel diary and Transit routes responses. 
