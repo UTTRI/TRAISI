@@ -434,7 +434,7 @@ namespace TRAISI.Export
         {
         }
 
-        public void ResponsesPivot_TravelDiary(
+         public void ResponsesPivot_TravelDiary(
             List<QuestionPart> questionParts,
             List<SurveyResponse> surveyResponses,
             List<SurveyRespondent> surveyRespondents,
@@ -722,7 +722,7 @@ namespace TRAISI.Export
                 }
             }
         }
- 
+        
         public void ResponsesPivot_OneLocationTravelDiary(
                    List<QuestionPart> questionParts,
                    List<SurveyResponse> surveyResponses,
@@ -968,7 +968,7 @@ namespace TRAISI.Export
                 }
             }
         }
- 
+         
         public void ResponsesPivot_TransitRoutes(
             List<QuestionPart> questionParts,
             List<SurveyResponse> surveyResponses,
@@ -1053,7 +1053,6 @@ namespace TRAISI.Export
                 //Transit routes
                 var response_Json = responses.Where(r => r.Respondent == respondent && r.QuestionPart.Name == "Transit routes").ToList();
 
-
                 //if (response_timeline.Count <= 1 || response_Json.Count == 0)
                 //    continue;
 
@@ -1080,7 +1079,6 @@ namespace TRAISI.Export
                 {
                     continue;
                 }
-
 
                 //Destination
                 // var response_dest = responseValues_timeline[i + 1];
@@ -1288,11 +1286,8 @@ namespace TRAISI.Export
                 //N_Other
                 worksheet.Cells[rowNumber, 163].Value = String.Empty;
 
-
-
             }
         }
-
 
         public void ResponsesPivot_NotInListTransitRoutes(
                     List<QuestionPart> questionParts,
@@ -1354,14 +1349,13 @@ namespace TRAISI.Export
                 {
                     responseValues_timeline.Add(item);
                 }
-
                 //Origin
                 var response = response_Json.OrderByDescending(x => x.SurveyAccessRecord.AccessDateTime).FirstOrDefault();
 
                 JArray parsedResponse = JArray.Parse(((JsonResponse)response.ResponseValues[0]).Value);
 
                 var subResponse = parsedResponse[0];
-                if (subResponse["routeIndex"].Value<int>() >= 3)
+                if (subResponse["routeIndex"].Value<int>() < 3)
                 {
                     continue;
                 }
