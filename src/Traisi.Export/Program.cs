@@ -191,7 +191,7 @@ namespace TRAISI.Export
             }
 
             // Transit Routes Excel file
-            /* var rfi = new FileInfo(@"..\..\src\TRAISI.Export\surveyexportfiles\TransitRoutes.xlsx");
+             var rfi = new FileInfo(@"..\..\src\TRAISI.Export\surveyexportfiles\TransitRoutes.xlsx");
             if (rfi.Exists)
             {
                 rfi.Delete();
@@ -204,7 +204,7 @@ namespace TRAISI.Export
                 var transitRoutesSheet = workbook.Worksheets.Add("Transit Routes Responses");
                 responseTableExporter.ResponsesPivot_TransitRoutes(questionParts_personal, responses_personal, respondents, transitRoutesSheet);
                 eXp.Save();
-            }  */
+            }  
             return 0;
         }
 
