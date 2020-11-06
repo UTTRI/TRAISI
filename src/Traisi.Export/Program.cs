@@ -189,7 +189,7 @@ namespace TRAISI.Export
                 responseTableExporter.ResponsesPivot_OneLocationTravelDiary(questionParts_personal, responses_personal, respondents, oneLocationTravelDiarySheet);
                 eXp.Save();
             }
-
+ 
             // Transit Routes Excel file
              var rfi = new FileInfo(@"..\..\src\TRAISI.Export\surveyexportfiles\TransitRoutes.xlsx");
             if (rfi.Exists)
@@ -203,6 +203,9 @@ namespace TRAISI.Export
                 Console.WriteLine("Writing Transit Routes Response sheet");
                 var transitRoutesSheet = workbook.Worksheets.Add("Transit Routes Responses");
                 responseTableExporter.ResponsesPivot_TransitRoutes(questionParts_personal, responses_personal, respondents, transitRoutesSheet);
+                Console.WriteLine("Writing Not In List Routes Response sheet");
+                var notInListTransitRoutesSheet = workbook.Worksheets.Add("Not In List Responses");
+                responseTableExporter.ResponsesPivot_NotInListTransitRoutes(questionParts_personal, responses_personal, respondents, notInListTransitRoutesSheet);
                 eXp.Save();
             }  
             return 0;

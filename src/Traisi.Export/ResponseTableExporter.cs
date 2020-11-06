@@ -722,7 +722,7 @@ namespace TRAISI.Export
                 }
             }
         }
-
+ 
         public void ResponsesPivot_OneLocationTravelDiary(
                    List<QuestionPart> questionParts,
                    List<SurveyResponse> surveyResponses,
@@ -775,8 +775,6 @@ namespace TRAISI.Export
                 var response_timeline = surveyResponses.Where(r => r.Respondent.SurveyRespondentGroup.GroupMembers.Any(y => y == respondent))
                                                             .Where(r => r.Respondent == respondent)
                                                                 .Where(y => y.QuestionPart.Name == "Travel diary");
-
-
 
                 //Transit routes
                 var response_Json = surveyResponses.Where(r => r.Respondent.SurveyRespondentGroup.GroupMembers.Any(y => y == respondent))
@@ -970,7 +968,7 @@ namespace TRAISI.Export
                 }
             }
         }
-
+ 
         public void ResponsesPivot_TransitRoutes(
             List<QuestionPart> questionParts,
             List<SurveyResponse> surveyResponses,
@@ -1059,7 +1057,8 @@ namespace TRAISI.Export
                 //if (response_timeline.Count <= 1 || response_Json.Count == 0)
                 //    continue;
 
-                if(response_Json.Count == 0) {
+                if (response_Json.Count == 0)
+                {
                     continue;
                 }
 
@@ -1076,12 +1075,13 @@ namespace TRAISI.Export
 
                 JArray parsedResponse = JArray.Parse(((JsonResponse)response.ResponseValues[0]).Value);
 
-                var subResposne = parsedResponse[0];
-                if(subResposne["routeIndex"].Value<int>() > 3) {
+                var subResponse = parsedResponse[0];
+                if (subResponse["routeIndex"].Value<int>() > 3)
+                {
                     continue;
                 }
 
-                
+
                 //Destination
                 // var response_dest = responseValues_timeline[i + 1];
 
@@ -1293,6 +1293,99 @@ namespace TRAISI.Export
             }
         }
 
+
+        public void ResponsesPivot_NotInListTransitRoutes(
+                    List<QuestionPart> questionParts,
+                    List<SurveyResponse> surveyResponses,
+                    List<SurveyRespondent> surveyRespondents,
+                    ExcelWorksheet worksheet)
+        {
+            var responseValuesTask = Task.Run(() =>
+                surveyResponses
+                    .AsParallel()
+                    .WithExecutionMode(ParallelExecutionMode.ForceParallelism)
+                    .Select(ReadSingleResponse)
+                    .ToList()
+                );
+            // Place headers
+            // inject header
+            var headerRow = new List<string[]>()
+             {
+                 new string[] { "RespId_Num", "HhId_Num", "Pers_Num", "Trip_Num"}
+             };
+            worksheet.Cells["A1:D1"].LoadFromArrays(headerRow);
+            worksheet.Cells["A1:D1"].Style.Font.Bold = true;
+
+            // Collecting all relevant respondents
+            var Respondents_valid = surveyRespondents.Where(x => surveyResponses.Any(y => y.Respondent == x)).ToList();
+
+            var subRespondents = Respondents_valid.SelectMany(pr => pr.SurveyRespondentGroup.GroupMembers).ToList();
+            int locNumber = 0;
+            int rowNumber = 1;
+
+            foreach (var respondent in subRespondents)
+            {
+                var responses = surveyResponses.Where(r => r.Respondent == respondent).ToList();
+
+                //Location number
+                locNumber = 0;
+                //Trip number
+                int trpNumber = 0;
+
+                if (responses.Count == 0)
+                {
+                    continue;
+                }
+                //Travel diary
+                var response_timeline = responses.Where(r => r.Respondent == respondent && r.QuestionPart.Name == "Travel diary").ToList();
+                
+                //Transit routes
+                var response_Json = responses.Where(r => r.Respondent == respondent && r.QuestionPart.Name == "Transit routes").ToList();
+
+                if (response_Json.Count == 0)
+                {
+                    continue;
+                }
+
+                var responseValues_timeline_1 = ReadTimelineResponseList(response_timeline.First());
+                List<dynamic> responseValues_timeline = new List<object>();
+
+                foreach (var item in responseValues_timeline_1)
+                {
+                    responseValues_timeline.Add(item);
+                }
+
+                //Origin
+                var response = response_Json.OrderByDescending(x => x.SurveyAccessRecord.AccessDateTime).FirstOrDefault();
+
+                JArray parsedResponse = JArray.Parse(((JsonResponse)response.ResponseValues[0]).Value);
+
+                var subResponse = parsedResponse[0];
+                if (subResponse["routeIndex"].Value<int>() >= 3)
+                {
+                    continue;
+                }
+
+                //TripLinx Data
+                locNumber++;
+                trpNumber++;
+                var objTripLinx = parsedResponse[0];
+                rowNumber++;
+
+                // Respondent ID (Unique)          
+                worksheet.Cells[rowNumber, 1].Value = (responses.Where(r => r.Respondent == respondent)
+                                                        .Select(r => r.Respondent.Id)).First().ToString();
+                // Household ID        
+                worksheet.Cells[rowNumber, 2].Value = (responses.Where(r => r.Respondent.SurveyRespondentGroup.GroupMembers.Any(y => y == respondent))
+                                                        .Select(r => r.Respondent.SurveyRespondentGroup.Id)).First().ToString();
+                //Person ID 
+                worksheet.Cells[rowNumber, 3].Value = (responses.Where(r => r.Respondent == respondent)
+                                                        .Select(r => r.Respondent.SurveyRespondentGroup.GroupMembers.IndexOf(respondent) + 1)).First().ToString();
+                //Trip Number  
+                worksheet.Cells[rowNumber, 4].Value = trpNumber.ToString();
+
+            }
+        }
 
         public void ResponseListToWorksheet(List<SurveyResponse> surveyResponses, ExcelWorksheet worksheet, Boolean isHouseHold)
         {
