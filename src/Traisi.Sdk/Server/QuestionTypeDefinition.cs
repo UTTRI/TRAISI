@@ -146,6 +146,8 @@ namespace Traisi.Sdk
         /// <value></value>
         public ResponseValidator ResponseValidator { get; private set; }
 
+        public string ClassName {get;set;}
+
         public Dictionary<string, NestedQuestionDefinition> NestedQuestionDefinitions { get; set; }
 
         /// <summary>
@@ -159,7 +161,7 @@ namespace Traisi.Sdk
             this.Type = type;
             TypeName = type.TypeName;
             Icon = type.Icon;
-
+            ClassName = type.GetType().Name;
             QuestionResources = new Dictionary<string, QuestionResource>();
 
             CodeBundleName = attribute.CodeBundleName;

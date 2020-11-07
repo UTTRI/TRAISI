@@ -756,8 +756,13 @@ namespace TRAISI.Export
             //Location Identifier
             Dictionary<Tuple<double, double>, int> Location_Identification = new Dictionary<Tuple<double, double>, int>();
 
-            foreach (var respondent in subRespondents)
+            var responseGroup = surveyResponses.Where(r => this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ResponseType == QuestionResponseType.Timeline).GroupBy(r => r.Respondent).Select(g => g).ToList();
+
+
+            foreach (var group in responseGroup)
             {
+                var respondent = group.Key;
+                var response_timeline = group;
                 // var responses = surveyResponses.Where(r => r.Respondent == respondent).ToList();
 
                 //Location number
@@ -765,7 +770,7 @@ namespace TRAISI.Export
 
 
                 //Travel diary
-                var response_timeline = surveyResponses.Where(r => r.Respondent == respondent && this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ResponseType == QuestionResponseType.Timeline);
+                // var response_timeline = surveyResponses.Where(r => r.Respondent == respondent && this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ResponseType == QuestionResponseType.Timeline);
 
                 //Transit routes
 
@@ -1014,37 +1019,43 @@ namespace TRAISI.Export
             worksheet.Cells["A1:FG1"].Style.Font.Bold = true;
 
             // Collecting all relevant respondents
-            var Respondents_valid = surveyRespondents.Where(x => surveyResponses.Any(y => y.Respondent == x)).ToList();
+            //var Respondents_valid = surveyRespondents.Where(x => surveyResponses.Any(y => y.Respondent == x)).ToList();
 
-            var subRespondents = Respondents_valid.SelectMany(pr => pr.SurveyRespondentGroup.GroupMembers).ToList();
+            // var subRespondents = Respondents_valid.SelectMany(pr => pr.SurveyRespondentGroup.GroupMembers).ToList();
             int locNumber = 0;
             int rowNumber = 1;
 
-            foreach (var respondent in subRespondents)
+            var responseGroup = surveyResponses.Where(r => this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ClassName ==
+            typeof(RouteSelectQuestion).Name).GroupBy(r => r.Respondent).Select(g => g).OrderBy(x => x.Key.SurveyRespondentGroup.Id).ToList();
+
+
+            foreach (var group in responseGroup)
             {
-                var responses = surveyResponses.Where(r => r.Respondent == respondent).ToList();
+                var respondent = group.Key;
+                var response_Json = group;
+                // var responses 
 
                 //Location number
                 locNumber = 0;
                 //Trip number
                 int trpNumber = 0;
 
-                if (responses.Count == 0)
-                {
-                    continue;
-                }
+                //if (responses.Count == 0)
+                //{
+                //    continue;
+                // }
                 //Travel diary
-                var response_timeline = responses.Where(r => r.Respondent == respondent && this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ResponseType == QuestionResponseType.Timeline).ToList();
+                // var response_timeline = responses.Where(r => r.Respondent == respondent && this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ResponseType == QuestionResponseType.Timeline).ToList();
                 //Transit routes
-                var response_Json = responses.Where(r => r.Respondent == respondent && this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].Type is RouteSelectQuestion).ToList();
+                //var response_Json = responses.Where(r => r.Respondent == respondent && this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].Type is RouteSelectQuestion).ToList();
 
                 //if (response_timeline.Count <= 1 || response_Json.Count == 0)
                 //    continue;
 
-                if (response_Json.Count == 0)
-                {
-                    continue;
-                }
+                // if (response_Json.Count == 0)
+                //{
+                //     continue;
+                // }
 
                 // var responseValues_timeline_1 = ReadTimelineResponseList(response_timeline.First());
                 // List<dynamic> responseValues_timeline = new List<object>();
@@ -1060,7 +1071,6 @@ namespace TRAISI.Export
                 JArray parsedResponse = JArray.Parse(((JsonResponse)response.ResponseValues[0]).Value);
 
                 var subResponse = parsedResponse[0];
-                Console.WriteLine(subResponse["routeIndex"].Value<int>());
                 if (subResponse["routeIndex"].Value<int>() > 3)
                 {
                     continue;
@@ -1121,10 +1131,13 @@ namespace TRAISI.Export
                 //Checking for Operator Code TTC or not
                 string ttcValue = "N";
 
+                // count total sections
+                var sectionCount = objTripLinx["routes"]["sections"]["Section"].Count();
+
                 //Looping routes, collects section info from Triplinx and outputs to excel columns
-                for (int sectionNum = 1; sectionNum <= 11; sectionNum++)
+                for (int sectionNum = 0; sectionNum < sectionCount; sectionNum++)
                 {
-                    int rowNumberAddition = (sectionNum - 1) * 13;
+                    int rowNumberAddition = (sectionNum ) * 13;
                     //Route_Accs_Stn_Num
                     worksheet.Cells[rowNumber, 11 + rowNumberAddition].Value = GetValuesFromTripLinxData(objTripLinx, "Route_Accs_Stn_Num", sectionNum);
 
@@ -1296,43 +1309,42 @@ namespace TRAISI.Export
             worksheet.Cells["A1:D1"].Style.Font.Bold = true;
 
             // Collecting all relevant respondents
-            var Respondents_valid = surveyRespondents.Where(x => surveyResponses.Any(y => y.Respondent == x)).ToList();
+            //var Respondents_valid = surveyRespondents.Where(x => surveyResponses.Any(y => y.Respondent == x)).ToList();
 
-            var subRespondents = Respondents_valid.SelectMany(pr => pr.SurveyRespondentGroup.GroupMembers).ToList();
+           // var subRespondents = Respondents_valid.SelectMany(pr => pr.SurveyRespondentGroup.GroupMembers).ToList();
             int locNumber = 0;
             int rowNumber = 1;
 
-            foreach (var respondent in subRespondents)
+            var responseGroup = surveyResponses.Where(r => this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ClassName ==
+            typeof(RouteSelectQuestion).Name).GroupBy(r => r.Respondent).Select(g => g).OrderBy(x => x.Key.SurveyRespondentGroup.Id).ToList();
+
+
+            foreach (var group in responseGroup)
             {
-                var responses = surveyResponses.Where(r => r.Respondent == respondent).ToList();
+                var respondent = group.Key;
+                var responses = group;
+                var response_Json  = group;
 
                 //Location number
                 locNumber = 0;
                 //Trip number
                 int trpNumber = 0;
 
-                if (responses.Count == 0)
-                {
-                    continue;
-                }
                 //Travel diary
-                var response_timeline = responses.Where(r => r.Respondent == respondent && this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ResponseType == QuestionResponseType.Timeline).ToList();
+                // var response_timeline = responses.Where(r => r.Respondent == respondent && this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ResponseType == QuestionResponseType.Timeline).ToList();
 
                 //Transit routes
-                var response_Json = responses.Where(r => r.Respondent == respondent && this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].Type is RouteSelectQuestion).ToList();
+                // var response_Json = responses.Where(r => r.Respondent == respondent && this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].Type is RouteSelectQuestion).ToList();
 
-                if (response_Json.Count == 0)
-                {
-                    continue;
-                }
 
-                var responseValues_timeline_1 = ReadTimelineResponseList(response_timeline.First());
+
+                // var responseValues_timeline_1 = ReadTimelineResponseList(response_timeline.First());
                 List<dynamic> responseValues_timeline = new List<object>();
 
-                foreach (var item in responseValues_timeline_1)
-                {
-                    responseValues_timeline.Add(item);
-                }
+                //foreach (var item in responseValues_timeline_1)
+                //{
+                //    responseValues_timeline.Add(item);
+               // }
                 //Origin
                 var response = response_Json.OrderByDescending(x => x.SurveyAccessRecord.AccessDateTime).FirstOrDefault();
 
