@@ -17,6 +17,7 @@ using Traisi.Sdk.Enums;
 using Traisi.Data.Models.Surveys;
 using Traisi.Data.Models.Questions;
 using Traisi.Sdk.Interfaces;
+using Traisi.Sdk.Questions;
 
 namespace TRAISI.Export
 {
@@ -434,11 +435,11 @@ namespace TRAISI.Export
         {
         }
 
-         public void ResponsesPivot_TravelDiary(
-            List<QuestionPart> questionParts,
-            List<SurveyResponse> surveyResponses,
-            List<SurveyRespondent> surveyRespondents,
-            ExcelWorksheet worksheet)
+        public void ResponsesPivot_TravelDiary(
+           List<QuestionPart> questionParts,
+           List<SurveyResponse> surveyResponses,
+           List<SurveyRespondent> surveyRespondents,
+           ExcelWorksheet worksheet)
         {
             var responseValuesTask = Task.Run(() =>
                 surveyResponses
@@ -469,8 +470,8 @@ namespace TRAISI.Export
             worksheet.Cells["A1:BE1"].Style.Font.Bold = true;
 
             // Collecting all relevant respondents
-            var Respondents_valid = surveyRespondents.Where(x => surveyResponses.Any(y => y.Respondent == x)).ToList();
-            var subRespondents = Respondents_valid.SelectMany(pr => pr.SurveyRespondentGroup.GroupMembers).ToList();
+            // var Respondents_valid = surveyRespondents.Where(x => surveyResponses.Any(y => y.Respondent == x)).ToList();
+            var subRespondents = surveyRespondents;
 
             int locNumber = 0;
             int rowNumber = 1;
@@ -478,30 +479,26 @@ namespace TRAISI.Export
             //Location Identifier
             Dictionary<Tuple<double, double>, int> Location_Identification = new Dictionary<Tuple<double, double>, int>();
 
-            foreach (var respondent in subRespondents)
+            var responseGroup = surveyResponses.Where(r => this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ResponseType == QuestionResponseType.Timeline).GroupBy(r => r.Respondent).Select(g => g).ToList();
+
+
+            foreach (var group in responseGroup)
             {
-                var responses = surveyResponses.Where(r => r.Respondent.SurveyRespondentGroup.GroupMembers.Any(y => y == respondent)).ToList();
+                var respondent = group.Key;
+                var response_timeline = group;
+                // var response_timeline = surveyResponses.Where(r => r.Respondent == respondent && this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ResponseType == QuestionResponseType.Timeline);
+
 
                 //Location number
                 locNumber = 0;
                 //Trip number
                 int trpNumber = 0;
 
-                if (responses.Count() == 0)
+                if (response_timeline.Count() == 0)
                 {
                     continue;
                 }
-                //Travel diary
-                var response_timeline = surveyResponses.Where(r => r.Respondent.SurveyRespondentGroup.GroupMembers.Any(y => y == respondent))
-                                                            .Where(r => r.Respondent == respondent)
-                                                                .Where(y => y.QuestionPart.Name == "Travel diary");
-                //Transit routes
-                var response_Json = surveyResponses.Where(r => r.Respondent.SurveyRespondentGroup.GroupMembers.Any(y => y == respondent))
-                                                        .Where(r => r.Respondent == respondent)
-                                                            .Where(y => y.QuestionPart.Name == "Transit routes");
 
-                if (response_timeline.Count() == 0)
-                    continue;
 
                 var responseValues_timeline_1 = ReadTimelineResponseList(response_timeline.First());
                 List<dynamic> responseValues_timeline = new List<object>();
@@ -534,14 +531,11 @@ namespace TRAISI.Export
                         Location_Identification.Add(new Tuple<double, double>(response_dest.X, response_dest.Y), Location_Identification.Count() + 1);
                     }
                     // Respondent ID (Unique)          
-                    worksheet.Cells[rowNumber, 1].Value = (responses.Where(r => r.Respondent == respondent)
-                                                            .Select(r => r.Respondent.Id)).First().ToString();
+                    worksheet.Cells[rowNumber, 1].Value = respondent.Id;
                     // Household ID        
-                    worksheet.Cells[rowNumber, 2].Value = (responses.Where(r => r.Respondent.SurveyRespondentGroup.GroupMembers.Any(y => y == respondent))
-                                                            .Select(r => r.Respondent.SurveyRespondentGroup.Id)).First().ToString();
+                    worksheet.Cells[rowNumber, 2].Value = respondent.SurveyRespondentGroup.Id;
                     //Person ID 
-                    worksheet.Cells[rowNumber, 3].Value = (responses.Where(r => r.Respondent == respondent)
-                                                            .Select(r => r.Respondent.SurveyRespondentGroup.GroupMembers.IndexOf(respondent) + 1)).First().ToString();
+                    worksheet.Cells[rowNumber, 3].Value = respondent.SurveyRespondentGroup.GroupMembers.IndexOf(respondent) + 1;
                     //Trip Number  
                     worksheet.Cells[rowNumber, 4].Value = trpNumber.ToString();
 
@@ -697,8 +691,7 @@ namespace TRAISI.Export
 
                     //SingTripdiaryFlag
                     int singleTripValue = 1;
-                    var res = responses.Where(r => r.Respondent == respondent).ToList();
-                    singleTripValue = res.Count > 1 ? 0 : 1;
+                    singleTripValue = responseValues_timeline.Count > 1 ? 0 : 1;
                     worksheet.Cells[rowNumber, 54].Value = singleTripValue;
 
                     //IncompDiary
@@ -722,7 +715,7 @@ namespace TRAISI.Export
                 }
             }
         }
-        
+
         public void ResponsesPivot_OneLocationTravelDiary(
                    List<QuestionPart> questionParts,
                    List<SurveyResponse> surveyResponses,
@@ -754,8 +747,8 @@ namespace TRAISI.Export
             worksheet.Cells["A1:AQ1"].Style.Font.Bold = true;
 
             // Collecting all relevant respondents
-            var Respondents_valid = surveyRespondents.Where(x => surveyResponses.Any(y => y.Respondent == x)).ToList();
-            var subRespondents = Respondents_valid.SelectMany(pr => pr.SurveyRespondentGroup.GroupMembers).ToList();
+            // var Respondents_valid = surveyRespondents.Where(x => surveyResponses.Any(y => y.Respondent == x)).ToList();
+            var subRespondents = surveyRespondents;
 
             int locNumber = 0;
             int rowNumber = 1;
@@ -765,21 +758,17 @@ namespace TRAISI.Export
 
             foreach (var respondent in subRespondents)
             {
-                var responses = surveyResponses.Where(r => r.Respondent.SurveyRespondentGroup.GroupMembers.Any(y => y == respondent)).ToList();
+                // var responses = surveyResponses.Where(r => r.Respondent == respondent).ToList();
 
                 //Location number
                 locNumber = 0;
 
 
                 //Travel diary
-                var response_timeline = surveyResponses.Where(r => r.Respondent.SurveyRespondentGroup.GroupMembers.Any(y => y == respondent))
-                                                            .Where(r => r.Respondent == respondent)
-                                                                .Where(y => y.QuestionPart.Name == "Travel diary");
+                var response_timeline = surveyResponses.Where(r => r.Respondent == respondent && this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ResponseType == QuestionResponseType.Timeline);
 
                 //Transit routes
-                var response_Json = surveyResponses.Where(r => r.Respondent.SurveyRespondentGroup.GroupMembers.Any(y => y == respondent))
-                                                        .Where(r => r.Respondent == respondent)
-                                                            .Where(y => y.QuestionPart.Name == "Transit routes");
+
 
                 if (response_timeline.Count() == 0)
                     continue;
@@ -812,14 +801,11 @@ namespace TRAISI.Export
                     }
 
                     // Respondent ID (Unique)          
-                    worksheet.Cells[rowNumber, 1].Value = (responses.Where(r => r.Respondent == respondent)
-                                                            .Select(r => r.Respondent.Id)).First().ToString();
+                    worksheet.Cells[rowNumber, 1].Value = respondent.Id;
                     // Household ID        
-                    worksheet.Cells[rowNumber, 2].Value = (responses.Where(r => r.Respondent.SurveyRespondentGroup.GroupMembers.Any(y => y == respondent))
-                                                            .Select(r => r.Respondent.SurveyRespondentGroup.Id)).First().ToString();
+                    worksheet.Cells[rowNumber, 2].Value = respondent.SurveyRespondentGroup.Id;
                     //Person ID 
-                    worksheet.Cells[rowNumber, 3].Value = (responses.Where(r => r.Respondent == respondent)
-                                                            .Select(r => r.Respondent.SurveyRespondentGroup.GroupMembers.IndexOf(respondent) + 1)).First().ToString();
+                    worksheet.Cells[rowNumber, 3].Value = respondent.SurveyRespondentGroup.GroupMembers.IndexOf(respondent) + 1;
 
                     //Trip Origin Latitude 
                     worksheet.Cells[rowNumber, 4].Value = response.Y.ToString();
@@ -947,8 +933,7 @@ namespace TRAISI.Export
 
                     //SingTripdiaryFlag
                     int singleTripValue = 0;
-                    var res = responses.Where(r => r.Respondent == respondent).ToList();
-                    singleTripValue = res.Count > 0 ? 1 : 0;
+                    singleTripValue = responseValues_timeline.Count > 0 ? 1 : 0;
                     worksheet.Cells[rowNumber, 40].Value = singleTripValue;
 
                     //IncompDiary
@@ -968,7 +953,7 @@ namespace TRAISI.Export
                 }
             }
         }
-         
+
         public void ResponsesPivot_TransitRoutes(
             List<QuestionPart> questionParts,
             List<SurveyResponse> surveyResponses,
@@ -1049,9 +1034,9 @@ namespace TRAISI.Export
                     continue;
                 }
                 //Travel diary
-                var response_timeline = responses.Where(r => r.Respondent == respondent && r.QuestionPart.Name == "Travel diary").ToList();
+                var response_timeline = responses.Where(r => r.Respondent == respondent && this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ResponseType == QuestionResponseType.Timeline).ToList();
                 //Transit routes
-                var response_Json = responses.Where(r => r.Respondent == respondent && r.QuestionPart.Name == "Transit routes").ToList();
+                var response_Json = responses.Where(r => r.Respondent == respondent && this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].Type is RouteSelectQuestion).ToList();
 
                 //if (response_timeline.Count <= 1 || response_Json.Count == 0)
                 //    continue;
@@ -1061,13 +1046,13 @@ namespace TRAISI.Export
                     continue;
                 }
 
-                var responseValues_timeline_1 = ReadTimelineResponseList(response_timeline.First());
-                List<dynamic> responseValues_timeline = new List<object>();
+                // var responseValues_timeline_1 = ReadTimelineResponseList(response_timeline.First());
+                // List<dynamic> responseValues_timeline = new List<object>();
 
-                foreach (var item in responseValues_timeline_1)
-                {
-                    responseValues_timeline.Add(item);
-                }
+                //foreach (var item in responseValues_timeline_1)
+                //{
+                //    responseValues_timeline.Add(item);
+                //}
 
                 //Origin
                 var response = response_Json.OrderByDescending(x => x.SurveyAccessRecord.AccessDateTime).FirstOrDefault();
@@ -1075,6 +1060,7 @@ namespace TRAISI.Export
                 JArray parsedResponse = JArray.Parse(((JsonResponse)response.ResponseValues[0]).Value);
 
                 var subResponse = parsedResponse[0];
+                Console.WriteLine(subResponse["routeIndex"].Value<int>());
                 if (subResponse["routeIndex"].Value<int>() > 3)
                 {
                     continue;
@@ -1092,14 +1078,12 @@ namespace TRAISI.Export
                 rowNumber++;
 
                 // Respondent ID (Unique)          
-                worksheet.Cells[rowNumber, 1].Value = (responses.Where(r => r.Respondent == respondent)
-                                                        .Select(r => r.Respondent.Id)).First().ToString();
+                // Respondent ID (Unique)          
+                worksheet.Cells[rowNumber, 1].Value = respondent.Id;
                 // Household ID        
-                worksheet.Cells[rowNumber, 2].Value = (responses.Where(r => r.Respondent.SurveyRespondentGroup.GroupMembers.Any(y => y == respondent))
-                                                        .Select(r => r.Respondent.SurveyRespondentGroup.Id)).First().ToString();
+                worksheet.Cells[rowNumber, 2].Value = respondent.SurveyRespondentGroup.Id;
                 //Person ID 
-                worksheet.Cells[rowNumber, 3].Value = (responses.Where(r => r.Respondent == respondent)
-                                                        .Select(r => r.Respondent.SurveyRespondentGroup.GroupMembers.IndexOf(respondent) + 1)).First().ToString();
+                worksheet.Cells[rowNumber, 3].Value = respondent.SurveyRespondentGroup.GroupMembers.IndexOf(respondent) + 1;
                 //Trip Number  
                 worksheet.Cells[rowNumber, 4].Value = trpNumber.ToString();
 
@@ -1332,10 +1316,10 @@ namespace TRAISI.Export
                     continue;
                 }
                 //Travel diary
-                var response_timeline = responses.Where(r => r.Respondent == respondent && r.QuestionPart.Name == "Travel diary").ToList();
-                
+                var response_timeline = responses.Where(r => r.Respondent == respondent && this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ResponseType == QuestionResponseType.Timeline).ToList();
+
                 //Transit routes
-                var response_Json = responses.Where(r => r.Respondent == respondent && r.QuestionPart.Name == "Transit routes").ToList();
+                var response_Json = responses.Where(r => r.Respondent == respondent && this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].Type is RouteSelectQuestion).ToList();
 
                 if (response_Json.Count == 0)
                 {
@@ -1367,14 +1351,12 @@ namespace TRAISI.Export
                 rowNumber++;
 
                 // Respondent ID (Unique)          
-                worksheet.Cells[rowNumber, 1].Value = (responses.Where(r => r.Respondent == respondent)
-                                                        .Select(r => r.Respondent.Id)).First().ToString();
+                // Respondent ID (Unique)          
+                worksheet.Cells[rowNumber, 1].Value = respondent.Id;
                 // Household ID        
-                worksheet.Cells[rowNumber, 2].Value = (responses.Where(r => r.Respondent.SurveyRespondentGroup.GroupMembers.Any(y => y == respondent))
-                                                        .Select(r => r.Respondent.SurveyRespondentGroup.Id)).First().ToString();
+                worksheet.Cells[rowNumber, 2].Value = respondent.SurveyRespondentGroup.Id;
                 //Person ID 
-                worksheet.Cells[rowNumber, 3].Value = (responses.Where(r => r.Respondent == respondent)
-                                                        .Select(r => r.Respondent.SurveyRespondentGroup.GroupMembers.IndexOf(respondent) + 1)).First().ToString();
+                worksheet.Cells[rowNumber, 3].Value = respondent.SurveyRespondentGroup.GroupMembers.IndexOf(respondent) + 1;
                 //Trip Number  
                 worksheet.Cells[rowNumber, 4].Value = trpNumber.ToString();
 
@@ -1384,7 +1366,8 @@ namespace TRAISI.Export
         public void ResponseListToWorksheet(List<SurveyResponse> surveyResponses, ExcelWorksheet worksheet, Boolean isHouseHold)
         {
             //Removed Travel diary and Transit routes responses. 
-            surveyResponses = surveyResponses.Where(res => res.QuestionPart.Name != "Travel diary" && res.QuestionPart.Name != "Transit routes").OrderBy(res => res.Respondent.Id).ToList();
+            surveyResponses = surveyResponses.Where(res => this._questionTypeManager.QuestionTypeDefinitions[res.QuestionPart.QuestionType].ResponseType != QuestionResponseType.Timeline
+             && !(this._questionTypeManager.QuestionTypeDefinitions[res.QuestionPart.QuestionType].Type is RouteSelectQuestion)).OrderBy(res => res.Respondent.Id).ToList();
 
             var responseValuesTask = Task.Run(() =>
                 surveyResponses
@@ -1492,9 +1475,12 @@ namespace TRAISI.Export
         List<SurveyRespondent> surveyRespondents,
         ExcelWorksheet worksheet)
         {
+
             //Removed Transit routes and Travel diary columns
-            surveyResponses = surveyResponses.Where(res => res.QuestionPart.Name != "Travel diary" && res.QuestionPart.Name != "Transit routes").ToList();
-            questionParts = questionParts.Where(res => res.Name != "Travel diary" && res.Name != "Transit routes").ToList();
+            surveyResponses = surveyResponses.Where(res => this._questionTypeManager.QuestionTypeDefinitions[res.QuestionPart.QuestionType].ResponseType != QuestionResponseType.Timeline &&
+           !(this._questionTypeManager.QuestionTypeDefinitions[res.QuestionPart.QuestionType].Type is RouteSelectQuestion)).ToList();
+            questionParts = questionParts.Where(res => this._questionTypeManager.QuestionTypeDefinitions[res.QuestionType].ResponseType != QuestionResponseType.Timeline &&
+            !(this._questionTypeManager.QuestionTypeDefinitions[res.QuestionType].Type is RouteSelectQuestion)).ToList();
 
             // process questions
             // build dictionary of questions and column numbers
@@ -1515,13 +1501,16 @@ namespace TRAISI.Export
             foreach (var questionPart in questionParts)
             {
                 //Household members
-                if (questionPart.Name == "Household Members")
+                if (this._questionTypeManager.QuestionTypeDefinitions[questionPart.QuestionType].Type is HouseholdQuestion)
+                {
                     continue;
+                }
+
 
                 questionColumnDict.Add(questionPart, columnNum);
 
                 //Location Columns
-                if (questionPart.Name.Contains("location"))
+                if (this._questionTypeManager.QuestionTypeDefinitions[questionPart.QuestionType].ResponseType == QuestionResponseType.Location)
                 {
                     //Adding Address to School and Work Location Questions Parts
                     worksheet.Cells[1, columnNum].Value = questionPart.Name + ": Addr";
@@ -1546,40 +1535,44 @@ namespace TRAISI.Export
                 columnNum += 1;
             }
             // Collecting all relevant respondents
-            var Respondents_valid = surveyRespondents.Where(x => surveyResponses.Any(y => y.Respondent == x)).ToList();
-            var subRespondents = Respondents_valid.SelectMany(pr => pr.SurveyRespondentGroup.GroupMembers).ToList();
+            //var Respondents_valid = surveyRespondents.Where(x => surveyResponses.Any(y => y.Respondent == x)).ToList();
+            // var subRespondents = Respondents_valid.SelectMany(pr => pr.SurveyRespondentGroup.GroupMembers).ToList();
 
             // Assign row number for each respondent
             var respondentRowNum = new Dictionary<SurveyRespondent, int>();
             var rowNum = 2;
 
-            foreach (var respondent in subRespondents)
+
+
+            var responseGroup = surveyResponses.GroupBy(r => r.Respondent).Select(g => g).ToList().OrderBy(x => x.Key.SurveyRespondentGroup.Id);
+
+            foreach (var group in responseGroup)
             {
-                respondentRowNum.Add(respondent, rowNum);
+                respondentRowNum.Add(group.Key, rowNum);
                 rowNum += 1;
             }
             // Place response into rows via map  
-            foreach (var respondent in subRespondents)
+            foreach (var group in responseGroup)
             {
-                var responses = surveyResponses.Where(r => r.Respondent == respondent).ToList();
+                var responses = group;
+                var respondent = group.Key;
 
                 if (responses.Count() > 0)
                 {
                     // Respondent ID (Unique)                
-                    worksheet.Cells[respondentRowNum[respondent], 1].Value = (responses.Where(r => r.Respondent == respondent)
-                                                                                    .Select(r => r.Respondent.Id)).First().ToString();
+                    worksheet.Cells[respondentRowNum[respondent], 1].Value = respondent.Id;
+
                     // Household ID          
-                    worksheet.Cells[respondentRowNum[respondent], 2].Value = (responses.Where(r => r.Respondent.SurveyRespondentGroup.GroupMembers.Any(y => y == respondent))
-                                                                                    .Select(r => r.Respondent.SurveyRespondentGroup.Id)).First().ToString();
+                    worksheet.Cells[respondentRowNum[respondent], 2].Value = respondent.SurveyRespondentGroup.Id;
+
                     //Person ID
-                    worksheet.Cells[respondentRowNum[respondent], 3].Value = (responses.Where(r => r.Respondent == respondent)
-                                                                                    .Select(r => r.Respondent.SurveyRespondentGroup.GroupMembers.IndexOf(respondent) + 1)).First().ToString();
+                    worksheet.Cells[respondentRowNum[respondent], 3].Value = respondent.SurveyRespondentGroup.GroupMembers.IndexOf(respondent) + 1;
 
                     //Household members Name
                     worksheet.Cells[respondentRowNum[respondent], 4].Value = respondent.Name;
 
                     //Household members Relationship
-                    if (Convert.ToString(respondent.GetType()).Contains("PrimaryRespondent"))
+                    if (respondent is PrimaryRespondent)
                     {
                         worksheet.Cells[respondentRowNum[respondent], 5].Value = "Head";
                     }
@@ -1693,11 +1686,15 @@ namespace TRAISI.Export
                 if (responses.Count() > 0)
                 {
                     // Respondent ID (Unique)                
-                    worksheet.Cells[respondentRowNum[respondent], 1].Value = (surveyResponses.Where(r => r.Respondent == respondent)
-                                                                                    .Select(r => r.Respondent.Id)).First().ToString();
+                    worksheet.Cells[respondentRowNum[respondent], 1].Value = respondent.Id;
+
+                    //(surveyResponses.Where(r => r.Respondent == respondent)
+                    //                                                               .Select(r => r.Respondent.Id)).First().ToString();
                     // Household ID          
-                    worksheet.Cells[respondentRowNum[respondent], 2].Value = (surveyResponses.Where(r => r.Respondent == respondent)
-                                                                                    .Select(r => r.Respondent.SurveyRespondentGroup.Id)).First().ToString();
+                    worksheet.Cells[respondentRowNum[respondent], 2].Value = respondent.SurveyRespondentGroup.Id;
+
+                    //(surveyResponses.Where(r => r.Respondent == respondent)
+                    //                                                               .Select(r => r.Respondent.SurveyRespondentGroup.Id)).First().ToString();
                     //Household PsId(Unique)
                     try
                     {

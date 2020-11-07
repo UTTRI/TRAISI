@@ -115,6 +115,7 @@ namespace TRAISI.Export
             var responses = responseTableExporter.ResponseList(questionPartViews);
             Console.WriteLine("Finding Respondents");
             var respondents = responderTableExporter.GetSurveyRespondents(survey);
+            var allSurveyRespondents = responderTableExporter.GetAllRespondents(survey);
             var questionParts = questionPartViews.Select(qpv => qpv.QuestionPart).ToList();    
 
             // Separating Personal and Household questions    
@@ -183,10 +184,10 @@ namespace TRAISI.Export
                 var workbook = eXp.Workbook;
                 Console.WriteLine("Writing Travel Diary Response sheet");
                 var travelDiarySheet = workbook.Worksheets.Add("Travel Diary Responses");
-                responseTableExporter.ResponsesPivot_TravelDiary(questionParts_personal, responses_personal, respondents, travelDiarySheet);
+                responseTableExporter.ResponsesPivot_TravelDiary(questionParts_personal, responses_personal, allSurveyRespondents, travelDiarySheet);
                 Console.WriteLine("Writing One Location Travel Diary Response sheet");
                 var oneLocationTravelDiarySheet = workbook.Worksheets.Add("One Location Diary Responses");
-                responseTableExporter.ResponsesPivot_OneLocationTravelDiary(questionParts_personal, responses_personal, respondents, oneLocationTravelDiarySheet);
+                responseTableExporter.ResponsesPivot_OneLocationTravelDiary(questionParts_personal, responses_personal, allSurveyRespondents, oneLocationTravelDiarySheet);
                 eXp.Save();
             }
  

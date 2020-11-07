@@ -37,5 +37,30 @@ namespace TRAISI.Export
 
             return primaryRespondents.Cast<SurveyRespondent>().ToList();
         }
+
+        public List<PrimaryRespondent> GetPrimaryRespondents(Survey survey)
+        {
+            var primaryRespondents = _context.PrimaryRespondents.AsQueryable()
+               .Where(sr => sr.Survey == survey)
+               .OrderBy(sr => sr.Shortcode)
+               .Include(sr => sr.SurveyRespondentGroup)
+               .ThenInclude(srg => srg.GroupMembers)
+               .Include(r => r.SurveyAccessRecords)
+               .ToList();
+            return primaryRespondents;
+        }
+
+        public List<SurveyRespondent> GetAllRespondents(Survey survey)
+        {
+            var primaryRespondents = _context.SurveyRespondents.AsQueryable()
+               .Where(sr => sr.SurveyRespondentGroup.GroupPrimaryRespondent.Survey == survey)
+                .OrderBy(sr => sr.SurveyRespondentGroup.Id)
+               .Include(sr => sr.SurveyRespondentGroup)
+               .ThenInclude(srg => srg.GroupMembers)
+               .Include(r => r.SurveyRespondentGroup.GroupPrimaryRespondent)
+               .ThenInclude(r => r.SurveyRespondentGroup.GroupPrimaryRespondent.SurveyAccessRecords)
+               .ToList();
+            return primaryRespondents;
+        }
     }
 }
