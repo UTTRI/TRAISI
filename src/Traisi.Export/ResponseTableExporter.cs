@@ -479,9 +479,9 @@ namespace TRAISI.Export
             //Location Identifier
             Dictionary<Tuple<double, double>, int> Location_Identification = new Dictionary<Tuple<double, double>, int>();
 
-            var responseGroup = surveyResponses.Where(r => this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ResponseType == QuestionResponseType.Timeline).GroupBy(r => r.Respondent).Select(g => g).ToList();
-
-
+            var responseGroup = surveyResponses.Where(r => this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ResponseType == QuestionResponseType.Timeline).GroupBy(r => r.Respondent)
+                                    .Select(g => g).ToList().OrderBy(x => x.Key.SurveyRespondentGroup.Id);
+                  
             foreach (var group in responseGroup)
             {
                 var respondent = group.Key;
@@ -1086,8 +1086,7 @@ namespace TRAISI.Export
                 //if (response.Mode != "transit-all-way")
                 //    continue;
                 rowNumber++;
-
-                // Respondent ID (Unique)          
+                      
                 // Respondent ID (Unique)          
                 worksheet.Cells[rowNumber, 1].Value = respondent.Id;
                 // Household ID        
@@ -1362,8 +1361,7 @@ namespace TRAISI.Export
                 var objTripLinx = parsedResponse[0];
                 rowNumber++;
 
-                // Respondent ID (Unique)          
-                // Respondent ID (Unique)          
+                // Respondent ID (Unique) 
                 worksheet.Cells[rowNumber, 1].Value = respondent.Id;
                 // Household ID        
                 worksheet.Cells[rowNumber, 2].Value = respondent.SurveyRespondentGroup.Id;
