@@ -141,10 +141,10 @@ namespace TRAISI.Export
                 Console.WriteLine("Writing Household Question sheet");
                 var hhQuestionsSheet = workbook.Worksheets.Add("Household Questions");
                 questionExporter.BuildQuestionTable(questionPartViews_houseHold, hhQuestionsSheet);
-                Console.WriteLine("Writing Household Response Sheet");
+                Console.WriteLine("Writing Household Response sheet");
                 var hhResponseSheet = workbook.Worksheets.Add("Household Responses");
                 responseTableExporter.ResponseListToWorksheet(responses_houseHold, hhResponseSheet, true);
-                Console.WriteLine("Writing Household Response Pivot Sheet");
+                Console.WriteLine("Writing Household Response Pivot sheet");
                 var hhResponsePivotSheet = workbook.Worksheets.Add("Household Responses Pivot");
                 responseTableExporter.ResponsesPivot_HouseHold(questionParts_houseHold, responses_houseHold, respondents, hhResponsePivotSheet);
                 eXp.Save();

@@ -488,7 +488,6 @@ namespace TRAISI.Export
                 var response_timeline = group;
                 // var response_timeline = surveyResponses.Where(r => r.Respondent == respondent && this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ResponseType == QuestionResponseType.Timeline);
 
-
                 //Location number
                 locNumber = 0;
                 //Trip number
@@ -498,7 +497,6 @@ namespace TRAISI.Export
                 {
                     continue;
                 }
-
 
                 var responseValues_timeline_1 = ReadTimelineResponseList(response_timeline.First());
                 List<dynamic> responseValues_timeline = new List<object>();
