@@ -1374,8 +1374,11 @@ namespace TRAISI.Export
         public void ResponseListToWorksheet(List<SurveyResponse> surveyResponses, ExcelWorksheet worksheet, Boolean isHouseHold)
         {
             //Removed Travel diary and Transit routes responses. 
+            //surveyResponses = surveyResponses.Where(res => this._questionTypeManager.QuestionTypeDefinitions[res.QuestionPart.QuestionType].ResponseType != QuestionResponseType.Timeline
+             //&& !(this._questionTypeManager.QuestionTypeDefinitions[res.QuestionPart.QuestionType].Type is RouteSelectQuestion)).OrderBy(res => res.Respondent.Id).ToList();
+
             surveyResponses = surveyResponses.Where(res => this._questionTypeManager.QuestionTypeDefinitions[res.QuestionPart.QuestionType].ResponseType != QuestionResponseType.Timeline
-             && !(this._questionTypeManager.QuestionTypeDefinitions[res.QuestionPart.QuestionType].Type is RouteSelectQuestion)).OrderBy(res => res.Respondent.Id).ToList();
+             && !(this._questionTypeManager.QuestionTypeDefinitions[res.QuestionPart.QuestionType].ClassName == typeof(RouteSelectQuestion).Name)).OrderBy(res => res.Respondent.Id).ToList();
 
             var responseValuesTask = Task.Run(() =>
                 surveyResponses
@@ -1486,9 +1489,10 @@ namespace TRAISI.Export
 
             //Removed Transit routes and Travel diary columns
             surveyResponses = surveyResponses.Where(res => this._questionTypeManager.QuestionTypeDefinitions[res.QuestionPart.QuestionType].ResponseType != QuestionResponseType.Timeline &&
-           !(this._questionTypeManager.QuestionTypeDefinitions[res.QuestionPart.QuestionType].Type is RouteSelectQuestion)).ToList();
+            !(this._questionTypeManager.QuestionTypeDefinitions[res.QuestionPart.QuestionType].ClassName == typeof(RouteSelectQuestion).Name)).OrderBy(res => res.Respondent.Id).ToList();
+            
             questionParts = questionParts.Where(res => this._questionTypeManager.QuestionTypeDefinitions[res.QuestionType].ResponseType != QuestionResponseType.Timeline &&
-            !(this._questionTypeManager.QuestionTypeDefinitions[res.QuestionType].Type is RouteSelectQuestion)).ToList();
+            !(this._questionTypeManager.QuestionTypeDefinitions[res.QuestionType].ClassName == typeof(RouteSelectQuestion).Name)).ToList();
 
             // process questions
             // build dictionary of questions and column numbers
