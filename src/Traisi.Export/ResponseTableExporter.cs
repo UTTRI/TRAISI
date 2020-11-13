@@ -481,7 +481,7 @@ namespace TRAISI.Export
 
             var responseGroup = surveyResponses.Where(r => this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ResponseType == QuestionResponseType.Timeline).GroupBy(r => r.Respondent)
                                     .Select(g => g).ToList().OrderBy(x => x.Key.SurveyRespondentGroup.Id);
-                  
+
             foreach (var group in responseGroup)
             {
                 var respondent = group.Key;
@@ -1024,8 +1024,7 @@ namespace TRAISI.Export
             int rowNumber = 1;
 
             var responseGroup = surveyResponses.Where(r => this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ClassName ==
-            typeof(RouteSelectQuestion).Name).GroupBy(r => r.Respondent).Select(g => g).OrderBy(x => x.Key.SurveyRespondentGroup.Id).ToList();
-
+                                    typeof(RouteSelectQuestion).Name).GroupBy(r => r.Respondent).Select(g => g).OrderBy(x => x.Key.SurveyRespondentGroup.Id).ToList();
 
             foreach (var group in responseGroup)
             {
@@ -1064,222 +1063,223 @@ namespace TRAISI.Export
                 //}
 
                 //Origin
-                var response = response_Json.OrderByDescending(x => x.SurveyAccessRecord.AccessDateTime).FirstOrDefault();
+                //var response = response_Json.OrderByDescending(x => x.SurveyAccessRecord.AccessDateTime).FirstOrDefault();
+                var responses = response_Json.OrderByDescending(x => x.SurveyAccessRecord.AccessDateTime).ToList();
 
-                JArray parsedResponse = JArray.Parse(((JsonResponse)response.ResponseValues[0]).Value);
-
-                var subResponse = parsedResponse[0];
-                if (subResponse["routeIndex"].Value<int>() > 3)
+                foreach (var jresponse in responses)
                 {
-                    continue;
-                }
+                    JArray parsedResponse = JArray.Parse(((JsonResponse)jresponse.ResponseValues[0]).Value);
 
-                //Destination
-                // var response_dest = responseValues_timeline[i + 1];
+                    var subResponse = parsedResponse[0];
+                    if (subResponse["routeIndex"].Value<int>() > 3)
+                    {
+                        continue;
+                    }
 
-                //TripLinx Data
-                locNumber++;
-                trpNumber++;
-                var objTripLinx = parsedResponse[0];
-                //if (response.Mode != "transit-all-way")
-                //    continue;
-                rowNumber++;
-                      
-                // Respondent ID (Unique)          
-                worksheet.Cells[rowNumber, 1].Value = respondent.Id;
-                // Household ID        
-                worksheet.Cells[rowNumber, 2].Value = respondent.SurveyRespondentGroup.Id;
-                //Person ID 
-                worksheet.Cells[rowNumber, 3].Value = respondent.SurveyRespondentGroup.GroupMembers.IndexOf(respondent) + 1;
-                //Trip Number  
-                worksheet.Cells[rowNumber, 4].Value = trpNumber.ToString();
+                    //Destination
+                    // var response_dest = responseValues_timeline[i + 1];
 
-                //Mode_Accs 
-                worksheet.Cells[rowNumber, 5].Value = GetValuesFromTripLinxData(objTripLinx, "Mode_Accs");
+                    //TripLinx Data
+                    locNumber++;
+                    trpNumber++;
+                    var objTripLinx = parsedResponse[0];
+                    rowNumber++;
 
-                //Trip_Orig_Lat
-                //worksheet.Cells[rowNumber, 6].Value = response.Y;
+                    // Respondent ID (Unique)          
+                    worksheet.Cells[rowNumber, 1].Value = respondent.Id;
+                    // Household ID        
+                    worksheet.Cells[rowNumber, 2].Value = respondent.SurveyRespondentGroup.Id;
+                    //Person ID 
+                    worksheet.Cells[rowNumber, 3].Value = respondent.SurveyRespondentGroup.GroupMembers.IndexOf(respondent) + 1;
+                    //Trip Number  
+                    worksheet.Cells[rowNumber, 4].Value = trpNumber.ToString();
 
-                //Trip_Orig_Lng
-                //worksheet.Cells[rowNumber, 7].Value = response.X;
+                    //Mode_Accs 
+                    worksheet.Cells[rowNumber, 5].Value = GetValuesFromTripLinxData(objTripLinx, "Mode_Accs");
 
-                //Mode_Egrs
-                worksheet.Cells[rowNumber, 8].Value = GetValuesFromTripLinxData(objTripLinx, "Egrs_Mode");
+                    //Trip_Orig_Lat
+                    //worksheet.Cells[rowNumber, 6].Value = response.Y;
 
-                //Trip_Dest_Lat
-                //worksheet.Cells[rowNumber, 9].Value = response_dest.Y;
+                    //Trip_Orig_Lng
+                    //worksheet.Cells[rowNumber, 7].Value = response.X;
 
-                //Trip_Dest_Lng
-                //worksheet.Cells[rowNumber, 10].Value = response_dest.X;
+                    //Mode_Egrs
+                    worksheet.Cells[rowNumber, 8].Value = GetValuesFromTripLinxData(objTripLinx, "Egrs_Mode");
 
-                //Routes numbers list
-                List<string> route_Numbers = new List<string>();
+                    //Trip_Dest_Lat
+                    //worksheet.Cells[rowNumber, 9].Value = response_dest.Y;
 
-                //Routes numbers data guide list
-                List<string> route_Numbers_DG = new List<string>();
+                    //Trip_Dest_Lng
+                    //worksheet.Cells[rowNumber, 10].Value = response_dest.X;
 
-                //GO bus and train; TTC bus and subway; Non-TTC and Non-GO data
-                int go_Bus = 0;
-                int go_Train = 0;
-                int ttc_Bus = 0;
-                int ttc_Train = 0;
-                int n_Local = 0;
+                    //Routes numbers list
+                    List<string> route_Numbers = new List<string>();
 
-                //Checking for Operator Code TTC or not
-                string ttcValue = "N";
+                    //Routes numbers data guide list
+                    List<string> route_Numbers_DG = new List<string>();
 
-                // count total sections
-                var sectionCount = objTripLinx["routes"]["sections"]["Section"].Count();
-
-                //Looping routes, collects section info from Triplinx and outputs to excel columns
-                for (int sectionNum = 0; sectionNum < sectionCount; sectionNum++)
-                {
-                    int rowNumberAddition = (sectionNum ) * 13;
-                    //Route_Accs_Stn_Num
-                    worksheet.Cells[rowNumber, 11 + rowNumberAddition].Value = GetValuesFromTripLinxData(objTripLinx, "Route_Accs_Stn_Num", sectionNum);
-
-                    //Route_Accs_Stn_Name
-                    worksheet.Cells[rowNumber, 12 + rowNumberAddition].Value = GetValuesFromTripLinxData(objTripLinx, "Route_Accs_Stn_Name", sectionNum);
-
-                    //Route_Accs_Stn_Lat
-                    worksheet.Cells[rowNumber, 13 + rowNumberAddition].Value = GetValuesFromTripLinxData(objTripLinx, "Route_Accs_Stn_Lat", sectionNum);
-
-                    //Route_Accs_Stn_Lng
-                    worksheet.Cells[rowNumber, 14 + rowNumberAddition].Value = GetValuesFromTripLinxData(objTripLinx, "Route_Accs_Stn_Lng", sectionNum);
-
-                    //Route_Egrs_Stn_Num
-                    worksheet.Cells[rowNumber, 15 + rowNumberAddition].Value = GetValuesFromTripLinxData(objTripLinx, "Route_Egrs_Stn_Num", sectionNum);
-
-                    //Route_Egrs_Stn_Name
-                    worksheet.Cells[rowNumber, 16 + rowNumberAddition].Value = GetValuesFromTripLinxData(objTripLinx, "Route_Egrs_Stn_Name", sectionNum);
-
-                    //Route_Egrs_Stn_Lat
-                    worksheet.Cells[rowNumber, 17 + rowNumberAddition].Value = GetValuesFromTripLinxData(objTripLinx, "Route_Egrs_Stn_Lat", sectionNum);
-
-                    //Route_Egrs_Stn_Lng
-                    worksheet.Cells[rowNumber, 18 + rowNumberAddition].Value = GetValuesFromTripLinxData(objTripLinx, "Route_Egrs_Stn_Lng", sectionNum);
-
-                    //Route_Oper_Code
-                    string operator_Code = GetValuesFromTripLinxData(objTripLinx, "Route_Oper_Code", sectionNum);
-                    worksheet.Cells[rowNumber, 19 + rowNumberAddition].Value = operator_Code;
+                    //GO bus and train; TTC bus and subway; Non-TTC and Non-GO data
+                    int go_Bus = 0;
+                    int go_Train = 0;
+                    int ttc_Bus = 0;
+                    int ttc_Train = 0;
+                    int n_Local = 0;
 
                     //Checking for Operator Code TTC or not
-                    if (ttcValue != "Y")
-                        ttcValue = (operator_Code == "TTC") ? "Y" : "N";
+                    string ttcValue = "N";
 
-                    //Route_Trans_Num 
-                    string RouteTransNum = GetValuesFromTripLinxData(objTripLinx, "Route_Trans_Num", sectionNum);
-                    if (!string.IsNullOrEmpty(RouteTransNum))
+                    // count total sections
+                    var sectionCount = objTripLinx["routes"]["sections"]["Section"].Count();
+
+                    //Looping routes, collects section info from Triplinx and outputs to excel columns
+                    for (int sectionNum = 0; sectionNum < sectionCount; sectionNum++)
                     {
-                        route_Numbers.Add(RouteTransNum);
-                    }
-                    worksheet.Cells[rowNumber, 20 + rowNumberAddition].Value = RouteTransNum;
+                        int rowNumberAddition = (sectionNum) * 13;
+                        //Route_Accs_Stn_Num
+                        worksheet.Cells[rowNumber, 11 + rowNumberAddition].Value = GetValuesFromTripLinxData(objTripLinx, "Route_Accs_Stn_Num", sectionNum);
 
-                    //Route_Trans_Mode 
-                    string trans_Mode = GetValuesFromTripLinxData(objTripLinx, "Route_Trans_Mode", sectionNum);
-                    worksheet.Cells[rowNumber, 23 + rowNumberAddition].Value = trans_Mode;
+                        //Route_Accs_Stn_Name
+                        worksheet.Cells[rowNumber, 12 + rowNumberAddition].Value = GetValuesFromTripLinxData(objTripLinx, "Route_Accs_Stn_Name", sectionNum);
 
-                    //DataGuide Transit Code
-                    string data_guide_RouteTransNum = string.Empty;
-                    string dg_replace_value = string.Empty;
+                        //Route_Accs_Stn_Lat
+                        worksheet.Cells[rowNumber, 13 + rowNumberAddition].Value = GetValuesFromTripLinxData(objTripLinx, "Route_Accs_Stn_Lat", sectionNum);
 
-                    //Replace Transit Number with DataGuide codes
-                    if (dg_codes_replacement.TryGetValue(RouteTransNum, out dg_replace_value))
-                    {
-                        data_guide_RouteTransNum = dg_replace_value;
-                        route_Numbers_DG.Add(data_guide_RouteTransNum);
-                    }
-                    else if (!string.IsNullOrEmpty(RouteTransNum))
-                    {
-                        //Checks for OperatorCode and Maps with DataGuide codes.
-                        if (operator_Code == "TTC" && (trans_Mode == "BUS" || trans_Mode == "TRAMWAY"))
+                        //Route_Accs_Stn_Lng
+                        worksheet.Cells[rowNumber, 14 + rowNumberAddition].Value = GetValuesFromTripLinxData(objTripLinx, "Route_Accs_Stn_Lng", sectionNum);
+
+                        //Route_Egrs_Stn_Num
+                        worksheet.Cells[rowNumber, 15 + rowNumberAddition].Value = GetValuesFromTripLinxData(objTripLinx, "Route_Egrs_Stn_Num", sectionNum);
+
+                        //Route_Egrs_Stn_Name
+                        worksheet.Cells[rowNumber, 16 + rowNumberAddition].Value = GetValuesFromTripLinxData(objTripLinx, "Route_Egrs_Stn_Name", sectionNum);
+
+                        //Route_Egrs_Stn_Lat
+                        worksheet.Cells[rowNumber, 17 + rowNumberAddition].Value = GetValuesFromTripLinxData(objTripLinx, "Route_Egrs_Stn_Lat", sectionNum);
+
+                        //Route_Egrs_Stn_Lng
+                        worksheet.Cells[rowNumber, 18 + rowNumberAddition].Value = GetValuesFromTripLinxData(objTripLinx, "Route_Egrs_Stn_Lng", sectionNum);
+
+                        //Route_Oper_Code
+                        string operator_Code = GetValuesFromTripLinxData(objTripLinx, "Route_Oper_Code", sectionNum);
+                        worksheet.Cells[rowNumber, 19 + rowNumberAddition].Value = operator_Code;
+
+                        //Checking for Operator Code TTC or not
+                        if (ttcValue != "Y")
+                            ttcValue = (operator_Code == "TTC") ? "Y" : "N";
+
+                        //Route_Trans_Num 
+                        string RouteTransNum = GetValuesFromTripLinxData(objTripLinx, "Route_Trans_Num", sectionNum);
+                        if (!string.IsNullOrEmpty(RouteTransNum))
                         {
-                            if (RouteTransNum.Length == 1)
-                                RouteTransNum = "00" + RouteTransNum;
-
-                            if (RouteTransNum.Length == 2)
-                                RouteTransNum = "0" + RouteTransNum;
+                            route_Numbers.Add(RouteTransNum);
                         }
-                        else if (operator_Code == "YRT")
-                        {
-                            if (RouteTransNum.Length == 1)
-                                RouteTransNum = "00" + RouteTransNum;
+                        worksheet.Cells[rowNumber, 20 + rowNumberAddition].Value = RouteTransNum;
 
-                            if (RouteTransNum.Length == 2)
-                                RouteTransNum = "0" + RouteTransNum;
-                        }
-                        else if (operator_Code != "TTC")
-                        {
-                            if (RouteTransNum.Length == 1)
-                                RouteTransNum = "0" + RouteTransNum;
-                        }
-                        //DataGuide Code value
-                        string data_guide_code_value = string.Empty;
+                        //Route_Trans_Mode 
+                        string trans_Mode = GetValuesFromTripLinxData(objTripLinx, "Route_Trans_Mode", sectionNum);
+                        worksheet.Cells[rowNumber, 23 + rowNumberAddition].Value = trans_Mode;
 
-                        if (data_guide_codes.TryGetValue(operator_Code + trans_Mode, out data_guide_code_value))
+                        //DataGuide Transit Code
+                        string data_guide_RouteTransNum = string.Empty;
+                        string dg_replace_value = string.Empty;
+
+                        //Replace Transit Number with DataGuide codes
+                        if (dg_codes_replacement.TryGetValue(RouteTransNum, out dg_replace_value))
                         {
-                            data_guide_RouteTransNum = data_guide_code_value + RouteTransNum;
+                            data_guide_RouteTransNum = dg_replace_value;
                             route_Numbers_DG.Add(data_guide_RouteTransNum);
                         }
-                    }
-                    //Route_Data_Guide_Code 
-                    worksheet.Cells[rowNumber, 21 + rowNumberAddition].Value = data_guide_RouteTransNum;
+                        else if (!string.IsNullOrEmpty(RouteTransNum))
+                        {
+                            //Checks for OperatorCode and Maps with DataGuide codes.
+                            if (operator_Code == "TTC" && (trans_Mode == "BUS" || trans_Mode == "TRAMWAY"))
+                            {
+                                if (RouteTransNum.Length == 1)
+                                    RouteTransNum = "00" + RouteTransNum;
 
-                    //Route_Trans_Name
-                    worksheet.Cells[rowNumber, 22 + rowNumberAddition].Value = GetValuesFromTripLinxData(objTripLinx, "Route_Trans_Name", sectionNum);
+                                if (RouteTransNum.Length == 2)
+                                    RouteTransNum = "0" + RouteTransNum;
+                            }
+                            else if (operator_Code == "YRT")
+                            {
+                                if (RouteTransNum.Length == 1)
+                                    RouteTransNum = "00" + RouteTransNum;
 
-                    //Calculate GO Bus and Train
-                    if (operator_Code == "GO")
-                    {
-                        if (trans_Mode == "BUS")
-                            go_Bus++;
-                        else
-                            go_Train++;
+                                if (RouteTransNum.Length == 2)
+                                    RouteTransNum = "0" + RouteTransNum;
+                            }
+                            else if (operator_Code != "TTC")
+                            {
+                                if (RouteTransNum.Length == 1)
+                                    RouteTransNum = "0" + RouteTransNum;
+                            }
+                            //DataGuide Code value
+                            string data_guide_code_value = string.Empty;
+
+                            if (data_guide_codes.TryGetValue(operator_Code + trans_Mode, out data_guide_code_value))
+                            {
+                                data_guide_RouteTransNum = data_guide_code_value + RouteTransNum;
+                                route_Numbers_DG.Add(data_guide_RouteTransNum);
+                            }
+                        }
+                        //Route_Data_Guide_Code 
+                        worksheet.Cells[rowNumber, 21 + rowNumberAddition].Value = data_guide_RouteTransNum;
+
+                        //Route_Trans_Name
+                        worksheet.Cells[rowNumber, 22 + rowNumberAddition].Value = GetValuesFromTripLinxData(objTripLinx, "Route_Trans_Name", sectionNum);
+
+                        //Calculate GO Bus and Train
+                        if (operator_Code == "GO")
+                        {
+                            if (trans_Mode == "BUS")
+                                go_Bus++;
+                            else
+                                go_Train++;
+                        }
+                        //Calculate TTC Bus, Streetcar and Subway
+                        else if (operator_Code == "TTC")
+                        {
+                            if (trans_Mode == "METRO")
+                                ttc_Train++;
+                            else
+                                ttc_Bus++;
+                        }
+                        //Calculate Non-TTC and Non-GO
+                        else if (!string.IsNullOrEmpty(operator_Code))
+                        {
+                            n_Local++;
+                        }
                     }
-                    //Calculate TTC Bus, Streetcar and Subway
-                    else if (operator_Code == "TTC")
-                    {
-                        if (trans_Mode == "METRO")
-                            ttc_Train++;
-                        else
-                            ttc_Bus++;
-                    }
-                    //Calculate Non-TTC and Non-GO
-                    else if (!string.IsNullOrEmpty(operator_Code))
-                    {
-                        n_Local++;
-                    }
+                    //Use_TTC
+                    worksheet.Cells[rowNumber, 154].Value = ttcValue;
+
+                    //N_Route
+                    worksheet.Cells[rowNumber, 155].Value = route_Numbers.Count;
+
+                    //Last_Route
+                    worksheet.Cells[rowNumber, 156].Value = route_Numbers.LastOrDefault();
+
+                    //Last_Route_Data_Guide_Code                   
+                    worksheet.Cells[rowNumber, 157].Value = route_Numbers_DG.LastOrDefault();
+
+                    //N_Go_Rail
+                    worksheet.Cells[rowNumber, 158].Value = go_Train;
+
+                    //N_Go_Bus
+                    worksheet.Cells[rowNumber, 159].Value = go_Bus;
+
+                    //N_Subway
+                    worksheet.Cells[rowNumber, 160].Value = ttc_Train;
+
+                    //N_TTC_Bus
+                    worksheet.Cells[rowNumber, 161].Value = ttc_Bus;
+
+                    //N_Local
+                    worksheet.Cells[rowNumber, 162].Value = n_Local;
+
+                    //N_Other
+                    worksheet.Cells[rowNumber, 163].Value = String.Empty;
                 }
-                //Use_TTC
-                worksheet.Cells[rowNumber, 154].Value = ttcValue;
-
-                //N_Route
-                worksheet.Cells[rowNumber, 155].Value = route_Numbers.Count;
-
-                //Last_Route
-                worksheet.Cells[rowNumber, 156].Value = route_Numbers.LastOrDefault();
-
-                //Last_Route_Data_Guide_Code                   
-                worksheet.Cells[rowNumber, 157].Value = route_Numbers_DG.LastOrDefault();
-
-                //N_Go_Rail
-                worksheet.Cells[rowNumber, 158].Value = go_Train;
-
-                //N_Go_Bus
-                worksheet.Cells[rowNumber, 159].Value = go_Bus;
-
-                //N_Subway
-                worksheet.Cells[rowNumber, 160].Value = ttc_Train;
-
-                //N_TTC_Bus
-                worksheet.Cells[rowNumber, 161].Value = ttc_Bus;
-
-                //N_Local
-                worksheet.Cells[rowNumber, 162].Value = n_Local;
-
-                //N_Other
-                worksheet.Cells[rowNumber, 163].Value = String.Empty;
-
             }
         }
 
@@ -1308,19 +1308,18 @@ namespace TRAISI.Export
             // Collecting all relevant respondents
             //var Respondents_valid = surveyRespondents.Where(x => surveyResponses.Any(y => y.Respondent == x)).ToList();
 
-           // var subRespondents = Respondents_valid.SelectMany(pr => pr.SurveyRespondentGroup.GroupMembers).ToList();
+            // var subRespondents = Respondents_valid.SelectMany(pr => pr.SurveyRespondentGroup.GroupMembers).ToList();
             int locNumber = 0;
             int rowNumber = 1;
 
             var responseGroup = surveyResponses.Where(r => this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ClassName ==
-            typeof(RouteSelectQuestion).Name).GroupBy(r => r.Respondent).Select(g => g).OrderBy(x => x.Key.SurveyRespondentGroup.Id).ToList();
-
+                                    typeof(RouteSelectQuestion).Name).GroupBy(r => r.Respondent).Select(g => g).OrderBy(x => x.Key.SurveyRespondentGroup.Id).ToList();
 
             foreach (var group in responseGroup)
             {
                 var respondent = group.Key;
-                var responses = group;
-                var response_Json  = group;
+               // var responses = group;
+                var response_Json = group;
 
                 //Location number
                 locNumber = 0;
@@ -1341,33 +1340,38 @@ namespace TRAISI.Export
                 //foreach (var item in responseValues_timeline_1)
                 //{
                 //    responseValues_timeline.Add(item);
-               // }
+                // }
                 //Origin
-                var response = response_Json.OrderByDescending(x => x.SurveyAccessRecord.AccessDateTime).FirstOrDefault();
+                //var response = response_Json.OrderByDescending(x => x.SurveyAccessRecord.AccessDateTime).FirstOrDefault();
+                //JArray parsedResponse = JArray.Parse(((JsonResponse)response.ResponseValues[0]).Value);
 
-                JArray parsedResponse = JArray.Parse(((JsonResponse)response.ResponseValues[0]).Value);
+                var responses = response_Json.OrderByDescending(x => x.SurveyAccessRecord.AccessDateTime).ToList();
 
-                var subResponse = parsedResponse[0];
-                if (subResponse["routeIndex"].Value<int>() < 3)
+                foreach (var jresponse in responses)
                 {
-                    continue;
+                    JArray parsedResponse = JArray.Parse(((JsonResponse)jresponse.ResponseValues[0]).Value);
+
+                    var subResponse = parsedResponse[0];
+                    if (subResponse["routeIndex"].Value<int>() < 3)
+                    {
+                        continue;
+                    }
+
+                    //TripLinx Data
+                    locNumber++;
+                    trpNumber++;
+                    var objTripLinx = parsedResponse[0];
+                    rowNumber++;
+
+                    // Respondent ID (Unique) 
+                    worksheet.Cells[rowNumber, 1].Value = respondent.Id;
+                    // Household ID        
+                    worksheet.Cells[rowNumber, 2].Value = respondent.SurveyRespondentGroup.Id;
+                    //Person ID 
+                    worksheet.Cells[rowNumber, 3].Value = respondent.SurveyRespondentGroup.GroupMembers.IndexOf(respondent) + 1;
+                    //Trip Number  
+                    worksheet.Cells[rowNumber, 4].Value = trpNumber.ToString();
                 }
-
-                //TripLinx Data
-                locNumber++;
-                trpNumber++;
-                var objTripLinx = parsedResponse[0];
-                rowNumber++;
-
-                // Respondent ID (Unique) 
-                worksheet.Cells[rowNumber, 1].Value = respondent.Id;
-                // Household ID        
-                worksheet.Cells[rowNumber, 2].Value = respondent.SurveyRespondentGroup.Id;
-                //Person ID 
-                worksheet.Cells[rowNumber, 3].Value = respondent.SurveyRespondentGroup.GroupMembers.IndexOf(respondent) + 1;
-                //Trip Number  
-                worksheet.Cells[rowNumber, 4].Value = trpNumber.ToString();
-
             }
         }
 
@@ -1375,7 +1379,7 @@ namespace TRAISI.Export
         {
             //Removed Travel diary and Transit routes responses. 
             //surveyResponses = surveyResponses.Where(res => this._questionTypeManager.QuestionTypeDefinitions[res.QuestionPart.QuestionType].ResponseType != QuestionResponseType.Timeline
-             //&& !(this._questionTypeManager.QuestionTypeDefinitions[res.QuestionPart.QuestionType].Type is RouteSelectQuestion)).OrderBy(res => res.Respondent.Id).ToList();
+            //&& !(this._questionTypeManager.QuestionTypeDefinitions[res.QuestionPart.QuestionType].Type is RouteSelectQuestion)).OrderBy(res => res.Respondent.Id).ToList();
 
             surveyResponses = surveyResponses.Where(res => this._questionTypeManager.QuestionTypeDefinitions[res.QuestionPart.QuestionType].ResponseType != QuestionResponseType.Timeline
              && !(this._questionTypeManager.QuestionTypeDefinitions[res.QuestionPart.QuestionType].ClassName == typeof(RouteSelectQuestion).Name)).OrderBy(res => res.Respondent.Id).ToList();
@@ -1490,7 +1494,7 @@ namespace TRAISI.Export
             //Removed Transit routes and Travel diary columns
             surveyResponses = surveyResponses.Where(res => this._questionTypeManager.QuestionTypeDefinitions[res.QuestionPart.QuestionType].ResponseType != QuestionResponseType.Timeline &&
             !(this._questionTypeManager.QuestionTypeDefinitions[res.QuestionPart.QuestionType].ClassName == typeof(RouteSelectQuestion).Name)).OrderBy(res => res.Respondent.Id).ToList();
-            
+
             questionParts = questionParts.Where(res => this._questionTypeManager.QuestionTypeDefinitions[res.QuestionType].ResponseType != QuestionResponseType.Timeline &&
             !(this._questionTypeManager.QuestionTypeDefinitions[res.QuestionType].ClassName == typeof(RouteSelectQuestion).Name)).ToList();
 
@@ -1517,7 +1521,6 @@ namespace TRAISI.Export
                 {
                     continue;
                 }
-
 
                 questionColumnDict.Add(questionPart, columnNum);
 
@@ -1701,12 +1704,12 @@ namespace TRAISI.Export
                     worksheet.Cells[respondentRowNum[respondent], 1].Value = respondent.Id;
 
                     //(surveyResponses.Where(r => r.Respondent == respondent)
-                    //                                                               .Select(r => r.Respondent.Id)).First().ToString();
+                    //                     .Select(r => r.Respondent.Id)).First().ToString();
                     // Household ID          
                     worksheet.Cells[respondentRowNum[respondent], 2].Value = respondent.SurveyRespondentGroup.Id;
 
                     //(surveyResponses.Where(r => r.Respondent == respondent)
-                    //                                                               .Select(r => r.Respondent.SurveyRespondentGroup.Id)).First().ToString();
+                    //                  .Select(r => r.Respondent.SurveyRespondentGroup.Id)).First().ToString();
                     //Household PsId(Unique)
                     try
                     {
