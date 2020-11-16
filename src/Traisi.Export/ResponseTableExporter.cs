@@ -1719,13 +1719,7 @@ namespace TRAISI.Export
                     }
                     catch { }
                 }
-                //Example
-                //string value;
-                //bool keyExists = response.TryGetValue(key, out value)
-                //if(keyExists)
-                //{}
-                //else{}
-                
+                                
                 //Question Part Location column 
                 foreach (var response in responses)
                 {
