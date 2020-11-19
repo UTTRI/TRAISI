@@ -218,17 +218,8 @@ namespace TRAISI.Export
         private string GetValuesFromTripLinxData(JToken objTripLinx, string key, int sectionNumber = 0)
         {
             string returnValue = string.Empty;
-            //bool strPTRide = true;
             try
             {
-                /*  try
-                 {
-                     strPTRide = objTripLinx["routes"]["sections"]["Section"][sectionNumber]["PTRide"].HasValues;
-                 }
-                 catch
-                 {
-                     strPTRide = true;
-                 } */
                 switch (key)
                 {
                     //Route details 
@@ -249,25 +240,11 @@ namespace TRAISI.Export
                         break;
 
                     case "Route_Accs_Stn_Lat":
-                        /* if (!strPTRide)
-                        {
-                            returnValue = (string)objTripLinx["routes"]["sections"]["Section"][sectionNumber]["Leg"]["Departure"]["Site"]["Position"]["Lat"];
-                        }
-                        else
-                        { */
                         returnValue = (string)objTripLinx["routes"]["sections"]["Section"][sectionNumber]["PTRide"]["Departure"]["StopPlace"]["Position"]["Lat"];
-                        //}
                         break;
 
                     case "Route_Accs_Stn_Lng":
-                        /* if (!strPTRide)
-                        {
-                            returnValue = (string)objTripLinx["routes"]["sections"]["Section"][sectionNumber]["Leg"]["Departure"]["Site"]["Position"]["Long"];
-                        }
-                        else
-                        { */
                         returnValue = (string)objTripLinx["routes"]["sections"]["Section"][sectionNumber]["PTRide"]["Departure"]["StopPlace"]["Position"]["Long"];
-                        //}
                         break;
 
                     case "Route_Egrs_Stn_Num":
@@ -279,25 +256,11 @@ namespace TRAISI.Export
                         break;
 
                     case "Route_Egrs_Stn_Lat":
-                        /* if (!strPTRide)
-                        {
-                            returnValue = (string)objTripLinx["routes"]["sections"]["Section"][sectionNumber]["Leg"]["Arrival"]["Site"]["Position"]["Lat"];
-                        }
-                        else
-                        { */
                         returnValue = (string)objTripLinx["routes"]["sections"]["Section"][sectionNumber]["PTRide"]["Arrival"]["StopPlace"]["Position"]["Lat"];
-                        //}
                         break;
 
                     case "Route_Egrs_Stn_Lng":
-                        /* if (!strPTRide)
-                        {
-                            returnValue = (string)objTripLinx["routes"]["sections"]["Section"][sectionNumber]["Leg"]["Arrival"]["Site"]["Position"]["Long"];
-                        }
-                        else
-                        { */
                         returnValue = (string)objTripLinx["routes"]["sections"]["Section"][sectionNumber]["PTRide"]["Arrival"]["StopPlace"]["Position"]["Long"];
-                        //}
                         break;
 
                     case "Route_Oper_Code":
@@ -313,18 +276,12 @@ namespace TRAISI.Export
                         break;
 
                     case "Route_Trans_Mode":
-                        /* if (!strPTRide)
-                        {
-                            returnValue = (string)objTripLinx["routes"]["sections"]["Section"][sectionNumber]["Leg"]["TransportMode"];
-                        }
-                        else
-                        { */
                         returnValue = (string)objTripLinx["routes"]["sections"]["Section"][sectionNumber]["PTRide"]["TransportMode"];
-                        //}
                         break;
 
                     default:
                         break;
+                        
                 }
             }
             catch (System.Exception)
@@ -1058,8 +1015,6 @@ namespace TRAISI.Export
                     //Trip_Orig_Lng
                     //worksheet.Cells[rowNumber, 7].Value = response.X;
 
-
-
                     //Mode_Egrs
                     worksheet.Cells[rowNumber, 8].Value = GetValuesFromTripLinxData(objTripLinx, "Egrs_Mode", sectionCount - 1);
 
@@ -1085,21 +1040,15 @@ namespace TRAISI.Export
                     //Checking for Operator Code TTC or not
                     string ttcValue = "N";
 
-                    // count total sections
-
-
                     //Looping routes, collects section info from Triplinx and outputs to excel columns
-
                     int routeColumnIndex = 0;
                     for (int sectionNum = 0; sectionNum < sectionCount; sectionNum++)
                     {
                         int rowNumberAddition = (routeColumnIndex) * 13;
-
                         string mode = GetValuesFromTripLinxData(objTripLinx, "Route_Trans_Mode", sectionNum);
 
-
-                        // determine if this is a walk leg of the route
-                        // if walk, continue parsing route information
+                        // determine if this is a walk leg of the route, 
+                        //if walk, continue parsing route information
                         if (objTripLinx["routes"]["sections"]["Section"][sectionNum]?["Leg"].Type != JTokenType.Null)
                         {
                             if (objTripLinx["routes"]["sections"]["Section"][sectionNum]["Leg"]?["TransportMode"]?.Value<string>() == "WALK" ||
@@ -1254,7 +1203,6 @@ namespace TRAISI.Export
 
                     //N_Other
                     worksheet.Cells[rowNumber, 163].Value = String.Empty;
-
 
                 }
             }
