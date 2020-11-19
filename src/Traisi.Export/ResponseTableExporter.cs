@@ -214,21 +214,20 @@ namespace TRAISI.Export
               return modeDetails;
           } */
 
-
         private string GetValuesFromTripLinxData(JToken objTripLinx, string key, int sectionNumber = 0)
         {
             string returnValue = string.Empty;
             //bool strPTRide = true;
             try
-            {                
-               /*  try
-                {
-                    strPTRide = objTripLinx["routes"]["sections"]["Section"][sectionNumber]["PTRide"].HasValues;
-                }
-                catch
-                {
-                    strPTRide = true;
-                } */
+            {
+                /*  try
+                 {
+                     strPTRide = objTripLinx["routes"]["sections"]["Section"][sectionNumber]["PTRide"].HasValues;
+                 }
+                 catch
+                 {
+                     strPTRide = true;
+                 } */
                 switch (key)
                 {
                     //Route details 
@@ -255,7 +254,7 @@ namespace TRAISI.Export
                         }
                         else
                         { */
-                            returnValue = (string)objTripLinx["routes"]["sections"]["Section"][sectionNumber]["PTRide"]["Departure"]["StopPlace"]["Position"]["Lat"];
+                        returnValue = (string)objTripLinx["routes"]["sections"]["Section"][sectionNumber]["PTRide"]["Departure"]["StopPlace"]["Position"]["Lat"];
                         //}
                         break;
 
@@ -266,7 +265,7 @@ namespace TRAISI.Export
                         }
                         else
                         { */
-                            returnValue = (string)objTripLinx["routes"]["sections"]["Section"][sectionNumber]["PTRide"]["Departure"]["StopPlace"]["Position"]["Long"];
+                        returnValue = (string)objTripLinx["routes"]["sections"]["Section"][sectionNumber]["PTRide"]["Departure"]["StopPlace"]["Position"]["Long"];
                         //}
                         break;
 
@@ -285,7 +284,7 @@ namespace TRAISI.Export
                         }
                         else
                         { */
-                            returnValue = (string)objTripLinx["routes"]["sections"]["Section"][sectionNumber]["PTRide"]["Arrival"]["StopPlace"]["Position"]["Lat"];
+                        returnValue = (string)objTripLinx["routes"]["sections"]["Section"][sectionNumber]["PTRide"]["Arrival"]["StopPlace"]["Position"]["Lat"];
                         //}
                         break;
 
@@ -296,7 +295,7 @@ namespace TRAISI.Export
                         }
                         else
                         { */
-                            returnValue = (string)objTripLinx["routes"]["sections"]["Section"][sectionNumber]["PTRide"]["Arrival"]["StopPlace"]["Position"]["Long"];
+                        returnValue = (string)objTripLinx["routes"]["sections"]["Section"][sectionNumber]["PTRide"]["Arrival"]["StopPlace"]["Position"]["Long"];
                         //}
                         break;
 
@@ -319,7 +318,7 @@ namespace TRAISI.Export
                         }
                         else
                         { */
-                            returnValue = (string)objTripLinx["routes"]["sections"]["Section"][sectionNumber]["PTRide"]["TransportMode"];
+                        returnValue = (string)objTripLinx["routes"]["sections"]["Section"][sectionNumber]["PTRide"]["TransportMode"];
                         //}
                         break;
 
@@ -469,8 +468,6 @@ namespace TRAISI.Export
             worksheet.Cells["A1:BE1"].LoadFromArrays(headerRow);
             worksheet.Cells["A1:BE1"].Style.Font.Bold = true;
 
-            // Collecting all relevant respondents
-            // var Respondents_valid = surveyRespondents.Where(x => surveyResponses.Any(y => y.Respondent == x)).ToList();
             var subRespondents = surveyRespondents;
 
             int locNumber = 0;
@@ -486,7 +483,6 @@ namespace TRAISI.Export
             {
                 var respondent = group.Key;
                 var response_timeline = group;
-                // var response_timeline = surveyResponses.Where(r => r.Respondent == respondent && this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ResponseType == QuestionResponseType.Timeline);
 
                 //Location number
                 locNumber = 0;
@@ -743,9 +739,7 @@ namespace TRAISI.Export
             };
             worksheet.Cells["A1:AQ1"].LoadFromArrays(headerRow);
             worksheet.Cells["A1:AQ1"].Style.Font.Bold = true;
-
-            // Collecting all relevant respondents
-            // var Respondents_valid = surveyRespondents.Where(x => surveyResponses.Any(y => y.Respondent == x)).ToList();
+            
             var subRespondents = surveyRespondents;
 
             int locNumber = 0;
@@ -756,29 +750,19 @@ namespace TRAISI.Export
 
             var responseGroup = surveyResponses.Where(r => this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ResponseType == QuestionResponseType.Timeline).GroupBy(r => r.Respondent).Select(g => g).ToList();
 
-
             foreach (var group in responseGroup)
             {
                 var respondent = group.Key;
                 var response_timeline = group;
-                // var responses = surveyResponses.Where(r => r.Respondent == respondent).ToList();
 
                 //Location number
                 locNumber = 0;
-
-
-                //Travel diary
-                // var response_timeline = surveyResponses.Where(r => r.Respondent == respondent && this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ResponseType == QuestionResponseType.Timeline);
-
-                //Transit routes
-
 
                 if (response_timeline.Count() == 0)
                     continue;
 
                 var responseValues_timeline_1 = ReadTimelineResponseList(response_timeline.FirstOrDefault());
                 List<dynamic> responseValues_timeline = new List<object>();
-
 
                 foreach (var item in responseValues_timeline_1)
                 {
@@ -1015,11 +999,7 @@ namespace TRAISI.Export
              };
             worksheet.Cells["A1:FG1"].LoadFromArrays(headerRow);
             worksheet.Cells["A1:FG1"].Style.Font.Bold = true;
-
-            // Collecting all relevant respondents
-            //var Respondents_valid = surveyRespondents.Where(x => surveyResponses.Any(y => y.Respondent == x)).ToList();
-
-            // var subRespondents = Respondents_valid.SelectMany(pr => pr.SurveyRespondentGroup.GroupMembers).ToList();
+            
             int locNumber = 0;
             int rowNumber = 1;
 
@@ -1036,34 +1016,8 @@ namespace TRAISI.Export
                 locNumber = 0;
                 //Trip number
                 int trpNumber = 0;
-
-                //if (responses.Count == 0)
-                //{
-                //    continue;
-                // }
-                //Travel diary
-                // var response_timeline = responses.Where(r => r.Respondent == respondent && this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ResponseType == QuestionResponseType.Timeline).ToList();
-                //Transit routes
-                //var response_Json = responses.Where(r => r.Respondent == respondent && this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].Type is RouteSelectQuestion).ToList();
-
-                //if (response_timeline.Count <= 1 || response_Json.Count == 0)
-                //    continue;
-
-                // if (response_Json.Count == 0)
-                //{
-                //     continue;
-                // }
-
-                // var responseValues_timeline_1 = ReadTimelineResponseList(response_timeline.First());
-                // List<dynamic> responseValues_timeline = new List<object>();
-
-                //foreach (var item in responseValues_timeline_1)
-                //{
-                //    responseValues_timeline.Add(item);
-                //}
-
+               
                 //Origin
-                //var response = response_Json.OrderByDescending(x => x.SurveyAccessRecord.AccessDateTime).FirstOrDefault();
                 var responses = response_Json.OrderByDescending(x => x.SurveyAccessRecord.AccessDateTime).ToList();
 
                 foreach (var jresponse in responses)
@@ -1075,7 +1029,6 @@ namespace TRAISI.Export
                     {
                         continue;
                     }
-
                     //Destination
                     // var response_dest = responseValues_timeline[i + 1];
 
@@ -1130,12 +1083,12 @@ namespace TRAISI.Export
 
                     // count total sections
                     var sectionCount = objTripLinx["routes"]["sections"]["Section"].Count();
-                    
+
                     //Looping routes, collects section info from Triplinx and outputs to excel columns
                     for (int sectionNum = 0; sectionNum < sectionCount; sectionNum++)
                     {
                         int rowNumberAddition = (sectionNum) * 13;
-                       
+
                         //Route_Accs_Stn_Num
                         worksheet.Cells[rowNumber, 11 + rowNumberAddition].Value = GetValuesFromTripLinxData(objTripLinx, "Route_Accs_Stn_Num", sectionNum);
 
@@ -1306,10 +1259,6 @@ namespace TRAISI.Export
             worksheet.Cells["A1:D1"].LoadFromArrays(headerRow);
             worksheet.Cells["A1:D1"].Style.Font.Bold = true;
 
-            // Collecting all relevant respondents
-            //var Respondents_valid = surveyRespondents.Where(x => surveyResponses.Any(y => y.Respondent == x)).ToList();
-
-            // var subRespondents = Respondents_valid.SelectMany(pr => pr.SurveyRespondentGroup.GroupMembers).ToList();
             int locNumber = 0;
             int rowNumber = 1;
 
@@ -1319,7 +1268,6 @@ namespace TRAISI.Export
             foreach (var group in responseGroup)
             {
                 var respondent = group.Key;
-               // var responses = group;
                 var response_Json = group;
 
                 //Location number
@@ -1327,20 +1275,8 @@ namespace TRAISI.Export
                 //Trip number
                 int trpNumber = 0;
 
-                //Travel diary
-                // var response_timeline = responses.Where(r => r.Respondent == respondent && this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ResponseType == QuestionResponseType.Timeline).ToList();
-                //Transit routes
-                // var response_Json = responses.Where(r => r.Respondent == respondent && this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].Type is RouteSelectQuestion).ToList();
-                // var responseValues_timeline_1 = ReadTimelineResponseList(response_timeline.First());
-                //foreach (var item in responseValues_timeline_1)
-                //{
-                //    responseValues_timeline.Add(item);
-                // }               
-                //var response = response_Json.OrderByDescending(x => x.SurveyAccessRecord.AccessDateTime).FirstOrDefault();
-                //JArray parsedResponse = JArray.Parse(((JsonResponse)response.ResponseValues[0]).Value);
-                
                 List<dynamic> responseValues_timeline = new List<object>();
-                
+
                 //Origin
                 var responses = response_Json.OrderByDescending(x => x.SurveyAccessRecord.AccessDateTime).ToList();
                 foreach (var jresponse in responses)
@@ -1359,13 +1295,16 @@ namespace TRAISI.Export
 
                     // Respondent ID (Unique) 
                     worksheet.Cells[rowNumber, 1].Value = respondent.Id;
+                    
                     // Household ID        
                     worksheet.Cells[rowNumber, 2].Value = respondent.SurveyRespondentGroup.Id;
+                   
                     //Person ID 
                     worksheet.Cells[rowNumber, 3].Value = respondent.SurveyRespondentGroup.GroupMembers.IndexOf(respondent) + 1;
+                   
                     //Trip Number  
                     worksheet.Cells[rowNumber, 4].Value = trpNumber.ToString();
-                
+
                 }
             }
         }
@@ -1496,6 +1435,7 @@ namespace TRAISI.Export
             // process questions
             // build dictionary of questions and column numbers
             var questionColumnDict = new Dictionary<QuestionPart, int>();
+            
             // place questions on headers and add to dictionary
             var columnNum = 6;
 
@@ -1516,7 +1456,6 @@ namespace TRAISI.Export
                 {
                     continue;
                 }
-
                 questionColumnDict.Add(questionPart, columnNum);
 
                 //Location Columns
@@ -1544,16 +1483,12 @@ namespace TRAISI.Export
                 }
                 columnNum += 1;
             }
-            // Collecting all relevant respondents
-            //var Respondents_valid = surveyRespondents.Where(x => surveyResponses.Any(y => y.Respondent == x)).ToList();
-            // var subRespondents = Respondents_valid.SelectMany(pr => pr.SurveyRespondentGroup.GroupMembers).ToList();
-
+            
             // Assign row number for each respondent
             var respondentRowNum = new Dictionary<SurveyRespondent, int>();
             var rowNum = 2;
 
             var responseGroup = surveyResponses.GroupBy(r => r.Respondent).Select(g => g).ToList().OrderBy(x => x.Key.SurveyRespondentGroup.Id);
-
             foreach (var group in responseGroup)
             {
                 respondentRowNum.Add(group.Key, rowNum);
@@ -1681,28 +1616,27 @@ namespace TRAISI.Export
             // assign row number for each respondent
             var respondentRowNum = new Dictionary<SurveyRespondent, int>();
             var rowNum = 2;
-            foreach (var respondent in surveyRespondents)
+            
+            var responseGroup = surveyResponses.GroupBy(r => r.Respondent).Select(g => g).ToList().OrderBy(x => x.Key.SurveyRespondentGroup.Id);
+            foreach (var group in responseGroup)
             {
-                respondentRowNum.Add(respondent, rowNum);
+                respondentRowNum.Add(group.Key, rowNum);
                 rowNum += 1;
             }
             // place response into rows via map
-            foreach (var respondent in surveyRespondents)
+            foreach (var group in responseGroup)
             {
-                var responses = surveyResponses.Where(r => r.Respondent == respondent);
+                var responses = group;
+                var respondent = group.Key;
 
                 if (responses.Count() > 0)
                 {
                     // Respondent ID (Unique)                
                     worksheet.Cells[respondentRowNum[respondent], 1].Value = respondent.Id;
-
-                    //(surveyResponses.Where(r => r.Respondent == respondent)
-                    //                     .Select(r => r.Respondent.Id)).First().ToString();
+            
                     // Household ID          
                     worksheet.Cells[respondentRowNum[respondent], 2].Value = respondent.SurveyRespondentGroup.Id;
-
-                    //(surveyResponses.Where(r => r.Respondent == respondent)
-                    //                  .Select(r => r.Respondent.SurveyRespondentGroup.Id)).First().ToString();
+            
                     //Household PsId(Unique)
                     try
                     {
@@ -1718,43 +1652,43 @@ namespace TRAISI.Export
                         }
                     }
                     catch { }
-                }
-                                
-                //Question Part Location column 
-                foreach (var response in responses)
-                {
-                    if (!response.QuestionPart.Name.Contains("location"))
+
+                    //Question Part Location column 
+                    foreach (var response in responses)
                     {
-                        worksheet.Cells[respondentRowNum[respondent],
+                        if (!response.QuestionPart.Name.Contains("location"))
+                        {
+                            worksheet.Cells[respondentRowNum[respondent],
+                                            questionColumnDict[response.QuestionPart]].Value
+                                = ReadSingleResponse(response);
+                        }
+                        else
+                        {
+                            //Address
+                            locationPart = "_address";
+                            worksheet.Cells[respondentRowNum[respondent],
                                         questionColumnDict[response.QuestionPart]].Value
                             = ReadSingleResponse(response);
-                    }
-                    else
-                    {
-                        //Address
-                        locationPart = "_address";
-                        worksheet.Cells[respondentRowNum[respondent],
-                                    questionColumnDict[response.QuestionPart]].Value
-                        = ReadSingleResponse(response);
 
-                        //Postal Code
-                        locationPart = "_postalCode";
-                        worksheet.Cells[respondentRowNum[respondent],
-                                    questionColumnDict[response.QuestionPart] + 1].Value
-                        = ReadSingleResponse(response);
+                            //Postal Code
+                            locationPart = "_postalCode";
+                            worksheet.Cells[respondentRowNum[respondent],
+                                        questionColumnDict[response.QuestionPart] + 1].Value
+                            = ReadSingleResponse(response);
 
-                        //Latitide
-                        locationPart = "_yLatitude";
-                        worksheet.Cells[respondentRowNum[respondent],
-                                    questionColumnDict[response.QuestionPart] + 2].Value
-                        = ReadSingleResponse(response);
+                            //Latitide
+                            locationPart = "_yLatitude";
+                            worksheet.Cells[respondentRowNum[respondent],
+                                        questionColumnDict[response.QuestionPart] + 2].Value
+                            = ReadSingleResponse(response);
 
-                        //Longitude
-                        locationPart = "_xLongitude";
-                        worksheet.Cells[respondentRowNum[respondent],
-                                    questionColumnDict[response.QuestionPart] + 3].Value
-                        = ReadSingleResponse(response);
+                            //Longitude
+                            locationPart = "_xLongitude";
+                            worksheet.Cells[respondentRowNum[respondent],
+                                        questionColumnDict[response.QuestionPart] + 3].Value
+                            = ReadSingleResponse(response);
 
+                        }
                     }
                 }
             }
