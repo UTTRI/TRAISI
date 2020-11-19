@@ -19,6 +19,7 @@ using Traisi.Data.Models.Questions;
 using Traisi.Sdk.Interfaces;
 using Traisi.Sdk.Questions;
 
+
 namespace TRAISI.Export
 {
     public class ResponseTableExporter
@@ -739,7 +740,7 @@ namespace TRAISI.Export
             };
             worksheet.Cells["A1:AQ1"].LoadFromArrays(headerRow);
             worksheet.Cells["A1:AQ1"].Style.Font.Bold = true;
-            
+
             var subRespondents = surveyRespondents;
 
             int locNumber = 0;
@@ -999,7 +1000,7 @@ namespace TRAISI.Export
              };
             worksheet.Cells["A1:FG1"].LoadFromArrays(headerRow);
             worksheet.Cells["A1:FG1"].Style.Font.Bold = true;
-            
+
             int locNumber = 0;
             int rowNumber = 1;
 
@@ -1016,7 +1017,7 @@ namespace TRAISI.Export
                 locNumber = 0;
                 //Trip number
                 int trpNumber = 0;
-               
+
                 //Origin
                 var responses = response_Json.OrderByDescending(x => x.SurveyAccessRecord.AccessDateTime).ToList();
 
@@ -1038,6 +1039,7 @@ namespace TRAISI.Export
                     var objTripLinx = parsedResponse[0];
                     rowNumber++;
 
+                    var sectionCount = objTripLinx["routes"]["sections"]["Section"].Count();
                     // Respondent ID (Unique)          
                     worksheet.Cells[rowNumber, 1].Value = respondent.Id;
                     // Household ID        
@@ -1048,7 +1050,7 @@ namespace TRAISI.Export
                     worksheet.Cells[rowNumber, 4].Value = trpNumber.ToString();
 
                     //Mode_Accs 
-                    worksheet.Cells[rowNumber, 5].Value = GetValuesFromTripLinxData(objTripLinx, "Mode_Accs");
+                    worksheet.Cells[rowNumber, 5].Value = GetValuesFromTripLinxData(objTripLinx, "Mode_Accs", 0);
 
                     //Trip_Orig_Lat
                     //worksheet.Cells[rowNumber, 6].Value = response.Y;
@@ -1056,8 +1058,10 @@ namespace TRAISI.Export
                     //Trip_Orig_Lng
                     //worksheet.Cells[rowNumber, 7].Value = response.X;
 
+
+
                     //Mode_Egrs
-                    worksheet.Cells[rowNumber, 8].Value = GetValuesFromTripLinxData(objTripLinx, "Egrs_Mode");
+                    worksheet.Cells[rowNumber, 8].Value = GetValuesFromTripLinxData(objTripLinx, "Egrs_Mode", sectionCount - 1);
 
                     //Trip_Dest_Lat
                     //worksheet.Cells[rowNumber, 9].Value = response_dest.Y;
@@ -1082,12 +1086,28 @@ namespace TRAISI.Export
                     string ttcValue = "N";
 
                     // count total sections
-                    var sectionCount = objTripLinx["routes"]["sections"]["Section"].Count();
+
 
                     //Looping routes, collects section info from Triplinx and outputs to excel columns
+
+                    int routeColumnIndex = 0;
                     for (int sectionNum = 0; sectionNum < sectionCount; sectionNum++)
                     {
-                        int rowNumberAddition = (sectionNum) * 13;
+                        int rowNumberAddition = (routeColumnIndex) * 13;
+
+                        string mode = GetValuesFromTripLinxData(objTripLinx, "Route_Trans_Mode", sectionNum);
+
+
+                        // determine if this is a walk leg of the route
+                        // if walk, continue parsing route information
+                        if (objTripLinx["routes"]["sections"]["Section"][sectionNum]?["Leg"].Type != JTokenType.Null)
+                        {
+                            if (objTripLinx["routes"]["sections"]["Section"][sectionNum]["Leg"]?["TransportMode"]?.Value<string>() == "WALK" ||
+                            objTripLinx["routes"]["sections"]["Section"][sectionNum]["Leg"]?["TransportMode"]?.Value<string>() == "CAR")
+                            {
+                                continue;
+                            }
+                        }
 
                         //Route_Accs_Stn_Num
                         worksheet.Cells[rowNumber, 11 + rowNumberAddition].Value = GetValuesFromTripLinxData(objTripLinx, "Route_Accs_Stn_Num", sectionNum);
@@ -1203,6 +1223,7 @@ namespace TRAISI.Export
                         {
                             n_Local++;
                         }
+                        routeColumnIndex++;
                     }
                     //Use_TTC
                     worksheet.Cells[rowNumber, 154].Value = ttcValue;
@@ -1233,6 +1254,8 @@ namespace TRAISI.Export
 
                     //N_Other
                     worksheet.Cells[rowNumber, 163].Value = String.Empty;
+
+
                 }
             }
         }
@@ -1295,13 +1318,13 @@ namespace TRAISI.Export
 
                     // Respondent ID (Unique) 
                     worksheet.Cells[rowNumber, 1].Value = respondent.Id;
-                    
+
                     // Household ID        
                     worksheet.Cells[rowNumber, 2].Value = respondent.SurveyRespondentGroup.Id;
-                   
+
                     //Person ID 
                     worksheet.Cells[rowNumber, 3].Value = respondent.SurveyRespondentGroup.GroupMembers.IndexOf(respondent) + 1;
-                   
+
                     //Trip Number  
                     worksheet.Cells[rowNumber, 4].Value = trpNumber.ToString();
 
@@ -1435,7 +1458,7 @@ namespace TRAISI.Export
             // process questions
             // build dictionary of questions and column numbers
             var questionColumnDict = new Dictionary<QuestionPart, int>();
-            
+
             // place questions on headers and add to dictionary
             var columnNum = 6;
 
@@ -1483,7 +1506,7 @@ namespace TRAISI.Export
                 }
                 columnNum += 1;
             }
-            
+
             // Assign row number for each respondent
             var respondentRowNum = new Dictionary<SurveyRespondent, int>();
             var rowNum = 2;
@@ -1616,7 +1639,7 @@ namespace TRAISI.Export
             // assign row number for each respondent
             var respondentRowNum = new Dictionary<SurveyRespondent, int>();
             var rowNum = 2;
-            
+
             var responseGroup = surveyResponses.GroupBy(r => r.Respondent).Select(g => g).ToList().OrderBy(x => x.Key.SurveyRespondentGroup.Id);
             foreach (var group in responseGroup)
             {
@@ -1633,10 +1656,10 @@ namespace TRAISI.Export
                 {
                     // Respondent ID (Unique)                
                     worksheet.Cells[respondentRowNum[respondent], 1].Value = respondent.Id;
-            
+
                     // Household ID          
                     worksheet.Cells[respondentRowNum[respondent], 2].Value = respondent.SurveyRespondentGroup.Id;
-            
+
                     //Household PsId(Unique)
                     try
                     {
