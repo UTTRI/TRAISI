@@ -1527,7 +1527,7 @@ namespace TRAISI.Export
                                 var itemProperties = item.Children<JProperty>();
                                 var myElement = itemProperties.FirstOrDefault(x => x.Name == "other");
                                 var myElementValue = myElement.Value;
-                                
+
                                 //MatrixResponse values
                                 var columnNames = response.QuestionPart.QuestionOptions.ToList();
                                 var filteredColNames = columnNames.Where(x => x.Name == "Column Options").ToList();
@@ -1723,9 +1723,8 @@ namespace TRAISI.Export
                                         questionColumnDict[response.QuestionPart]].Value
                             = ReadSingleResponse(response);
                         }
-
-                        //Online and In-store responses
-                        if (response.QuestionPart.Name.Contains("Online shopping frequency") && response.QuestionPart.Name.Contains("In-store shopping frequency"))
+                        //Online frequency responses
+                        if (response.QuestionPart.Name.Contains("Online shopping frequency"))// && response.QuestionPart.Name.Contains("In-store shopping frequency"))
                         {
                             //Matrix questions
                             var matrixresponses = surveyResponses.Where(r => this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ClassName ==
@@ -1734,25 +1733,57 @@ namespace TRAISI.Export
                             foreach (var matres in matrixresponses)
                             {
                                 JArray parsedMatResponse = JArray.Parse(((JsonResponse)matres.First().ResponseValues[0]).Value);
-                                var subResponse = parsedMatResponse.ToList();
 
-                                //Online shopping frequency-matrix question responses
-                                // if (response.QuestionPart.Name.Contains("Online shopping frequency"))
-                                //{
-                                //Online/In-store shopping frequency
-                                worksheet.Cells[respondentRowNum[respondent],
-                                            questionColumnDict[response.QuestionPart]].Value
-                                = subResponse;
-                                //}
-                                /*  else if (response.QuestionPart.Name.Contains("In-store shopping frequency"))
-                                 {
-                                     //In-store shopping frequency-matrix question responses
-                                     worksheet.Cells[respondentRowNum[respondent],
-                                                 questionColumnDict[response.QuestionPart]].Value
-                                     = subResponse;
-                                 } */
+                                foreach (var item in parsedMatResponse.Children())
+                                {
+                                    var itemProperties = item.Children<JProperty>();
+                                    var myElement = itemProperties.FirstOrDefault(x => x.Name == "other");
+                                    var myElementValue = myElement.Value;
+
+                                    //MatrixResponse values
+                                    var columnNames = response.QuestionPart.QuestionOptions.ToList();
+                                    var filteredColNames = columnNames.Where(x => x.Name == "Column Options").ToList();
+                                    for (int i = 0; i < filteredColNames.Count(); i++)
+                                    {
+                                        //R1
+                                        worksheet.Cells[respondentRowNum[respondent],
+                                        questionColumnDict[response.QuestionPart] + i].Value
+                                        = filteredColNames[i].Code;
+                                    }
+                                }
                             }
                         }
+                        //In-store frequency responses
+                        if(response.QuestionPart.Name.Contains("In-store shopping frequency"))
+                        {
+                            //Matrix questions
+                            var matrixresponses = surveyResponses.Where(r => this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ClassName ==
+                                                    typeof(MatrixQuestion).Name).GroupBy(r => r.Respondent).Select(g => g).OrderBy(x => x.Key.SurveyRespondentGroup.Id).ToList();
+
+                            foreach (var matres in matrixresponses)
+                            {
+                                JArray parsedMatResponse = JArray.Parse(((JsonResponse)matres.First().ResponseValues[0]).Value);
+
+                                foreach (var item in parsedMatResponse.Children())
+                                {
+                                    var itemProperties = item.Children<JProperty>();
+                                    var myElement = itemProperties.FirstOrDefault(x => x.Name == "other");
+                                    var myElementValue = myElement.Value;
+
+                                    //MatrixResponse values
+                                    var columnNames = response.QuestionPart.QuestionOptions.ToList();
+                                    var filteredColNames = columnNames.Where(x => x.Name == "Column Options").ToList();
+                                    for (int i = 0; i < filteredColNames.Count(); i++)
+                                    {
+                                        //R1
+                                        worksheet.Cells[respondentRowNum[respondent],
+                                        questionColumnDict[response.QuestionPart] + i].Value
+                                        = filteredColNames[i].Code;
+                                    }
+                                }
+                            }
+                        }
+ 
                     }
                 }
             }
