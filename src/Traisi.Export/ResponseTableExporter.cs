@@ -1521,24 +1521,22 @@ namespace TRAISI.Export
                         foreach (var matres in matrixresponses)
                         {
                             JArray parsedMatResponse = JArray.Parse(((JsonResponse)matres.First().ResponseValues[0]).Value);
-                                    
+
                             foreach (var item in parsedMatResponse.Children())
                             {
                                 var itemProperties = item.Children<JProperty>();
                                 var myElement = itemProperties.FirstOrDefault(x => x.Name == "other");
                                 var myElementValue = myElement.Value;
-                                //MatrixResponse values
-                                var columnNames = response.QuestionPart.QuestionOptions.ToList().OrderBy(x => x.Order);
                                 
-                                foreach (var columnName in columnNames)
+                                //MatrixResponse values
+                                var columnNames = response.QuestionPart.QuestionOptions.ToList();
+                                var filteredColNames = columnNames.Where(x => x.Name == "Column Options").ToList();
+                                for (int i = 0; i < filteredColNames.Count(); i++)
                                 {
-                                    //Column responses
-                                    if (columnName?.Name == "Column Options")
-                                    {
-                                        worksheet.Cells[respondentRowNum[respondent],
-                                                    questionColumnDict[response.QuestionPart]].Value
-                                        = columnName?.Code;
-                                    }
+                                    //R1
+                                    worksheet.Cells[respondentRowNum[respondent],
+                                                questionColumnDict[response.QuestionPart] + i].Value
+                                    = filteredColNames[i].Code;
                                 }
                             }
                         }
