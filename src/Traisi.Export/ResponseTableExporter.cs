@@ -281,7 +281,7 @@ namespace TRAISI.Export
 
                     default:
                         break;
-                        
+
                 }
             }
             catch (System.Exception)
@@ -1452,6 +1452,20 @@ namespace TRAISI.Export
                 {
                     worksheet.Cells[1, columnNum].Value = questionPart.Name;
                 }
+                //Transit usage by purpose
+                if (this._questionTypeManager.QuestionTypeDefinitions[questionPart.QuestionType].ResponseType == QuestionResponseType.Json)
+                {
+                    var rowtitles = questionPart.QuestionOptions.ToList().OrderBy(x => x.Order);
+                    foreach (var rowtitle in rowtitles)
+                    {
+                        //Row question titles
+                        if (rowtitle?.Name == "Row Options")
+                        {
+                            worksheet.Cells[1, columnNum].Value = rowtitle?.Code + ":" + rowtitle?.QuestionOptionLabels["en"].Value;
+                            columnNum += 1;
+                        }
+                    }
+                }
                 columnNum += 1;
             }
 
@@ -1498,6 +1512,37 @@ namespace TRAISI.Export
                 //Question Part Location column
                 foreach (var response in responses)
                 {
+                    //Transit usage by purpose
+                    if (response.QuestionPart.Name.Contains("Transit usage by purpose"))
+                    {
+                        var matrixresponses = surveyResponses.Where(r => this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ClassName ==
+                                                    typeof(MatrixQuestion).Name).GroupBy(r => r.Respondent).Select(g => g).OrderBy(x => x.Key.SurveyRespondentGroup.Id).ToList();
+
+                        foreach (var matres in matrixresponses)
+                        {
+                            JArray parsedMatResponse = JArray.Parse(((JsonResponse)matres.First().ResponseValues[0]).Value);
+                                    
+                            foreach (var item in parsedMatResponse.Children())
+                            {
+                                var itemProperties = item.Children<JProperty>();
+                                var myElement = itemProperties.FirstOrDefault(x => x.Name == "other");
+                                var myElementValue = myElement.Value;
+                                //MatrixResponse values
+                                var columnNames = response.QuestionPart.QuestionOptions.ToList().OrderBy(x => x.Order);
+                                
+                                foreach (var columnName in columnNames)
+                                {
+                                    //Column responses
+                                    if (columnName?.Name == "Column Options")
+                                    {
+                                        worksheet.Cells[respondentRowNum[respondent],
+                                                    questionColumnDict[response.QuestionPart]].Value
+                                        = columnName?.Code;
+                                    }
+                                }
+                            }
+                        }
+                    }
                     //Location column                    
                     if (response.QuestionPart.Name.Contains("location"))
                     {
@@ -1561,11 +1606,8 @@ namespace TRAISI.Export
 
                 questionColumnDict.Add(questionPart, columnNum);
 
-                if (!questionPart.Name.Contains("location"))
-                {
-                    worksheet.Cells[1, columnNum].Value = questionPart.Name;
-                }
-                else
+                //Location
+                if (this._questionTypeManager.QuestionTypeDefinitions[questionPart.QuestionType].ResponseType == QuestionResponseType.Location)
                 {
                     //Adding Address to School and Work Location Questions Parts
                     worksheet.Cells[1, columnNum].Value = questionPart.Name + ": Addr";
@@ -1581,6 +1623,29 @@ namespace TRAISI.Export
 
                     //Adding Longitude to School and Work Location Questions Parts
                     worksheet.Cells[1, columnNum].Value = questionPart.Name + ": Lng";
+                }
+                else
+                {
+                    worksheet.Cells[1, columnNum].Value = questionPart.Name;
+                }
+                //Online and In-store shopping frequency columns
+                if (this._questionTypeManager.QuestionTypeDefinitions[questionPart.QuestionType].ResponseType == QuestionResponseType.Json)
+                {
+                    var rowtitles = questionPart.QuestionOptions.ToList().OrderBy(x => x.Order);
+                    foreach (var rowtitle in rowtitles)
+                    {
+                        //Row question titles
+                        if (rowtitle?.Name == "Row Options" && questionPart.Name.Contains("Online shopping frequency"))
+                        {
+                            worksheet.Cells[1, columnNum].Value = "Online-" + rowtitle?.Code + ":" + rowtitle?.QuestionOptionLabels["en"].Value;
+                            columnNum += 1;
+                        }
+                        else if (rowtitle?.Name == "Row Options" && questionPart.Name.Contains("In-store shopping frequency"))
+                        {
+                            worksheet.Cells[1, columnNum].Value = "In-store-" + rowtitle?.Code + ":" + rowtitle?.QuestionOptionLabels["en"].Value;
+                            columnNum += 1;
+                        }
+                    }
                 }
                 columnNum += 1;
             }
@@ -1613,27 +1678,22 @@ namespace TRAISI.Export
                     {
                         if (respondent is PrimaryRespondent primaryRespondent)
                         {
-                            var result = JObject.Parse(primaryRespondent.SurveyAccessRecords.FirstOrDefault()?.QueryParams)["psid"]?.Value<string>();
+                            var result = JObject.Parse(primaryRespondent.SurveyAccessRecords.FirstOrDefault()?.QueryParams)["uid"]?.Value<string>();
                             worksheet.Cells[respondentRowNum[respondent], 3].Value = result;
                         }
                         else if (respondent is SubRespondent subRespondent)
                         {
-                            var result = JObject.Parse(subRespondent.PrimaryRespondent.SurveyAccessRecords.FirstOrDefault()?.QueryParams)["psid"]?.Value<string>();
+                            var result = JObject.Parse(subRespondent.PrimaryRespondent.SurveyAccessRecords.FirstOrDefault()?.QueryParams)["uid"]?.Value<string>();
                             worksheet.Cells[respondentRowNum[respondent], 3].Value = result;
                         }
                     }
                     catch { }
 
-                    //Question Part Location column 
+                    //Question parts responses 
                     foreach (var response in responses)
                     {
-                        if (!response.QuestionPart.Name.Contains("location"))
-                        {
-                            worksheet.Cells[respondentRowNum[respondent],
-                                            questionColumnDict[response.QuestionPart]].Value
-                                = ReadSingleResponse(response);
-                        }
-                        else
+                        //Location question part
+                        if (response.QuestionPart.Name.Contains("location"))
                         {
                             //Address
                             locationPart = "_address";
@@ -1658,7 +1718,42 @@ namespace TRAISI.Export
                             worksheet.Cells[respondentRowNum[respondent],
                                         questionColumnDict[response.QuestionPart] + 3].Value
                             = ReadSingleResponse(response);
+                        }
+                        else
+                        {
+                            worksheet.Cells[respondentRowNum[respondent],
+                                        questionColumnDict[response.QuestionPart]].Value
+                            = ReadSingleResponse(response);
+                        }
 
+                        //Online and In-store responses
+                        if (response.QuestionPart.Name.Contains("Online shopping frequency") && response.QuestionPart.Name.Contains("In-store shopping frequency"))
+                        {
+                            //Matrix questions
+                            var matrixresponses = surveyResponses.Where(r => this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ClassName ==
+                                                    typeof(MatrixQuestion).Name).GroupBy(r => r.Respondent).Select(g => g).OrderBy(x => x.Key.SurveyRespondentGroup.Id).ToList();
+
+                            foreach (var matres in matrixresponses)
+                            {
+                                JArray parsedMatResponse = JArray.Parse(((JsonResponse)matres.First().ResponseValues[0]).Value);
+                                var subResponse = parsedMatResponse.ToList();
+
+                                //Online shopping frequency-matrix question responses
+                                // if (response.QuestionPart.Name.Contains("Online shopping frequency"))
+                                //{
+                                //Online/In-store shopping frequency
+                                worksheet.Cells[respondentRowNum[respondent],
+                                            questionColumnDict[response.QuestionPart]].Value
+                                = subResponse;
+                                //}
+                                /*  else if (response.QuestionPart.Name.Contains("In-store shopping frequency"))
+                                 {
+                                     //In-store shopping frequency-matrix question responses
+                                     worksheet.Cells[respondentRowNum[respondent],
+                                                 questionColumnDict[response.QuestionPart]].Value
+                                     = subResponse;
+                                 } */
+                            }
                         }
                     }
                 }
