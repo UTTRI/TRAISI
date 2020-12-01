@@ -1455,15 +1455,13 @@ namespace TRAISI.Export
                 //Transit usage by purpose
                 if (this._questionTypeManager.QuestionTypeDefinitions[questionPart.QuestionType].ResponseType == QuestionResponseType.Json)
                 {
-                    var rowtitles = questionPart.QuestionOptions.ToList().OrderBy(x => x.Order);
-                    foreach (var rowtitle in rowtitles)
+                    var rowNames = questionPart.QuestionOptions.ToList().OrderBy(x => x.Order);
+                    var filteredRowNames = rowNames.Where(x => x.Name == "Row Options").ToList();
+                    for (int i = 0; i < filteredRowNames.Count(); i++)
                     {
                         //Row question titles
-                        if (rowtitle?.Name == "Row Options")
-                        {
-                            worksheet.Cells[1, columnNum].Value = rowtitle?.Code + ":" + rowtitle?.QuestionOptionLabels["en"].Value;
-                            columnNum += 1;
-                        }
+                        worksheet.Cells[1, columnNum].Value = filteredRowNames[i]?.Code + ":" + filteredRowNames[i]?.QuestionOptionLabels["en"].Value;
+                        columnNum += 1;
                     }
                 }
                 columnNum += 1;
@@ -1629,21 +1627,22 @@ namespace TRAISI.Export
                 //Online and In-store shopping frequency columns
                 if (this._questionTypeManager.QuestionTypeDefinitions[questionPart.QuestionType].ResponseType == QuestionResponseType.Json)
                 {
-                    var rowtitles = questionPart.QuestionOptions.ToList().OrderBy(x => x.Order);
-                    foreach (var rowtitle in rowtitles)
+                    var rowNames = questionPart.QuestionOptions.ToList().OrderBy(x => x.Order);
+                    var filteredRowNames = rowNames.Where(x => x.Name == "Row Options").ToList();
+                    for (int i = 0; i < filteredRowNames.Count(); i++)
                     {
                         //Row question titles
-                        if (rowtitle?.Name == "Row Options" && questionPart.Name.Contains("Online shopping frequency"))
+                        if (questionPart.Name.Contains("Online shopping frequency"))
                         {
-                            worksheet.Cells[1, columnNum].Value = "Online-" + rowtitle?.Code + ":" + rowtitle?.QuestionOptionLabels["en"].Value;
+                        worksheet.Cells[1, columnNum].Value = "Online-" + filteredRowNames[i]?.Code + ":" + filteredRowNames[i]?.QuestionOptionLabels["en"].Value;
+                        columnNum += 1;
+                        }
+                        else if (questionPart.Name.Contains("In-store shopping frequency"))
+                        {
+                            worksheet.Cells[1, columnNum].Value = "In-store-" + filteredRowNames[i]?.Code + ":" + filteredRowNames[i]?.QuestionOptionLabels["en"].Value;
                             columnNum += 1;
                         }
-                        else if (rowtitle?.Name == "Row Options" && questionPart.Name.Contains("In-store shopping frequency"))
-                        {
-                            worksheet.Cells[1, columnNum].Value = "In-store-" + rowtitle?.Code + ":" + rowtitle?.QuestionOptionLabels["en"].Value;
-                            columnNum += 1;
-                        }
-                    }
+                    }                     
                 }
                 columnNum += 1;
             }
@@ -1754,7 +1753,7 @@ namespace TRAISI.Export
                             }
                         }
                         //In-store frequency responses
-                        if(response.QuestionPart.Name.Contains("In-store shopping frequency"))
+                        if (response.QuestionPart.Name.Contains("In-store shopping frequency"))
                         {
                             //Matrix questions
                             var matrixresponses = surveyResponses.Where(r => this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ClassName ==
@@ -1783,7 +1782,7 @@ namespace TRAISI.Export
                                 }
                             }
                         }
- 
+
                     }
                 }
             }
