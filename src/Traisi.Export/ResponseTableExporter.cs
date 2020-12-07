@@ -1468,38 +1468,23 @@ namespace TRAISI.Export
                         // matrixMap[""]
                         worksheet.Cells[1, columnNum + i].Value = filteredColNames[i]?.Code + "-" + filteredColNames[i]?.QuestionOptionLabels["en"].Value;
                         matrixColMap[questionPart][filteredColNames[i]?.QuestionOptionLabels["en"].Value] = i;
-
                     }
                     for (var i = 0; i < filteredRowNames.Count; i++)
                     {
                         // matrixMap[""]
-                        // worksheet.Cells[1, columnNum+i].Value = filteredColNames[i]?.Code + "-"+filteredColNames[i]?.QuestionOptionLabels["en"].Value;
                         matrixMap[questionPart][filteredRowNames[i]?.QuestionOptionLabels["en"].Value] = filteredRowNames[i]?.Code;
                     }
                     columnNum += filteredColNames.Count;
                     continue;
-
 
                 }
                 else
                 {
                     worksheet.Cells[1, columnNum].Value = questionPart.Name;
                 }
-                //Transit usage by purpose
-                /*if (this._questionTypeManager.QuestionTypeDefinitions[questionPart.QuestionType].ResponseType == QuestionResponseType.Json)
-                {
-                    var rowNames = questionPart.QuestionOptions.ToList().OrderBy(x => x.Order);
-                    var filteredRowNames = rowNames.Where(x => x.Name == "Row Options").ToList();
-                    for (int i = 0; i < filteredRowNames.Count(); i++)
-                    {
-                        //Row question titles
-                        worksheet.Cells[1, columnNum].Value = filteredRowNames[i]?.Code + ":" + filteredRowNames[i]?.QuestionOptionLabels["en"].Value;
-                        columnNum += 1;
-                    }
-                }*/
                 columnNum += 1;
-            }
 
+            }
             // Assign row number for each respondent
             var respondentRowNum = new Dictionary<SurveyRespondent, int>();
             var rowNum = 2;
@@ -1539,14 +1524,14 @@ namespace TRAISI.Export
                     {
                         worksheet.Cells[respondentRowNum[respondent], 5].Value = respondent.Relationship;
                     }
-                }
 
+                }
+                //Matrix Responses
                 var matrixresponses = responses.Where(r => this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ClassName ==
-    typeof(MatrixQuestion).Name).GroupBy(r => r.Respondent).Select(g => g).OrderBy(x => x.Key.SurveyRespondentGroup.Id).ToList();
+                                            typeof(MatrixQuestion).Name).GroupBy(r => r.Respondent).Select(g => g).OrderBy(x => x.Key.SurveyRespondentGroup.Id).ToList();
 
                 foreach (var matres in matrixresponses)
                 {
-
                     foreach (var matrixResponse in matres)
                     {
                         JArray parsedMatResponse = JArray.Parse(((JsonResponse)matrixResponse.ResponseValues[0]).Value);
@@ -1554,8 +1539,6 @@ namespace TRAISI.Export
                         {
                             var itemProperties = item.Children<JProperty>().ToList();
                             //MatrixResponse values
-                            // var columnNames = response.QuestionPart.QuestionOptions.ToList();
-                            // var filteredColNames = columnNames.Where(x => x.Name == "Column Options").ToList();
                             for (int i = 0; i < itemProperties.Count; i++)
                             {
                                 var itemProperty = itemProperties[i];
@@ -1568,48 +1551,19 @@ namespace TRAISI.Export
                             }
                         }
                     }
-
                 }
-
-                //Question Part Location column
+                //Question Part responses
                 foreach (var response in responses)
                 {
-                    //Transit usage by purpose
-
-                    //var matrixresponses = surveyResponses.Where(r => this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ClassName ==
-                    //                            typeof(MatrixQuestion).Name).GroupBy(r => r.Respondent).Select(g => g).OrderBy(x => x.Key.SurveyRespondentGroup.Id).ToList();
-
-                    /* foreach (var matres in matrixresponses)
-                     {
-                         JArray parsedMatResponse = JArray.Parse(((JsonResponse)matres.First().ResponseValues[0]).Value);
-
-                         foreach (var item in parsedMatResponse.Children())
-                         {
-                             var itemProperties = item.Children<JProperty>();
-                             var myElement = itemProperties.FirstOrDefault(x => x.Name == "other");
-                             var myElementValue = myElement.Value;
-
-                             //MatrixResponse values
-                             var columnNames = response.QuestionPart.QuestionOptions.ToList();
-                             var filteredColNames = columnNames.Where(x => x.Name == "Column Options").ToList();
-                             for (int i = 0; i < filteredColNames.Count(); i++)
-                             {
-                                 //R1
-                                 worksheet.Cells[respondentRowNum[respondent],
-                                             questionColumnDict[response.QuestionPart] + i].Value
-                                 = filteredColNames[i].Code;
-                             }
-                         }
-                     } */
-
-                    //Location column              
+                    //Matrix question              
                     if (this._questionTypeManager.QuestionTypeDefinitions[response.QuestionPart.QuestionType].ClassName ==
-    typeof(MatrixQuestion).Name)
+                                typeof(MatrixQuestion).Name)
                     {
                         continue;
                     }
+                    //Location column
                     else if (this._questionTypeManager.QuestionTypeDefinitions[response.QuestionPart.QuestionType].ResponseType ==
-    QuestionResponseType.Location)
+                                QuestionResponseType.Location)
                     {
                         //Address
                         locationPart = "_address";
@@ -1645,7 +1599,6 @@ namespace TRAISI.Export
             }
         }
 
-
         public void ResponsesPivot_HouseHold(
         List<QuestionPart> questionParts,
         List<SurveyResponse> surveyResponses,
@@ -1673,7 +1626,6 @@ namespace TRAISI.Export
                 {
                     continue;
                 }
-
                 questionColumnDict.Add(questionPart, columnNum);
 
                 //Location
@@ -1711,44 +1663,22 @@ namespace TRAISI.Export
                         // matrixMap[""]
                         worksheet.Cells[1, columnNum + i].Value = filteredColNames[i]?.Code + "-" + filteredColNames[i]?.QuestionOptionLabels["en"].Value;
                         matrixColMap[questionPart][filteredColNames[i]?.QuestionOptionLabels["en"].Value] = i;
-
                     }
                     for (var i = 0; i < filteredRowNames.Count; i++)
                     {
                         // matrixMap[""]
-                        // worksheet.Cells[1, columnNum+i].Value = filteredColNames[i]?.Code + "-"+filteredColNames[i]?.QuestionOptionLabels["en"].Value;
                         matrixMap[questionPart][filteredRowNames[i]?.QuestionOptionLabels["en"].Value] = filteredRowNames[i]?.Code;
                     }
                     columnNum += filteredColNames.Count;
                     continue;
-
 
                 }
                 else
                 {
                     worksheet.Cells[1, columnNum].Value = questionPart.Name;
                 }
-                //Online and In-store shopping frequency columns
-                /*if (this._questionTypeManager.QuestionTypeDefinitions[questionPart.QuestionType].ResponseType == QuestionResponseType.Json)
-                {
-                    var rowNames = questionPart.QuestionOptions.ToList().OrderBy(x => x.Order);
-                    var filteredRowNames = rowNames.Where(x => x.Name == "Row Options").ToList();
-                    for (int i = 0; i < filteredRowNames.Count(); i++)
-                    {
-                        //Row question titles
-                        if (questionPart.Name.Contains("Online shopping frequency"))
-                        {
-                            worksheet.Cells[1, columnNum].Value = "Online-" + filteredRowNames[i]?.Code + ":" + filteredRowNames[i]?.QuestionOptionLabels["en"].Value;
-                            columnNum += 1;
-                        }
-                        else if (questionPart.Name.Contains("In-store shopping frequency"))
-                        {
-                            worksheet.Cells[1, columnNum].Value = "In-store-" + filteredRowNames[i]?.Code + ":" + filteredRowNames[i]?.QuestionOptionLabels["en"].Value;
-                            columnNum += 1;
-                        }
-                    }
-                }*/
                 columnNum += 1;
+
             }
             // assign row number for each respondent
             var respondentRowNum = new Dictionary<SurveyRespondent, int>();
@@ -1779,12 +1709,12 @@ namespace TRAISI.Export
                     {
                         if (respondent is PrimaryRespondent primaryRespondent)
                         {
-                            var result = JObject.Parse(primaryRespondent.SurveyAccessRecords.FirstOrDefault()?.QueryParams)["uid"]?.Value<string>();
+                            var result = JObject.Parse(primaryRespondent.SurveyAccessRecords.FirstOrDefault()?.QueryParams)["psid"]?.Value<string>();
                             worksheet.Cells[respondentRowNum[respondent], 3].Value = result;
                         }
                         else if (respondent is SubRespondent subRespondent)
                         {
-                            var result = JObject.Parse(subRespondent.PrimaryRespondent.SurveyAccessRecords.FirstOrDefault()?.QueryParams)["uid"]?.Value<string>();
+                            var result = JObject.Parse(subRespondent.PrimaryRespondent.SurveyAccessRecords.FirstOrDefault()?.QueryParams)["psid"]?.Value<string>();
                             worksheet.Cells[respondentRowNum[respondent], 3].Value = result;
                         }
                     }
@@ -1796,7 +1726,6 @@ namespace TRAISI.Export
 
                     foreach (var matres in matrixresponses)
                     {
-
                         foreach (var matrixResponse in matres)
                         {
                             JArray parsedMatResponse = JArray.Parse(((JsonResponse)matrixResponse.ResponseValues[0]).Value);
@@ -1804,22 +1733,20 @@ namespace TRAISI.Export
                             {
                                 var itemProperties = item.Children<JProperty>().ToList();
                                 //MatrixResponse values
-                                // var columnNames = response.QuestionPart.QuestionOptions.ToList();
-                                // var filteredColNames = columnNames.Where(x => x.Name == "Column Options").ToList();
                                 for (int i = 0; i < itemProperties.Count; i++)
                                 {
                                     var itemProperty = itemProperties[i];
                                     var column = matrixColMap[matrixResponse.QuestionPart][itemProperty.Name];
                                     var colValue = matrixMap[matrixResponse.QuestionPart][itemProperty.Value.Value<string>()];
                                     worksheet.Cells[respondentRowNum[respondent],
-                                    questionColumnDict[matrixResponse.QuestionPart] + i].Value
+                                    questionColumnDict[matrixResponse.QuestionPart] + i].Value 
                                     = colValue;
 
                                 }
                             }
                         }
-
                     }
+
                     foreach (var response in responses)
                     {
                         //Location question part
@@ -1849,13 +1776,11 @@ namespace TRAISI.Export
                                         questionColumnDict[response.QuestionPart] + 3].Value
                             = ReadSingleResponse(response);
                         }
-
-                        //Online frequency responses
+                        //Shopping frequency responses
                         if (this._questionTypeManager.QuestionTypeDefinitions[response.QuestionPart.QuestionType].ClassName ==
                                                     typeof(MatrixQuestion).Name)// && response.QuestionPart.Name.Contains("In-store shopping frequency"))
                         {
-                            //Matrix questions
-
+                            continue;
                         }
                         else
                         {
@@ -1863,37 +1788,6 @@ namespace TRAISI.Export
                                         questionColumnDict[response.QuestionPart]].Value
                             = ReadSingleResponse(response);
                         }
-                        //In-store frequency responses
-
-                        /*if (response.QuestionPart.Name.Contains("In-store shopping frequency"))
-                        {
-                            //Matrix questions
-                            var matrixresponses = surveyResponses.Where(r => this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ClassName ==
-                                                    typeof(MatrixQuestion).Name).GroupBy(r => r.Respondent).Select(g => g).OrderBy(x => x.Key.SurveyRespondentGroup.Id).ToList();
-
-                            foreach (var matres in matrixresponses)
-                            {
-                                JArray parsedMatResponse = JArray.Parse(((JsonResponse)matres.First().ResponseValues[0]).Value);
-
-                                foreach (var item in parsedMatResponse.Children())
-                                {
-                                    var itemProperties = item.Children<JProperty>();
-                                    var myElement = itemProperties.FirstOrDefault(x => x.Name == "other");
-                                    var myElementValue = myElement.Value;
-
-                                    //MatrixResponse values
-                                    var columnNames = response.QuestionPart.QuestionOptions.ToList();
-                                    var filteredColNames = columnNames.Where(x => x.Name == "Column Options").ToList();
-                                    for (int i = 0; i < filteredColNames.Count(); i++)
-                                    {
-                                        //R1
-                                        worksheet.Cells[respondentRowNum[respondent],
-                                        questionColumnDict[response.QuestionPart] + i].Value
-                                        = filteredColNames[i].Code;
-                                    }
-                                }
-                            }
-                        } */
 
                     }
                 }
