@@ -61,7 +61,7 @@
 		<ProjectReference Include="..\Traisi.Questions\Traisi.Questions.csproj" />
 		<ProjectReference Include="..\Traisi.Sdk\Traisi.Sdk.csproj" />
 		<ProjectReference Include="..\Traisi.Models\Traisi.Models.csproj" />
-		<!-- <ProjectReference Include="..\TRAISI.Export\Traisi.Export.csproj" /> -->
+		<ProjectReference Include="..\TRAISI.Export\Traisi.Export.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />

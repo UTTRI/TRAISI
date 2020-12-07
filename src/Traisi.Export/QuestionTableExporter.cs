@@ -9,7 +9,6 @@ using System.Web;
 using HtmlAgilityPack;
 using System.Data;
 using Traisi.Data.Models.Questions;
-using Traisi.Helpers;
 using Traisi.Data;
 using Traisi.Sdk.Services;
 

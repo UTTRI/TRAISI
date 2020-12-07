@@ -10,7 +10,6 @@ using System.Data;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 using Traisi.Data;
-using Traisi.Controllers;
 using Traisi.Sdk.Services;
 using Traisi.Data.Models.ResponseTypes;
 using Traisi.Sdk.Enums;
@@ -18,7 +17,6 @@ using Traisi.Data.Models.Surveys;
 using Traisi.Data.Models.Questions;
 using Traisi.Sdk.Interfaces;
 using Traisi.Sdk.Questions;
-
 
 namespace TRAISI.Export
 {

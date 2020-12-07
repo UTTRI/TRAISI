@@ -10,8 +10,7 @@ using System.Drawing;
 using System.Data;
 using System.Collections.Generic;
 using Traisi.Data.Models.Questions;
-using Traisi;
-using Traisi.Helpers;
+using Traisi.Data;
 using Traisi.Sdk.Services;
 
 namespace TRAISI.Export

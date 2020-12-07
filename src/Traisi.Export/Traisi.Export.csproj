@@ -9,7 +9,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Traisi.Data\Traisi.Data.csproj" />
       <ProjectReference Include="..\Traisi.Sdk\Traisi.Sdk.csproj" />
-      <ProjectReference Include="..\Traisi\Traisi.csproj" />
+      <ProjectReference Include="..\Traisi.Questions\Traisi.Questions.csproj" />
     </ItemGroup>
 
     <ItemGroup>
