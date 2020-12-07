@@ -1,6 +1,7 @@
 import { Routes, RouterModule } from '@angular/router';
 import { LayoutComponent } from './layout.component';
 import { ChatAppComponent } from '../chat-app/chat-app.component';
+
 const routes: Routes = [
 	{
 		path: '',
@@ -40,6 +41,10 @@ const routes: Routes = [
 			{
 				path: 'survey-analyze',
 				loadChildren: () => import('../survey-analyze/survey-analyze.module').then(m => m.SurveyAnalyzeModule)
+			},
+			{
+				path: 'survey-exportresponses',
+				loadChildren: () => import('../survey-exportresponses/survey-exportresponses.module').then(m => m.SurveyExportresponsesModule)
 			},
 			{
 				path: 'samples',

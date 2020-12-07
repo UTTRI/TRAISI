@@ -284,6 +284,17 @@ namespace Traisi.Controllers
 
         }
 
+        [AllowAnonymous]
+        [HttpGet("{id}/exportresponses")]
+        public async Task<IActionResult> ExportResponses(int id)
+        {
+            var survey = await this._unitOfWork.Surveys.GetAsync(id);
+            string code = this._fileDownloader.GenerateFileCode();
+            string fileName = await this._fileDownloader.ExportResponses(code, this.User.Identity.Name, survey);
+            var stream = new FileStream(fileName, FileMode.Open);
+            return File(stream, "application/octet-stream", $"{survey.Code}.zip");
+        } 
+
         [HttpPost("import"), DisableRequestSizeLimit]
         public async Task<IActionResult> ImportSurvey()
         {

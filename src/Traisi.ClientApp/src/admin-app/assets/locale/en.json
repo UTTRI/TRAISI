@@ -98,7 +98,7 @@
 			"Solo": "Solo",
 			"Shared": "Shared",
 			"NewSurvey": "New Survey",
-			"ImportSurvey": "Import Survey",
+      "ImportSurvey": "Import Survey",
 			"Search": "Search for survey...",
 			"Edit": "Edit",
 			"Delete": "Delete",
@@ -106,6 +106,9 @@
     },
     "analyze":{
       "SampleAnalysis": "Survey Sample Distribution Data"
+    },
+    "surveyresponse":{
+      "ExportResponses": "Export Responses"
     },
     "execute":{
       "Apply": "Apply",

@@ -79,6 +79,13 @@
 											Analyze
 										</button>
 										<button class="btn btn-primary col rounded-0"
+											[routerLink]="['/app/survey-exportresponses', row.id]">
+											<span>
+												<i class="fas fa-file-export" aria-hidden="true"></i>
+											</span>
+											Export Responses
+										</button>
+										<button class="btn btn-primary col rounded-0"
 											(click)="showSurveyShareDialog(row)">
 											<span>
 												<i class="fas fa-share" aria-hidden="true"></i>
