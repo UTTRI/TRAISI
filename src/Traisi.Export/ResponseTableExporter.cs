@@ -1748,7 +1748,8 @@ namespace TRAISI.Export
                     foreach (var response in responses)
                     {
                         //Location question part
-                        if (response.QuestionPart.Name.Contains("location"))
+                        if (this._questionTypeManager.QuestionTypeDefinitions[response.QuestionPart.QuestionType].ResponseType ==
+                                QuestionResponseType.Location)
                         {
                             //Address
                             locationPart = "_address";
@@ -1775,8 +1776,8 @@ namespace TRAISI.Export
                             = ReadSingleResponse(response);
                         }
                         //Shopping frequency responses
-                        if (this._questionTypeManager.QuestionTypeDefinitions[response.QuestionPart.QuestionType].ClassName ==
-                                                    typeof(MatrixQuestion).Name)// && response.QuestionPart.Name.Contains("In-store shopping frequency"))
+                        else if (this._questionTypeManager.QuestionTypeDefinitions[response.QuestionPart.QuestionType].ClassName ==
+                                                    typeof(MatrixQuestion).Name)
                         {
                             continue;
                         }
