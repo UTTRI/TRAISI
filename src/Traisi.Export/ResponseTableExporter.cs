@@ -1455,8 +1455,8 @@ namespace TRAISI.Export
                 {
                     // count number of columns
                     var columnNames = questionPart.QuestionOptions.ToList();
-                    var filteredColNames = columnNames.Where(x => x.Name == "Row Options").OrderBy(x => x.Code).ToList();
-                    var filteredRowNames = columnNames.Where(x => x.Name == "Column Options").OrderBy(x => x.Code).ToList();
+                    var filteredColNames = columnNames.Where(x => x.Name == "Row Options").OrderBy(x => x.Order).ToList();
+                    var filteredRowNames = columnNames.Where(x => x.Name == "Column Options").OrderBy(x => x.Order).ToList();
                     if (!matrixMap.ContainsKey(questionPart))
                     {
                         matrixMap[questionPart] = new Dictionary<string, string>();
@@ -1650,8 +1650,8 @@ namespace TRAISI.Export
                 {
                     // count number of columns
                     var columnNames = questionPart.QuestionOptions.ToList();
-                    var filteredColNames = columnNames.Where(x => x.Name == "Row Options").OrderBy(x => x.Code).ToList();
-                    var filteredRowNames = columnNames.Where(x => x.Name == "Column Options").OrderBy(x => x.Code).ToList();
+                    var filteredColNames = columnNames.Where(x => x.Name == "Row Options").OrderBy(x => x.Order).ToList();
+                    var filteredRowNames = columnNames.Where(x => x.Name == "Column Options").OrderBy(x => x.Order).ToList();
                     if (!matrixMap.ContainsKey(questionPart))
                     {
                         matrixMap[questionPart] = new Dictionary<string, string>();
