@@ -547,7 +547,7 @@ namespace Traisi
             services.AddScoped<IUnitOfWork, HttpUnitOfWork>();
             services.AddScoped<IAccountManager, AccountManager>();
 
-            services.AddSingleton<SurveyCache>();
+            services.AddSingleton<SurveyCache>();           
 
             // Auth Handlers
             services
@@ -655,6 +655,7 @@ namespace Traisi
                         .AddFilter("AspNet", LogLevel.Error)
                         .AddFilter("NToastNotify", LogLevel.Warning);
                 });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

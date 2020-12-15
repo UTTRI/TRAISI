@@ -52,6 +52,11 @@ const routes: Routes = [
 				data: { hasSidebar: true }
 			},
 			{
+				path: 'smartphonedata',
+				loadChildren: () => import('../smartphonedata-management/smartphonedata-management.module').then(m => m.SmartphonedataManagementModule),
+				data: { hasSidebar: true }
+			},
+			{
 				path: 'chat',
 				component: ChatAppComponent
 			}

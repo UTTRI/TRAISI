@@ -15,7 +15,7 @@ using Traisi.Sdk.Services;
 
 namespace TRAISI.Export
 {
-    class Program
+    public class Program
     {
 
         public static int Main(string[] args)

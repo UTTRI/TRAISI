@@ -17,6 +17,7 @@ using Traisi.Data.Models.Surveys;
 using Traisi.Data.Models.Questions;
 using Traisi.Sdk.Interfaces;
 using Traisi.Sdk.Questions;
+using System.IO;
 
 namespace TRAISI.Export
 {
@@ -119,7 +120,7 @@ namespace TRAISI.Export
 
             //this._geocontroller = new GeoServiceController(null, null);
         }
-
+       
         public List<SurveyResponse> ResponseList(List<QuestionPartView> questionPartViews)
         {
             return _context.SurveyResponses.AsQueryable()
@@ -1737,7 +1738,7 @@ namespace TRAISI.Export
                                     var column = matrixColMap[matrixResponse.QuestionPart][itemProperty.Name];
                                     var colValue = matrixMap[matrixResponse.QuestionPart][itemProperty.Value.Value<string>()];
                                     worksheet.Cells[respondentRowNum[respondent],
-                                    questionColumnDict[matrixResponse.QuestionPart] + i].Value 
+                                    questionColumnDict[matrixResponse.QuestionPart] + i].Value
                                     = colValue;
 
                                 }

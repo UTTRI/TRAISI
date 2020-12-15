@@ -1,6 +1,7 @@
+import { Time } from '@angular/common';
 import { SamplePermissions } from './sample-permissions.model';
-export class Sample {
-
+export class Sample 
+{
 	constructor(public id?: number,
 				public accessCode?: string,
 				public lastName?: string,
@@ -24,6 +25,7 @@ export class Sample {
 				public language?: string,
 				//public selectSearchKey?: string,
 				public styleTemplate?: string,
-				public samplePermissions?: SamplePermissions[]) {
-	}
+				public samplePermissions?: SamplePermissions[])
+				{
+		}
 }

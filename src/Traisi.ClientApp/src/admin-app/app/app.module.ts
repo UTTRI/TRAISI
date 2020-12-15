@@ -38,6 +38,7 @@ import { HTTP_INTERCEPTORS } from "@angular/common/http";
 import { TokenInterceptor } from "../../shared/interceptors/token.interceptor";
 import { NgSelectModule } from '@ng-select/ng-select';
 import "pace-progressbar";
+import { SmartphonedataManagementComponent } from './smartphonedata-management/smartphonedata-management.component';
 
 export function monacoLoad() {}
 
@@ -60,7 +61,7 @@ const APP_PROVIDERS = [AppConfig];
 		BootstrapTabDirective,
 		BootstrapToggleDirective,
 		BootstrapDatepickerDirective,
-		BootstrapSelectDirective,
+		BootstrapSelectDirective
 	],
 	imports: [
 		BrowserModule,

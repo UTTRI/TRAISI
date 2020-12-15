@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using System.Globalization;
 using Newtonsoft.Json.Converters;
+using TRAISI.Export;
 
 namespace Traisi.Helpers
 {
@@ -23,7 +24,6 @@ namespace Traisi.Helpers
     {
         string GenerateFileCode();
         Task<string> ExportSurvey(string code, string userName, Survey survey);
-        Task<string> ExportResponses(string code, string userName, Survey survey);
         Task<Survey> ExtractSurveyImportAsync(IFormFile importFile, string userName);
         void WriteShortcodeFile(string code, string userName, string mode, Survey survey);
         void WriteGroupCodeFile(string code, string userName, string mode, Survey survey);
@@ -94,39 +94,6 @@ namespace Traisi.Helpers
             }
         }
         
-        //Export Survey Responses
-        public async Task<string> ExportResponses(string code, string userName, Survey survey)
-        {
-            string zipFileName = default;
-            using (var scope = this._serviceScopeFactory.CreateScope())
-            {
-                IUnitOfWork unitOfWorkInScope = (IUnitOfWork)scope.ServiceProvider.GetRequiredService(typeof(IUnitOfWork));
-                var fullSurveyStructure = await unitOfWorkInScope.Surveys.GetSurveyFullExportAsync(survey.Id);
-                string folderName = "Download";
-                string webRootPath = _hostingEnvironment.WebRootPath;
-                string newPath = Path.Combine(webRootPath, folderName, userName ?? "anon", code);
-                string compressDirectory = Path.Combine(newPath, "ExportResponses");
-                string fileName = Path.Combine(compressDirectory, $"ExportResponses_{survey.Name}.json");
-                zipFileName = Path.Combine(newPath, $"ExportResponses_{survey.Name}.zip");
-                string url = $"/{folderName}/{userName}/{code}/ExportResponses_{survey.Name}.zip";
-                if (!Directory.Exists(newPath))
-                {
-                    Directory.CreateDirectory(newPath);
-                    Directory.CreateDirectory(compressDirectory);
-                }
-                // Write out survey structure to json
-                using (var output = new StreamWriter(fileName))
-                {
-                    var settings = new JsonSerializerSettings();
-                    settings.PreserveReferencesHandling = PreserveReferencesHandling.All;
-                    settings.Converters.Add(new StringEnumConverter());
-                    output.Write(JsonConvert.SerializeObject(fullSurveyStructure, settings));
-                }
-                ZipFile.CreateFromDirectory(compressDirectory, zipFileName);
-                return zipFileName;
-            }
-        }
-
         public void WriteErrorCodes(string code, string userName, List<(string, string, string)> codesWithErrors)
         {
             Task.Run(async () =>

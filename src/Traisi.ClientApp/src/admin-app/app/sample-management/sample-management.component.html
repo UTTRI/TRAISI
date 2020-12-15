@@ -21,7 +21,7 @@
 				<li class="nav-item">
 					<a class="nav-link fw-semi-bold" (click)="switchGroup('Queue')" id="queue-tab" data-toggle="tab"
 						href="#queue" role="tab" aria-controls="queue" aria-expanded="true">
-						{{ 'samples.management.Queue' | translate }}
+						{{ 'samples.management.Queue' | translate }}						
 					</a>
 				</li>
 			</ul>
@@ -139,13 +139,13 @@
 					<div role="tabpanel" style="clear:left;" class="tab-pane active in clearfix" id="queue"
 						aria-labelledby="queue-tab" aria-expanded="true">
 						<div class="row" *ngIf="queueBeingViewed">
-							<!--<div class="col-sm-4">
-							<div class="form-group search-box">
+							<!-- <div class="col-sm-4">
+							 <div class="form-group search-box">
 								<search-input (searchChange)="onSearchChanged($event)"
 									placeholder="{{ 'samples.management.Search' | translate }}">
 								</search-input>
-							</div>
-						</div>-->
+							</div> 
+							</div> -->
 						</div>
 						<!-- <ngx-datatable [@fadeInOut] #queueTable *ngIf="queueBeingViewed && !distributionBeingViewed"
 						class="bootstrap sm table table-striped table-hover table-responsive" [rows]="queueSampleRows"
@@ -160,8 +160,8 @@
 								</div>
 							</ng-template>
 						</ngx-datatable-row-detail>
-					</ngx-datatable> -->
-					</div>
+						</ngx-datatable>  -->
+					</div>					
 				</div>
 
 				<div class="modal fade" bsModal #editorModal="bs-modal" (onHidden)="onEditorModalHidden()"

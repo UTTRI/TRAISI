@@ -124,4 +124,8 @@ export class MainSidebarComponent implements OnInit, AfterViewInit {
 		return this.accountService.userHasPermission(Permission.viewSamplesPermission);
 	}
 
+	/* get canViewPhoneData() {
+		return this.accountService.userHasPermission(Permission.viewPhonedataPermission);
+	} */
+
 }

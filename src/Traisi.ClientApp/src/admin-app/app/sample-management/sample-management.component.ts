@@ -31,7 +31,7 @@ import { AuthService } from '../../../shared/services/auth.service';
 export class SampleManagementComponent implements OnInit, AfterViewInit {
 
 	//TestSampleData
-	public samplesArray: Sample[] = [];
+	public samplesArray: Sample[] = [];	
 
 	public activateSampleColumns: any[] = [];
 	public activateSampleRows: Sample[] = [];
@@ -135,6 +135,7 @@ export class SampleManagementComponent implements OnInit, AfterViewInit {
 			{ accessCode: "ATS-461", hhIdNum: 1000005, mailingBlock: 100, lastName: "Leung", postalCode: "N2A5B6", address: "55 Stoney Creek St", phoneNumber: 4161991111, owner: "Administrator", group: "TTS", startDate: new Date(), lastModified: new Date(), status: "Fresh", state: "Inactive", language: "English" },
 			{ accessCode: "YCH-001", hhIdNum: 1000006, mailingBlock: 100, lastName: "Omaruan", postalCode: "N2A6C8", address: "10 Matheson St", phoneNumber: 4372225555, owner: "Administrator", group: "TTS", startDate: new Date(), lastModified: new Date(), status: "Fresh", state: "Inactive", language: "English" }
 		]; */
+		
 		//Sample Distribution visual data
 		for (let i = 0; i < this.responses.length; i++) {
 			let rC = this.responses[i].resCount;
@@ -149,7 +150,7 @@ export class SampleManagementComponent implements OnInit, AfterViewInit {
 		this.model.state = "";
 		this.activateSampleRows = this.samplesArray;
 		this.activateSampleColumns = this.samplesArray;
-
+		
 		// columns for the display data table
 		this.activateSampleColumns = [
 			{
@@ -304,7 +305,7 @@ export class SampleManagementComponent implements OnInit, AfterViewInit {
 				resizeable: false,
 				draggable: false,
 				canAutoResize: false
-			}
+			},
 		];
 
 		if (this.canViewSamples) {
@@ -332,7 +333,7 @@ export class SampleManagementComponent implements OnInit, AfterViewInit {
 		if (name === 'Activate') {
 			this.activateBeingViewed = true;
 			this.distributionBeingViewed = false;
-			this.queueBeingViewed = false;
+			this.queueBeingViewed = false;			
 			this.groupActive = '';
 		} else if (name === 'Distribution') {
 			this.activateBeingViewed = false;

@@ -18,6 +18,8 @@ using Newtonsoft.Json;
 using Traisi.Helpers;
 using Traisi.ViewModels;
 using Traisi.Data.Models.Questions;
+using TRAISI.Export;
+using System.IO.Compression;
 
 namespace Traisi.Controllers
 {
@@ -30,19 +32,20 @@ namespace Traisi.Controllers
         private readonly IAuthorizationService _authorizationService;
         private readonly IAccountManager _accountManager;
         private readonly IFileDownloader _fileDownloader;
-
         private readonly IMapper _mapper;
-
+        private IWebHostEnvironment _hostingEnvironment;
+        
         public SurveyController(IUnitOfWork unitOfWork, IWebHostEnvironment hostingEnvironment,
         IFileDownloader fileDownloaderService, IAuthorizationService authorizationService,
-         IAccountManager accountManager,
-         IMapper mapper)
+         IAccountManager accountManager, IMapper mapper)
         {
             this._unitOfWork = unitOfWork;
             this._authorizationService = authorizationService;
             this._accountManager = accountManager;
             this._fileDownloader = fileDownloaderService;
             this._mapper = mapper;
+            this._hostingEnvironment  = hostingEnvironment;
+
         }
 
         /// <summary>
@@ -286,13 +289,27 @@ namespace Traisi.Controllers
 
         [AllowAnonymous]
         [HttpGet("{id}/exportresponses")]
-        public async Task<IActionResult> ExportResponses(int id)
+        public async Task<IActionResult>  ExportResponses(int id)
         {
             var survey = await this._unitOfWork.Surveys.GetAsync(id);
-            string code = this._fileDownloader.GenerateFileCode();
-            string fileName = await this._fileDownloader.ExportResponses(code, this.User.Identity.Name, survey);
-            var stream = new FileStream(fileName, FileMode.Open);
-            return File(stream, "application/octet-stream", $"{survey.Code}.zip");
+
+            string[] args = new string[]{survey.Code};
+            TRAISI.Export.Program.Main(args);
+            
+            string folderName = "Download\\surveyexportfiles";
+            string webRootPath = _hostingEnvironment.WebRootPath;
+            string newPath = Path.Combine(webRootPath, folderName);
+
+            var zipFileName  = newPath + "\\" + survey.Code + ".zip";
+            var directoryInfo = new DirectoryInfo(@"..\..\src\TRAISI.Export\surveyexportfiles");
+            var zFile = new FileInfo(zipFileName);
+            if (zFile.Exists)
+            {
+                zFile.Delete();
+            }
+            ZipFile.CreateFromDirectory(directoryInfo.FullName, zipFileName);
+            var stream = new FileStream(zipFileName, FileMode.Open);
+            return File(stream, "application/octet-stream", survey.Code + ".zip"); 
         } 
 
         [HttpPost("import"), DisableRequestSizeLimit]

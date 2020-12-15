@@ -11,6 +11,7 @@
 		"ManageUsers": "Manage Users",
     "ManageRoles": "Manage Roles",
     "ViewSamples": "Manage Samples",
+    "ViewPhoneData": "Manage Smartphone Data",
 		"Logout": "Logout"
   },
   "pageHeader": {
@@ -131,6 +132,14 @@
       "Queue": "Sample Queues",
       "Search": "Search using filter option"
 		}
+  },
+  "smartphone": {
+    "management" : {
+      "ViewPhoneData": "Manage Smartphone Data",
+      "Smartphone": "Smartphone Data",
+      "ImportPhoneData": "Import Phone Data",
+      "Search": "Search for phone data"
+    }
   },
   "users": {
     "management": {

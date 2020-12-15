@@ -67,8 +67,16 @@
 
 				<li class="menu-item" *ngIf="canViewSamples">
 					<a [routerLink]="['samples']" class="menu-link" routerLinkActive="has-active">
-						<span class="menu-icon fab fa-gg-circle"></span>
+						<span class="menu-icon fab fa-creative-commons-sampling"></span>
 						<span class="menu-text">{{ 'sidebar.ViewSamples' | translate}}</span>
+					</a>
+				</li>
+
+				<li class="menu-item">
+					<!-- *ngIf="canViewPhoneData" -->
+					<a [routerLink]="['smartphonedata']" class="menu-link" routerLinkActive="has-active">
+						<span class="menu-icon fa fa-mobile"></span>
+						<span class="menu-text">{{ 'sidebar.ViewPhoneData' | translate }}</span>
 					</a>
 				</li>
 

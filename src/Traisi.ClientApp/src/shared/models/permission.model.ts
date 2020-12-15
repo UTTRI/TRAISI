@@ -13,6 +13,7 @@ export type PermissionNames =
 	| 'View Group Surveys'
 	| 'Manage Group Surveys'
 	| 'View All Samples'
+	| 'View Phone Data'
 	| 'Create Group Surveys';
 
 export type PermissionValues =
@@ -30,6 +31,7 @@ export type PermissionValues =
 	| 'surveys.viewgroup'
 	| 'surveys.managegroup'
 	| 'surveys.create'
+	| 'phonedata.view'
 	| 'samples.view';
 
 export class Permission {
@@ -51,6 +53,8 @@ export class Permission {
 	public static readonly createSurveysPermission: PermissionValues = 'surveys.create';
 
 	public static readonly viewSamplesPermission: PermissionValues = 'samples.view';
+
+	public static readonly viewPhonedataPermission: PermissionValues = 'phonedata.view';
 
 	constructor(name?: PermissionNames, value?: PermissionValues, groupName?: string, description?: string) {
 		this.name = name;
