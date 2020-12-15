@@ -14,6 +14,7 @@ export class SurveyExportresponsesComponent implements OnInit {
 
   public surveyId: number;
   public survey: Survey;
+  public fileFormat: string = "Excel";
 
   constructor(private userGroupService: UserGroupService, private surveyService: SurveyService, private route: ActivatedRoute, private http:HttpClient) {
     this.route.params.subscribe(params => this.surveyId = params['id']);
@@ -30,28 +31,9 @@ export class SurveyExportresponsesComponent implements OnInit {
     }
   }
 
-  public exportSurveyResponses(): void {
-
-		// return this.http.get('http://localhost:8080/employees/download', { responseType: ResponseContentType.Blob });
-		window.open(`/api/Survey/${this.surveyId}/exportresponses`);
-		
-	} 
-
-  /* public downloadResponsesZip(): void {
-    //alert("Hello");
-    //console.log(this.survey)
-    this.http.get("http://localhost:5000/api/Survey/2/exportresponses", {
-      responseType: 'arraybuffer'
-    }).subscribe(data => {
-      
-      const blob = new Blob([data], {
-        type: 'application/zip'
-      });
-      const url = window.URL.createObjectURL(blob);
-      console.log(url);
-      window.open(url);
-      
-     //console.log(data);
-    });
-  } */
+  public exportSurveyResponses(): void 
+  {
+		  window.open(`/api/Survey/${this.surveyId}/exportresponses/${this.fileFormat}`);		
+  } 
+  
 }

@@ -20,6 +20,7 @@ using Traisi.ViewModels;
 using Traisi.Data.Models.Questions;
 using TRAISI.Export;
 using System.IO.Compression;
+using OfficeOpenXml;
 
 namespace Traisi.Controllers
 {
@@ -34,7 +35,7 @@ namespace Traisi.Controllers
         private readonly IFileDownloader _fileDownloader;
         private readonly IMapper _mapper;
         private IWebHostEnvironment _hostingEnvironment;
-        
+
         public SurveyController(IUnitOfWork unitOfWork, IWebHostEnvironment hostingEnvironment,
         IFileDownloader fileDownloaderService, IAuthorizationService authorizationService,
          IAccountManager accountManager, IMapper mapper)
@@ -44,7 +45,7 @@ namespace Traisi.Controllers
             this._accountManager = accountManager;
             this._fileDownloader = fileDownloaderService;
             this._mapper = mapper;
-            this._hostingEnvironment  = hostingEnvironment;
+            this._hostingEnvironment = hostingEnvironment;
 
         }
 
@@ -288,29 +289,62 @@ namespace Traisi.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("{id}/exportresponses")]
-        public async Task<IActionResult>  ExportResponses(int id)
+        [HttpGet("{id}/exportresponses/{fileFormat}")]
+        public async Task<IActionResult> ExportResponses(int id, string fileFormat)
         {
             var survey = await this._unitOfWork.Surveys.GetAsync(id);
-
-            string[] args = new string[]{survey.Code};
+            var str = fileFormat;
+            string[] args = new string[] { survey.Code };
             TRAISI.Export.Program.Main(args);
-            
+
             string folderName = "Download\\surveyexportfiles";
             string webRootPath = _hostingEnvironment.WebRootPath;
             string newPath = Path.Combine(webRootPath, folderName);
 
-            var zipFileName  = newPath + "\\" + survey.Code + ".zip";
+            var zipFileName = newPath + "\\" + survey.Code + ".zip";
             var directoryInfo = new DirectoryInfo(@"..\..\src\TRAISI.Export\surveyexportfiles");
             var zFile = new FileInfo(zipFileName);
             if (zFile.Exists)
             {
                 zFile.Delete();
             }
-            ZipFile.CreateFromDirectory(directoryInfo.FullName, zipFileName);
+
+            string zipFileDirectory = directoryInfo.FullName;
+            if (fileFormat == "CSV")
+            {
+                zipFileDirectory = GenerateCsvFromExcel(directoryInfo.FullName, newPath);
+            }
+
+            ZipFile.CreateFromDirectory(zipFileDirectory, zipFileName);
             var stream = new FileStream(zipFileName, FileMode.Open);
-            return File(stream, "application/octet-stream", survey.Code + ".zip"); 
-        } 
+            return File(stream, "application/octet-stream", survey.Code + ".zip");
+        }
+
+        [NonAction]
+        public string GenerateCsvFromExcel(string sourceFolder, string destinationFolder)
+        {
+            string[] excelFiles = { "HouseholdQuestions.xlsx", "PersonalQuestions.xlsx", "TransitRoutes.xlsx", "TravelDiary.xlsx" };
+            destinationFolder = destinationFolder + "\\csv\\";
+
+            foreach (string fName in excelFiles)
+            {
+                string excelFileName = sourceFolder + "\\" + fName;  
+                using (var sourceExcel = new ExcelPackage(new FileInfo(excelFileName)))
+                {
+                    var sheetsToCopy = sourceExcel.Workbook.Worksheets;
+                    foreach (var sheetToCopy in sheetsToCopy)
+                    {
+                        using (var destExcel = new ExcelPackage())
+                        {
+                            destExcel.Workbook.Worksheets.Add(sheetToCopy.Name, sheetToCopy);
+                            string csvFileName = destinationFolder + sheetToCopy.Name + ".csv";
+                            destExcel.SaveAs(new FileInfo(csvFileName));
+                        }
+                    }
+                }
+            }
+            return destinationFolder;
+        }
 
         [HttpPost("import"), DisableRequestSizeLimit]
         public async Task<IActionResult> ImportSurvey()
