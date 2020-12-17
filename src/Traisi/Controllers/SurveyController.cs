@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -328,18 +329,17 @@ namespace Traisi.Controllers
 
             foreach (string fName in excelFiles)
             {
-                string excelFileName = sourceFolder + "\\" + fName;  
+                string excelFileName = sourceFolder + "\\" + fName;
                 using (var sourceExcel = new ExcelPackage(new FileInfo(excelFileName)))
                 {
                     var sheetsToCopy = sourceExcel.Workbook.Worksheets;
-                    foreach (var sheetToCopy in sheetsToCopy)
+                    for (int i = 0; i < sheetsToCopy.Count; i++)
                     {
-                        using (var destExcel = new ExcelPackage())
-                        {
-                            destExcel.Workbook.Worksheets.Add(sheetToCopy.Name, sheetToCopy);
-                            string csvFileName = destinationFolder + sheetToCopy.Name + ".csv";
-                            destExcel.SaveAs(new FileInfo(csvFileName));
-                        }
+
+                        string csvFileName = destinationFolder + sheetsToCopy[i].Name + ".csv";
+                        byte[] responseBytes = sourceExcel.ConvertToCsv(i);
+                        string s = Encoding.UTF8.GetString(responseBytes);
+                        System.IO.File.WriteAllText(csvFileName, s);
                     }
                 }
             }
