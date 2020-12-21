@@ -294,9 +294,10 @@ namespace Traisi.Controllers
         public async Task<IActionResult> ExportResponses(int id, string fileFormat)
         {
             var survey = await this._unitOfWork.Surveys.GetAsync(id);
-            var str = fileFormat;
             string[] args = new string[] { survey.Code };
             TRAISI.Export.Program.Main(args);
+
+            string client_fileName = survey.Code + "_" + fileFormat + ".zip";
 
             string folderName = "Download\\surveyexportfiles";
             string webRootPath = _hostingEnvironment.WebRootPath;
@@ -318,7 +319,7 @@ namespace Traisi.Controllers
 
             ZipFile.CreateFromDirectory(zipFileDirectory, zipFileName);
             var stream = new FileStream(zipFileName, FileMode.Open);
-            return File(stream, "application/octet-stream", survey.Code + ".zip");
+            return File(stream, "application/octet-stream", client_fileName);
         }
 
         [NonAction]
