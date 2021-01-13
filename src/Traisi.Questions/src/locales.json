@@ -17,6 +17,7 @@
 		"slider": "Value Slider",
 		"contact-information": "Contact Information",
 		"travel-diary": "Travel Diary V2",
+		"travel-diary-logger": "Travel Diary Logger",
 		"route-select": "Route Select"
 	},
 	"fr": {
@@ -37,6 +38,7 @@
 		"slider": "Value Slider",
 		"contact-information": "Contact Information",
 		"travel-diary": "Travel Diary V2",
+		"travel-diary-logger": "Travel Diary Logger",
 		"route-select": "Route Select"
 	}
 }

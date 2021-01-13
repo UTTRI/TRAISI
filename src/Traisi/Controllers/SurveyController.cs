@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -293,9 +294,10 @@ namespace Traisi.Controllers
         public async Task<IActionResult> ExportResponses(int id, string fileFormat)
         {
             var survey = await this._unitOfWork.Surveys.GetAsync(id);
-            var str = fileFormat;
             string[] args = new string[] { survey.Code };
             TRAISI.Export.Program.Main(args);
+
+            string client_fileName = survey.Code + "_" + fileFormat + ".zip";
 
             string folderName = "Download\\surveyexportfiles";
             string webRootPath = _hostingEnvironment.WebRootPath;
@@ -317,7 +319,7 @@ namespace Traisi.Controllers
 
             ZipFile.CreateFromDirectory(zipFileDirectory, zipFileName);
             var stream = new FileStream(zipFileName, FileMode.Open);
-            return File(stream, "application/octet-stream", survey.Code + ".zip");
+            return File(stream, "application/octet-stream", client_fileName);
         }
 
         [NonAction]
@@ -328,18 +330,17 @@ namespace Traisi.Controllers
 
             foreach (string fName in excelFiles)
             {
-                string excelFileName = sourceFolder + "\\" + fName;  
+                string excelFileName = sourceFolder + "\\" + fName;
                 using (var sourceExcel = new ExcelPackage(new FileInfo(excelFileName)))
                 {
                     var sheetsToCopy = sourceExcel.Workbook.Worksheets;
-                    foreach (var sheetToCopy in sheetsToCopy)
+                    for (int i = 0; i < sheetsToCopy.Count; i++)
                     {
-                        using (var destExcel = new ExcelPackage())
-                        {
-                            destExcel.Workbook.Worksheets.Add(sheetToCopy.Name, sheetToCopy);
-                            string csvFileName = destinationFolder + sheetToCopy.Name + ".csv";
-                            destExcel.SaveAs(new FileInfo(csvFileName));
-                        }
+
+                        string csvFileName = destinationFolder + sheetsToCopy[i].Name + ".csv";
+                        byte[] responseBytes = sourceExcel.ConvertToCsv(i);
+                        string s = Encoding.UTF8.GetString(responseBytes);
+                        System.IO.File.WriteAllText(csvFileName, s);
                     }
                 }
             }
