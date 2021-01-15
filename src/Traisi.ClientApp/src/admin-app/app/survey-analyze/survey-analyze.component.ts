@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { fadeInOut } from '../services/animations';
 
 @Component({
   selector: 'app-survey-analyze',
   templateUrl: './survey-analyze.component.html',
-  styleUrls: ['./survey-analyze.component.scss']
+  styleUrls: ['./survey-analyze.component.scss'],
+  animations: [fadeInOut]
 })
 export class SurveyAnalyzeComponent implements OnInit {
 
