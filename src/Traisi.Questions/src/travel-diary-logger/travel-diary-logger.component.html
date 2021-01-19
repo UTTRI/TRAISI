@@ -1,0 +1,22 @@
+<!-- <link rel="stylesheet" href="https://unpkg.com/ngx-bootstrap/datepicker/bs-datepicker.css" /> -->
+
+<button type="button" class="btn btn-primary" (click)="openModal(template)">Create template modal</button>
+
+<ng-template #template>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Modal</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+   
+    <div class="col-xs-12 col-12 col-md-4 form-group">
+      <input type="text"
+             placeholder="Datepicker"
+             class="form-control"
+             bsDatepicker>
+    </div>
+   
+  </div>
+</ng-template>

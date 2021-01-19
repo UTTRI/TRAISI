@@ -10,7 +10,7 @@ namespace Traisi.Sdk.Questions
 {
 
     [SurveyQuestion(QuestionResponseType.Timeline, CodeBundleName = "traisi-questions-travel-diary.module.js")]
-    public class TravelDiaryLoggerQuestion : ISurveyQuestion
+    public class TravelDiaryLogger : ISurveyQuestion
     {
 
         public string TypeName
