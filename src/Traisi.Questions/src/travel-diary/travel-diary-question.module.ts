@@ -19,6 +19,8 @@ import { PopoverModule } from 'ngx-bootstrap/popover';
 import { TravelDiaryLinearViewComponent } from './components/travel-diary-linear-view.component';
 import { TravelDiaryLinearViewEventDisplayComponent } from './components/travel-diary-linear-view-event-display/travel-diary-linear-view-event-display.component';
 import {TravelDiaryLoggerComponent} from 'travel-diary-logger/travel-diary-logger.component';
+import { LocationLookupComponent } from 'shared/components/location-lookup.component';
+
 export const calendarProps = {
 	provide: DateAdapter,
 	useFactory: adapterFactory,
@@ -34,7 +36,8 @@ export const calModule: ModuleWithProviders = CalendarModule.forRoot(calendarPro
 		ReturnTimeValidatorDirective,
 		TravelDiaryLinearViewComponent,
 		TravelDiaryLinearViewEventDisplayComponent,
-		TravelDiaryLoggerComponent
+		TravelDiaryLoggerComponent,
+		LocationLookupComponent
 	],
 	entryComponents: [
 		TravelDiaryQuestionComponent,
@@ -43,7 +46,8 @@ export const calModule: ModuleWithProviders = CalendarModule.forRoot(calendarPro
 		TravelDiaryEventDisplayComponent,
 		TravelDiaryLinearViewComponent,
 		TravelDiaryLinearViewEventDisplayComponent,
-		TravelDiaryLoggerComponent
+		TravelDiaryLoggerComponent,
+		LocationLookupComponent
 	],
 	providers: [
 		{

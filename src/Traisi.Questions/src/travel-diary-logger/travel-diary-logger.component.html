@@ -1,22 +1,40 @@
-<!-- <link rel="stylesheet" href="https://unpkg.com/ngx-bootstrap/datepicker/bs-datepicker.css" /> -->
+<div class=""> 
+  <strong>Date Selection:</strong> 
+    <input type="date"
+         placeholder="Datepicker"
+         class=""/>
+</div>
+<br/>
+<div>
+  <h5>Trips</h5>
+  <table width="700" border="2">
+    <tr>
+      <th>Trip_Number</th>
+      <th>Departure_Time</th>
+      <th>Trip_Mode</th>
+      <th>Trip_Purpose</th>
+      <th>Action</th>
+    </tr>
 
-<button type="button" class="btn btn-primary" (click)="openModal(template)">Create template modal</button>
+    <tr *ngFor="let item of tripData; let i = index; ">
+      <td>{{i + 1}}</td>
+      <td>{{item.deptTime}}</td>
+      <td>{{item.mode}}</td>
+      <td>{{item.purpose}}</td>
+      <td>
+          <a href="javascript:void(0);" (click)="onConfirmClick()">Confirm</a>  <br/>
+          <a href="javascript:void(0);">Modify</a> 
+    </tr>
+   </table>
+</div>
+<br/>
+<div>
+  <traisi-location-lookup (locationSelected)="onLocationSelected($event)" #locationSelect></traisi-location-lookup>
+  <div class="mapbox-container" #mapContainer [style.height.px]="containerHeight"></div>
+</div>
 
-<ng-template #template>
-  <div class="modal-header">
-    <h4 class="modal-title pull-left">Modal</h4>
-    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body">
-   
-    <div class="col-xs-12 col-12 col-md-4 form-group">
-      <input type="text"
-             placeholder="Datepicker"
-             class="form-control"
-             bsDatepicker>
-    </div>
-   
-  </div>
-</ng-template>
+<div class="address-overlay">
+  <span #addressOverlayText></span>
+</div>
+
+<div class="mapbox-container" #mapContainer [style.height.px]="containerHeight"></div>
