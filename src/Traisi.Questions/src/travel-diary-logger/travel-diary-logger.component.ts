@@ -43,7 +43,7 @@ import { MapQuestionConfiguration } from '../map-question/models/map-question-co
 	entryComponents: [],
 	styles: ['' + styleString],
 })
-export class TravelDiaryLoggerComponent extends SurveyQuestion<ResponseTypes.String> implements OnInit, AfterViewInit, OnVisibilityChanged {
+export class TravelDiaryLoggerComponent extends SurveyQuestion<ResponseTypes.String> implements OnInit, AfterViewInit {
 	modalRef: BsModalRef;
 
 	public locationSearch: string;
