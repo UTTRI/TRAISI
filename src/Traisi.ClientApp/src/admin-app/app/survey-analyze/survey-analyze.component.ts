@@ -26,6 +26,10 @@ export class SurveyAnalyzeComponent implements OnInit {
 
 	public colorClasses: string[] = ["progress-bar bg-success", "progress-bar bg-info", "progress-bar bg-warning", "progress-bar bg-primary"];
 	public responses: any = [];
+	public serverData: any = {};
+	public actualResponses: any = [];
+
+	public selectedRegion:string = "";
 
 	public ngOnInit(): void 
 	{
@@ -33,23 +37,37 @@ export class SurveyAnalyzeComponent implements OnInit {
 		let url = "/api/SurveyAnalytics/" + this.surveyId;
 		this.httpObj.get(url).subscribe((resData: any) => {
 			
+			this.serverData  = resData;
 			this.responses = resData.completedResponses;
+			this.actualResponses = resData.completedResponses;
 			this.completed  = resData.totalComplete;
 			this.incomplete  = resData.totalIncomplete;
-		
-			for (let i = 0, j = 0; i < this.responses.length; i++) {
-				let compSurveyByCity = this.responses[i].surveyCompleted;
-				let incompSurveyByCity = resData.incompletedResponses.find(item => item.city == this.responses[i].city).surveyIncompleted;
-				let rPercent = (compSurveyByCity / incompSurveyByCity) * 100;
 
-				this.responses[i].compSurveyByCity = compSurveyByCity;
-				this.responses[i].incompSurveyByCity = incompSurveyByCity;
-				this.responses[i].percentage = Math.round(rPercent) + "%";
-				this.responses[i].pending =  (100-Math.round(rPercent)) + "%";
-
-				j++;
-				if (j >= this.colorClasses.length) j = 0;
-			}
+			this.doResponseHandle();
+			
 		});
+	}
+
+	public doFilter()
+	{
+		this.responses = this.actualResponses.filter(item  => item.city == this.selectedRegion);
+		this.doResponseHandle();
+	}
+
+	public doResponseHandle()
+	{
+		for (let i = 0, j = 0; i < this.responses.length; i++) {
+			let compSurveyByCity = this.responses[i].surveyCompleted;
+			let incompSurveyByCity = this.serverData.incompletedResponses.find(item => item.city == this.responses[i].city).surveyIncompleted;
+			let rPercent = (compSurveyByCity / incompSurveyByCity) * 100;
+
+			this.responses[i].compSurveyByCity = compSurveyByCity;
+			this.responses[i].incompSurveyByCity = incompSurveyByCity;
+			this.responses[i].percentage = Math.round(rPercent) + "%";
+			this.responses[i].pending =  (100-Math.round(rPercent)) + "%";
+
+			j++;
+			if (j >= this.colorClasses.length) j = 0;
+		}
 	}
 }

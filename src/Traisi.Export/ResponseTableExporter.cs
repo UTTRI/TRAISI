@@ -1567,8 +1567,6 @@ namespace TRAISI.Export
                     }
                 }
 
-
-
                 //Matrix Responses
                 var matrixresponses = responses.Where(r => this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ClassName ==
                                             typeof(MatrixQuestion).Name).GroupBy(r => r.Respondent).Select(g => g).OrderBy(x => x.Key.SurveyRespondentGroup.Id).ToList();
@@ -1659,8 +1657,13 @@ namespace TRAISI.Export
             worksheet.Cells[1, 2].Value = "HhId_Num";
             worksheet.Cells[1, 3].Value = "Hh_Ps_Id";
 
+            //Matrix
             var matrixMap = new Dictionary<QuestionPart, Dictionary<string, string>>();
             var matrixColMap = new Dictionary<QuestionPart, Dictionary<string, int>>();
+
+            //checkbox question
+            var checkCodeMap = new Dictionary<QuestionPart, Dictionary<string, int>>();
+
             //Adding Question Parts names to columns
             foreach (var questionPart in questionParts)
             {
@@ -1689,6 +1692,25 @@ namespace TRAISI.Export
                     //Adding Longitude to School and Work Location Questions Parts
                     worksheet.Cells[1, columnNum].Value = questionPart.Name + ": Lng";
                 }
+
+                //checkbox
+                else if (this._questionTypeManager.QuestionTypeDefinitions[questionPart.QuestionType].ClassName == typeof(CheckboxQuestion).Name)
+                {
+                    if (!checkCodeMap.ContainsKey(questionPart))
+                    {
+                        checkCodeMap[questionPart] = new Dictionary<string, int>();
+                    }
+                    var columnNames = questionPart.QuestionOptions.ToList();
+                    var filteredColNames = columnNames.Where(x => x.Name == "Response Options").OrderBy(x => x.Order).ToList();
+
+                    for (var i = 0; i < filteredColNames.Count; i++)
+                    {
+                        worksheet.Cells[1, i + columnNum + 1].Value = filteredColNames[i]?.Code + "-" + filteredColNames[i]?.QuestionOptionLabels["en"].Value;
+                        checkCodeMap[questionPart][filteredColNames[i]?.Code] = i;
+                    }
+                    columnNum += filteredColNames.Count;
+                }
+
                 else if (this._questionTypeManager.QuestionTypeDefinitions[questionPart.QuestionType].ClassName == typeof(MatrixQuestion).Name)
                 {
                     // count number of columns
@@ -1706,6 +1728,7 @@ namespace TRAISI.Export
                         // matrixMap[""]
                         worksheet.Cells[1, columnNum + i].Value = filteredColNames[i]?.Code + "-" + filteredColNames[i]?.QuestionOptionLabels["en"].Value;
                         matrixColMap[questionPart][filteredColNames[i]?.QuestionOptionLabels["en"].Value] = i;
+
                     }
                     for (var i = 0; i < filteredRowNames.Count; i++)
                     {
@@ -1762,7 +1785,7 @@ namespace TRAISI.Export
                         }
                     }
                     catch { }
-
+                    
                     //Question parts responses 
                     var matrixresponses = responses.Where(r => this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ClassName ==
                         typeof(MatrixQuestion).Name).GroupBy(r => r.Respondent).Select(g => g).OrderBy(x => x.Key.SurveyRespondentGroup.Id).ToList();
@@ -1787,6 +1810,28 @@ namespace TRAISI.Export
 
                                 }
                             }
+                        }
+                    }
+
+                    //Checkbox
+                    var checkboxResponses = responses.Where(r => this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ClassName ==
+                                typeof(CheckboxQuestion).Name).GroupBy(r => r.Respondent).Select(g => g).OrderBy(x => x.Key.SurveyRespondentGroup.Id).ToList();
+
+                    foreach (var respondentOuter in checkboxResponses)
+                    {
+                        foreach (var responseOuter in respondentOuter)
+                        {
+                            for (int i = 0; i < responseOuter.ResponseValues.Count; i++)
+                            {
+                                if (!checkCodeMap[responseOuter.QuestionPart].ContainsKey(((OptionSelectResponse)responseOuter.ResponseValues[i]).Code))
+                                {
+                                    continue;
+                                }
+                                int coloumn = checkCodeMap[responseOuter.QuestionPart][((OptionSelectResponse)responseOuter.ResponseValues[i]).Code];
+                                worksheet.Cells[respondentRowNum[respondent],
+                                 questionColumnDict[responseOuter.QuestionPart] + i].Value = 'X';
+                            }
+
                         }
                     }
 
