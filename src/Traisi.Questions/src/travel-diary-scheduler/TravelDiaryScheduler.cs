@@ -24,5 +24,21 @@ namespace Traisi.Sdk.Questions
 
         public QuestionIconType IconType { get => QuestionIconType.FONT; }
 
+
+        [QuestionConfiguration(ConfigurationValueType.Custom,
+        DisplayName = "Mode",
+        Description = "What travel modes are available.",
+        SurveyBuilderValueType = QuestionBuilderType.MultiSelect,
+        Resource = "traveldiary-modes")]
+        public string[] Modes = new string[] { };
+
+        [QuestionConfiguration(ConfigurationValueType.Custom,
+       DisplayName = "Purpose",
+       Description = "Purpose of being at location.",
+       SurveyBuilderValueType = QuestionBuilderType.MultiSelect,
+       DefaultValue = "home",
+       SharedResource = "mapquestion-purpose")]
+        public string[] Purposes = new string[] { };
+
     }
 }
