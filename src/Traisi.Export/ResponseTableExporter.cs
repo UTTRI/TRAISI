@@ -1455,6 +1455,7 @@ namespace TRAISI.Export
                 }
                 else if (this._questionTypeManager.QuestionTypeDefinitions[questionPart.QuestionType].ClassName == typeof(CheckboxQuestion).Name)
                 {
+                    var checkboxQuestionDef = this._questionTypeManager.QuestionTypeDefinitions[questionPart.QuestionType];
                     if (!checkCodeMap.ContainsKey(questionPart))
                     {
                         checkCodeMap[questionPart] = new Dictionary<string, int>();
@@ -1464,10 +1465,21 @@ namespace TRAISI.Export
 
                     for (var i = 0; i < filteredColNames.Count; i++)
                     {
-                        worksheet.Cells[1, i + columnNum + 1].Value = filteredColNames[i]?.Code + "-" + filteredColNames[i]?.QuestionOptionLabels["en"].Value;
+                        worksheet.Cells[1, i + columnNum].Value = filteredColNames[i]?.Code + "-" + filteredColNames[i]?.QuestionOptionLabels["en"].Value;
                         checkCodeMap[questionPart][filteredColNames[i]?.Code] = i;
                     }
                     columnNum += filteredColNames.Count;
+
+                    var notaValue = questionPart.QuestionConfigurations.FirstOrDefault(x => x.Name.Equals("IsShowNoneOfTheAbove"));
+                    bool.TryParse(notaValue?.Value, out var hasNotaOption);
+
+                    if (hasNotaOption)
+                    {
+                        worksheet.Cells[1, columnNum].Value = "NOTA";
+                        checkCodeMap[questionPart]["nota"] = filteredColNames.Count;
+                        // columnNum += 1;
+                    }
+
                 }
                 else if (this._questionTypeManager.QuestionTypeDefinitions[questionPart.QuestionType].ClassName == typeof(MatrixQuestion).Name)
                 {
@@ -1546,7 +1558,7 @@ namespace TRAISI.Export
                 }
 
                 var checkboxResponses = responses.Where(r => this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ClassName ==
-                                            typeof(CheckboxQuestion).Name).GroupBy(r => r.Respondent).Select(g => g).OrderBy(x => x.Key.SurveyRespondentGroup.Id).ToList();
+                        typeof(CheckboxQuestion).Name).GroupBy(r => r.Respondent).Select(g => g).OrderBy(x => x.Key.SurveyRespondentGroup.Id).ToList();
 
                 foreach (var respondentOuter in checkboxResponses)
                 {
@@ -1561,7 +1573,7 @@ namespace TRAISI.Export
                             }
                             int coloumn = checkCodeMap[responseOuter.QuestionPart][((OptionSelectResponse)responseOuter.ResponseValues[i]).Code];
                             worksheet.Cells[respondentRowNum[respondent],
-                             questionColumnDict[responseOuter.QuestionPart] + i].Value = 'X';
+                             questionColumnDict[responseOuter.QuestionPart] + coloumn].Value = 'X';
                         }
 
                     }
@@ -1601,6 +1613,11 @@ namespace TRAISI.Export
                     //Matrix question              
                     if (this._questionTypeManager.QuestionTypeDefinitions[response.QuestionPart.QuestionType].ClassName ==
                                 typeof(MatrixQuestion).Name)
+                    {
+                        continue;
+                    }
+                    if (this._questionTypeManager.QuestionTypeDefinitions[response.QuestionPart.QuestionType].ClassName ==
+                                typeof(CheckboxQuestion).Name)
                     {
                         continue;
                     }
@@ -1661,6 +1678,7 @@ namespace TRAISI.Export
 
             var matrixMap = new Dictionary<QuestionPart, Dictionary<string, string>>();
             var matrixColMap = new Dictionary<QuestionPart, Dictionary<string, int>>();
+            var checkCodeMap = new Dictionary<QuestionPart, Dictionary<string, int>>();
             //Adding Question Parts names to columns
             foreach (var questionPart in questionParts)
             {
@@ -1688,6 +1706,34 @@ namespace TRAISI.Export
 
                     //Adding Longitude to School and Work Location Questions Parts
                     worksheet.Cells[1, columnNum].Value = questionPart.Name + ": Lng";
+                }
+                else if (this._questionTypeManager.QuestionTypeDefinitions[questionPart.QuestionType].ClassName == typeof(CheckboxQuestion).Name)
+                {
+                    var checkboxQuestionDef = this._questionTypeManager.QuestionTypeDefinitions[questionPart.QuestionType];
+                    if (!checkCodeMap.ContainsKey(questionPart))
+                    {
+                        checkCodeMap[questionPart] = new Dictionary<string, int>();
+                    }
+                    var columnNames = questionPart.QuestionOptions.ToList();
+                    var filteredColNames = columnNames.Where(x => x.Name == "Response Options").OrderBy(x => x.Order).ToList();
+
+                    for (var i = 0; i < filteredColNames.Count; i++)
+                    {
+                        worksheet.Cells[1, i + columnNum].Value = filteredColNames[i]?.Code + "-" + filteredColNames[i]?.QuestionOptionLabels["en"].Value;
+                        checkCodeMap[questionPart][filteredColNames[i]?.Code] = i;
+                    }
+                    columnNum += filteredColNames.Count;
+
+                    var notaValue = questionPart.QuestionConfigurations.FirstOrDefault(x => x.Name.Equals("IsShowNoneOfTheAbove"));
+                    bool.TryParse(notaValue.Value, out var hasNotaOption);
+
+                    if (hasNotaOption)
+                    {
+                        worksheet.Cells[1, columnNum].Value = "NOTA";
+                        checkCodeMap[questionPart]["nota"] = filteredColNames.Count;
+                        // columnNum += 1;
+                    }
+
                 }
                 else if (this._questionTypeManager.QuestionTypeDefinitions[questionPart.QuestionType].ClassName == typeof(MatrixQuestion).Name)
                 {
@@ -1763,6 +1809,28 @@ namespace TRAISI.Export
                     }
                     catch { }
 
+                    var checkboxResponses = responses.Where(r => this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ClassName ==
+                                            typeof(CheckboxQuestion).Name).GroupBy(r => r.Respondent).Select(g => g).OrderBy(x => x.Key.SurveyRespondentGroup.Id).ToList();
+
+                    foreach (var respondentOuter in checkboxResponses)
+                    {
+
+                        foreach (var responseOuter in respondentOuter)
+                        {
+                            for (int i = 0; i < responseOuter.ResponseValues.Count; i++)
+                            {
+                                if (!checkCodeMap[responseOuter.QuestionPart].ContainsKey(((OptionSelectResponse)responseOuter.ResponseValues[i]).Code))
+                                {
+                                    continue;
+                                }
+                                int coloumn = checkCodeMap[responseOuter.QuestionPart][((OptionSelectResponse)responseOuter.ResponseValues[i]).Code];
+                                worksheet.Cells[respondentRowNum[respondent],
+                                 questionColumnDict[responseOuter.QuestionPart] + coloumn].Value = 'X';
+                            }
+
+                        }
+                    }
+
                     //Question parts responses 
                     var matrixresponses = responses.Where(r => this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ClassName ==
                         typeof(MatrixQuestion).Name).GroupBy(r => r.Respondent).Select(g => g).OrderBy(x => x.Key.SurveyRespondentGroup.Id).ToList();
@@ -1823,6 +1891,11 @@ namespace TRAISI.Export
                         //Shopping frequency responses
                         else if (this._questionTypeManager.QuestionTypeDefinitions[response.QuestionPart.QuestionType].ClassName ==
                                                     typeof(MatrixQuestion).Name)
+                        {
+                            continue;
+                        }
+                        else if (this._questionTypeManager.QuestionTypeDefinitions[response.QuestionPart.QuestionType].ClassName ==
+                                                    typeof(CheckboxQuestion).Name)
                         {
                             continue;
                         }
