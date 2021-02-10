@@ -75,6 +75,7 @@ namespace TRAISI.Export
                     if (q.QuestionPart != null)
                     {                        
                         context.Entry(q.QuestionPart).Collection(c => c.QuestionOptions).Load();
+                        context.Entry(q.QuestionPart).Collection(c => c.QuestionConfigurations).Load();
                         foreach (var option in q.QuestionPart.QuestionOptions)
                         {
                             context.Entry(option).Collection(option => option.QuestionOptionLabels).Load();
@@ -92,6 +93,7 @@ namespace TRAISI.Export
                         context.Entry(q2).Collection(c => c.Labels).Load();
                         context.Entry(q2).Reference(r => r.QuestionPart).Load();
                         context.Entry(q2.QuestionPart).Collection(c => c.QuestionOptions).Load();
+                        context.Entry(q2.QuestionPart).Collection(c => c.QuestionConfigurations).Load();
                         context.Entry(q2).Collection(c => c.QuestionPartViewChildren).Load();
                         foreach (var option in q2.QuestionPart.QuestionOptions)
                         {
