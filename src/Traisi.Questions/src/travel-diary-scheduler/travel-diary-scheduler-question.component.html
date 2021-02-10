@@ -3,7 +3,7 @@
 		<traisi-travel-diary-scheduler-item [class.active]="i === scheduleItems.length-1 && !isScheduleConfirmed"
         [class.inactive]="i !== scheduleItems.length-1 || isScheduleConfirmed"
 			[model]="scheduleItem"
-			[scheduleIndex]="i"
+			[scheduleIndex]="i" (click)="editSchedulerItem(i)"
 		></traisi-travel-diary-scheduler-item>
 	</div>
 </div>

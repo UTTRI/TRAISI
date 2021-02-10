@@ -51,6 +51,17 @@ export class TravelDiarySchedulerQuestionComponent
 		return this._scheduler.isScheduleConfirmed;
 	}
 
+	/**
+	 * 
+	 * @param _modalService 
+	 * @param _elementRef 
+	 * @param _injector 
+	 * @param modalService 
+	 * @param _scheduler 
+	 * @param _respondent 
+	 * @param _primaryRespondent 
+	 * @param _analytics 
+	 */
 	public constructor(
 		private _modalService: BsModalService,
 		private _elementRef: ElementRef,
@@ -81,7 +92,18 @@ export class TravelDiarySchedulerQuestionComponent
 		// throw new Error('Method not implemented.');
 	}
 
+	/**
+	 * Unconfirms the schedule diary, so it can be re-edited.
+	 */
 	public unconfirmSchedule(): void {
 		this._scheduler.unconfirmSchedule();
+	}
+
+	/**
+	 * 
+	 * @param idx 
+	 */
+	public editSchedulerItem(idx: number): void {
+
 	}
 }
