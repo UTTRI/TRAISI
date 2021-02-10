@@ -40,5 +40,18 @@ namespace Traisi.Sdk.Questions
        SharedResource = "mapquestion-purpose")]
         public string[] Purposes = new string[] { };
 
+        [QuestionConfiguration(ConfigurationValueType.Response,
+DisplayName = "School Locations",
+Description = "Which question IDs indicates the location of the respondent's school locations.",
+SurveyBuilderValueType = QuestionBuilderType.MultiSelect)]
+        public int[] SchoolLocationIds = new int[] { };
+
+
+        [QuestionConfiguration(ConfigurationValueType.Response,
+DisplayName = "Work Locations",
+Description = "Which question IDs indicates the location of the respondent's work locations.",
+SurveyBuilderValueType = QuestionBuilderType.MultiSelect)]
+        public int[] WorkLocationids = new int[] { };
+
     }
 }
