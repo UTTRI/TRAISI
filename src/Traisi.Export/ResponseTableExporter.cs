@@ -1448,6 +1448,7 @@ namespace TRAISI.Export
 
                     //Adding Address to School and Work Location Questions Parts
                     worksheet.Cells[1, columnNum].Value = questionPart.Name + ": Lng";
+                    columnNum += 1;
 
                 }
                 else if (this._questionTypeManager.QuestionTypeDefinitions[questionPart.QuestionType].ClassName == typeof(CheckboxQuestion).Name)
@@ -1493,7 +1494,7 @@ namespace TRAISI.Export
                     for (var i = 0; i < filteredColNames.Count; i++)
                     {
                         // matrixMap[""]
-                        worksheet.Cells[1, columnNum + i].Value = filteredColNames[i]?.Code + "-" + filteredColNames[i]?.QuestionOptionLabels["en"].Value;
+                        worksheet.Cells[1, columnNum + i + 1].Value = filteredColNames[i]?.Code + "-" + filteredColNames[i]?.QuestionOptionLabels["en"].Value;
                         matrixColMap[questionPart][filteredColNames[i]?.QuestionOptionLabels["en"].Value] = i;
                     }
                     for (var i = 0; i < filteredRowNames.Count; i++)
@@ -1671,6 +1672,7 @@ namespace TRAISI.Export
             worksheet.Cells[1, 2].Value = "HhId_Num";
             worksheet.Cells[1, 3].Value = "Hh_Ps_Id";
 
+            //Matrix
             var matrixMap = new Dictionary<QuestionPart, Dictionary<string, string>>();
             var matrixColMap = new Dictionary<QuestionPart, Dictionary<string, int>>();
             var checkCodeMap = new Dictionary<QuestionPart, Dictionary<string, int>>();
@@ -1750,6 +1752,7 @@ namespace TRAISI.Export
                         // matrixMap[""]
                         worksheet.Cells[1, columnNum + i].Value = filteredColNames[i]?.Code + "-" + filteredColNames[i]?.QuestionOptionLabels["en"].Value;
                         matrixColMap[questionPart][filteredColNames[i]?.QuestionOptionLabels["en"].Value] = i;
+
                     }
                     for (var i = 0; i < filteredRowNames.Count; i++)
                     {

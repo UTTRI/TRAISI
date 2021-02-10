@@ -106,7 +106,7 @@
 			"View": "View"
     },
     "analyze":{
-      "SampleAnalysis": "Survey Sample Distribution Data"
+      "SampleAnalysis": "Survey Sample Distribution Dashboard"
     },
     "surveyresponse":{
       "ExportResponses": "Export Responses"
