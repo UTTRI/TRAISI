@@ -1,0 +1,87 @@
+import {
+	SurveyQuestion,
+	ResponseTypes,
+	OnVisibilityChanged,
+	LocationResponseData,
+	TimelineResponseData,
+	ResponseValidationState,
+	ValidationError,
+	SurveyRespondent,
+	TraisiValues,
+	SurveyAnalyticsService,
+} from 'traisi-question-sdk';
+import {
+	Component,
+	ViewEncapsulation,
+	OnInit,
+	AfterViewInit,
+	ViewChild,
+	ElementRef,
+	TemplateRef,
+	Injector,
+	Inject,
+	OnDestroy,
+} from '@angular/core';
+import { setHours, isSameMonth, setMinutes, addHours } from 'date-fns';
+import templateString from './travel-diary-scheduler-question.component.html';
+import styleString from './travel-diary-scheduler-question.component.scss';
+import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
+import { TravelDiaryScheduler } from './services/travel-diary-scheduler.service';
+import { TravelDiarySchedulerLogic } from './services/travel-diary-scheduler-logic.service';
+import { TravelDiarySchedulerDialogInput } from './components/travel-diary-scheduler-dialog-input/travel-diary-scheduler-dialog-input.component';
+
+@Component({
+	selector: 'traisi-travel-diary-scheduler-question',
+	template: '' + templateString,
+	providers: [TravelDiaryScheduler],
+	encapsulation: ViewEncapsulation.None,
+	entryComponents: [],
+	styles: ['' + styleString],
+})
+export class TravelDiarySchedulerQuestionComponent
+	extends SurveyQuestion<ResponseTypes.Timeline>
+	implements OnInit, AfterViewInit, OnVisibilityChanged, OnDestroy {
+	public viewHeight: number = 100;
+
+	public get scheduleItems(): TimelineResponseData[] {
+		return this._scheduler.scheduleItems;
+	}
+
+	public get isScheduleConfirmed(): boolean {
+		return this._scheduler.isScheduleConfirmed;
+	}
+
+	public constructor(
+		private _modalService: BsModalService,
+		private _elementRef: ElementRef,
+		private _injector: Injector,
+		private modalService: BsModalService,
+		private _scheduler: TravelDiaryScheduler,
+		@Inject(TraisiValues.Respondent) private _respondent: SurveyRespondent,
+		@Inject(TraisiValues.PrimaryRespondent) private _primaryRespondent: SurveyRespondent,
+		@Inject(TraisiValues.SurveyAnalytics) private _analytics: SurveyAnalyticsService
+	) {
+		super();
+		// this.isFillVertical = true;
+	}
+	public ngOnInit(): void {
+		// mark invalid
+		this.validationState.emit(ResponseValidationState.INVALID);
+	}
+	public ngAfterViewInit(): void {
+		// throw new Error('Method not implemented.');
+	}
+	public onQuestionShown(): void {
+		// throw new Error('Method not implemented.');
+	}
+	public onQuestionHidden(): void {
+		// new Error('Method not implemented.');
+	}
+	public ngOnDestroy(): void {
+		// throw new Error('Method not implemented.');
+	}
+
+	public unconfirmSchedule(): void {
+		this._scheduler.unconfirmSchedule();
+	}
+}

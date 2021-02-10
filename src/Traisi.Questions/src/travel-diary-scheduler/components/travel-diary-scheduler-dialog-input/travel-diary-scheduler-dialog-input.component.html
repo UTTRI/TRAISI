@@ -1,0 +1,47 @@
+<div
+	bsModal
+	#inputModal="bs-modal"
+	class="modal fade"
+	[config]="{ ignoreBackdropClick: true }"
+	(onShown)="modalShown($event)"
+>
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title pull-left" *ngIf="dialogMode === dialogModeNew">Trip Details</h4>
+				<button type="button" class="close pull-right" aria-label="Close" (click)="hide()">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div [class.missingMap]="model && !model.address">
+					<ng-template #mapTemplate>
+						<ng-container #container></ng-container>
+					</ng-template>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<span class="delete-container">
+					<button
+						*ngIf="dialogMode === dialogModeEdit"
+						type="button"
+						class="btn btn-danger"
+						(click)="delete()"
+					>
+						Delete
+					</button>
+				</span>
+				<button type="button" class="btn btn-default" (click)="hide()">Cancel</button>
+				<button
+					type="button"
+					[class.disabled]="!isFormValid"
+					class="btn btn-primary"
+					[disabled]="!isFormValid"
+					(click)="dialogSave()"
+				>
+					Save
+				</button>
+			</div>
+		</div>
+	</div>
+</div>

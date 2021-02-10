@@ -18,6 +18,7 @@
 		"contact-information": "Contact Information",
 		"travel-diary": "Travel Diary V2",
 		"travel-diary-logger": "Travel Diary Logger",
+		"travel-diary-scheduler": "Travel Diary Scheduler",
 		"route-select": "Route Select"
 	},
 	"fr": {
@@ -39,6 +40,7 @@
 		"contact-information": "Contact Information",
 		"travel-diary": "Travel Diary V2",
 		"travel-diary-logger": "Travel Diary Logger",
+		"travel-diary-scheduler": "Travel Diary Scheduler",
 		"route-select": "Route Select"
 	}
 }

@@ -9,8 +9,10 @@ module.exports = {
 		sp: path.join(process.cwd(), './src/stated-preference/viewer/traisi-sp-question-viewer.module.ts'),
 		'sp-builder': path.join(process.cwd(), './src/stated-preference/builder/traisi-sp-question-builder.module.ts'),
 		'travel-diary': path.join(process.cwd(), './src/travel-diary/travel-diary-question.module.ts'),
-		'route-select': path.join(process.cwd(), './src/route-select/route-select-question.module.ts')
+		'travel-diary-scheduler': path.join(process.cwd(), './src/travel-diary-scheduler/travel-diary-scheduler-question.module.ts'),
+		'route-select': path.join(process.cwd(), './src/route-select/route-select-question.module.ts'),
 	},
+
 
 	output: {
 		path: path.join(process.cwd(), 'dist'),

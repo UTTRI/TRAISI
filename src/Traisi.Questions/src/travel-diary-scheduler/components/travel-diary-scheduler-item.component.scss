@@ -1,0 +1,57 @@
+@import '~flatpickr/dist/flatpickr.css';
+
+.trip-purpose-label {
+	font-weight: bold;
+}
+
+.schedule-item-container {
+	padding-top: 15px;
+	padding-left: 30px;
+	padding-right: 30px;
+	padding-bottom: 25px;
+}
+
+.inactive {
+	display: block;
+	background-color: rgb(222, 227, 235);
+}
+
+.active {
+	border-bottom: solid 3px #8da1b5;
+	display: block;
+	background-color: rgb(211, 218, 228);
+}
+
+.trip-message {
+	font-weight: bold;
+}
+
+.purpose-label {
+	font-weight: bold;
+}
+
+.button-footer-container {
+	text-align: center;
+	margin-top: 5px;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+}
+
+.departure-time-label {
+	margin-left: 20px;
+	color: #5c9cea;
+	float: right;
+}
+
+traisi-travel-diary-scheduler-item {
+	display: block;
+}
+
+traisi-travel-diary-scheduler-item.inactive {
+	opacity: 0.75;
+}
+traisi-travel-diary-scheduler-item.inactive:hover {
+	opacity: 1;
+	cursor: pointer;
+}

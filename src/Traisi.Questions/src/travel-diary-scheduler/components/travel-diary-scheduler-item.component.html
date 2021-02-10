@@ -1,0 +1,137 @@
+<div class="schedule-item-container">
+	<div *ngIf="state.isConfirmed">
+		<div class="schedule-item">
+			<span class="purpose-label">{{ model.purpose }}</span>
+			<span *ngIf="scheduleIndex > 0" class="departure-time-label">{{ model.timeA | date :'shortTime' }} </span>
+		</div>
+	</div>
+	<div *ngIf="!state.isConfirmed">
+		<div *ngIf="scheduleIndex === 0">
+			<span class="begin-day-message trip-message">Where did you begin your day?</span>
+		</div>
+		<div *ngIf="scheduleIndex > 0">
+			<span class="begin-day-message trip-message">
+				Where did you go after
+				<span class="trip-purpose-label">{{ scheduleItems[scheduleIndex - 1].purpose }}?</span></span
+			>
+		</div>
+		<div class="form-group row">
+			<div class="col-12">
+				<ng-select
+					*ngIf="scheduleIndex === 0"
+					[items]="purposes"
+					placeholder="Enter a purpose"
+					[(ngModel)]="model.purpose"
+					(change)="onPurposeChanged()"
+				>
+				</ng-select>
+			</div>
+		</div>
+		<div class="form-group row">
+			<div class="col-12">
+				<ng-select
+					*ngIf="scheduleIndex > 0"
+					placeholder="Enter a purpose"
+					[(ngModel)]="model.purpose"
+					(change)="onPurposeChanged()"
+				>
+					<ng-option *ngFor="let purpose of purposesExtended" [value]="purpose">{{ purpose }}</ng-option>
+					<ng-option *ngIf="scheduleIndex >= 2" [value]="'workOtherMember'">Work (any other member)</ng-option>
+					<ng-option *ngIf="scheduleIndex >= 2" [value]="'schoolOtherMember'">School (any other member)</ng-option>
+					<ng-option *ngIf="scheduleIndex >= 2" [value]="'lastLocation'">Last Location</ng-option>
+				</ng-select>
+			</div>
+		</div>
+		<div class="form-group row confirm-last-location" *ngIf="model.purpose === 'lastLocation'">
+			<div class="col-12">
+				<span class="trip-message"
+					>Did you return home after {{ scheduleItems[scheduleIndex - 1].purpose }}?</span
+				>
+			</div>
+			<div class="col-12">
+				<ng-select
+					[(ngModel)]="state.returnHomeResponse"
+					*ngIf="scheduleIndex > 0"
+					placeholder=""
+					(change)="onLastLocationChanged($event)"
+				>
+					<ng-option [value]="'yes'">Yes</ng-option>
+					<ng-option [value]="'no'">No, I stayed at {{ scheduleItems[scheduleIndex - 1].purpose }}</ng-option>
+					<ng-option [value]="'other'">No, I went to another location.</ng-option>
+				</ng-select>
+			</div>
+		</div>
+
+		<div class="departure-time-collect form-group row" *ngIf="scheduleIndex > 0">
+			<div class="col-6">
+				<label for="timeA" class="col-form-label">Departure time for the trip </label>
+				<div class="input-group" [class.ng-invalid]="!model.timeA">
+					<div class="input-group-prepend">
+						<span class="input-group-text" id="inputGroupPrepend2"><i class="far fa-clock"></i></span>
+					</div>
+					<input
+						id="timeA"
+						type="text"
+						class="form-control"
+						name="timeA"
+						mwlFlatpickr
+						(ngModelChange)="onDepartureTimeChanged($event)"
+						[(ngModel)]="model.timeA"
+						[noCalendar]="true"
+						[enableTime]="true"
+						[time24hr]="false"
+						[now]="defaultDate"
+						dateFormat="H:i"
+						aria-describedby="inputGroupPrepend2"
+						[convertModelValue]="true"
+						required
+					/>
+				</div>
+			</div>
+			<div class="col-6">
+				<label for="modeSelect" class="col-form-label">Travel Mode </label>
+				<ng-select
+					id="modeSelect"
+					*ngIf="scheduleIndex > 0"
+					[items]="modes"
+					placeholder="Enter the travel mode used"
+					[(ngModel)]="model.mode"
+					(change)="onModeChanged()"
+				>
+				</ng-select>
+			</div>
+		</div>
+		<div class="button-footer-container">
+			<button
+				type="button"
+				class="btn btn-danger delete-schedule"
+				(click)="removeScheduleItem()"
+				*ngIf="scheduleIndex > 0"
+			>
+				Delete
+			</button>
+			<button type="button" class="btn btn-secondary" [disabled]="!state.isValid" (click)="confirmScheduleItem()">
+				Confirm
+			</button>
+		</div>
+	</div>
+</div>
+<ng-template #addressInputDialogTemplate>
+	<div class="modal-header">
+		<h4 class="modal-title pull-left">Please enter the address</h4>
+		<button type="button" class="close pull-right" aria-label="Close" (click)="closeAddressInputDialog()">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+	<div class="modal-body text-left">
+		<div class="location-query"></div>
+	</div>
+	<div class="modal-footer text-center">
+		<button type="button" class="btn btn-primary" (click)="saveAddressInputDialog()">Save</button>
+		<button type="button" class="btn btn-secondary" (click)="closeAddressInputDialog()">Cancel</button>
+	</div>
+</ng-template>
+
+<traisi-travel-diary-scheduler-dialog-input
+	#dialogInput
+></traisi-travel-diary-scheduler-dialog-input>
