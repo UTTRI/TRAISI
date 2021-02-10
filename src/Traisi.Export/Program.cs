@@ -95,6 +95,7 @@ namespace TRAISI.Export
                         context.Entry(q2.QuestionPart).Collection(c => c.QuestionOptions).Load();
                         context.Entry(q2.QuestionPart).Collection(c => c.QuestionConfigurations).Load();
                         context.Entry(q2).Collection(c => c.QuestionPartViewChildren).Load();
+                        foreach (var option in q2.QuestionPart.QuestionOptions)
                         {
                             context.Entry(option).Collection(option => option.QuestionOptionLabels).Load();
                         }
