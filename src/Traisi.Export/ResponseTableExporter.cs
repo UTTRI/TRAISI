@@ -1611,6 +1611,11 @@ namespace TRAISI.Export
                     {
                         continue;
                     }
+                    if (this._questionTypeManager.QuestionTypeDefinitions[response.QuestionPart.QuestionType].ClassName ==
+                                typeof(CheckboxQuestion).Name)
+                    {
+                        continue;
+                    }
                     //Location column
                     else if (this._questionTypeManager.QuestionTypeDefinitions[response.QuestionPart.QuestionType].ResponseType ==
                                 QuestionResponseType.Location)
@@ -1674,11 +1679,6 @@ namespace TRAISI.Export
             {
                 //Removed Household members column
                 if (this._questionTypeManager.QuestionTypeDefinitions[questionPart.QuestionType].ClassName == typeof(HouseholdQuestion).Name)
-                {
-                    continue;
-                }
-                else if (this._questionTypeManager.QuestionTypeDefinitions[questionPart.QuestionType].ClassName ==
-                                typeof(CheckboxQuestion).Name)
                 {
                     continue;
                 }
@@ -1807,6 +1807,28 @@ namespace TRAISI.Export
                     }
                     catch { }
 
+                    var checkboxResponses = responses.Where(r => this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ClassName ==
+                                            typeof(CheckboxQuestion).Name).GroupBy(r => r.Respondent).Select(g => g).OrderBy(x => x.Key.SurveyRespondentGroup.Id).ToList();
+
+                    foreach (var respondentOuter in checkboxResponses)
+                    {
+
+                        foreach (var responseOuter in respondentOuter)
+                        {
+                            for (int i = 0; i < responseOuter.ResponseValues.Count; i++)
+                            {
+                                if (!checkCodeMap[responseOuter.QuestionPart].ContainsKey(((OptionSelectResponse)responseOuter.ResponseValues[i]).Code))
+                                {
+                                    continue;
+                                }
+                                int coloumn = checkCodeMap[responseOuter.QuestionPart][((OptionSelectResponse)responseOuter.ResponseValues[i]).Code];
+                                worksheet.Cells[respondentRowNum[respondent],
+                                 questionColumnDict[responseOuter.QuestionPart] + coloumn].Value = 'X';
+                            }
+
+                        }
+                    }
+
                     //Question parts responses 
                     var matrixresponses = responses.Where(r => this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ClassName ==
                         typeof(MatrixQuestion).Name).GroupBy(r => r.Respondent).Select(g => g).OrderBy(x => x.Key.SurveyRespondentGroup.Id).ToList();
@@ -1834,27 +1856,6 @@ namespace TRAISI.Export
                         }
                     }
 
-                    var checkboxResponses = responses.Where(r => this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ClassName ==
-                                             typeof(CheckboxQuestion).Name).GroupBy(r => r.Respondent).Select(g => g).OrderBy(x => x.Key.SurveyRespondentGroup.Id).ToList();
-
-                    foreach (var respondentOuter in checkboxResponses)
-                    {
-
-                        foreach (var responseOuter in respondentOuter)
-                        {
-                            for (int i = 0; i < responseOuter.ResponseValues.Count; i++)
-                            {
-                                if (!checkCodeMap[responseOuter.QuestionPart].ContainsKey(((OptionSelectResponse)responseOuter.ResponseValues[i]).Code))
-                                {
-                                    continue;
-                                }
-                                int coloumn = checkCodeMap[responseOuter.QuestionPart][((OptionSelectResponse)responseOuter.ResponseValues[i]).Code];
-                                worksheet.Cells[respondentRowNum[respondent],
-                                 questionColumnDict[responseOuter.QuestionPart] + coloumn].Value = 'X';
-                            }
-
-                        }
-                    }
 
                     foreach (var response in responses)
                     {
