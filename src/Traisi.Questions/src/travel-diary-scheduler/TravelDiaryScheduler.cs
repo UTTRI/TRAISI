@@ -13,16 +13,11 @@ namespace Traisi.Sdk.Questions
     public class TravelDiaryScheduler : ISurveyQuestion
     {
 
-        public string TypeName
-        {
-            get => "travel-diary-scheduler";
-        }
-        public string Icon
-        {
-            get => "fas fa-map-marked-alt";
-        }
+        public string TypeName => "travel-diary-scheduler";
 
-        public QuestionIconType IconType { get => QuestionIconType.FONT; }
+        public string Icon => "fas fa-map-marked-alt";
+
+        public QuestionIconType IconType => QuestionIconType.FONT; 
 
 
         [QuestionConfiguration(ConfigurationValueType.Custom,
@@ -30,7 +25,7 @@ namespace Traisi.Sdk.Questions
         Description = "What travel modes are available.",
         SurveyBuilderValueType = QuestionBuilderType.MultiSelect,
         Resource = "traveldiary-modes")]
-        public string[] Modes = new string[] { };
+        public string[] Modes;
 
         [QuestionConfiguration(ConfigurationValueType.Custom,
        DisplayName = "Purpose",
@@ -38,20 +33,20 @@ namespace Traisi.Sdk.Questions
        SurveyBuilderValueType = QuestionBuilderType.MultiSelect,
        DefaultValue = "home",
        SharedResource = "mapquestion-purpose")]
-        public string[] Purposes = new string[] { };
+        public string[] Purposes;
 
         [QuestionConfiguration(ConfigurationValueType.Response,
         DisplayName = "School Locations",
         Description = "Which question IDs indicates the location of the respondent's school locations.",
         SurveyBuilderValueType = QuestionBuilderType.MultiSelect)]
-        public int[] SchoolLocationIds = new int[] { };
+        public int[] SchoolLocationIds;
 
 
         [QuestionConfiguration(ConfigurationValueType.Response,
         DisplayName = "Work Locations",
         Description = "Which question IDs indicates the location of the respondent's work locations.",
         SurveyBuilderValueType = QuestionBuilderType.MultiSelect)]
-        public int[] WorkLocationids = new int[] { };
+        public int[] WorkLocationids;
 
     }
 }
