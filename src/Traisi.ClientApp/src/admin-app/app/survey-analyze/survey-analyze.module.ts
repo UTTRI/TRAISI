@@ -9,6 +9,7 @@ import { SurveyAnalyzeComponent } from "./survey-analyze.component";
 import { ROUTES } from "./survey-analyze.routes";
 import { DropzoneModule } from "ngx-dropzone-wrapper";
 import { NgxDatatableModule } from "@swimlane/ngx-datatable";
+import { NgSelectModule } from "@ng-select/ng-select";
 
 export const buttonsModule = ButtonsModule.forRoot();
 export const translateModule = TranslateModule.forChild({
@@ -24,6 +25,7 @@ export const translateModule = TranslateModule.forChild({
 		buttonsModule,
 		translateModule,
 		DropzoneModule,
+		NgSelectModule,
 		NgxDatatableModule
 	],
 	declarations: [SurveyAnalyzeComponent],

@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgModule } from '@angular/core';
 import { fadeInOut } from '../services/animations';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
 	selector: 'app-survey-analyze',
@@ -9,6 +10,13 @@ import { ActivatedRoute } from '@angular/router';
 	styleUrls: ['./survey-analyze.component.scss'],
 	animations: [fadeInOut]
 })
+
+@NgModule({
+	imports: [
+		NgSelectModule,
+	]
+})
+
 export class SurveyAnalyzeComponent implements OnInit {
 
 	public surveyId: number;
@@ -29,32 +37,43 @@ export class SurveyAnalyzeComponent implements OnInit {
 	public serverData: any = {};
 	public actualResponses: any = [];
 
-	public selectedRegion:string = "";
+	public questions : any = [];
 
+	public selectedRegion:string = "";
+	public selectedQuestion:string = "1";
+	
 	public ngOnInit(): void 
 	{
-		//api analytics controller url.
+		//Load Question names				
+		//api analytics controller url
 		let url = "/api/SurveyAnalytics/" + this.surveyId;
+		this.httpObj.get(url).subscribe((resData: any[]) => {
+			this.questions = resData;
+		});
+		this.filterByQuestion();
+	}
+
+	public filterByCity()
+	{
+		this.responses = this.actualResponses.filter(item  => item.city == this.selectedRegion);
+		this.handleResponses();
+	}
+
+	public filterByQuestion()
+	{
+		//api analytics controller url
+		let url = "/api/SurveyAnalytics/" + this.surveyId + "/" + this.selectedQuestion;
 		this.httpObj.get(url).subscribe((resData: any) => {
-			
 			this.serverData  = resData;
 			this.responses = resData.completedResponses;
 			this.actualResponses = resData.completedResponses;
 			this.completed  = resData.totalComplete;
 			this.incomplete  = resData.totalIncomplete;
-
-			this.doResponseHandle();
-			
+			this.handleResponses();			
 		});
 	}
 
-	public doFilter()
-	{
-		this.responses = this.actualResponses.filter(item  => item.city == this.selectedRegion);
-		this.doResponseHandle();
-	}
-
-	public doResponseHandle()
+	public handleResponses()
 	{
 		for (let i = 0, j = 0; i < this.responses.length; i++) {
 			let compSurveyByCity = this.responses[i].surveyCompleted;

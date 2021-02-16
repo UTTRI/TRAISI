@@ -6,7 +6,7 @@
         <!--Sample Distribution Analysis-->
         <div class="row">
             <div class="card-body" style="margin-left: 1rem;">
-                <div style="height: 0.5rem;"></div> 
+                <div style="height: 0.5rem;"></div>
                 <div class="row">
                     <div class="col-md-4 text-primary" style="text-align: left; height: 3.7rem;">Impact of
                         COVID-19 on
@@ -22,25 +22,39 @@
                     <div class="progress-bar bg-warning" role="progressbar" style="width: 100%" aria-valuenow="0"
                         aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
-                <br/>
+                <br />
                 <div style="height: 1.5rem; color: blue; margin-left: 1rem;">
-                   Region: <select  [(ngModel)]="selectedRegion" (change)="doFilter()" style="height: 1.5rem;" >
+                    <!-- Questions dropdown list -->
+                    Select Question : <select [(ngModel)]="selectedQuestion" style="height: 1.5rem;"
+                        (change)="filterByQuestion()">
+                        <option *ngFor="let item of questions;" value="{{item.id}}">{{item.name}}</option>
+                    </select>
+                    <!-- Regions dropdown list-->
+                    Select Region : <select [(ngModel)]="selectedRegion" (change)="filterByCity()"
+                        style="height: 1.5rem;">
                         <option *ngFor="let item of actualResponses;">{{item.city}}</option>
                     </select>
+                    <!-- FSA dropdown list -->
+                    Select FSA: <select style="height: 1.5rem;">
+                        <option>M1L4P2</option>
+                        <option>M2L5Q4</option>
+                        <option>L5P4J5</option>
+                        <option>L7K7A3</option>
+                        <option>N5K2D4</option>
+                    </select>
                 </div>
-                
+                <br />
                 <div style="height: 1.5rem;"></div>
                 <div *ngFor="let item of responses;" class="row" style="clear:right;">
                     <div class="col-2">{{item.city}}</div>
                     <div class="col-6" style="height:2.5rem; width:400px;">
                         <div class="progress" style="height:1.5rem;">
                             <!-- <div class="{{item.colorClass}}" [style.width]="item.percentage"></div> -->
-                            <div class="progress-bar bg-success" [style.width]="item.percentage"></div> 
+                            <div class="progress-bar bg-success" [style.width]="item.percentage"></div>
                             <div class="progress-bar bg-danger" [style.width]="item.pending"></div>
                         </div>
                     </div>
-                    <!-- <div class="col-4">{{item.count}}/3500</div> -->
-                    <div class="col-4">{{item.compSurveyByCity}} (Complete) / {{item.incompSurveyByCity}} (Incomplete)</div>
+                    <div class="col-4">{{item.compSurveyByCity}} (Complete) / {{item.incompSurveyByCity}} (Incomplete) </div>
                 </div>
             </div>
         </div>
