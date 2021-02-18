@@ -56,7 +56,6 @@ namespace Traisi.Controllers
                                         .AsQueryable()
                                         .Include(s => s.Survey)
                                         .Where(item => item.Survey.Id == surveyId).ToList();
-            
             //complete
             var completedResponse = surveyResponses.Where(item => item.QuestionPart.Id == questionId  && item.QuestionPart.SurveyId == surveyId).ToList();
             var surveyCompleted = completedResponse.Where(item => item.Respondent.HomeAddress != null).GroupBy(item => item.Respondent.HomeAddress.City);
@@ -66,7 +65,6 @@ namespace Traisi.Controllers
                                         City = item.Key,
                                         surveyCompleted = item.Count()
                                     };
-            
             //incomplete
             var incompleteResponse = surveyResponses.Where(item => item.QuestionPart.Id != questionId  && item.QuestionPart.SurveyId == surveyId).ToList();
             var surveyIncompleted = incompleteResponse.Where(item => item.Respondent.HomeAddress != null).GroupBy(item => item.Respondent.HomeAddress.City);
@@ -76,7 +74,6 @@ namespace Traisi.Controllers
                                         City = item.Key,
                                         surveyIncompleted = item.Count()
                                     };
-            
             //final result                        
             var finalResults = new
             {
@@ -85,7 +82,6 @@ namespace Traisi.Controllers
                 completedResponses = completedResult,
                 incompletedResponses = incompletedResult,
             };
-
             return Ok(finalResults);
         }
 
@@ -94,7 +90,6 @@ namespace Traisi.Controllers
         {
             var questionParts = this._unitOfWork.QuestionParts.GetAll()
                                                 .Where(item => item.SurveyId == surveyId).ToList();
-            
             var result = from item in questionParts
                                     select new
                                     {
@@ -102,10 +97,7 @@ namespace Traisi.Controllers
                                         Name = item.Name,
                                         Type = item.QuestionType
                                     };
-
             return Ok(result);
-            
         } 
-
     }
 }

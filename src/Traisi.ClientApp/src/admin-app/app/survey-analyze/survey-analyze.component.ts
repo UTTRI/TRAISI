@@ -40,7 +40,7 @@ export class SurveyAnalyzeComponent implements OnInit {
 	public questions : any = [];
 
 	public selectedRegion:string = "";
-	public selectedQuestion:string = "1";
+	public selectedQuestion:string = "38";
 	
 	public ngOnInit(): void 
 	{
@@ -55,7 +55,11 @@ export class SurveyAnalyzeComponent implements OnInit {
 
 	public filterByCity()
 	{
-		this.responses = this.actualResponses.filter(item  => item.city == this.selectedRegion);
+		if(this.selectedRegion ==  "")
+			this.responses = this.actualResponses;
+		else
+			this.responses = this.actualResponses.filter(item  => item.city == this.selectedRegion);
+			
 		this.handleResponses();
 	}
 

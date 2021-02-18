@@ -28,10 +28,11 @@
                     Select Question : <select [(ngModel)]="selectedQuestion" style="height: 1.5rem;"
                         (change)="filterByQuestion()">
                         <option *ngFor="let item of questions;" value="{{item.id}}">{{item.name}}</option>
-                    </select>
+                    </select> 
                     <!-- Regions dropdown list-->
                     Select Region : <select [(ngModel)]="selectedRegion" (change)="filterByCity()"
                         style="height: 1.5rem;">
+                        <option value="">All Cities</option>
                         <option *ngFor="let item of actualResponses;">{{item.city}}</option>
                     </select>
                     <!-- FSA dropdown list -->
@@ -54,7 +55,8 @@
                             <div class="progress-bar bg-danger" [style.width]="item.pending"></div>
                         </div>
                     </div>
-                    <div class="col-4">{{item.compSurveyByCity}} (Complete) / {{item.incompSurveyByCity}} (Incomplete) </div>
+                    <div class="col-4">{{item.compSurveyByCity}} (Complete) / {{item.incompSurveyByCity}} (Incomplete)
+                    </div>
                 </div>
             </div>
         </div>
