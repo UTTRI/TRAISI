@@ -1,40 +1,34 @@
-<div class=""> 
-  <strong>Date Selection:</strong> 
-    <input type="date"
-         placeholder="Datepicker"
-         class=""/>
+<div class="">
+  <strong>Date Selection:</strong>
+  <input type="date" placeholder="Datepicker" class="" style="margin-left: 0.5rem;" />
 </div>
-<br/>
+<br />
 <div>
-  <h5>Trips</h5>
-  <table width="700" border="2">
+  <h5>Trip Information: </h5>
+  <table width="750" border="1">
     <tr>
-      <th>Trip_Number</th>
-      <th>Departure_Time</th>
-      <th>Trip_Mode</th>
-      <th>Trip_Purpose</th>
+      <th>#</th>
+      <th>User Id</th>
+      <th>Trip Id</th>
+      <th>Started At</th>
+      <th>Finished At</th>
+      <th>Mode</th>
+      <th>Travel Status</th>
       <th>Action</th>
     </tr>
-
     <tr *ngFor="let item of tripData; let i = index; ">
       <td>{{i + 1}}</td>
-      <td>{{item.deptTime}}</td>
-      <td>{{item.mode}}</td>
-      <td>{{item.purpose}}</td>
+      <td>{{item["User Id"]}}</td>
+      <td>{{item["Trip Id"]}}</td>
+      <td>{{item["Started At"]}}</td>
+      <td>{{item["Finished At"]}}</td>
+      <td>{{item.Mode}}</td>
+      <td>{{item["Travel Status"]}}</td>
       <td>
-          <a href="javascript:void(0);" (click)="onConfirmClick()">Confirm</a>  <br/>
-          <a href="javascript:void(0);">Modify</a> 
+        <a href="javascript:void(0);" (click)="onConfirmClick()">Confirm</a> <br />
+        <a href="javascript:void(0);">Modify</a>
     </tr>
-   </table>
+  </table>
 </div>
-<br/>
-<div>
-  <traisi-location-lookup (locationSelected)="onLocationSelected($event)" #locationSelect></traisi-location-lookup>
-  <div class="mapbox-container" #mapContainer [style.height.px]="containerHeight"></div>
-</div>
-
-<div class="address-overlay">
-  <span #addressOverlayText></span>
-</div>
-
-<div class="mapbox-container" #mapContainer [style.height.px]="containerHeight"></div>
+<br />
+<div style="height:500px;" id="map"></div>
