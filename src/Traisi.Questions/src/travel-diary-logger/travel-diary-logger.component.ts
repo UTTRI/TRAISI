@@ -58,6 +58,7 @@ export class TravelDiaryLoggerComponent extends SurveyQuestion<ResponseTypes.Str
 
 	public tripData: any[] = [];
 
+	//using test data at the moment
 	public getTripData(): any[] {
 		return [
 		{
@@ -175,10 +176,10 @@ export class TravelDiaryLoggerComponent extends SurveyQuestion<ResponseTypes.Str
 	 * on init
 	 */
 	public ngOnInit(): void {
+		//it's just the test data, getTripData() would call the backend in normal circumstances
 		this.tripData = this.getTripData();
-		// ADD YOUR ACCESS TOKEN FROM
-		// https://account.mapbox.com		
-		(mapboxgl as any).accessToken = 'pk.eyJ1Ijoia2F2aXRoYW1la2FsYSIsImEiOiJja2trZXpvZ2QxaDJxMnVsYWt3M3Z1dm1yIn0.9GdmEM1ksT_CNpI8m0xuAg';
+		(mapboxgl as any).accessToken = this.accessToken;
+		
 		var map = new mapboxgl.Map({
 			container: 'map',
 			style: 'mapbox://styles/mapbox/streets-v11',
