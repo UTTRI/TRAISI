@@ -25,8 +25,10 @@ namespace Traisi.ViewModels.SurveyViewer
         public string Purpose { get; set; }
         public int Order { get; set; }
 
-        public string Mode {get;set;}
+        public string Mode { get; set; }
 
-        public string Identifier {get;set;}
+        public string Identifier { get; set; }
+
+        public JObject Meta { get; set; }
     }
 }

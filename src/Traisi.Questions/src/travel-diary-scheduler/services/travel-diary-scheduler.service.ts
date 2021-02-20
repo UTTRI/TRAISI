@@ -1,8 +1,12 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable, Injector } from '@angular/core';
 import { EventEmitter } from 'events';
-import { BehaviorSubject } from 'rxjs';
-import { TimelineResponseData } from 'traisi-question-sdk';
-import { TravelDiaryScheduleItem } from 'travel-diary-scheduler/models/services/travel-diary-schedule-item.model';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { TimelineResponseData, TraisiValues, SurveyRespondent, SurveyViewQuestion } from 'traisi-question-sdk';
+import { TravelDiarySchedulerConfiguration } from 'travel-diary-scheduler/models/config.model';
+import { RespondentData } from 'travel-diary-scheduler/models/respondent-data.model';
+import { TravelDiarySchedulerQuestionComponent } from 'travel-diary-scheduler/travel-diary-scheduler-question.component';
+import { TravelDiaryScheduleRespondentDataService } from './travel-diary-scheduler-respondent-data.service';
+// import { TravelDiaryScheduleItem } from 'travel-diary-scheduler/models/services/travel-diary-schedule-item.model';
 
 @Injectable()
 export class TravelDiaryScheduler {
@@ -12,13 +16,36 @@ export class TravelDiaryScheduler {
 
 	public isScheduleConfirmed: boolean = false;
 
-	public constructor() {
+	public onScheduleConfirmed: Observable<void>;
+
+	public component: TravelDiarySchedulerQuestionComponent;
+
+	/**
+	 *
+	 * @param _surveyAccessTime
+	 * @param _configuration
+	 */
+	public constructor(
+		@Inject(TraisiValues.SurveyAccessTime) private _surveyAccessTime: Date,
+		@Inject(TraisiValues.Configuration) private _configuration: TravelDiarySchedulerConfiguration,
+		@Inject(TraisiValues.PrimaryRespondent) private _primaryRespondent: SurveyRespondent,
+		private _respondentData: TravelDiaryScheduleRespondentDataService,
+		private _injector: Injector
+	) {
 		this.scheduleItems = [];
-		this.initialize();
+		this.onScheduleConfirmed = new Subject<void>();
 	}
+
+	/**
+	 *
+	 */
 
 	public clearItems(): void {
 		this.scheduleItems = [];
+	}
+
+	public get configuration(): TravelDiarySchedulerConfiguration {
+		return this._configuration;
 	}
 
 	/**
@@ -27,12 +54,26 @@ export class TravelDiaryScheduler {
 	 */
 	public removeItem(idx: number): void {
 		this.scheduleItems.splice(idx, 1);
-		this.activeScheduleItem.next(idx - 1);
+		if (!this.isScheduleConfirmed) {
+			this.activeScheduleItem.next(idx - 1);
+		}
 	}
 
+	/**
+	 *
+	 */
 	public unconfirmSchedule(): void {
 		this.isScheduleConfirmed = false;
 		this.activeScheduleItem.next(this.scheduleItems.length - 1);
+	}
+
+	/**
+	 * Confirms the schedule
+	 */
+	public confirmSchedule(): void {
+		this.isScheduleConfirmed = true;
+		this.activeScheduleItem.next(-1);
+		(<Subject<void>>this.onScheduleConfirmed).next();
 	}
 
 	/**
@@ -43,24 +84,30 @@ export class TravelDiaryScheduler {
 			address: {},
 			latitude: -1,
 			longitude: -1,
-			name: '<empty>',
+			name: null,
 			order: 0,
-			purpose: undefined,
-			timeA: new Date(),
-			timeB: new Date(),
-			identifier: undefined,
-			mode: undefined,
+			purpose: null,
+			timeA: new Date(new Date(this._surveyAccessTime).setHours(0, 0, 0, 0)),
+			timeB: new Date(new Date(this._surveyAccessTime).setHours(0, 0, 0, 0)),
+			identifier: null,
+			meta: {},
+			mode: null,
 		});
 		this.activeScheduleItem.next(this.scheduleItems.length - 1);
 	}
 
 	/**
-	 *
+	 * Initialize properties and other misc data values
+	 * needed for operation
 	 */
 	public initialize(): void {
-		if (this.scheduleItems.length === 0) {
-			// add default item at start of day
-			this.addItem();
-		}
+		this.component.savedResponse.subscribe((response: TimelineResponseData[]) => {
+			this.scheduleItems = this.scheduleItems.concat(response);
+			if (this.scheduleItems.length === 0) {
+				// add default item at start of day
+				this.addItem();
+			}
+			console.log(this.scheduleItems);
+		});
 	}
 }

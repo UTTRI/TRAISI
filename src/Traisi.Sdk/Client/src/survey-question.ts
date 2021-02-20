@@ -264,6 +264,7 @@ export interface TimelineResponseData
   order: number
   purpose: string
   identifier?: string
+  meta?: any;
 }
 
 export interface RangeResponseData extends ResponseData<ResponseTypes.Range> {

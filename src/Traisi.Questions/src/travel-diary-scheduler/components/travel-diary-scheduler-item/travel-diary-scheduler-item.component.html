@@ -2,9 +2,13 @@
 	<div *ngIf="state.isConfirmed">
 		<div class="schedule-item">
 			<span class="purpose-label">{{ model.purpose }}</span>
-			<span *ngIf="scheduleIndex > 0" class="departure-time-label">{{ model.timeA | date :'shortTime' }} </span>
+			<span *ngIf="scheduleIndex > 0" class="departure-time-label">{{ model.timeA | date: 'shortTime' }} </span>
+			<div class="schedule-item-address">
+				{{ model.address | addressDisplay }}
+			</div>
 		</div>
 	</div>
+
 	<div *ngIf="!state.isConfirmed">
 		<div *ngIf="scheduleIndex === 0">
 			<span class="begin-day-message trip-message">Where did you begin your day?</span>
@@ -15,33 +19,44 @@
 				<span class="trip-purpose-label">{{ scheduleItems[scheduleIndex - 1].purpose }}?</span></span
 			>
 		</div>
-		<div class="form-group row">
+		<div class="form-group row purpose-select-form">
 			<div class="col-12">
 				<ng-select
-					*ngIf="scheduleIndex === 0"
-					[items]="purposes"
+					*ngIf="scheduleIndex >= 0"
 					placeholder="Enter a purpose"
-					[(ngModel)]="model.purpose"
-					(change)="onPurposeChanged()"
+					bindLabel="label"
+					bindValue="id"
+					[ngModel]="model.purpose"
+					(change)="onPurposeChanged($event)"
 				>
+					<ng-option *ngIf="definedHomeLocation" [value]="definedHomeLocation?.purpose"
+						><div class="purpose-label">
+							<i class="fas fa-star star-location"></i>{{ definedHomeLocation?.purpose.label }}
+						</div>
+						<div class="purpose-address">
+							{{ definedHomeLocation?.address | addressDisplay }}
+						</div></ng-option
+					>
+
+					<ng-option *ngFor="let school of definedSchoolLocations" [value]="school.purpose"
+						><div class="purpose-label"><i class="fas fa-star star-location"></i>{{school.purpose.label}}</div>
+						<div class="purpose-address">
+							{{ school.address | addressDisplay }}
+						</div></ng-option
+					>
+					<ng-option *ngFor="let work of definedWorkLocations" [value]="work.purpose"
+						><div class="purpose-label"><i class="fas fa-star star-location"></i>{{work.purpose.label}}</div>
+						<div class="purpose-address">
+							{{ work.address | addressDisplay }}
+						</div></ng-option
+					>
+					<ng-option *ngFor="let purpose of purposes" [value]="purpose"
+						><div class="purpose-label">{{ purpose.label }}</div></ng-option
+					>
 				</ng-select>
 			</div>
 		</div>
-		<div class="form-group row">
-			<div class="col-12">
-				<ng-select
-					*ngIf="scheduleIndex > 0"
-					placeholder="Enter a purpose"
-					[(ngModel)]="model.purpose"
-					(change)="onPurposeChanged()"
-				>
-					<ng-option *ngFor="let purpose of purposesExtended" [value]="purpose">{{ purpose }}</ng-option>
-					<ng-option *ngIf="scheduleIndex >= 2" [value]="'workOtherMember'">Work (any other member)</ng-option>
-					<ng-option *ngIf="scheduleIndex >= 2" [value]="'schoolOtherMember'">School (any other member)</ng-option>
-					<ng-option *ngIf="scheduleIndex >= 2" [value]="'lastLocation'">Last Location</ng-option>
-				</ng-select>
-			</div>
-		</div>
+
 		<div class="form-group row confirm-last-location" *ngIf="model.purpose === 'lastLocation'">
 			<div class="col-12">
 				<span class="trip-message"
@@ -63,7 +78,11 @@
 		</div>
 
 		<div class="departure-time-collect form-group row" *ngIf="scheduleIndex > 0">
-			<div class="col-6">
+			<div
+				class="col-6"
+				[class.has-error]="state.errorState?.invalidTime"
+				[class.no-error]="!state.errorState?.invalidTime"
+			>
 				<label for="timeA" class="col-form-label">Departure time for the trip </label>
 				<div class="input-group" [class.ng-invalid]="!model.timeA">
 					<div class="input-group-prepend">
@@ -87,6 +106,11 @@
 						required
 					/>
 				</div>
+				<div class="time-input-error">
+					<span class="error" *ngIf="state.errorState?.invalidTime"
+						>The time must be later than the previous event.</span
+					>
+				</div>
 			</div>
 			<div class="col-6">
 				<label for="modeSelect" class="col-form-label">Travel Mode </label>
@@ -94,6 +118,8 @@
 					id="modeSelect"
 					*ngIf="scheduleIndex > 0"
 					[items]="modes"
+					bindLabel="label"
+					bindValue="id"
 					placeholder="Enter the travel mode used"
 					[(ngModel)]="model.mode"
 					(change)="onModeChanged()"
@@ -101,7 +127,15 @@
 				</ng-select>
 			</div>
 		</div>
-		<div class="button-footer-container">
+		<div class="button-footer-container" *ngIf="!state.isConfirmed">
+			<button
+				type="button"
+				class="btn btn-primary confirm-complete-schedule"
+				(click)="confirmScheduleItemAndComplete()"
+				*ngIf="scheduleIndex > 0"
+			>
+				I made no more trips
+			</button>
 			<button
 				type="button"
 				class="btn btn-danger delete-schedule"
@@ -132,6 +166,4 @@
 	</div>
 </ng-template>
 
-<traisi-travel-diary-scheduler-dialog-input
-	#dialogInput
-></traisi-travel-diary-scheduler-dialog-input>
+<traisi-travel-diary-scheduler-dialog-input #dialogInput></traisi-travel-diary-scheduler-dialog-input>

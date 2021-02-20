@@ -12,12 +12,11 @@ namespace Traisi.Sdk.Questions
     [SurveyQuestion(QuestionResponseType.Timeline, CodeBundleName = "traisi-questions-travel-diary-scheduler.module.js")]
     public class TravelDiaryScheduler : ISurveyQuestion
     {
-
         public string TypeName => "travel-diary-scheduler";
 
         public string Icon => "fas fa-map-marked-alt";
 
-        public QuestionIconType IconType => QuestionIconType.FONT; 
+        public QuestionIconType IconType => QuestionIconType.FONT;
 
 
         [QuestionConfiguration(ConfigurationValueType.Custom,

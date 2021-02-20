@@ -1,4 +1,5 @@
 import { TimelineResponseData } from "traisi-question-sdk";
+import { TravelDiarySchedulerErrorState } from "./error-state.model";
 
 export interface ScheduleInputState {
 
@@ -11,6 +12,7 @@ export interface ScheduleInputState {
     scheduleIndex?: number;
     returnHomeResponse?: string;
     isConfirmed?: boolean;
+    errorState?: TravelDiarySchedulerErrorState;
 
 
 }

@@ -29,11 +29,12 @@ import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { TravelDiaryScheduler } from './services/travel-diary-scheduler.service';
 import { TravelDiarySchedulerLogic } from './services/travel-diary-scheduler-logic.service';
 import { TravelDiarySchedulerDialogInput } from './components/travel-diary-scheduler-dialog-input/travel-diary-scheduler-dialog-input.component';
+import { TravelDiaryScheduleRespondentDataService } from './services/travel-diary-scheduler-respondent-data.service';
 
 @Component({
 	selector: 'traisi-travel-diary-scheduler-question',
 	template: '' + templateString,
-	providers: [TravelDiaryScheduler],
+	providers: [TravelDiaryScheduler, TravelDiarySchedulerLogic, TravelDiaryScheduleRespondentDataService],
 	encapsulation: ViewEncapsulation.None,
 	entryComponents: [],
 	styles: ['' + styleString],
@@ -52,15 +53,15 @@ export class TravelDiarySchedulerQuestionComponent
 	}
 
 	/**
-	 * 
-	 * @param _modalService 
-	 * @param _elementRef 
-	 * @param _injector 
-	 * @param modalService 
-	 * @param _scheduler 
-	 * @param _respondent 
-	 * @param _primaryRespondent 
-	 * @param _analytics 
+	 *
+	 * @param _modalService
+	 * @param _elementRef
+	 * @param _injector
+	 * @param modalService
+	 * @param _scheduler
+	 * @param _respondent
+	 * @param _primaryRespondent
+	 * @param _analytics
 	 */
 	public constructor(
 		private _modalService: BsModalService,
@@ -68,6 +69,7 @@ export class TravelDiarySchedulerQuestionComponent
 		private _injector: Injector,
 		private modalService: BsModalService,
 		private _scheduler: TravelDiaryScheduler,
+		private _scheulderLogic: TravelDiarySchedulerLogic,
 		@Inject(TraisiValues.Respondent) private _respondent: SurveyRespondent,
 		@Inject(TraisiValues.PrimaryRespondent) private _primaryRespondent: SurveyRespondent,
 		@Inject(TraisiValues.SurveyAnalytics) private _analytics: SurveyAnalyticsService
@@ -78,6 +80,9 @@ export class TravelDiarySchedulerQuestionComponent
 	public ngOnInit(): void {
 		// mark invalid
 		this.validationState.emit(ResponseValidationState.INVALID);
+		this._scheduler.component = this;
+		this._scheduler.initialize();
+		this._scheduler.onScheduleConfirmed.subscribe(this.onScheduleConfirmed);
 	}
 	public ngAfterViewInit(): void {
 		// throw new Error('Method not implemented.');
@@ -100,10 +105,17 @@ export class TravelDiarySchedulerQuestionComponent
 	}
 
 	/**
-	 * 
-	 * @param idx 
+	 *
+	 * @param idx
 	 */
-	public editSchedulerItem(idx: number): void {
+	public editSchedulerItem(idx: number): void {}
 
-	}
+	/**
+	 * Callback for when schedule has been confirmed
+	 */
+	public onScheduleConfirmed = (): void => {
+		console.log('schedule confirmed');
+		console.log(this._scheduler.scheduleItems);
+		this.response.emit(this._scheduler.scheduleItems);
+	};
 }

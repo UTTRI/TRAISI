@@ -519,7 +519,9 @@ namespace Traisi.Services
                         Identifier = responseValue.Identifier,
                         Location =
                             new Point(responseValue.Longitude,
-                                responseValue.Latitude)
+                                responseValue.Latitude),
+                        Meta = responseValue.Meta.ToString()
+                        
                     });
             }
             response.ResponseValues.Clear();

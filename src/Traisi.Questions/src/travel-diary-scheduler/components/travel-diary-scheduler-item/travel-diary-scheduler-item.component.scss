@@ -44,6 +44,33 @@
 	float: right;
 }
 
+.purpose-address {
+	font-size: 12px;
+}
+
+.star-location {
+	color: rgb(218, 195, 64);
+	font-size: 12px;
+	margin-right: 5px;
+}
+
+.purpose-label {
+	text-transform: capitalize;
+	font-weight: bold;
+}
+
+.error {
+	font-size: 12px;
+	font-weight: bold;
+	color: rgb(240, 141, 27);
+	padding: 5px;
+}
+
+
+.has-error {
+	background-color: #c3d2de;
+}
+
 traisi-travel-diary-scheduler-item {
 	display: block;
 }
@@ -54,4 +81,8 @@ traisi-travel-diary-scheduler-item.inactive {
 traisi-travel-diary-scheduler-item.inactive:hover {
 	opacity: 1;
 	cursor: pointer;
+}
+
+.purpose-select-form .ng-select.ng-select-single .ng-select-container {
+    height: 50px;
 }

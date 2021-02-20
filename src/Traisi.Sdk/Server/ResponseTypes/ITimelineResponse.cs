@@ -16,5 +16,7 @@ namespace Traisi.Sdk.Library.ResponseTypes {
 		int? Order { get; set; }
 
 		public string Mode {get;set;}
+
+		public string Meta {get;set;}
 	}
 }

@@ -8,18 +8,20 @@ export interface TravelDiaryConfiguration {
 	homeAllDay: option;
 	homeDeparture: option;
 	returnHome: option;
-	workOutside: option[],
-	schoolOutside: option[],
+	workOutside: option[];
+	schoolOutside: option[];
 }
 
-export interface TravelMode  {
+export interface TravelMode {
 	icon: string;
 	id: string;
 	label: string;
 }
 
-export interface Purpose  {
+export interface Purpose {
 	icon: string;
 	id: string;
 	label: string;
+	allowFirstLocation: boolean;
+	askIfOtherPassengers: boolean;
 }

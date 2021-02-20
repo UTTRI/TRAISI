@@ -2,86 +2,120 @@
 	{
 		"label": "home",
 		"icon": "fas fa-house-night",
-		"id": "home"
+		"id": "home",
+		"allowFirstLocation": true,
+		"askIfOtherPassengers": false
 	},
 	{
 		"label": "usual work location",
 		"icon": "fas fa-building",
-		"id": "work"
+		"id": "work",
+		"allowFirstLocation": true,
+		"askIfOtherPassengers": false
 	},
 	{
 		"label": "work-related/business meeting",
 		"icon": "fas fa-briefcase",
-		"id": "work-related"
+		"id": "work-related",
+		"allowFirstLocation": true,
+		"askIfOtherPassengers": false
 	},
 	{
 		"label": "school/education",
 		"icon": "fas fa-school",
-		"id": "school"
+		"id": "school",
+		"allowFirstLocation": true,
+		"askIfOtherPassengers": false
 	},
 	{
 		"label": "school-related/school-trip",
 		"icon": "fas fa-bus-school",
-		"id": "school-related"
+		"id": "school-related",
+		"allowFirstLocation": true,
+		"askIfOtherPassengers": false
 	},
 	{
 		"label": "restaurant, bar, coffee",
 		"icon": "fas fa-utensils",
-		"id": "restaurant"
+		"id": "restaurant",
+		"allowFirstLocation": false,
+		"askIfOtherPassengers": true
 	},
 	{
 		"label": "pick up food",
 		"icon": "fas fa-utensils",
-		"id": "pick-up-food"
+		"id": "pick-up-food",
+		"allowFirstLocation": false,
+		"askIfOtherPassengers": true
 	},
 	{
 		"label": "visiting friends, family",
 		"icon": "fas fa-users",
-		"id": "vsiting"
+		"id": "vsiting",
+		"allowFirstLocation": false,
+		"askIfOtherPassengers": false
 	},
 	{
 		"label": "recreation, sports, leisure, arts",
 		"icon": "fas fa-hockey-sticks",
-		"id": "recreation"
+		"id": "recreation",
+		"allowFirstLocation": false,
+		"askIfOtherPassengers": true
 	},
 	{
 		"label": "worship, religion",
 		"icon": "fas fa-place-of-worship",
-		"id": "worship"
+		"id": "worship",
+		"allowFirstLocation": false,
+		"askIfOtherPassengers": true
 	},
 	{
 		"label": "health and personal care",
 		"icon": "fas fa-head-side-medical",
-		"id": "health"
+		"id": "health",
+		"allowFirstLocation": false,
+		"askIfOtherPassengers": true
 	},
 	{
 		"label": "drop someone off",
 		"icon": "fas car-bus",
-		"id": "dropoff"
+		"id": "dropoff",
+		"allowFirstLocation": false,
+		"askIfOtherPassengers": true
 	},
 	{
 		"label": "pick someone up",
 		"icon": "fas car-garage",
-		"id": "pickup"
+		"id": "pickup",
+		"allowFirstLocation": false,
+		"askIfOtherPassengers": true
 	},
 	{
 		"label": "education (including TA/RA work)",
 		"icon": "fas fa-home",
-		"id": "education-work"
+		"id": "education-work",
+		"allowFirstLocation": false,
+		"askIfOtherPassengers": false
 	},
 	{
 		"label": "shopping and errands (groceries, corner store, shopping center, gas station, etc.)",
 		"icon": "fas fa-home",
-		"id": "shopping"
+		"id": "shopping",
+		"allowFirstLocation": false,
+		"askIfOtherPassengers": true
 	},
 	{
 		"label": "services (bank, hairdresser, lawyer, notary, mechanic, etc.)",
 		"icon": "fas fa-car-mechanic",
-		"id": "services"
+		"id": "services",
+		"allowFirstLocation": false,
+		"askIfOtherPassengers": true
 	},
 	{
 		"label": "other",
 		"icon": "fas fa-cogs",
-		"id": "other"
+		"id": "other",
+		"allowFirstLocation": false,
+		"askIfOtherPassengers": true
 	}
 ]
