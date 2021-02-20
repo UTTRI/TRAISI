@@ -75,7 +75,7 @@ export class SliderQuestionComponent
   private onSavedResponseData: (
     response: ResponseData<ResponseTypes.Decminal>[] | 'none',
   ) => void = (response: ResponseData<ResponseTypes.Range>[] | 'none') => {
-    if (response !== 'none') {
+    if (response.length>0) {
       let rangeResponse = <RangeResponseData>response[0]
 
       this.sliderValue.next(

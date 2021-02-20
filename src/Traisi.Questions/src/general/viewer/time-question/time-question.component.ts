@@ -80,7 +80,7 @@ export class TimeQuestionComponent extends SurveyQuestion<ResponseTypes.Time> im
 	}
 
 	private onSavedResponseData: (response: TimeResponseData[] | 'none') => void = (response: TimeResponseData[] | 'none') => {
-		if (response !== 'none') {
+		if (response.length>0) {
 			let timeValue = new Date(response[0].value);
 			this.inputTime = timeValue;
 		}

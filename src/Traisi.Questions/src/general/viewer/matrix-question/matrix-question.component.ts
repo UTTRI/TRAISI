@@ -45,9 +45,7 @@ export class MatrixQuestionComponent extends SurveyQuestion<ResponseTypes.Json> 
 	private onSavedResponseData: (response: ResponseData<ResponseTypes.Json>[] | 'none') => void = (
 		response: ResponseData<ResponseTypes.Json>[] | 'none'
 	) => {
-		if (response !== 'none') {
-			console.log('got response ');
-			console.log(response);
+		if (response.length > 0) {
 			let model = JSON.parse(response[0]['value']);
 			this.model = model[0];
 			this.validationState.emit(ResponseValidationState.VALID);
@@ -63,7 +61,7 @@ export class MatrixQuestionComponent extends SurveyQuestion<ResponseTypes.Json> 
 				this.columnLabels.push(i['label']);
 			}
 		}
-		
+
 		this.calculateDimensions();
 	}
 

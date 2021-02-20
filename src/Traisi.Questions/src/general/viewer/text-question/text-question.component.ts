@@ -62,7 +62,7 @@ export class TextQuestionComponent extends SurveyQuestion<ResponseTypes.String>
 	private onSavedResponseData: (response: ResponseData<ResponseTypes.String>[] | 'none') => void = (
 		response: ResponseData<ResponseTypes.String>[] | 'none'
 	) => {
-		if (response !== 'none') {
+		if (response.length > 0) {
 			let stringResponse = <StringResponseData>response[0];
 			this.textInput = stringResponse.value;
 			if (this.isInputValid(this.textInput)) {

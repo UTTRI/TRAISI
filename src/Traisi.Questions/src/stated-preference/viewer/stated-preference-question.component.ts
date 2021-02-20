@@ -214,7 +214,7 @@ export class StatedPreferenceQuestionComponent extends SurveyQuestion<ResponseTy
 	private onSavedResponseData: (response: ResponseData<any>[] | 'none') => void = (
 		response: ResponseData<any>[] | 'none'
 	) => {
-		if (response !== 'none') {
+		if (response.length > 0) {
 			let r = JSON.parse(response[0]['value']).value;
 			this.inputModel.value = r;
 			this.validationState.emit(ResponseValidationState.VALID);

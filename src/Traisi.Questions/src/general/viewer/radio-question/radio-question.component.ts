@@ -60,7 +60,7 @@ export class RadioQuestionComponent extends SurveyQuestion<ResponseTypes.OptionS
 	private onSavedResponseData: (response: ResponseData<ResponseTypes.OptionSelect>[] | 'none') => void = (
 		response: ResponseData<ResponseTypes.OptionSelect>[] | 'none'
 	) => {
-		if (response !== 'none') {
+		if (response.length > 0) {
 			let optionResponse = <OptionSelectResponseData>response[0];
 
 			this.selectedOption = optionResponse.code;

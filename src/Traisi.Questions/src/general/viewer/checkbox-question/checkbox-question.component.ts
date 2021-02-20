@@ -89,7 +89,7 @@ export class CheckboxQuestionComponent extends SurveyQuestion<ResponseTypes.Opti
 	private onLoadSavedResponse: (responses: OptionSelectResponseData[] | 'none') => void = (
 		responses: OptionSelectResponseData[] | 'none'
 	) => {
-		if (responses !== 'none') {
+		if (responses.length > 0) {
 			responses.forEach((response) => {
 				this.model[response.value] = true;
 			});

@@ -88,7 +88,7 @@ export class QuestionInstanceState {
 			.loadSavedResponse(this._questionModel, this._respondent, this._repeatIndex)
 			.subscribe((response) => {
 				this._questionInstance.savedResponse.next(
-					response === undefined || response === null ? 'none' : response.responseValues
+					response === undefined || response === null ? [] : response.responseValues
 				);
 				this._questionInstance.traisiOnLoaded();
 			});

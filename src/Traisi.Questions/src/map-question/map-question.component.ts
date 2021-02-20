@@ -171,7 +171,7 @@ export class MapQuestionComponent extends SurveyQuestion<ResponseTypes.Location>
 	private onSavedResponseData: (response: Array<LocationResponseData> | 'none') => void = (
 		response: Array<LocationResponseData> | 'none'
 	) => {
-		if (response !== 'none') {
+		if (response.length>0) {
 			let locationResponse = response[0];
 			let coords = new LngLat(locationResponse['longitude'], locationResponse['latitude']);
 

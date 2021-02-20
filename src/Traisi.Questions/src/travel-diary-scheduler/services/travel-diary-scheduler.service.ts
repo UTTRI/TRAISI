@@ -103,6 +103,7 @@ export class TravelDiaryScheduler {
 	public initialize(): void {
 		this.component.savedResponse.subscribe((response: TimelineResponseData[]) => {
 			this.scheduleItems = this.scheduleItems.concat(response);
+
 			if (this.scheduleItems.length === 0) {
 				// add default item at start of day
 				this.addItem();

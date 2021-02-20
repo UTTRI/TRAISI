@@ -101,7 +101,7 @@ export class DateQuestionComponent extends SurveyQuestion<ResponseTypes.Date>
 	private onSavedResponseData: (
 		response: DateResponseData[] | 'none'
 	) => void = (response: DateResponseData[] | 'none') => {
-		if (response !== 'none') {
+		if (response.length > 0) {
 			let dateValue = new Date(response[0].value);
 
 			this.dateData = dateValue;

@@ -137,7 +137,7 @@ export class NumberQuestionComponent extends SurveyQuestion<ResponseTypes.Number
 	private onSavedResponseData: (response: ResponseData<ResponseTypes.Number>[] | 'none') => void = (
 		response: ResponseData<ResponseTypes.Number>[] | 'none'
 	) => {
-		if (response !== 'none') {
+		if (response.length > 0) {
 			let decimalResponse = <NumberResponseData>response[0];
 			this.model = '' + decimalResponse.value;
 			this._numberModel = Number(this.model.replace(/[^0-9\.]+/g, ''));
