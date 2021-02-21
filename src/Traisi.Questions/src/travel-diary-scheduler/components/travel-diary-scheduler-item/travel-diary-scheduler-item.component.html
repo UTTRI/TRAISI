@@ -1,5 +1,5 @@
 <div class="schedule-item-container">
-	<div *ngIf="state.isConfirmed">
+	<div *ngIf="state.model.isConfirmed">
 		<div class="schedule-item">
 			<span class="purpose-label">{{ model.purpose }}</span>
 			<span *ngIf="scheduleIndex > 0" class="departure-time-label">{{ model.timeA | date: 'shortTime' }} </span>
@@ -9,7 +9,7 @@
 		</div>
 	</div>
 
-	<div *ngIf="!state.isConfirmed">
+	<div *ngIf="!state.model.isConfirmed">
 		<div *ngIf="scheduleIndex === 0">
 			<span class="begin-day-message trip-message">Where did {{ respondentName }} begin their day?</span>
 		</div>
@@ -127,7 +127,7 @@
 				</ng-select>
 			</div>
 		</div>
-		<div class="button-footer-container" *ngIf="!state.isConfirmed">
+		<div class="button-footer-container" *ngIf="!state.model.isConfirmed">
 			<button
 				type="button"
 				class="btn btn-primary confirm-complete-schedule"

@@ -25,7 +25,7 @@ export class TravelDiarySchedulerLogic {
 	 */
 	private _onActiveScheduleItemChanged = (idx: number) => {
 		if (this.inputState?.scheduleIndex === idx) {
-			this.inputState.isConfirmed = false;
+			this.inputState.model.isConfirmed = false;
 		}
 	};
 
@@ -49,7 +49,7 @@ export class TravelDiarySchedulerLogic {
 		} else {
 			this._scheduler.addItem();
 		}
-		this.inputState.isConfirmed = true;
+		this.inputState.model.isConfirmed = true;
 	}
 
 	/**
@@ -59,7 +59,7 @@ export class TravelDiarySchedulerLogic {
 		// remove last item
 		this._scheduler.removeItem(this._scheduler.scheduleItems.length - 1);
 		this._scheduler.confirmSchedule();
-		this.inputState.isConfirmed = true;
+		this.inputState.model.isConfirmed = true;
 		
 
 

@@ -22,6 +22,7 @@ import { TravelDiaryScheduleRespondentDataService } from 'travel-diary-scheduler
 import { PurposeLocation } from 'travel-diary-scheduler/models/purpose-location.model';
 import { Purpose } from 'travel-diary/models/travel-diary-configuration.model';
 import { TravelDiarySchedulerErrorState } from 'travel-diary-scheduler/models/error-state.model';
+import { TimelineSchedulerData } from 'travel-diary-scheduler/models/timeline-scheduler-data.model';
 @Component({
 	selector: 'traisi-travel-diary-scheduler-item',
 	template: '' + templateString,
@@ -32,7 +33,7 @@ import { TravelDiarySchedulerErrorState } from 'travel-diary-scheduler/models/er
 })
 export class TravelDiarySchedulerItemComponent implements OnInit {
 	@Input()
-	public model: TimelineResponseData;
+	public model: TimelineSchedulerData;
 
 	@Input()
 	public scheduleIndex: number;
@@ -49,7 +50,7 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 
 	public modalRef: BsModalRef | null;
 
-	public get scheduleItems(): TimelineResponseData[] {
+	public get scheduleItems(): TimelineSchedulerData[] {
 		return this._scheduler.scheduleItems;
 	}
 
