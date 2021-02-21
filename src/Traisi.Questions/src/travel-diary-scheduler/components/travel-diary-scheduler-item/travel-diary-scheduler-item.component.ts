@@ -114,6 +114,12 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 		if (!this.model.meta) {
 			this.model.meta = {};
 		}
+
+		this._scheduler.activeScheduleItem.subscribe((x) => {
+			if (x === this.scheduleIndex) {
+				this.updateState();
+			}
+		});
 	}
 
 	/**
@@ -207,6 +213,9 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 		this.dialogInput.show(this.model);
 	}
 
+	/**
+	 *
+	 */
 	public closeAddressInputDialog(): void {
 		// clear purpose as address was reset
 		this.model.purpose = undefined;
@@ -214,13 +223,20 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 		this.updateState();
 	}
 
+	/**
+	 *
+	 */
 	public saveAddressInputDialog(): void {
 		// clear purpose as address was reset
 		this.modalRef.hide();
 		this.updateState();
 	}
 
+	/**
+	 * When this scheduler item is active
+	 */
 	public setActive(): void {
 		this.dataCollected = false;
+		this.updateState();
 	}
 }

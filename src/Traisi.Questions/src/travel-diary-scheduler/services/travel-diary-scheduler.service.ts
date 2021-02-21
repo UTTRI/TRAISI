@@ -9,6 +9,9 @@ import { TravelDiarySchedulerQuestionComponent } from 'travel-diary-scheduler/tr
 import { TravelDiaryScheduleRespondentDataService } from './travel-diary-scheduler-respondent-data.service';
 // import { TravelDiaryScheduleItem } from 'travel-diary-scheduler/models/services/travel-diary-schedule-item.model';
 
+/**
+ * 
+ */
 @Injectable()
 export class TravelDiaryScheduler {
 	public scheduleItems: TimelineSchedulerData[];
@@ -22,9 +25,12 @@ export class TravelDiaryScheduler {
 	public component: TravelDiarySchedulerQuestionComponent;
 
 	/**
-	 *
-	 * @param _surveyAccessTime
-	 * @param _configuration
+	 * 
+	 * @param _surveyAccessTime 
+	 * @param _configuration 
+	 * @param _primaryRespondent 
+	 * @param _respondentData 
+	 * @param _injector 
 	 */
 	public constructor(
 		@Inject(TraisiValues.SurveyAccessTime) private _surveyAccessTime: Date,

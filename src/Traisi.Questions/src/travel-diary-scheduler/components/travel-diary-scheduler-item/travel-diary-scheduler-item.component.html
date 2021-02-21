@@ -151,14 +151,14 @@
 			</button>
 			<button
 				type="button"
-				class="btn btn-danger delete-schedule"
+				class="btn btn-danger delete-schedule float-left"
 				(click)="removeScheduleItem()"
 				*ngIf="scheduleIndex > 0"
 			>
 				Delete
 			</button>
 			<button type="button" class="btn btn-secondary" [disabled]="!state.isValid" (click)="confirmScheduleItem()">
-				Confirm
+				Proceed to next location
 			</button>
 		</div>
 	</div>

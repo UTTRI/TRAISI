@@ -14,11 +14,6 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				<div [class.missingMap]="model && !model.address">
-					<ng-template #mapTemplate>
-						<ng-container #container></ng-container>
-					</ng-template>
-				</div>
 				<div class="form-group row">
 					<div class="col-12" *ngIf="state.collectFamilyMembers">
 						<label for="members" class="col-form-label">Family members who attended this activity</label>
@@ -81,6 +76,11 @@
 							</ng-select>
 						</div>
 					</div>
+				</div>
+				<div [class.missingMap]="model && !model.address">
+					<ng-template #mapTemplate>
+						<ng-container #container></ng-container>
+					</ng-template>
 				</div>
 			</div>
 			<div class="modal-footer">
