@@ -15,6 +15,7 @@ import { filter, map, tap } from 'rxjs/operators';
 import { SurveyQuestion, SurveyRespondent, TimelineResponseData, TraisiValues } from 'traisi-question-sdk';
 import { Purpose } from 'travel-diary-scheduler/models/purpose.model';
 import { ScheduleInputState } from 'travel-diary-scheduler/models/schedule-input-state.model';
+import { TimelineSchedulerData } from 'travel-diary-scheduler/models/timeline-scheduler-data.model';
 import { TravelDiarySchedulerDialogState } from 'travel-diary-scheduler/models/travel-diary-scheduler-dialog-state.model';
 import { TravelDiarySchedulerLogic } from 'travel-diary-scheduler/services/travel-diary-scheduler-logic.service';
 import { TravelDiaryScheduleRespondentDataService } from 'travel-diary-scheduler/services/travel-diary-scheduler-respondent-data.service';
@@ -45,9 +46,9 @@ export class TravelDiarySchedulerDialogInput implements OnInit {
 
 	public isValid: boolean = false;
 
-	public model: TimelineResponseData = <any>{ meta: {} };
+	public model: TimelineSchedulerData = <any>{ meta: {} };
 
-	public onSaved: (data: TimelineResponseData) => void;
+	public onSaved: (data: TimelineSchedulerData) => void;
 
 	public respondents$: Observable<SurveyRespondent[]>;
 
@@ -55,7 +56,7 @@ export class TravelDiarySchedulerDialogInput implements OnInit {
 		return this._scheduler.configuration.purpose;
 	}
 
-	public state: TravelDiarySchedulerDialogState = { collectFamilyMembers: false };
+	public state: TravelDiarySchedulerDialogState = { collectFamilyMembers: false, isDropOffOrPickup: false };
 
 	/**
 	 *
@@ -87,9 +88,9 @@ export class TravelDiarySchedulerDialogInput implements OnInit {
 		this.isValid = false;
 
 		let purpose = this.purposes.find((x) => x.id === this.model.purpose);
-		console.log(purpose);
 		this.state = {
 			collectFamilyMembers: purpose?.askIfOtherPassengers ?? false,
+			isDropOffOrPickup: purpose?.isDropOffOrPickup ?? false,
 		};
 		this.modal.show();
 		if (!this._isMapLoaded) {
@@ -103,6 +104,7 @@ export class TravelDiarySchedulerDialogInput implements OnInit {
 	public dialogSave(): void {
 		this.modal.hide();
 		this.onSaved(this.model);
+		
 	}
 
 	/**
@@ -136,6 +138,18 @@ export class TravelDiarySchedulerDialogInput implements OnInit {
 	public onMembersChanged($event): void {
 		// console.log($event);
 		// this.model.meta['familyMembers'] = $event;
+	}
+
+	/**
+	 *
+	 * @param $event
+	 * @param passenger
+	 */
+	public onFacilitatePassengerPurposeChanged($event: Purpose, passenger: SurveyRespondent): void {
+		let idx = this.model.meta.passengers.findIndex((x) => x.name === passenger.name);
+		if (idx >= 0) {
+			this.model.meta.passengers[idx]['mode'] = $event.id;
+		}
 	}
 
 	/**

@@ -191,6 +191,7 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 			this.model.latitude = data.latitude;
 			this.model.longitude = data.longitude;
 			this.model.meta = data.meta;
+			console.log(this.model);
 		};
 
 		this.dialogInput.show(this.model);

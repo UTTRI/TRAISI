@@ -92,7 +92,7 @@
 		"icon": "fas car-bus",
 		"id": "dropoff",
 		"allowFirstLocation": false,
-		"askIfOtherPassengers": true,
+		"askIfOtherPassengers": false,
 		"isDropOffOrPickup":true
 	},
 	{
@@ -100,7 +100,7 @@
 		"icon": "fas car-garage",
 		"id": "pickup",
 		"allowFirstLocation": false,
-		"askIfOtherPassengers": true,
+		"askIfOtherPassengers": false,
 		"isDropOffOrPickup":true
 	},
 	{

@@ -19,7 +19,7 @@
 						<ng-container #container></ng-container>
 					</ng-template>
 				</div>
-				<div class="form-group row" >
+				<div class="form-group row">
 					<div class="col-12" *ngIf="state.collectFamilyMembers">
 						<label for="members" class="col-form-label">Family members who attended this activity</label>
 						<ng-select
@@ -28,16 +28,58 @@
 							[items]="respondents$ | async"
 							name="members"
 							(change)="onMembersChanged($event)"
-							[(ngModel)]="model.meta.familyMembers"
+							[(ngModel)]="model.meta.passengers"
 							[multiple]="true"
 							bindLabel="name"
-							bindValue="id"
 							[selectOnTab]="true"
 							labelForId="members"
 							placeholder="Select Household Members"
 							required
 						>
-						</ng-select> 
+						</ng-select>
+					</div>
+					<div class="col-12" *ngIf="state.isDropOffOrPickup">
+						<label for="members" class="col-form-label"
+							>Who is {{ respondentName }} dropping off or picking up?</label
+						>
+						<ng-select
+							appearance="outline"
+							#memberSelect
+							name="members"
+							(change)="onMembersChanged($event)"
+							[(ngModel)]="model.meta.passengers"
+							[multiple]="true"
+							bindLabel="name"
+							[selectOnTab]="true"
+							labelForId="members"
+							placeholder="Select Household Members"
+							required
+						>
+							<ng-option [value]="respondent" *ngFor="let respondent of respondents$ | async">{{
+								respondent.name
+							}}</ng-option>
+							<ng-option [value]="-1">Facilitate non-family member</ng-option>
+						</ng-select>
+					</div>
+					<div class="col-12" *ngFor="let passenger of model.meta?.passengers">
+						<div *ngIf="passenger !== -1">
+							<label for="members" class="col-form-label"
+								>What purpose is passenger {{ passenger.name }}?</label
+							>
+							<ng-select
+								placeholder="Enter a purpose"
+								bindLabel="label"
+								bindValue="id"
+								required
+								(change)="onFacilitatePassengerPurposeChanged($event, passenger)"
+							>
+								<ng-container *ngFor="let purpose of purposes">
+									<ng-option [value]="purpose" *ngIf="!purpose.isDropOffOrPickup"
+										><div class="purpose-label">{{ purpose.label }}</div></ng-option
+									>
+								</ng-container>
+							</ng-select>
+						</div>
 					</div>
 				</div>
 			</div>
