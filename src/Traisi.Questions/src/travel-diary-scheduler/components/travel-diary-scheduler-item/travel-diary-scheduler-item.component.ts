@@ -23,6 +23,7 @@ import { PurposeLocation } from 'travel-diary-scheduler/models/purpose-location.
 import { Purpose } from 'travel-diary/models/travel-diary-configuration.model';
 import { TravelDiarySchedulerErrorState } from 'travel-diary-scheduler/models/error-state.model';
 import { TimelineSchedulerData } from 'travel-diary-scheduler/models/timeline-scheduler-data.model';
+import { SurveyRespondentUser } from 'travel-diary/models/consts';
 @Component({
 	selector: 'traisi-travel-diary-scheduler-item',
 	template: '' + templateString,
@@ -85,6 +86,10 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 		return this._schedulerLogic.inputState.errorState;
 	}
 
+	public get respondent(): SurveyRespondent {
+		return this._respondent;
+	}
+
 	/**
 	 *
 	 * @param _scheduler
@@ -95,6 +100,7 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 		private _scheduler: TravelDiaryScheduler,
 		private _schedulerLogic: TravelDiarySchedulerLogic,
 		private _modalService: BsModalService,
+		@Inject(TraisiValues.Respondent) private _respondent: SurveyRespondent,
 		private _respondentData: TravelDiaryScheduleRespondentDataService,
 		private ref: ChangeDetectorRef
 	) {}

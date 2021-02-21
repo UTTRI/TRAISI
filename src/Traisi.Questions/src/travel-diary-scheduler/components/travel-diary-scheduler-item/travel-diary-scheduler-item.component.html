@@ -11,11 +11,11 @@
 
 	<div *ngIf="!state.model.isConfirmed">
 		<div *ngIf="scheduleIndex === 0">
-			<span class="begin-day-message trip-message">Where did {{ respondentName }} begin their day?</span>
+			<span class="begin-day-message trip-message">Where did {{ respondent.name }} begin their day?</span>
 		</div>
 		<div *ngIf="scheduleIndex > 0">
 			<span class="begin-day-message trip-message">
-				Where did {{ respondentName }} go after
+				Where did {{ respondent.name }} go after
 				<span class="trip-purpose-label">{{ scheduleItems[scheduleIndex - 1].purpose }}?</span></span
 			>
 		</div>
@@ -60,7 +60,7 @@
 		<div class="form-group row confirm-last-location" *ngIf="model.purpose === 'lastLocation'">
 			<div class="col-12">
 				<span class="trip-message"
-					>Did {{ respondentName }} return home after {{ scheduleItems[scheduleIndex - 1].purpose }}?</span
+					>Did {{ respondent.name }} return home after {{ scheduleItems[scheduleIndex - 1].purpose }}?</span
 				>
 			</div>
 			<div class="col-12">
