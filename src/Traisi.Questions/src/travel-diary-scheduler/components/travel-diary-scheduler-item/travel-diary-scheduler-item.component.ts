@@ -135,7 +135,7 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 		} else if (workPurpose) {
 			this.model.purpose = workPurpose.purpose.id;
 			this.model.address = workPurpose.address;
-		} else if (workPurpose) {
+		} else if (schoolPurpose) {
 			this.model.purpose = schoolPurpose.purpose.id;
 			this.model.address = schoolPurpose.address;
 		} else {
