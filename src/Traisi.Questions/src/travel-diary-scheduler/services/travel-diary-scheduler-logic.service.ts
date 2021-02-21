@@ -9,8 +9,6 @@ import { TravelDiaryScheduler } from './travel-diary-scheduler.service';
 export class TravelDiarySchedulerLogic {
 	public inputState: ScheduleInputState;
 
-	
-
 	/**
 	 *
 	 * @param _scheduler
@@ -57,12 +55,9 @@ export class TravelDiarySchedulerLogic {
 	 */
 	public confirmAndCompleteSchedule(): void {
 		// remove last item
-		this._scheduler.removeItem(this._scheduler.scheduleItems.length - 1);
+		// this._scheduler.removeItem(this._scheduler.scheduleItems.length - 1);
 		this._scheduler.confirmSchedule();
 		this.inputState.model.isConfirmed = true;
-		
-
-
 	}
 
 	/**
@@ -82,6 +77,7 @@ export class TravelDiarySchedulerLogic {
 		let state: TravelDiarySchedulerErrorState = {
 			invalidTime: false,
 			isValid: true,
+			adjacentLocations: false,
 		};
 
 		let idx = this.inputState.scheduleIndex;
@@ -98,6 +94,28 @@ export class TravelDiarySchedulerLogic {
 				state.isValid = false;
 			}
 		}
+		if (this.checkHasAdjacentLocations()) {
+			state.adjacentLocations = true;
+			state.isValid = false;
+		}
 		return state;
+	}
+
+	/**
+	 * Roughly determines if two locations are adjacent to eachother on the schedule using
+	 * address information.
+	 */
+	private checkHasAdjacentLocations(): boolean {
+		for (let i = 0; i < this._scheduler.scheduleItems.length - 1; i++) {
+			if (
+				this._scheduler.scheduleItems[i].address.streetAddress ===
+					this._scheduler.scheduleItems[i + 1].address.streetAddress &&
+				this._scheduler.scheduleItems[i].address.streetNumber ===
+					this._scheduler.scheduleItems[i + 1].address.streetNumber
+			) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

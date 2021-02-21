@@ -54,6 +54,9 @@
 						><div class="purpose-label">{{ purpose.label }}</div></ng-option
 					>
 				</ng-select>
+				<div class="adjacent-location-error-message error" *ngIf="state.errorState?.adjacentLocations">
+					There cannot be two consecutive trips at the same location.
+				</div>
 			</div>
 		</div>
 
@@ -127,7 +130,17 @@
 				</ng-select>
 			</div>
 		</div>
+		
 		<div class="button-footer-container" *ngIf="!state.model.isConfirmed">
+
+			<button
+			type="button"
+			class="btn btn-primary confirm-complete-schedule"
+			(click)="confirmScheduleItemAndComplete()"
+			*ngIf="scheduleItemsCount === 1 && scheduleIndex === 0"
+		>
+			I was at this location all day.
+		</button>
 			<button
 				type="button"
 				class="btn btn-primary confirm-complete-schedule"
@@ -150,20 +163,5 @@
 		</div>
 	</div>
 </div>
-<ng-template #addressInputDialogTemplate>
-	<div class="modal-header">
-		<h4 class="modal-title pull-left">Please enter the address</h4>
-		<button type="button" class="close pull-right" aria-label="Close" (click)="closeAddressInputDialog()">
-			<span aria-hidden="true">&times;</span>
-		</button>
-	</div>
-	<div class="modal-body text-left">
-		<div class="location-query"></div>
-	</div>
-	<div class="modal-footer text-center">
-		<button type="button" class="btn btn-primary" (click)="saveAddressInputDialog()">Save</button>
-		<button type="button" class="btn btn-secondary" (click)="closeAddressInputDialog()">Cancel</button>
-	</div>
-</ng-template>
 
 <traisi-travel-diary-scheduler-dialog-input #dialogInput></traisi-travel-diary-scheduler-dialog-input>

@@ -90,6 +90,10 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 		return this._respondent;
 	}
 
+	public get scheduleItemsCount(): number {
+		return this._scheduler.scheduleItems.length;
+	}
+
 	/**
 	 *
 	 * @param _scheduler
