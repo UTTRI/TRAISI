@@ -56,6 +56,8 @@ export class TravelDiarySchedulerDialogInput implements OnInit {
 		return this._scheduler.configuration.purpose;
 	}
 
+	private _locationLookupComponent: any;
+
 	public state: TravelDiarySchedulerDialogState = { collectFamilyMembers: false, isDropOffOrPickup: false };
 
 	/**
@@ -104,7 +106,6 @@ export class TravelDiarySchedulerDialogInput implements OnInit {
 	public dialogSave(): void {
 		this.modal.hide();
 		this.onSaved(this.model);
-		
 	}
 
 	/**
@@ -168,6 +169,11 @@ export class TravelDiarySchedulerDialogInput implements OnInit {
 				instance.response.subscribe(this.locationResponseReceived);
 				this._mapComponent = instance;
 				this._isMapLoaded = true;
+
+				instance['onInit'] = () => {
+					this._locationLookupComponent = instance['locationSelect'];
+					console.log(this._locationLookupComponent['staticAddressResults']);
+				};
 			}
 		});
 	}
