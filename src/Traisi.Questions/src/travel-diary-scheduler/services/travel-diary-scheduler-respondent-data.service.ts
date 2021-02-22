@@ -27,9 +27,13 @@ export class TravelDiaryScheduleRespondentDataService {
 
 	private _respondents: SurveyRespondent[] = [];
 
+	public get respondents(): SurveyRespondent[] {
+		return this._respondents;
+	}
+
 	private _respondents$: ReplaySubject<SurveyRespondent[]> = new ReplaySubject<SurveyRespondent[]>();
 
-	public get respondents(): Observable<SurveyRespondent[]> {
+	public get respondents$(): Observable<SurveyRespondent[]> {
 		return this._respondents$;
 	}
 
@@ -122,6 +126,7 @@ export class TravelDiaryScheduleRespondentDataService {
 										icon: '',
 										allowFirstLocation: true,
 										askIfOtherPassengers: false,
+										respondentId: respondent.id,
 									},
 									address: x.responseValues[0].address,
 									latitide: x.responseValues[0].latitude,
@@ -142,6 +147,7 @@ export class TravelDiaryScheduleRespondentDataService {
 										icon: '',
 										allowFirstLocation: true,
 										askIfOtherPassengers: false,
+										respondentId: respondent.id,
 									},
 									address: x.responseValues[0].address,
 									latitide: x.responseValues[0].latitude,

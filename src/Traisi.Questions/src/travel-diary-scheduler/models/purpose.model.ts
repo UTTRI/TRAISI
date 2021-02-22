@@ -5,5 +5,6 @@ export interface Purpose {
 	allowFirstLocation: boolean;
 	askIfOtherPassengers: boolean;
 	isDropOffOrPickup: boolean;
+	respondentId?: number;
 	
 }

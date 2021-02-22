@@ -57,40 +57,55 @@ export class TravelDiarySchedulerDialogInput implements OnInit {
 		return this._scheduler.configuration.purpose;
 	}
 
-	private _locationLookupComponent: any;
-
 	public state: TravelDiarySchedulerDialogState = { collectFamilyMembers: false, isDropOffOrPickup: false };
 
 	public get respondentsData(): RespondentsData {
 		return this._respondentData.respondentsData;
 	}
 
+	public get primaryRespondent(): SurveyRespondent {
+		return this._primaryRespondent;
+	}
+
 	/**
 	 *
 	 * @param _questionLoaderService
+	 * @param _surveyRespondent
+	 * @param _primaryRespondent
+	 * @param _scheduler
 	 * @param _injector
 	 * @param _respondentData
 	 */
 	public constructor(
 		@Inject(TraisiValues.QuestionLoader) private _questionLoaderService,
 		@Inject(TraisiValues.Respondent) private _surveyRespondent,
+		@Inject(TraisiValues.PrimaryRespondent) private _primaryRespondent,
 		private _scheduler: TravelDiaryScheduler,
 		private _injector: Injector,
 		private _respondentData: TravelDiaryScheduleRespondentDataService
 	) {}
 
 	public ngOnInit(): void {
-		this.respondents$ = this._respondentData.respondents.pipe(
+		this.respondents$ = this._respondentData.respondents$.pipe(
 			map((v) => v.filter((r) => r.id !== this._surveyRespondent.id))
 		);
 	}
 
 	/**
-	 * 
+	 * Validates the current state of input
 	 */
 	public validate(): boolean {
 		// determine that another passenger is selected
-		return true;
+		this.isValid = true;
+		if (!this.state.isDropOffOrPickup && !this.model.address) {
+			this.isValid = false;
+		} else if (
+			this.state.isDropOffOrPickup &&
+			(!this.model.address || this.model.meta.passengers?.length === 0 || !this.model.purpose)
+		) {
+			this.isValid = false;
+		}
+		return this.isValid;
 	}
 
 	/**
@@ -142,7 +157,7 @@ export class TravelDiarySchedulerDialogInput implements OnInit {
 		this.model.address = value['address'];
 		this.model.latitude = value['latitude'];
 		this.model.longitude = value['longitude'];
-		this.isValid = true;
+		this.validate();
 	};
 
 	/**
@@ -159,11 +174,21 @@ export class TravelDiarySchedulerDialogInput implements OnInit {
 	 * @param purpose
 	 * @param passenger
 	 */
-	public onFacilitatePassengerPurposeChanged(purpose: Purpose, passenger: SurveyRespondent): void {
-		let idx = this.model.meta.passengers.findIndex((x) => x.name === passenger.name);
-		if (idx >= 0) {
-			this.model.meta.passengers[idx]['mode'] = purpose.id;
+	public onFacilitatePassengerPurposeChanged(purpose: Purpose): void {
+		for (let passenger of this.model.meta.passengers) {
+			passenger['purpose'] = purpose.id;
 		}
+		// retrieve passenger
+		let passenger = this._respondentData.respondents.find((x) => x.id === purpose.respondentId);
+
+		if (!passenger) {
+			//no need to update map since no location data is associated with purpose
+			this._mapComponent.resetInput();
+			this.model.address = undefined;
+			this.validate();
+			return;
+		}
+
 		// find the matching purpose and update the location input
 		let workPurpose = this.respondentsData.respondent[passenger.id].workLocations.find(
 			(x) => x.purpose.id === purpose.id
@@ -194,10 +219,11 @@ export class TravelDiarySchedulerDialogInput implements OnInit {
 			this.model.latitude = schoolPurpose.latitide;
 			this.model.longitude = schoolPurpose.longitude;
 			this._mapComponent.setQuestionState(schoolPurpose.latitide, schoolPurpose.longitude, schoolPurpose.address);
-		}
-		else {
+		} else {
+			this.model.address = undefined;
 			this._mapComponent.resetInput();
 		}
+		this.validate();
 	}
 
 	/**
@@ -216,10 +242,6 @@ export class TravelDiarySchedulerDialogInput implements OnInit {
 				instance.response.subscribe(this.locationResponseReceived);
 				this._mapComponent = instance;
 				this._isMapLoaded = true;
-
-				instance['onInit'] = () => {
-					this._locationLookupComponent = instance['locationSelect'];
-				};
 			}
 		});
 	}
