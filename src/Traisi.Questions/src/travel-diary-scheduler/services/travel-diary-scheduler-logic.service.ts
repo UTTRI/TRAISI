@@ -96,6 +96,7 @@ export class TravelDiarySchedulerLogic {
 		}
 
 		if (this._scheduler.scheduleItems[idx].latitude === -1 || this._scheduler.scheduleItems[idx].longitude === -1) {
+			console.log('fail');
 			state.isValid = false;
 		}
 		if (this.checkHasAdjacentLocations()) {

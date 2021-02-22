@@ -132,12 +132,18 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 		if (purpose.id === this.definedHomeLocation.purpose.id) {
 			this.model.purpose = purpose.id;
 			this.model.address = this.definedHomeLocation.address;
+			this.model.latitude = this.definedHomeLocation.latitide;
+			this.model.longitude = this.definedHomeLocation.longitude;
 		} else if (workPurpose) {
 			this.model.purpose = workPurpose.purpose.id;
 			this.model.address = workPurpose.address;
+			this.model.latitude = workPurpose.latitide;
+			this.model.longitude = workPurpose.longitude;
 		} else if (schoolPurpose) {
 			this.model.purpose = schoolPurpose.purpose.id;
 			this.model.address = schoolPurpose.address;
+			this.model.latitude = schoolPurpose.latitide;
+			this.model.longitude = schoolPurpose.longitude;
 		} else {
 			this.model.purpose = purpose.id;
 			this.openModal(this.addressInputDialogTemplate);
