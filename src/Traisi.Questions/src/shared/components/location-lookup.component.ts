@@ -33,15 +33,7 @@ export class LocationLookupComponent implements OnInit {
 		this._initializeAddressSearch();
 	}
 
-	public staticAddressResults: MapLocation[] = [
-		{
-			address: {},
-			id: '1',
-			lat: 0,
-			lng: 0,
-			name: 'test',
-		},
-	];
+	public staticAddressResults: MapLocation[] = [];
 
 	private _initializeAddressSearch(): void {
 		this.addressResults$ = concat(
