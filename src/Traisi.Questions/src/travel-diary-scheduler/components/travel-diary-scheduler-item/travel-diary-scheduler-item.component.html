@@ -155,6 +155,7 @@
 				</button>
 				<button
 					type="button"
+					[disabled]="!state.isValid"
 					class="btn btn-primary confirm-complete-schedule"
 					(click)="confirmScheduleItemAndComplete()"
 					*ngIf="scheduleIndex > 0"

@@ -67,15 +67,15 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 	}
 
 	public get definedSchoolLocations(): PurposeLocation[] {
-		return this._respondentData.respondentData.schoolLocations;
+		return this._respondentData.respondentsData.respondent[this._respondent.id].schoolLocations;
 	}
 
 	public get definedHomeLocation(): PurposeLocation {
-		return this._respondentData.respondentData.homeLocation;
+		return this._respondentData.respondentsData.homeLocation;
 	}
 
 	public get definedWorkLocations(): PurposeLocation[] {
-		return this._respondentData.respondentData.workLocations;
+		return this._respondentData.respondentsData.respondent[this._respondent.id].workLocations;
 	}
 
 	public get state(): ScheduleInputState {

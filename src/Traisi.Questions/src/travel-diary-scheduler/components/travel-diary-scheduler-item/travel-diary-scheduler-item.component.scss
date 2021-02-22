@@ -66,6 +66,10 @@
 	padding: 5px;
 }
 
+.button-container-inner {
+	flex-grow: 1;
+}
+
 
 .has-error {
 	background-color: #c3d2de;

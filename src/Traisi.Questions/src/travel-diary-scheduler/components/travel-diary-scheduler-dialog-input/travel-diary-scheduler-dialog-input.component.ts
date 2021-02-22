@@ -14,6 +14,7 @@ import { BehaviorSubject, from, Observable } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
 import { SurveyQuestion, SurveyRespondent, TimelineResponseData, TraisiValues } from 'traisi-question-sdk';
 import { Purpose } from 'travel-diary-scheduler/models/purpose.model';
+import { RespondentsData } from 'travel-diary-scheduler/models/respondent-data.model';
 import { ScheduleInputState } from 'travel-diary-scheduler/models/schedule-input-state.model';
 import { TimelineSchedulerData } from 'travel-diary-scheduler/models/timeline-scheduler-data.model';
 import { TravelDiarySchedulerDialogState } from 'travel-diary-scheduler/models/travel-diary-scheduler-dialog-state.model';
@@ -60,6 +61,10 @@ export class TravelDiarySchedulerDialogInput implements OnInit {
 
 	public state: TravelDiarySchedulerDialogState = { collectFamilyMembers: false, isDropOffOrPickup: false };
 
+	public get respondentsData(): RespondentsData {
+		return this._respondentData.respondentsData;
+	}
+
 	/**
 	 *
 	 * @param _questionLoaderService
@@ -78,6 +83,17 @@ export class TravelDiarySchedulerDialogInput implements OnInit {
 		this.respondents$ = this._respondentData.respondents.pipe(
 			map((v) => v.filter((r) => r.id !== this._surveyRespondent.id))
 		);
+	}
+
+	/**
+	 * 
+	 */
+	public validate(): boolean {
+		// determine that another passenger is selected
+		
+
+
+		return true;
 	}
 
 	/**
@@ -143,13 +159,47 @@ export class TravelDiarySchedulerDialogInput implements OnInit {
 
 	/**
 	 *
-	 * @param $event
+	 * @param purpose
 	 * @param passenger
 	 */
-	public onFacilitatePassengerPurposeChanged($event: Purpose, passenger: SurveyRespondent): void {
+	public onFacilitatePassengerPurposeChanged(purpose: Purpose, passenger: SurveyRespondent): void {
 		let idx = this.model.meta.passengers.findIndex((x) => x.name === passenger.name);
 		if (idx >= 0) {
-			this.model.meta.passengers[idx]['mode'] = $event.id;
+			this.model.meta.passengers[idx]['mode'] = purpose.id;
+		}
+		// find the matching purpose and update the location input
+		let workPurpose = this.respondentsData.respondent[passenger.id].workLocations.find(
+			(x) => x.purpose.id === purpose.id
+		);
+		let schoolPurpose = this.respondentsData.respondent[passenger.id].schoolLocations.find(
+			(x) => x.purpose.id === purpose.id
+		);
+
+		if (purpose.id === this.respondentsData.homeLocation.purpose.id) {
+			this.model.purpose = purpose.id;
+			this.model.address = this.respondentsData.homeLocation.address;
+			this.model.latitude = this.respondentsData.homeLocation.latitide;
+			(this.model.longitude = this.respondentsData.homeLocation.longitude),
+				this._mapComponent.setQuestionState(
+					this.respondentsData.homeLocation.latitide,
+					this.respondentsData.homeLocation.longitude,
+					this.respondentsData.homeLocation.address
+				);
+		} else if (workPurpose) {
+			this.model.purpose = workPurpose.purpose.id;
+			this.model.address = workPurpose.address;
+			this.model.latitude = workPurpose.latitide;
+			this.model.longitude = workPurpose.longitude;
+			this._mapComponent.setQuestionState(workPurpose.latitide, workPurpose.longitude, workPurpose.address);
+		} else if (schoolPurpose) {
+			this.model.purpose = schoolPurpose.purpose.id;
+			this.model.address = schoolPurpose.address;
+			this.model.latitude = schoolPurpose.latitide;
+			this.model.longitude = schoolPurpose.longitude;
+			this._mapComponent.setQuestionState(schoolPurpose.latitide, schoolPurpose.longitude, schoolPurpose.address);
+		}
+		else {
+			this._mapComponent.resetInput();
 		}
 	}
 
@@ -172,7 +222,6 @@ export class TravelDiarySchedulerDialogInput implements OnInit {
 
 				instance['onInit'] = () => {
 					this._locationLookupComponent = instance['locationSelect'];
-					console.log(this._locationLookupComponent['staticAddressResults']);
 				};
 			}
 		});

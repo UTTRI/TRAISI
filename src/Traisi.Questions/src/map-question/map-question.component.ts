@@ -235,6 +235,10 @@ export class MapQuestionComponent
 		}
 	}
 
+	/**
+	 *
+	 * @param lngLat
+	 */
 	public setMarkerLocation(lngLat: LngLat): void {
 		if (this._marker) {
 			this._marker.setLngLat(lngLat);
@@ -419,13 +423,20 @@ export class MapQuestionComponent
 		// this.accessToken = mapConfig.AccessToken;
 	}
 
+	/**
+	 *
+	 */
 	public resetInput(): void {
 		this._isMarkerAdded = false;
 		if (this._marker) {
 			this._marker.remove();
 		}
+		this.locationSelect.addressInputModel = undefined;
 	}
 
+	/**
+	 *
+	 */
 	public clearLocation(): void {
 		this.resetInput();
 		this.validationState.emit(ResponseValidationState.INVALID);

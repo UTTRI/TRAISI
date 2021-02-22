@@ -6,6 +6,8 @@ import {
 	SurveyResponseService,
 	SurveyRespondentService,
 	Address,
+	SurveyRespondentViewModel,
+	SurveyResponseViewModel,
 } from 'traisi-question-sdk';
 import { TravelDiarySchedulerConfiguration } from 'travel-diary-scheduler/models/config.model';
 import {
@@ -49,14 +51,12 @@ export class TravelDiaryScheduleRespondentDataService {
 		private _injector: Injector
 	) {
 		this.initialize();
-		
 	}
 
 	public initialize(): void {
 		this.respondentsData = {
-			workLocations: [],
-			schoolLocations: [],
 			homeLocation: undefined,
+			respondent: {},
 		};
 
 		let workLocations = [];
@@ -71,40 +71,8 @@ export class TravelDiaryScheduleRespondentDataService {
 			let schoolQuestion = this._injector.get('question.' + schoolLocation.label);
 			schoolLocations.push(schoolQuestion);
 		}
-		this._responseService
-			.loadSavedResponsesForRespondents(schoolLocations.concat(workLocations), [this._respondent])
-			.subscribe((results) => {
-				this.respondentsData[this._respondent.id].schoolLocations = results
-					.filter((r) => schoolLocations.some((x) => x.questionId == r.questionId))
-					.map((x) => {
-						return {
-							purpose: {
-								id: SCHOOL_DEFINED_PURPOSE,
-								label: 'School',
-								icon: '',
-								allowFirstLocation: true,
-								askIfOtherPassengers: false,
-							},
-							address: x.responseValues[0].address,
-						};
-					}) as any[];
-				this.respondentsData.workLocations = results
-					.filter((r) => workLocations.some((x) => x.questionId == r.questionId))
-					.map((x) => {
-						return {
-							purpose: {
-								id: WORK_DEFINED_PURPOSE,
-								label: 'Work',
-								icon: '',
-								allowFirstLocation: true,
-								askIfOtherPassengers: false,
-							},
-							address: x.responseValues[0].address,
-						};
-					}) as any[];
-			});
-
 		// get the primary home address
+
 		this._respondentService.getSurveyGroupMembers(this._respondent).subscribe((respondents) => {
 			let primaryHomeAddress: Address = {};
 			let primaryHomeLat = 0;
@@ -114,7 +82,7 @@ export class TravelDiaryScheduleRespondentDataService {
 				primaryHomeLat = respondents[0].homeLatitude;
 				primaryHomeLng = respondents[0].homeLongitude;
 			}
-			this.respondentData.homeLocation = {
+			this.respondentsData.homeLocation = {
 				address: primaryHomeAddress,
 				purpose: {
 					id: HOME_DEFINED_PURPOSE,
@@ -122,12 +90,68 @@ export class TravelDiaryScheduleRespondentDataService {
 					icon: '',
 					allowFirstLocation: true,
 					askIfOtherPassengers: false,
+					isDropOffOrPickup: true,
 				},
+				latitide: primaryHomeLat,
+				longitude: primaryHomeLng,
 			};
 			for (let respondent of respondents) {
 				this._respondents.push(respondent);
 			}
-			this._respondents$.next(this._respondents);
+
+			this._responseService
+				.loadSavedResponsesForRespondents(schoolLocations.concat(workLocations), this._respondents)
+				.subscribe((results: SurveyResponseViewModel[]) => {
+					console.log(results);
+					for (let respondent of this._respondents) {
+						this.respondentsData.respondent[respondent.id] = {
+							schoolLocations: [],
+							workLocations: [],
+						};
+						this.respondentsData.respondent[respondent.id].schoolLocations = results
+							.filter((r) =>
+								schoolLocations.some(
+									(x) => x.questionId == r.questionId && r.respondent.id === respondent.id
+								)
+							)
+							.map((x) => {
+								return {
+									purpose: {
+										id: SCHOOL_DEFINED_PURPOSE,
+										label: 'School',
+										icon: '',
+										allowFirstLocation: true,
+										askIfOtherPassengers: false,
+									},
+									address: x.responseValues[0].address,
+									latitide: x.responseValues[0].latitude,
+									longitude: x.responseValues[0].longitude,
+								};
+							}) as any[];
+						this.respondentsData.respondent[respondent.id].workLocations = results
+							.filter((r) =>
+								workLocations.some(
+									(x) => x.questionId === r.questionId && r.respondent.id === respondent.id
+								)
+							)
+							.map((x) => {
+								return {
+									purpose: {
+										id: WORK_DEFINED_PURPOSE,
+										label: 'Work',
+										icon: '',
+										allowFirstLocation: true,
+										askIfOtherPassengers: false,
+									},
+									address: x.responseValues[0].address,
+									latitide: x.responseValues[0].latitude,
+									longitude: x.responseValues[0].longitude,
+								};
+							}) as any[];
+					}
+					this._respondents$.next(this._respondents);
+					console.log(this.respondentsData);
+				});
 		});
 	}
 }

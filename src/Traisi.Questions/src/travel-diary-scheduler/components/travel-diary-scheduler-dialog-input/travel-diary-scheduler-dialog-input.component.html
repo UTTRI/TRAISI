@@ -68,6 +68,40 @@
 								required
 								(change)="onFacilitatePassengerPurposeChanged($event, passenger)"
 							>
+								<ng-option
+									*ngIf="respondentsData.respondent[passenger.id]"
+									[value]="respondentsData.homeLocation?.purpose"
+									><div class="purpose-label">
+										<i class="fas fa-star star-location"></i
+										>{{ respondentsData.homeLocation?.purpose.label }}
+									</div>
+									<div class="purpose-address">
+										{{ respondentsData.homeLocation?.address | addressDisplay }}
+									</div></ng-option
+								>
+
+								<ng-option
+									*ngFor="let school of respondentsData.respondent[passenger.id].schoolLocations"
+									[value]="school.purpose"
+									><div class="purpose-label">
+										<i class="fas fa-star star-location"></i>{{ school.purpose.label }} -
+										{{ passenger.name }}
+									</div>
+									<div class="purpose-address">
+										{{ school.address | addressDisplay }}
+									</div></ng-option
+								>
+								<ng-option
+									*ngFor="let work of respondentsData.respondent[passenger.id].workLocations"
+									[value]="work.purpose"
+									><div class="purpose-label">
+										<i class="fas fa-star star-location"></i>{{ work.purpose.label }} -
+										{{ passenger.name }}
+									</div>
+									<div class="purpose-address">
+										{{ work.address | addressDisplay }}
+									</div></ng-option
+								>
 								<ng-container *ngFor="let purpose of purposes">
 									<ng-option [value]="purpose" *ngIf="!purpose.isDropOffOrPickup"
 										><div class="purpose-label">{{ purpose.label }}</div></ng-option
