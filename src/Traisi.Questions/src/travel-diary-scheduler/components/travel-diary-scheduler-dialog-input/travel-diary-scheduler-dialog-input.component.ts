@@ -114,7 +114,6 @@ export class TravelDiarySchedulerDialogInput implements OnInit {
 	 */
 	public show(model: TimelineResponseData): void {
 		this.model = Object.assign({}, model);
-		this.model.meta = {};
 		this.isValid = false;
 
 		let purpose = this.purposes.find((x) => x.id === this.model.purpose);
@@ -126,6 +125,7 @@ export class TravelDiarySchedulerDialogInput implements OnInit {
 		if (!this._isMapLoaded) {
 			this._loadMapDisplay();
 		}
+		this.validate();
 	}
 
 	/**

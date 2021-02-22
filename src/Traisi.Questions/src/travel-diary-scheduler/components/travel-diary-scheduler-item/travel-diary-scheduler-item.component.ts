@@ -144,7 +144,6 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 		}
 
 		this.updateState();
-		console.log(this.model);
 	}
 
 	/**
@@ -207,7 +206,7 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 			this.model.latitude = data.latitude;
 			this.model.longitude = data.longitude;
 			this.model.meta = data.meta;
-			console.log(this.model);
+			this.updateState();
 		};
 
 		this.dialogInput.show(this.model);

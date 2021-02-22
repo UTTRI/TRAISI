@@ -60,7 +60,7 @@
 		"icon": "fas fa-users",
 		"id": "vsiting",
 		"allowFirstLocation": false,
-		"askIfOtherPassengers": false,
+		"askIfOtherPassengers": true,
 		"isDropOffOrPickup":false
 	},
 	{
