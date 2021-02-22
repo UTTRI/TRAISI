@@ -17,11 +17,11 @@ import {
 	WORK_PURPOSE,
 } from 'travel-diary-scheduler/models/consts';
 import { PurposeLocation } from 'travel-diary-scheduler/models/purpose-location.model';
-import { RespondentData } from 'travel-diary-scheduler/models/respondent-data.model';
+import { RespondentData, RespondentsData } from 'travel-diary-scheduler/models/respondent-data.model';
 
 @Injectable()
 export class TravelDiaryScheduleRespondentDataService {
-	public respondentData: RespondentData;
+	public respondentsData: RespondentsData;
 
 	private _respondents: SurveyRespondent[] = [];
 
@@ -49,10 +49,11 @@ export class TravelDiaryScheduleRespondentDataService {
 		private _injector: Injector
 	) {
 		this.initialize();
+		
 	}
 
 	public initialize(): void {
-		this.respondentData = {
+		this.respondentsData = {
 			workLocations: [],
 			schoolLocations: [],
 			homeLocation: undefined,
@@ -73,7 +74,7 @@ export class TravelDiaryScheduleRespondentDataService {
 		this._responseService
 			.loadSavedResponsesForRespondents(schoolLocations.concat(workLocations), [this._respondent])
 			.subscribe((results) => {
-				this.respondentData.schoolLocations = results
+				this.respondentsData[this._respondent.id].schoolLocations = results
 					.filter((r) => schoolLocations.some((x) => x.questionId == r.questionId))
 					.map((x) => {
 						return {
@@ -87,7 +88,7 @@ export class TravelDiaryScheduleRespondentDataService {
 							address: x.responseValues[0].address,
 						};
 					}) as any[];
-				this.respondentData.workLocations = results
+				this.respondentsData.workLocations = results
 					.filter((r) => workLocations.some((x) => x.questionId == r.questionId))
 					.map((x) => {
 						return {
@@ -101,7 +102,6 @@ export class TravelDiaryScheduleRespondentDataService {
 							address: x.responseValues[0].address,
 						};
 					}) as any[];
-				console.log(this.respondentData);
 			});
 
 		// get the primary home address
