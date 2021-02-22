@@ -39,13 +39,17 @@
 					>
 
 					<ng-option *ngFor="let school of definedSchoolLocations" [value]="school.purpose"
-						><div class="purpose-label"><i class="fas fa-star star-location"></i>{{school.purpose.label}}</div>
+						><div class="purpose-label">
+							<i class="fas fa-star star-location"></i>{{ school.purpose.label }}
+						</div>
 						<div class="purpose-address">
 							{{ school.address | addressDisplay }}
 						</div></ng-option
 					>
 					<ng-option *ngFor="let work of definedWorkLocations" [value]="work.purpose"
-						><div class="purpose-label"><i class="fas fa-star star-location"></i>{{work.purpose.label}}</div>
+						><div class="purpose-label">
+							<i class="fas fa-star star-location"></i>{{ work.purpose.label }}
+						</div>
 						<div class="purpose-address">
 							{{ work.address | addressDisplay }}
 						</div></ng-option
@@ -130,25 +134,8 @@
 				</ng-select>
 			</div>
 		</div>
-		
-		<div class="button-footer-container" *ngIf="!state.model.isConfirmed">
 
-			<button
-			type="button"
-			class="btn btn-primary confirm-complete-schedule"
-			(click)="confirmScheduleItemAndComplete()"
-			*ngIf="scheduleItemsCount === 1 && scheduleIndex === 0"
-		>
-			I was at this location all day.
-		</button>
-			<button
-				type="button"
-				class="btn btn-primary confirm-complete-schedule"
-				(click)="confirmScheduleItemAndComplete()"
-				*ngIf="scheduleIndex > 0"
-			>
-				I made no more trips
-			</button>
+		<div class="button-footer-container" *ngIf="!state.model.isConfirmed">
 			<button
 				type="button"
 				class="btn btn-danger delete-schedule float-left"
@@ -157,9 +144,33 @@
 			>
 				Delete
 			</button>
-			<button type="button" class="btn btn-secondary" [disabled]="!state.isValid" (click)="confirmScheduleItem()">
-				Proceed to next location
-			</button>
+			<div class="button-container-inner">
+				<button
+					type="button"
+					class="btn btn-primary confirm-complete-schedule"
+					(click)="confirmScheduleItemAndComplete()"
+					*ngIf="scheduleItemsCount === 1 && scheduleIndex === 0"
+				>
+					I was at this location all day.
+				</button>
+				<button
+					type="button"
+					class="btn btn-primary confirm-complete-schedule"
+					(click)="confirmScheduleItemAndComplete()"
+					*ngIf="scheduleIndex > 0"
+				>
+					I made no more trips
+				</button>
+
+				<button
+					type="button"
+					class="btn btn-secondary"
+					[disabled]="!state.isValid"
+					(click)="confirmScheduleItem()"
+				>
+					Proceed to next location
+				</button>
+			</div>
 		</div>
 	</div>
 </div>
