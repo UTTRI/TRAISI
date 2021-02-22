@@ -18,7 +18,8 @@ import styleString from './radio-question.component.scss';
 	template: '' + templateString,
 	styles: ['' + styleString],
 })
-export class RadioQuestionComponent extends SurveyQuestion<ResponseTypes.OptionSelect>
+export class RadioQuestionComponent
+	extends SurveyQuestion<ResponseTypes.OptionSelect>
 	implements OnInit, OnOptionsLoaded, AfterViewInit {
 	public options: QuestionOption[];
 
@@ -57,8 +58,8 @@ export class RadioQuestionComponent extends SurveyQuestion<ResponseTypes.OptionS
 	/**
 	 * Determines whether saved response data on
 	 */
-	private onSavedResponseData: (response: ResponseData<ResponseTypes.OptionSelect>[] | 'none') => void = (
-		response: ResponseData<ResponseTypes.OptionSelect>[] | 'none'
+	private onSavedResponseData: (response: ResponseData<ResponseTypes.OptionSelect>[]) => void = (
+		response: ResponseData<ResponseTypes.OptionSelect>[]
 	) => {
 		if (response.length > 0) {
 			let optionResponse = <OptionSelectResponseData>response[0];

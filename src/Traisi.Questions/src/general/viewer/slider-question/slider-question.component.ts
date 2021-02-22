@@ -73,8 +73,8 @@ export class SliderQuestionComponent
   public ngOnInit(): void {}
 
   private onSavedResponseData: (
-    response: ResponseData<ResponseTypes.Decminal>[] | 'none',
-  ) => void = (response: ResponseData<ResponseTypes.Range>[] | 'none') => {
+    response: ResponseData<ResponseTypes.Decminal>[] ,
+  ) => void = (response: ResponseData<ResponseTypes.Range>[] ) => {
     if (response.length>0) {
       let rangeResponse = <RangeResponseData>response[0]
 

@@ -169,8 +169,8 @@ export class MapQuestionComponent
 	/**
 	 * Called when response data is ready
 	 */
-	private onSavedResponseData: (response: Array<LocationResponseData> | 'none') => void = (
-		response: Array<LocationResponseData> | 'none'
+	private onSavedResponseData: (response: Array<LocationResponseData> ) => void = (
+		response: Array<LocationResponseData> 
 	) => {
 		if (response.length > 0) {
 			let locationResponse = response[0];

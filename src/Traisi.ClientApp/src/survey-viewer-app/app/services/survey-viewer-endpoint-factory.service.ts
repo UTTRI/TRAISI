@@ -42,7 +42,11 @@ export class SurveyViewerEndpointFactory {
 	 * @param {Injector} injector
 	 * @memberof EndpointFactory
 	 */
-	constructor(protected http: HttpClient, protected configurations: ConfigurationService, private injector: Injector) {}
+	constructor(
+		protected http: HttpClient,
+		protected configurations: ConfigurationService,
+		private injector: Injector
+	) {}
 
 	/**
 	 *
@@ -74,7 +78,7 @@ export class SurveyViewerEndpointFactory {
 	public getRefreshLoginEndpoint<T>(): Observable<T> {
 		let header = new HttpHeaders({
 			Authorization: 'Bearer ' + this.authService.accessToken,
-			'Content-Type': 'application/x-www-form-urlencoded'
+			'Content-Type': 'application/x-www-form-urlencoded',
 		});
 
 		let params = new HttpParams()
@@ -84,11 +88,13 @@ export class SurveyViewerEndpointFactory {
 
 		let requestBody = params.toString();
 
-		return this.http.post<T>(this.loginUrl, requestBody, { headers: header }).pipe(
-			catchError(error => {
-				return this.handleError(error, () => this.getRefreshLoginEndpoint<T>());
-			})
-		);
+		return this.http
+			.post<T>(this.loginUrl, requestBody, { headers: header })
+			.pipe(
+				catchError((error) => {
+					return this.handleError(error, () => this.getRefreshLoginEndpoint<T>());
+				})
+			);
 	}
 
 	/**
@@ -126,10 +132,11 @@ export class SurveyViewerEndpointFactory {
 				'App-Version': ConfigurationService.appVersion,
 				'Survey-Id': String(this.authService.currentSurveyUser.surveyId),
 				Shortcode:
-					this.authService.currentSurveyUser !== null && this.authService.currentSurveyUser.shortcode !== undefined
+					this.authService.currentSurveyUser !== null &&
+					this.authService.currentSurveyUser.shortcode !== undefined
 						? this.authService.currentSurveyUser.shortcode
 						: 'NONE',
-				'Respondent-Id': respondentId === null ? this.authService.currentSurveyUser.id : String(respondentId)
+				'Respondent-Id': respondentId === null ? this.authService.currentSurveyUser.id : String(respondentId),
 			});
 
 			return { headers: headers, responseType: rType };
@@ -152,19 +159,20 @@ export class SurveyViewerEndpointFactory {
 			this.isRefreshingLogin = true;
 
 			return this.authService.refreshLogin().pipe(
-				mergeMap(data => {
+				mergeMap((data) => {
 					this.isRefreshingLogin = false;
 					this.resumeTasks(true);
 
 					return continuation();
 				}),
-				catchError(refreshLoginError => {
+				catchError((refreshLoginError) => {
 					this.isRefreshingLogin = false;
 					this.resumeTasks(false);
 
 					if (
 						refreshLoginError.status === 401 ||
-						(refreshLoginError.url && refreshLoginError.url.toLowerCase().includes(this.loginUrl.toLowerCase()))
+						(refreshLoginError.url &&
+							refreshLoginError.url.toLowerCase().includes(this.loginUrl.toLowerCase()))
 					) {
 						this.authService.reLogin();
 						return observableThrowError('session expired');
@@ -179,7 +187,9 @@ export class SurveyViewerEndpointFactory {
 			this.authService.reLogin();
 
 			return observableThrowError(
-				error.error && error.error.error_description ? `session expired (${error.error.error_description})` : 'session expired'
+				error.error && error.error.error_description
+					? `session expired (${error.error.error_description})`
+					: 'session expired'
 			);
 		} else {
 			return observableThrowError(error);
@@ -196,7 +206,7 @@ export class SurveyViewerEndpointFactory {
 		}
 
 		return this.taskPauser.pipe(
-			switchMap(continueOp => {
+			switchMap((continueOp) => {
 				return continueOp ? continuation() : observableThrowError('session expired');
 			})
 		);

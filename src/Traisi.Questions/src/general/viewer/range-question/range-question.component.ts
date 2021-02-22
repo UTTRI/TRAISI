@@ -59,8 +59,8 @@ export class RangeQuestionComponent extends SurveyQuestion<ResponseTypes.Decmina
 	/**
 	 *
 	 */
-	private onSavedResponseData: (response: ResponseData<ResponseTypes.Decminal>[] | 'none') => void = (
-		response: ResponseData<ResponseTypes.Range>[] | 'none'
+	private onSavedResponseData: (response: ResponseData<ResponseTypes.Decminal>[] ) => void = (
+		response: ResponseData<ResponseTypes.Range>[] 
 	) => {
 		if (response.length > 0) {
 			let rangeResponse = <RangeResponseData>response[0];

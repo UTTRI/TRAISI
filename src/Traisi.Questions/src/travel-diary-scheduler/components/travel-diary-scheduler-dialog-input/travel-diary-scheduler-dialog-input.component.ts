@@ -90,9 +90,6 @@ export class TravelDiarySchedulerDialogInput implements OnInit {
 	 */
 	public validate(): boolean {
 		// determine that another passenger is selected
-		
-
-
 		return true;
 	}
 

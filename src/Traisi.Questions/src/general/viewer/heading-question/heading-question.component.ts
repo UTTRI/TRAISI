@@ -6,12 +6,9 @@ import styleString from './heading-question.component.scss';
 	selector: 'traisi-heading-question',
 	template: '' + templateString,
 	styles: ['' + styleString],
-	encapsulation: ViewEncapsulation.None
+	encapsulation: ViewEncapsulation.None,
 })
 export class HeadingQuestionComponent extends SurveyQuestion<ResponseTypes.None> implements OnInit {
-
-
-
 	public constructor() {
 		super();
 		this.displayClass = 'heading-question';
@@ -31,8 +28,8 @@ export class HeadingQuestionComponent extends SurveyQuestion<ResponseTypes.None>
 		this.savedResponse.subscribe(this.onSavedResponseData);
 		this.validationState.emit(ResponseValidationState.VALID);
 	}
-	private onSavedResponseData: (response: ResponseData<ResponseTypes.OptionSelect>[] | 'none') => void = (
-		response: ResponseData<ResponseTypes.OptionSelect>[] | 'none'
+	private onSavedResponseData: (response: ResponseData<ResponseTypes.OptionSelect>[]) => void = (
+		response: ResponseData<ResponseTypes.OptionSelect>[]
 	) => {
 		this.validationState.emit(ResponseValidationState.VALID);
 		this.isLoaded.next(true);
