@@ -4,6 +4,7 @@
 	class="modal fade"
 	[config]="{ ignoreBackdropClick: true }"
 	(onShown)="modalShown($event)"
+	(onHidden)="modalHidden( $event)"
 >
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
@@ -59,9 +60,7 @@
 
 					<ng-container *ngIf="state.isDropOffOrPickup && model.meta.passengers?.length > 0">
 						<div class="col-12">
-							<label for="members" class="col-form-label"
-								>What is the purpose for this trip?</label
-							>
+							<label for="members" class="col-form-label">What is the purpose for this trip?</label>
 							<ng-select
 								placeholder="Enter a purpose"
 								bindLabel="label"

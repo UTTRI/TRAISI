@@ -55,9 +55,12 @@
 						</div></ng-option
 					>
 					<ng-option *ngFor="let purpose of purposes" [value]="purpose"
-						><div class="purpose-label">{{ purpose.label }}</div></ng-option
-					>
+						><div class="purpose-label">{{ purpose.label }}</div>
+					</ng-option>
 				</ng-select>
+				<div class="purpose-address" *ngIf="model.address">
+					{{ model.address | addressDisplay }}
+				</div>
 				<div class="adjacent-location-error-message error" *ngIf="state.errorState?.adjacentLocations">
 					There cannot be two consecutive trips at the same location.
 				</div>

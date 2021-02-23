@@ -51,6 +51,8 @@ export class TravelDiarySchedulerDialogInput implements OnInit {
 
 	public onSaved: (data: TimelineSchedulerData) => void;
 
+	public onCancelled: () => void;
+
 	public respondents$: Observable<SurveyRespondent[]>;
 
 	public get purposes(): Purpose[] {
@@ -148,6 +150,14 @@ export class TravelDiarySchedulerDialogInput implements OnInit {
 	 * @param $event
 	 */
 	public modalShown($event: any): void {}
+
+	/**
+	 *
+	 * @param $event
+	 */
+	public modalHidden($event: any): void {
+		// this.onCancelled();
+	}
 
 	/**
 	 *
