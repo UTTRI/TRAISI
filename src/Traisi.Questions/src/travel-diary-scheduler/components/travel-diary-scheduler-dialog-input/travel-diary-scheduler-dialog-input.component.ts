@@ -40,6 +40,9 @@ export class TravelDiarySchedulerDialogInput implements OnInit {
 	@ViewChild('inputModal', { static: true })
 	public modal: ModalDirective;
 
+	@ViewChild('confirmModal', { static: true })
+	public confirmModal: ModalDirective;
+
 	@ViewChild('mapTemplate', { read: ViewContainerRef })
 	public mapTemplate: ViewContainerRef;
 
@@ -177,6 +180,20 @@ export class TravelDiarySchedulerDialogInput implements OnInit {
 	public onMembersChanged($event): void {
 		// console.log($event);
 		// this.model.meta['familyMembers'] = $event;
+	}
+
+	/**
+	 * 
+	 */
+	public confirmReturnHome(): void {
+
+	}
+
+	/**
+	 * 
+	 */
+	public declineReturnHome(): void {
+
 	}
 
 	/**
