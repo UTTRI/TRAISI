@@ -162,6 +162,7 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 	public onPurposeChanged(purpose: Purpose): void {
 		let workPurpose = this.definedWorkLocations.find((x) => x.purpose.id === purpose.id);
 		let schoolPurpose = this.definedSchoolLocations.find((x) => x.purpose.id === purpose.id);
+		this.model.meta = {};
 		if (purpose.id === this.definedHomeLocation.purpose.id) {
 			this.model.purpose = purpose.id;
 			this.model.address = this.definedHomeLocation.address;
@@ -181,7 +182,7 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 			this.model.purpose = purpose.id;
 			this.openModal(this.addressInputDialogTemplate);
 		}
-
+		
 		this.updateState();
 	}
 
