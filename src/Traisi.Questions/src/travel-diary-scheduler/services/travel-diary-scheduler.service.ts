@@ -1,7 +1,7 @@
 import { Inject, Injectable, Injector } from '@angular/core';
 import { EventEmitter } from 'events';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { TimelineResponseData, TraisiValues, SurveyRespondent, SurveyViewQuestion, Address } from 'traisi-question-sdk';
+import { TimelineResponseData, TraisiValues, SurveyRespondent, SurveyViewQuestion, Address, ResponseValidationState } from 'traisi-question-sdk';
 import { TravelDiarySchedulerConfiguration } from 'travel-diary-scheduler/models/config.model';
 import { RespondentData } from 'travel-diary-scheduler/models/respondent-data.model';
 import { TimelineSchedulerData } from 'travel-diary-scheduler/models/timeline-scheduler-data.model';
@@ -143,6 +143,7 @@ export class TravelDiaryScheduler {
 			} else {
 				this.isScheduleConfirmed = true;
 				this.activeScheduleItem.next(-1);
+				this.component.validationState.emit(ResponseValidationState.VALID);
 			}
 		});
 	}

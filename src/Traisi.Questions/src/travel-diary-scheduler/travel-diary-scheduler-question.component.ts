@@ -102,6 +102,7 @@ export class TravelDiarySchedulerQuestionComponent
 	 */
 	public unconfirmSchedule(): void {
 		this._scheduler.unconfirmSchedule();
+		this.validationState.emit(ResponseValidationState.INVALID);
 	}
 
 	/**
@@ -114,8 +115,6 @@ export class TravelDiarySchedulerQuestionComponent
 	 * Callback for when schedule has been confirmed
 	 */
 	public onScheduleConfirmed = (): void => {
-		console.log('schedule confirmed');
-		console.log(this._scheduler.scheduleItems);
 		this.response.emit(this._scheduler.scheduleItems);
 	};
 }
