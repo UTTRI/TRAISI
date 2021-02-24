@@ -90,7 +90,7 @@ export class TravelDiaryScheduleRespondentDataService {
 				address: primaryHomeAddress,
 				purpose: {
 					id: HOME_DEFINED_PURPOSE,
-					label: 'Home',
+					label: 'Primary Home',
 					icon: '',
 					allowFirstLocation: true,
 					askIfOtherPassengers: false,
@@ -156,7 +156,6 @@ export class TravelDiaryScheduleRespondentDataService {
 							}) as any[];
 					}
 					this._respondents$.next(this._respondents);
-					console.log(this.respondentsData);
 				});
 		});
 	}
