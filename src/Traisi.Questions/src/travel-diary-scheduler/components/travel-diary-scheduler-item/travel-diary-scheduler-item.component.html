@@ -41,7 +41,7 @@
 
 					<ng-option *ngFor="let school of definedSchoolLocations" [value]="school.purpose"
 						><div class="purpose-label">
-							<i class="fas fa-star star-location"></i>{{respondent.name}}'s {{ school.purpose.label }}
+							<i class="fas fa-star star-location"></i>{{respondent.name}} - {{ school.purpose.label }}
 						</div>
 						<div class="purpose-address">
 							{{ school.address | addressDisplay }}
@@ -49,7 +49,7 @@
 					>
 					<ng-option *ngFor="let work of definedWorkLocations" [value]="work.purpose"
 						><div class="purpose-label">
-							<i class="fas fa-star star-location"></i>{{respondent.name}}'s {{ work.purpose.label }}
+							<i class="fas fa-star star-location"></i>{{respondent.name}} - {{ work.purpose.label }}
 						</div>
 						<div class="purpose-address">
 							{{ work.address | addressDisplay }}
