@@ -1,7 +1,7 @@
 import { Inject, Injectable, Injector } from '@angular/core';
 import { EventEmitter } from 'events';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { TimelineResponseData, TraisiValues, SurveyRespondent, SurveyViewQuestion } from 'traisi-question-sdk';
+import { TimelineResponseData, TraisiValues, SurveyRespondent, SurveyViewQuestion, Address } from 'traisi-question-sdk';
 import { TravelDiarySchedulerConfiguration } from 'travel-diary-scheduler/models/config.model';
 import { RespondentData } from 'travel-diary-scheduler/models/respondent-data.model';
 import { TimelineSchedulerData } from 'travel-diary-scheduler/models/timeline-scheduler-data.model';
@@ -97,8 +97,8 @@ export class TravelDiaryScheduler {
 			name: null,
 			order: 0,
 			purpose: null,
-			timeA: new Date(new Date(this._surveyAccessTime).setHours(0, 0, 0, 0)),
-			timeB: new Date(new Date(this._surveyAccessTime).setHours(0, 0, 0, 0)),
+			timeA: undefined,
+			timeB: undefined,
 			identifier: null,
 			meta: {},
 			mode: null,
@@ -107,18 +107,18 @@ export class TravelDiaryScheduler {
 	}
 
 	/**
-	 * 
+	 * Adds a prefilled home trip to the end of the schedule.
 	 */
-	public addHomeItem(): void {
+	public addHomeItem(homeAddress: Address): void {
 		this.scheduleItems.push({
-			address: {},
+			address: homeAddress,
 			latitude: -1,
 			longitude: -1,
 			name: null,
 			order: 0,
 			purpose: 'home-defined',
-			timeA: new Date(new Date(this._surveyAccessTime).setHours(0, 0, 0, 0)),
-			timeB: new Date(new Date(this._surveyAccessTime).setHours(0, 0, 0, 0)),
+			timeA: undefined,
+			timeB: undefined,
 			identifier: null,
 			meta: {},
 			mode: null,

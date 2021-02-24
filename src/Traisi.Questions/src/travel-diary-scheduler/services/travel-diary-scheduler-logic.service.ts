@@ -34,7 +34,7 @@ export class TravelDiarySchedulerLogic {
 	/**
 	 *
 	 */
-	public confirmSchedule(addItem:boolean = true): void {
+	public confirmSchedule(addItem: boolean = true): void {
 		if (this.inputState.returnHomeResponse === 'yes') {
 			this.inputState.model.purpose = 'Home';
 			this._scheduler.isScheduleConfirmed = true;
@@ -45,10 +45,9 @@ export class TravelDiarySchedulerLogic {
 			this.inputState.model.purpose = 'Home';
 			this._scheduler.isScheduleConfirmed = true;
 		} else {
-			if(addItem) {
+			if (addItem) {
 				this._scheduler.addItem();
 			}
-			
 		}
 		this.inputState.model.isConfirmed = true;
 	}
@@ -99,11 +98,13 @@ export class TravelDiarySchedulerLogic {
 		}
 
 		if (this._scheduler.scheduleItems[idx].latitude === -1 || this._scheduler.scheduleItems[idx].longitude === -1) {
-			console.log('fail');
 			state.isValid = false;
 		}
 		if (this.checkHasAdjacentLocations()) {
 			state.adjacentLocations = true;
+			state.isValid = false;
+		}
+		if (!this._scheduler.scheduleItems[idx].timeA) {
 			state.isValid = false;
 		}
 		return state;

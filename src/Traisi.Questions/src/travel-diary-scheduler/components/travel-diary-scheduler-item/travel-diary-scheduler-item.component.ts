@@ -196,7 +196,6 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 	 */
 	public confirmScheduleItemAndComplete(): void {
 		if (!this._scheduler.scheduleItems[this._scheduler.scheduleItems.length - 1].purpose.startsWith('home')) {
-			console.log('not home show dialog');
 			this.confirmModal.show();
 		} else {
 			this._schedulerLogic.confirmAndCompleteSchedule();
@@ -209,7 +208,7 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 	public confirmReturnHome(): void {
 		// add a home item
 		this._schedulerLogic.confirmSchedule(false);
-		this._scheduler.addHomeItem();
+		this._scheduler.addHomeItem(this.definedHomeLocation?.address);
 		this.confirmModal.hide();
 	}
 
