@@ -10,7 +10,7 @@ import { TravelDiaryScheduleRespondentDataService } from './travel-diary-schedul
 // import { TravelDiaryScheduleItem } from 'travel-diary-scheduler/models/services/travel-diary-schedule-item.model';
 
 /**
- * 
+ *
  */
 @Injectable()
 export class TravelDiaryScheduler {
@@ -25,12 +25,12 @@ export class TravelDiaryScheduler {
 	public component: TravelDiarySchedulerQuestionComponent;
 
 	/**
-	 * 
-	 * @param _surveyAccessTime 
-	 * @param _configuration 
-	 * @param _primaryRespondent 
-	 * @param _respondentData 
-	 * @param _injector 
+	 *
+	 * @param _surveyAccessTime
+	 * @param _configuration
+	 * @param _primaryRespondent
+	 * @param _respondentData
+	 * @param _injector
 	 */
 	public constructor(
 		@Inject(TraisiValues.SurveyAccessTime) private _surveyAccessTime: Date,
@@ -109,11 +109,11 @@ export class TravelDiaryScheduler {
 	/**
 	 * Adds a prefilled home trip to the end of the schedule.
 	 */
-	public addHomeItem(homeAddress: Address): void {
+	public addHomeItem(homeAddress: Address, latitude: number, longitude: number): void {
 		this.scheduleItems.push({
 			address: homeAddress,
-			latitude: -1,
-			longitude: -1,
+			latitude: latitude,
+			longitude: longitude,
 			name: null,
 			order: 0,
 			purpose: 'home-defined',

@@ -54,6 +54,8 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 
 	public modalRef: BsModalRef | null;
 
+	private _defaultDate: Date;
+
 	public get scheduleItems(): TimelineSchedulerData[] {
 		return this._scheduler.scheduleItems;
 	}
@@ -102,11 +104,16 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 	 * @param _scheduler
 	 * @param _schedulerLogic
 	 * @param _modalService
+	 * @param _surveyAccessTime
+	 * @param _respondent
+	 * @param _respondentData
+	 * @param ref
 	 */
 	public constructor(
 		private _scheduler: TravelDiaryScheduler,
 		private _schedulerLogic: TravelDiarySchedulerLogic,
 		private _modalService: BsModalService,
+		@Inject(TraisiValues.SurveyAccessTime) private _surveyAccessTime: Date,
 		@Inject(TraisiValues.Respondent) private _respondent: SurveyRespondent,
 		private _respondentData: TravelDiaryScheduleRespondentDataService,
 		private ref: ChangeDetectorRef
@@ -123,6 +130,12 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 				this.updateState();
 			}
 		});
+
+		this._defaultDate = new Date(this._surveyAccessTime);
+		this._defaultDate.setHours(12);
+		this._defaultDate.setMinutes(0);
+		this._defaultDate.setSeconds(0);
+		this._defaultDate.setMilliseconds(0);
 	}
 
 	/**
@@ -172,6 +185,16 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 	}
 
 	/**
+	 * Initializes the model time when user clicks on the time input control.
+	 */
+	public initTimeInput(): void {
+		if (!this.model.timeA) {
+			this.model.timeA = this._defaultDate;
+			this.onDepartureTimeChanged(this.model.timeA);
+		}
+	}
+
+	/**
 	 *
 	 * @param val
 	 */
@@ -203,12 +226,16 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 	}
 
 	/**
-	 *
+	 * Confirms a return home trip, adds it to schedule
 	 */
 	public confirmReturnHome(): void {
 		// add a home item
 		this._schedulerLogic.confirmSchedule(false);
-		this._scheduler.addHomeItem(this.definedHomeLocation?.address);
+		this._scheduler.addHomeItem(
+			this.definedHomeLocation?.address,
+			this.definedHomeLocation?.latitide,
+			this.definedHomeLocation?.longitude
+		);
 		this.confirmModal.hide();
 	}
 

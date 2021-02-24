@@ -105,6 +105,7 @@
 						name="timeA"
 						mwlFlatpickr
 						(ngModelChange)="onDepartureTimeChanged($event)"
+						(click)="initTimeInput()"
 						[(ngModel)]="model.timeA"
 						[noCalendar]="true"
 						[enableTime]="true"
@@ -186,7 +187,7 @@
 		<div class="modal-content">
 			<div class="modal-header"></div>
 			<div class="modal-body text-center">
-				<p>Did you return home at the end of the day?</p>
+				<p>Did {{respondent.name}} return home at the end of the day?</p>
 				<button type="button" class="btn btn-primary" (click)="confirmReturnHome()">Yes</button>
 				<button type="button" class="btn btn-default" (click)="declineReturnHome()">No</button>
 			</div>
