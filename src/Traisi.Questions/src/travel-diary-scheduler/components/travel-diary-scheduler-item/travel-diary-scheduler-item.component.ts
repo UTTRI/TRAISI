@@ -72,7 +72,7 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 	}
 
 	public get definedSchoolLocations(): PurposeLocation[] {
-		return this._respondentData.respondentsData.respondent[this._respondent.id].schoolLocations;
+		return this._respondentData.respondentsData.respondent[this._respondent.id]?.schoolLocations;
 	}
 
 	public get definedHomeLocation(): PurposeLocation {
@@ -80,7 +80,7 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 	}
 
 	public get definedWorkLocations(): PurposeLocation[] {
-		return this._respondentData.respondentsData.respondent[this._respondent.id].workLocations;
+		return this._respondentData.respondentsData.respondent[this._respondent.id]?.workLocations;
 	}
 
 	public get state(): ScheduleInputState {
