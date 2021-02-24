@@ -81,7 +81,7 @@
 								>
 								<ng-container *ngFor="let respondent of respondents$ | async">
 									<ng-option
-										*ngFor="let school of respondentsData.respondent[respondent.id].schoolLocations"
+										*ngFor="let school of respondentsData.respondent[respondent.id]?.schoolLocations"
 										[value]="school.purpose"
 										><div class="purpose-label">
 											<i class="fas fa-star star-location"></i>{{ school.purpose.label }} -
@@ -92,7 +92,7 @@
 										</div></ng-option
 									>
 									<ng-option
-										*ngFor="let work of respondentsData.respondent[respondent.id].workLocations"
+										*ngFor="let work of respondentsData.respondent[respondent.id]?.workLocations"
 										[value]="work.purpose"
 										><div class="purpose-label">
 											<i class="fas fa-star star-location"></i>{{ work.purpose.label }} -
