@@ -132,6 +132,15 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 		});
 
 		this._defaultDate = new Date(this._surveyAccessTime);
+
+		let day = this._defaultDate.getDay();
+		if (day === 0) {
+			this._defaultDate.setDate(this._defaultDate.getDate() - 2);
+		} else if (day === 1) {
+			this._defaultDate.setDate(this._defaultDate.getDate() - 3);
+		} else {
+			this._defaultDate.setDate(this._defaultDate.getDate() - 1);
+		}
 		this._defaultDate.setHours(12);
 		this._defaultDate.setMinutes(0);
 		this._defaultDate.setSeconds(0);
