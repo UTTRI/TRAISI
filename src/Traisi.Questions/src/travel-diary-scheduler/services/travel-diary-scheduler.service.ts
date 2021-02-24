@@ -107,6 +107,25 @@ export class TravelDiaryScheduler {
 	}
 
 	/**
+	 * 
+	 */
+	public addHomeItem(): void {
+		this.scheduleItems.push({
+			address: {},
+			latitude: -1,
+			longitude: -1,
+			name: null,
+			order: 0,
+			purpose: 'home',
+			timeA: new Date(new Date(this._surveyAccessTime).setHours(21, 0, 0, 0)),
+			timeB: new Date(new Date(this._surveyAccessTime).setHours(0, 0, 0, 0)),
+			identifier: null,
+			meta: {},
+			mode: null,
+		});
+	}
+
+	/**
 	 * Initialize properties and other misc data values
 	 * needed for operation
 	 */

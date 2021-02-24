@@ -8,7 +8,7 @@ import {
 	ViewChild,
 	ViewEncapsulation,
 } from '@angular/core';
-import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService, ModalDirective } from 'ngx-bootstrap/modal';
 import { Address, SurveyRespondent, TimelineResponseData, TraisiValues } from 'traisi-question-sdk';
 import { ScheduleInputState } from 'travel-diary-scheduler/models/schedule-input-state.model';
 import { TravelDiarySchedulerLogic } from '../../services/travel-diary-scheduler-logic.service';
@@ -44,6 +44,9 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 
 	@ViewChild('dialogInput')
 	public dialogInput: TravelDiarySchedulerDialogInput;
+
+	@ViewChild('confirmModal', { static: true })
+	public confirmModal: ModalDirective;
 
 	public dataCollected: boolean = false;
 
@@ -192,6 +195,28 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 	 *
 	 */
 	public confirmScheduleItemAndComplete(): void {
+		if (!this._scheduler.scheduleItems[this._scheduler.scheduleItems.length - 1].purpose.startsWith('home')) {
+			console.log('not home show dialog');
+			this.confirmModal.show();
+		} else {
+			this._schedulerLogic.confirmAndCompleteSchedule();
+		}
+	}
+
+	/**
+	 *
+	 */
+	public confirmReturnHome(): void {
+		// add a home item
+		this._scheduler.addHomeItem();
+		this._schedulerLogic.confirmAndCompleteSchedule();
+		
+	}
+
+	/**
+	 *
+	 */
+	public declineReturnHome(): void {
 		this._schedulerLogic.confirmAndCompleteSchedule();
 	}
 

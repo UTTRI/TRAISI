@@ -180,3 +180,16 @@
 </div>
 
 <traisi-travel-diary-scheduler-dialog-input #dialogInput></traisi-travel-diary-scheduler-dialog-input>
+
+<div bsModal #confirmModal="bs-modal" class="modal fade" [config]="{ ignoreBackdropClick: true }" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header"></div>
+			<div class="modal-body text-center">
+				<p>Did you return home at the end of the day?</p>
+				<button type="button" class="btn btn-default" (click)="confirmReturnHome()">Yes</button>
+				<button type="button" class="btn btn-primary" (click)="declineReturnHome()">No</button>
+			</div>
+		</div>
+	</div>
+</div>

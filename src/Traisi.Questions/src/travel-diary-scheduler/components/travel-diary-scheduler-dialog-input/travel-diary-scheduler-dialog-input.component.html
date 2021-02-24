@@ -40,7 +40,7 @@
 						>
 						<ng-select
 							appearance="outline"
-							#memberSelect
+							#memberSelectl
 							name="members"
 							(change)="onMembersChanged($event)"
 							[(ngModel)]="model.meta.passengers"
@@ -134,10 +134,4 @@
 	</div>
 </div>
 
-<div bsModal #confirmModal="bs-modal">
-	<div class="modal-body text-center">
-		<p>Did you return home at the end of the day?</p>
-		<button type="button" class="btn btn-default" (click)="confirmReturnHome()">Yes</button>
-		<button type="button" class="btn btn-primary" (click)="declineReturnHome()">No</button>
-	</div>
-</div>
+
