@@ -180,6 +180,15 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 	 * @param time
 	 */
 	public onDepartureTimeChanged(time: Date): void {
+		time.setFullYear(this._defaultDate.getFullYear());
+		time.setMonth(this._defaultDate.getMonth());
+		time.setDate(this._defaultDate.getDate());
+		time.setMilliseconds(0);
+		if (time.getHours() < 4 && time.getHours() >= 0) {
+			// this needs to be adjusted
+			time.setDate(time.getDate() + 1);
+		}
+
 		this.model.timeA = time;
 		this.updateState();
 	}
