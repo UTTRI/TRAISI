@@ -208,10 +208,9 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 	 */
 	public confirmReturnHome(): void {
 		// add a home item
+		this._schedulerLogic.confirmSchedule(false);
 		this._scheduler.addHomeItem();
-		this._schedulerLogic.confirmAndCompleteSchedule();
 		this.confirmModal.hide();
-		
 	}
 
 	/**

@@ -154,7 +154,7 @@
 					(click)="confirmScheduleItemAndComplete()"
 					*ngIf="scheduleItemsCount === 1 && scheduleIndex === 0"
 				>
-					I was at this location all day.
+					{{ respondent.name }} was at this location all day
 				</button>
 				<button
 					type="button"
@@ -163,7 +163,7 @@
 					(click)="confirmScheduleItemAndComplete()"
 					*ngIf="scheduleIndex > 0"
 				>
-					I made no more trips
+					{{ respondent.name }} made no more trips
 				</button>
 
 				<button
@@ -187,8 +187,8 @@
 			<div class="modal-header"></div>
 			<div class="modal-body text-center">
 				<p>Did you return home at the end of the day?</p>
-				<button type="button" class="btn btn-default" (click)="confirmReturnHome()">Yes</button>
-				<button type="button" class="btn btn-primary" (click)="declineReturnHome()">No</button>
+				<button type="button" class="btn btn-primary" (click)="confirmReturnHome()">Yes</button>
+				<button type="button" class="btn btn-default" (click)="declineReturnHome()">No</button>
 			</div>
 		</div>
 	</div>

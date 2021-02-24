@@ -116,13 +116,14 @@ export class TravelDiaryScheduler {
 			longitude: -1,
 			name: null,
 			order: 0,
-			purpose: 'home',
-			timeA: new Date(new Date(this._surveyAccessTime).setHours(21, 0, 0, 0)),
+			purpose: 'home-defined',
+			timeA: new Date(new Date(this._surveyAccessTime).setHours(0, 0, 0, 0)),
 			timeB: new Date(new Date(this._surveyAccessTime).setHours(0, 0, 0, 0)),
 			identifier: null,
 			meta: {},
 			mode: null,
 		});
+		this.activeScheduleItem.next(this.scheduleItems.length - 1);
 	}
 
 	/**

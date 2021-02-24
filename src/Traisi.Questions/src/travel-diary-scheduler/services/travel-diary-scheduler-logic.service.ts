@@ -34,7 +34,7 @@ export class TravelDiarySchedulerLogic {
 	/**
 	 *
 	 */
-	public confirmSchedule(): void {
+	public confirmSchedule(addItem:boolean = true): void {
 		if (this.inputState.returnHomeResponse === 'yes') {
 			this.inputState.model.purpose = 'Home';
 			this._scheduler.isScheduleConfirmed = true;
@@ -45,7 +45,10 @@ export class TravelDiarySchedulerLogic {
 			this.inputState.model.purpose = 'Home';
 			this._scheduler.isScheduleConfirmed = true;
 		} else {
-			this._scheduler.addItem();
+			if(addItem) {
+				this._scheduler.addItem();
+			}
+			
 		}
 		this.inputState.model.isConfirmed = true;
 	}

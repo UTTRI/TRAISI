@@ -1,6 +1,6 @@
 [
 	{
-		"label": "home",
+		"label": "non-primary home",
 		"icon": "fas fa-house-night",
 		"id": "home",
 		"allowFirstLocation": true,
@@ -11,7 +11,7 @@
 		"label": "usual work location",
 		"icon": "fas fa-building",
 		"id": "work",
-		"allowFirstLocation": true,
+		"allowFirstLocation": false,
 		"askIfOtherPassengers": false,
 		"isDropOffOrPickup":false
 	},
@@ -19,7 +19,7 @@
 		"label": "work-related/business meeting",
 		"icon": "fas fa-briefcase",
 		"id": "work-related",
-		"allowFirstLocation": true,
+		"allowFirstLocation": false,
 		"askIfOtherPassengers": false,
 		"isDropOffOrPickup":false
 	},
@@ -27,15 +27,15 @@
 		"label": "school/education",
 		"icon": "fas fa-school",
 		"id": "school",
-		"allowFirstLocation": true,
+		"allowFirstLocation": false,
 		"askIfOtherPassengers": false,
 		"isDropOffOrPickup":false
 	},
 	{
-		"label": "school-related/school-trip",
+		"label": "school-related",
 		"icon": "fas fa-bus-school",
 		"id": "school-related",
-		"allowFirstLocation": true,
+		"allowFirstLocation": false,
 		"askIfOtherPassengers": false,
 		"isDropOffOrPickup":false
 	},
@@ -131,7 +131,7 @@
 		"label": "other",
 		"icon": "fas fa-cogs",
 		"id": "other",
-		"allowFirstLocation": false,
+		"allowFirstLocation": true,
 		"askIfOtherPassengers": true,
 		"isDropOffOrPickup":false
 	}
