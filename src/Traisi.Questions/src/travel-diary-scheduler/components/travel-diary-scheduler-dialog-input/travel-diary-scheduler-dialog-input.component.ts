@@ -69,6 +69,10 @@ export class TravelDiarySchedulerDialogInput implements OnInit {
 		return this._primaryRespondent;
 	}
 
+	public get respondentName(): string {
+		return this._surveyRespondent.name;
+	}
+
 	/**
 	 *
 	 * @param _questionLoaderService
