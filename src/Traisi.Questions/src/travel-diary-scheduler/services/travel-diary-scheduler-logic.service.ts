@@ -104,7 +104,7 @@ export class TravelDiarySchedulerLogic {
 			state.adjacentLocations = true;
 			state.isValid = false;
 		}
-		if (!this._scheduler.scheduleItems[idx].timeA) {
+		if (!this._scheduler.scheduleItems[idx].timeA && idx > 0) {
 			console.log('fail time');
 			state.isValid = false;
 		}
