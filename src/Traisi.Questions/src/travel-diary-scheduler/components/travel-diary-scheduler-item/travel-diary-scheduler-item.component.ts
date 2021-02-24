@@ -210,6 +210,7 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 		// add a home item
 		this._scheduler.addHomeItem();
 		this._schedulerLogic.confirmAndCompleteSchedule();
+		this.confirmModal.hide();
 		
 	}
 
@@ -218,6 +219,7 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 	 */
 	public declineReturnHome(): void {
 		this._schedulerLogic.confirmAndCompleteSchedule();
+		this.confirmModal.hide();
 	}
 
 	/**
