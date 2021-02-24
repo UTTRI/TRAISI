@@ -27,6 +27,7 @@
 					bindLabel="label"
 					bindValue="id"
 					[ngModel]="model.purpose"
+					(close)="purposeSelected($event)"
 					(change)="onPurposeChanged($event)"
 				>
 					<ng-option *ngIf="definedHomeLocation" [value]="definedHomeLocation?.purpose"
@@ -54,8 +55,10 @@
 							{{ work.address | addressDisplay }}
 						</div></ng-option
 					>
-					<ng-container *ngFor="let purpose of purposes" >
-						<ng-option [value]="purpose" *ngIf="(purpose.allowFirstLocation && scheduleIndex === 0) || scheduleIndex > 0"
+					<ng-container *ngFor="let purpose of purposes">
+						<ng-option
+							[value]="purpose"
+							*ngIf="(purpose.allowFirstLocation && scheduleIndex === 0) || scheduleIndex > 0"
 							><div class="purpose-label">{{ purpose.label }}</div>
 						</ng-option>
 					</ng-container>
@@ -95,9 +98,9 @@
 				[class.has-error]="state.errorState?.invalidTime"
 				[class.no-error]="!state.errorState?.invalidTime"
 			>
-				<label for="timeA" class="col-form-label">Departure time for the trip 
-					<span *ngIf="model.timeA" class="time-display">({{model.timeA | date:'short' }})</span>
-
+				<label for="timeA" class="col-form-label"
+					>Departure time for the trip
+					<span *ngIf="model.timeA" class="time-display">({{ model.timeA | date: 'short' }})</span>
 				</label>
 				<div class="input-group" [class.ng-invalid]="!model.timeA">
 					<div class="input-group-prepend">

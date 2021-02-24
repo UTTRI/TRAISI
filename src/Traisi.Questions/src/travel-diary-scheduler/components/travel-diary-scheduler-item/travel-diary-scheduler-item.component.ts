@@ -148,6 +148,14 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 	}
 
 	/**
+	 * 
+	 * @param $event 
+	 */
+	public purposeSelected($event): void {
+		console.log('purpose selected');
+	}
+
+	/**
 	 *
 	 * @param purpose
 	 */

@@ -7,6 +7,9 @@ export class AddressDisplayPipe implements PipeTransform {
 		if (!address) {
 			return '<address formatting error>';
 		}
+		else if(!address?.streetAddress) {
+			return 'No location has been saved';
+		}
 		return `${address?.streetNumber} ${address?.streetAddress}, ${address?.city}`;
 	}
 }
