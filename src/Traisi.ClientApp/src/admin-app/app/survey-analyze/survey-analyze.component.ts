@@ -22,10 +22,10 @@ export class SurveyAnalyzeComponent implements OnInit {
 	public surveyId: number;
 
 	constructor(private httpObj: HttpClient, private route: ActivatedRoute) {
-				
-			this.route.params.subscribe(params => this.surveyId = params['id']);
-	 };
-	
+		
+		this.route.params.subscribe(params => this.surveyId = params['id']);
+	};
+
 	//Sample Distribution Analysis
 	public daysInField: number = 10;
 	public avgResponsePerDay = 40;
@@ -37,13 +37,13 @@ export class SurveyAnalyzeComponent implements OnInit {
 	public serverData: any = {};
 	public actualResponses: any = [];
 
-	public questions : any = [];
+	public questions: any = [];
+	public questionResults: any = [];
 
-	public selectedRegion:string = "";
-	public selectedQuestion:string = "38";
-	
-	public ngOnInit(): void 
-	{
+	public selectedRegion: string = "";
+	public selectedQuestion: string = "38";
+
+	public ngOnInit(): void {
 		//Load Question names				
 		//api analytics controller url
 		let url = "/api/SurveyAnalytics/" + this.surveyId;
@@ -53,32 +53,30 @@ export class SurveyAnalyzeComponent implements OnInit {
 		this.filterByQuestion();
 	}
 
-	public filterByCity()
-	{
-		if(this.selectedRegion ==  "")
+	public filterByCity() {
+		if (this.selectedRegion == "")
 			this.responses = this.actualResponses;
 		else
-			this.responses = this.actualResponses.filter(item  => item.city == this.selectedRegion);
-			
+			this.responses = this.actualResponses.filter(item => item.city == this.selectedRegion);
+
 		this.handleResponses();
 	}
 
-	public filterByQuestion()
-	{
+	public filterByQuestion() {
 		//api analytics controller url
 		let url = "/api/SurveyAnalytics/" + this.surveyId + "/" + this.selectedQuestion;
 		this.httpObj.get(url).subscribe((resData: any) => {
-			this.serverData  = resData;
+			this.serverData = resData;
 			this.responses = resData.completedResponses;
 			this.actualResponses = resData.completedResponses;
-			this.completed  = resData.totalComplete;
-			this.incomplete  = resData.totalIncomplete;
-			this.handleResponses();			
+			this.completed = resData.totalComplete;
+			this.incomplete = resData.totalIncomplete;
+			this.questionResults = resData.questionTypeResults;
+			this.handleResponses();
 		});
 	}
 
-	public handleResponses()
-	{
+	public handleResponses() {
 		for (let i = 0, j = 0; i < this.responses.length; i++) {
 			let compSurveyByCity = this.responses[i].surveyCompleted;
 			let incompSurveyByCity = this.serverData.incompletedResponses.find(item => item.city == this.responses[i].city).surveyIncompleted;
@@ -87,10 +85,20 @@ export class SurveyAnalyzeComponent implements OnInit {
 			this.responses[i].compSurveyByCity = compSurveyByCity;
 			this.responses[i].incompSurveyByCity = incompSurveyByCity;
 			this.responses[i].percentage = Math.round(rPercent) + "%";
-			this.responses[i].pending =  (100-Math.round(rPercent)) + "%";
+			this.responses[i].pending = (100 - Math.round(rPercent)) + "%";
 
 			j++;
 			if (j >= this.colorClasses.length) j = 0;
+		}
+		//Question type/options results count
+		var total = 0;
+		for (let i = 0; i < this.questionResults.length; i++) {
+			total += this.questionResults[i].count;
+		}
+		//Percentage calculation
+		for (let i = 0; i < this.questionResults.length; i++) {
+			let rPercent = (this.questionResults[i].count / total) * 100;
+			this.questionResults[i].percentage = Math.round(rPercent) + "%";
 		}
 	}
 }

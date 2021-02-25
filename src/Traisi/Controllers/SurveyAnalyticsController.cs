@@ -14,7 +14,7 @@ using Traisi.Data.Models.Questions;
 using Traisi.Data.Models.Surveys;
 using Traisi.ViewModels;
 using Microsoft.EntityFrameworkCore;
-
+using Traisi.Data.Models.ResponseTypes;
 namespace Traisi.Controllers
 {
     //[Authorize(Authorization.Policies.AccessAdminPolicy)]
@@ -52,21 +52,29 @@ namespace Traisi.Controllers
                                         .Include(r => r.QuestionPart)
                                         .ToListAsync();
 
+            var surveyResponseValues = await this._unitOfWork.DbContext.SurveyResponseValues
+                                            .AsQueryable()
+                                            .Include(sr => sr.SurveyResponse)
+                                            .ThenInclude(qp => qp.QuestionPart)
+                                            .ThenInclude(qo => qo.QuestionOptions)
+                                            .ThenInclude(qol => qol.QuestionOptionLabels)
+                                            .ToListAsync();
+
             var surveyRespondents = this._unitOfWork.DbContext.PrimaryRespondents
                                         .AsQueryable()
                                         .Include(s => s.Survey)
                                         .Where(item => item.Survey.Id == surveyId).ToList();
             //complete
-            var completedResponse = surveyResponses.Where(item => item.QuestionPart.Id == questionId  && item.QuestionPart.SurveyId == surveyId).ToList();
+            var completedResponse = surveyResponses.Where(item => item.QuestionPart.Id == questionId && item.QuestionPart.SurveyId == surveyId).ToList();
             var surveyCompleted = completedResponse.Where(item => item.Respondent.HomeAddress != null).GroupBy(item => item.Respondent.HomeAddress.City);
             var completedResult = from item in surveyCompleted
-                                    select new
-                                    {
-                                        City = item.Key,
-                                        surveyCompleted = item.Count()
-                                    };
+                                  select new
+                                  {
+                                      City = item.Key,
+                                      surveyCompleted = item.Count()
+                                  };
             //incomplete
-            var incompleteResponse = surveyResponses.Where(item => item.QuestionPart.Id != questionId  && item.QuestionPart.SurveyId == surveyId).ToList();
+            var incompleteResponse = surveyResponses.Where(item => item.QuestionPart.Id != questionId && item.QuestionPart.SurveyId == surveyId).ToList();
             var surveyIncompleted = incompleteResponse.Where(item => item.Respondent.HomeAddress != null).GroupBy(item => item.Respondent.HomeAddress.City);
             var incompletedResult = from item in surveyIncompleted
                                     select new
@@ -74,6 +82,16 @@ namespace Traisi.Controllers
                                         City = item.Key,
                                         surveyIncompleted = item.Count()
                                     };
+            //Responses based on QuestionType
+            var questTypeResponses = surveyResponseValues.Where(item => item.SurveyResponse.QuestionPart.Id == questionId && item.SurveyResponse.QuestionPart.SurveyId == surveyId)
+                                       .GroupBy(item => ((OptionSelectResponse)item).Code);
+
+            var questionTypeResults = from item in questTypeResponses
+                                      select new
+                                      {
+                                          QuestionOption = item.Key,
+                                          Count = item.Count()
+                                      }; 
             //final result                        
             var finalResults = new
             {
@@ -81,23 +99,24 @@ namespace Traisi.Controllers
                 totalIncomplete = incompleteResponse.Count(),
                 completedResponses = completedResult,
                 incompletedResponses = incompletedResult,
+                questionTypeResults = questionTypeResults
             };
             return Ok(finalResults);
         }
 
-       [HttpGet("{surveyId}")]
+        [HttpGet("{surveyId}")]
         public IActionResult GetQuestionNameList(int surveyId)
         {
             var questionParts = this._unitOfWork.QuestionParts.GetAll()
                                                 .Where(item => item.SurveyId == surveyId).ToList();
             var result = from item in questionParts
-                                    select new
-                                    {
-                                        Id = item.Id,
-                                        Name = item.Name,
-                                        Type = item.QuestionType
-                                    };
+                         select new
+                         {
+                             Id = item.Id,
+                             Name = item.Name,
+                             Type = item.QuestionType
+                         };
             return Ok(result);
-        } 
-    }
+        }
+    } 
 }
