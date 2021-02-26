@@ -7,23 +7,17 @@
   <h5>Trip Information: </h5>
   <table width="750" border="1">
     <tr>
-      <th>#</th>
-      <th>User Id</th>
-      <th>Trip Id</th>
-      <th>Started At</th>
-      <th>Finished At</th>
+      <th>Trip No #</th>    
+      <th>Departure Date</th> 
       <th>Mode</th>
-      <th>Travel Status</th>
+      <th>Purpose</th>
       <th>Action</th>
     </tr>
     <tr *ngFor="let item of tripData; let i = index; ">
-      <td>{{i + 1}}</td>
-      <td>{{item["User Id"]}}</td>
-      <td>{{item["Trip Id"]}}</td>
-      <td>{{item["Started At"]}}</td>
-      <td>{{item["Finished At"]}}</td>
+      <td>Trip_{{i + 1}}</td>
+      <td>{{item["Departure Date"]}}</td> 
       <td>{{item.Mode}}</td>
-      <td>{{item["Travel Status"]}}</td>
+      <td>{{item.Purpose}}</td>
       <td>
         <a href="javascript:void(0);" (click)="onConfirmClick()">Confirm</a> <br />
         <a href="javascript:void(0);">Modify</a>
