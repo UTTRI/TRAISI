@@ -131,8 +131,8 @@
 		"label": "other",
 		"icon": "fas fa-cogs",
 		"id": "other",
-		"allowFirstLocation": false,
-		"askIfOtherPassengers": true,
+		"allowFirstLocation": true,
+		"askIfOtherPassengers": false,
 		"isDropOffOrPickup":false
 	}
 ]
