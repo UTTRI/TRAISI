@@ -148,23 +148,16 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 	}
 
 	/**
-	 * 
-	 * @param $event 
+	 * Called when the ng-select window closes.
+	 * @param $event
 	 */
-	public purposeSelected($event): void {
-		console.log('purpose selected');
-	}
-
-	/**
-	 *
-	 * @param purpose
-	 */
-	public onPurposeChanged(purpose: Purpose): void {
-		let workPurpose = this.definedWorkLocations.find((x) => x.purpose.id === purpose.id);
-		let schoolPurpose = this.definedSchoolLocations.find((x) => x.purpose.id === purpose.id);
+	public purposeSelected(): void {
+		let purpose = this.model.purpose;
+		let workPurpose = this.definedWorkLocations.find((x) => x.purpose.id === purpose);
+		let schoolPurpose = this.definedSchoolLocations.find((x) => x.purpose.id === purpose);
 		this.model.meta = {};
-		if (purpose.id === this.definedHomeLocation.purpose.id) {
-			this.model.purpose = purpose.id;
+		if (purpose === this.definedHomeLocation.purpose.id) {
+			this.model.purpose = purpose;
 			this.model.address = this.definedHomeLocation.address;
 			this.model.latitude = this.definedHomeLocation.latitide;
 			this.model.longitude = this.definedHomeLocation.longitude;
@@ -179,11 +172,19 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 			this.model.latitude = schoolPurpose.latitide;
 			this.model.longitude = schoolPurpose.longitude;
 		} else {
-			this.model.purpose = purpose.id;
+			this.model.purpose = purpose;
 			this.openModal(this.addressInputDialogTemplate);
 		}
-		
+
 		this.updateState();
+	}
+
+	/**
+	 *
+	 * @param purpose
+	 */
+	public purposeModelChange(purpose: string): void {
+		this.model.purpose = purpose;
 	}
 
 	/**

@@ -27,8 +27,9 @@
 					bindLabel="label"
 					bindValue="id"
 					[ngModel]="model.purpose"
+					(ngModelChange)="purposeModelChange($event)"
 					(close)="purposeSelected($event)"
-					(change)="onPurposeChanged($event)"
+					
 				>
 					<ng-option *ngIf="definedHomeLocation" [value]="definedHomeLocation?.purpose"
 						><div class="purpose-label">
