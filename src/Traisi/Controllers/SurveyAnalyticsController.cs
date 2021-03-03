@@ -15,6 +15,11 @@ using Traisi.Data.Models.Surveys;
 using Traisi.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Traisi.Data.Models.ResponseTypes;
+using Traisi.Sdk.Services;
+using Traisi.Sdk.Interfaces;
+using Traisi.Sdk.Questions;
+using Traisi.Sdk.Enums;
+
 namespace Traisi.Controllers
 {
     //[Authorize(Authorization.Policies.AccessAdminPolicy)]
@@ -27,10 +32,12 @@ namespace Traisi.Controllers
         private readonly IFileDownloader _fileDownloader;
         private readonly IMapper _mapper;
         private IWebHostEnvironment _hostingEnvironment;
+        private IQuestionTypeManager _questionTypeManager;
+
 
         public SurveyAnalyticsController(IUnitOfWork unitOfWork, IWebHostEnvironment hostingEnvironment,
         IFileDownloader fileDownloaderService, IAuthorizationService authorizationService,
-         IAccountManager accountManager, IMapper mapper)
+         IAccountManager accountManager, IMapper mapper, IQuestionTypeManager questionTypeManager)
         {
             this._unitOfWork = unitOfWork;
             this._authorizationService = authorizationService;
@@ -38,28 +45,30 @@ namespace Traisi.Controllers
             this._fileDownloader = fileDownloaderService;
             this._mapper = mapper;
             this._hostingEnvironment = hostingEnvironment;
+            this._questionTypeManager = questionTypeManager;
         }
 
         [HttpGet("{surveyId}/{questionId}")]
         public async Task<IActionResult> ResponseStatistics(int surveyId, int questionId)
         {
+            //Surveys
             var surveys = await this._unitOfWork.Surveys.GetSurveyFullAsync(surveyId, 0);
-
+            //Survey Responses
             var surveyResponses = await this._unitOfWork.DbContext.SurveyResponses
                                         .AsQueryable()
                                         .Include(r => r.ResponseValues)
                                         .Include(r => r.Respondent)
                                         .Include(r => r.QuestionPart)
                                         .ToListAsync();
-
+            //Survey Response Values
             var surveyResponseValues = await this._unitOfWork.DbContext.SurveyResponseValues
-                                            .AsQueryable()
-                                            .Include(sr => sr.SurveyResponse)
-                                            .ThenInclude(qp => qp.QuestionPart)
-                                            .ThenInclude(qo => qo.QuestionOptions)
-                                            .ThenInclude(qol => qol.QuestionOptionLabels)
-                                            .ToListAsync();
-
+                                        .AsQueryable()
+                                        .Include(sr => sr.SurveyResponse)
+                                        .ThenInclude(qp => qp.QuestionPart)
+                                        .ThenInclude(qo => qo.QuestionOptions)
+                                        .ThenInclude(qol => qol.QuestionOptionLabels)
+                                        .ToListAsync();
+            //Survey Respondents
             var surveyRespondents = this._unitOfWork.DbContext.PrimaryRespondents
                                         .AsQueryable()
                                         .Include(s => s.Survey)
@@ -68,11 +77,11 @@ namespace Traisi.Controllers
             var completedResponse = surveyResponses.Where(item => item.QuestionPart.Id == questionId && item.QuestionPart.SurveyId == surveyId).ToList();
             var surveyCompleted = completedResponse.Where(item => item.Respondent.HomeAddress != null).GroupBy(item => item.Respondent.HomeAddress.City);
             var completedResult = from item in surveyCompleted
-                                  select new
-                                  {
-                                      City = item.Key,
-                                      surveyCompleted = item.Count()
-                                  };
+                                    select new
+                                    {
+                                        City = item.Key,
+                                        surveyCompleted = item.Count()
+                                    };
             //incomplete
             var incompleteResponse = surveyResponses.Where(item => item.QuestionPart.Id != questionId && item.QuestionPart.SurveyId == surveyId).ToList();
             var surveyIncompleted = incompleteResponse.Where(item => item.Respondent.HomeAddress != null).GroupBy(item => item.Respondent.HomeAddress.City);
@@ -83,25 +92,47 @@ namespace Traisi.Controllers
                                         surveyIncompleted = item.Count()
                                     };
             //Responses based on QuestionType
-            var questTypeResponses = surveyResponseValues.Where(item => item.SurveyResponse.QuestionPart.Id == questionId && item.SurveyResponse.QuestionPart.SurveyId == surveyId)
-                                       .GroupBy(item => ((OptionSelectResponse)item).Code);
-
-            var questionTypeResults = from item in questTypeResponses
-                                      select new
-                                      {
-                                          QuestionOption = item.Key,
-                                          Count = item.Count()
-                                      }; 
-            //final result                        
-            var finalResults = new
+            var question = await this._unitOfWork.DbContext.QuestionParts.FindAsync(questionId);
+            if (this._questionTypeManager.QuestionTypeDefinitions[question.QuestionType].ResponseType == QuestionResponseType.OptionSelect)
             {
-                totalComplete = completedResponse.Count(),
-                totalIncomplete = incompleteResponse.Count(),
-                completedResponses = completedResult,
-                incompletedResponses = incompletedResult,
-                questionTypeResults = questionTypeResults
-            };
-            return Ok(finalResults);
+                //QuestionType Responses
+                var questTypeResponses = surveyResponseValues.Where(item => item.SurveyResponse.QuestionPart.Id == questionId && item.SurveyResponse.QuestionPart.SurveyId == surveyId)
+                                                                .GroupBy(item => ((OptionSelectResponse)item).Code);
+                //Question Options Labels
+                var questionNames = question.QuestionOptions.ToList();
+                var questOptionNames = questionNames.Where(x => x.Name == "Response Options").OrderBy(x => x.Order).ToList();
+                //QuestionType results
+                var questionTypeResults = from item in questTypeResponses
+                                          select new
+                                          {
+                                              QuestionOption = item.Key,
+                                              Count = item.Count(),
+                                              Label = question.QuestionOptions.FirstOrDefault(x => x.Code == item.Key)?.QuestionOptionLabels["en"].Value
+                                          };
+                 //Final results 
+                var finalResults = new
+                {
+                    totalComplete = completedResponse.Count(),
+                    totalIncomplete = incompleteResponse.Count(),
+                    completedResponses = completedResult,
+                    incompletedResponses = incompletedResult,
+                    questionTypeResults = questionTypeResults.OrderBy( x => questionNames.FirstOrDefault(y => y.Code == x.QuestionOption)?.Order)
+                };
+                return Ok(finalResults);
+            }           
+            else
+            {
+                // default case count how many answers exist
+                //final result                        
+                var finalResults = new
+                {
+                    totalComplete = completedResponse.Count(),
+                    totalIncomplete = incompleteResponse.Count(),
+                    completedResponses = completedResult,
+                    incompletedResponses = incompletedResult
+                };
+                return Ok(finalResults);
+            }
         }
 
         [HttpGet("{surveyId}")]
@@ -118,5 +149,5 @@ namespace Traisi.Controllers
                          };
             return Ok(result);
         }
-    } 
+    }
 }

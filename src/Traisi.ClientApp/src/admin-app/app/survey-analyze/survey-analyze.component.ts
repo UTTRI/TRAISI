@@ -22,7 +22,7 @@ export class SurveyAnalyzeComponent implements OnInit {
 	public surveyId: number;
 
 	constructor(private httpObj: HttpClient, private route: ActivatedRoute) {
-		
+
 		this.route.params.subscribe(params => this.surveyId = params['id']);
 	};
 
@@ -39,9 +39,10 @@ export class SurveyAnalyzeComponent implements OnInit {
 
 	public questions: any = [];
 	public questionResults: any = [];
+	public questionOptionLabels: any = [];
 
 	public selectedRegion: string = "";
-	public selectedQuestion: string = "38";
+	public selectedQuestion: string = "1";
 
 	public ngOnInit(): void {
 		//Load Question names				
@@ -66,13 +67,27 @@ export class SurveyAnalyzeComponent implements OnInit {
 		//api analytics controller url
 		let url = "/api/SurveyAnalytics/" + this.surveyId + "/" + this.selectedQuestion;
 		this.httpObj.get(url).subscribe((resData: any) => {
-			this.serverData = resData;
-			this.responses = resData.completedResponses;
-			this.actualResponses = resData.completedResponses;
-			this.completed = resData.totalComplete;
-			this.incomplete = resData.totalIncomplete;
-			this.questionResults = resData.questionTypeResults;
-			this.handleResponses();
+
+			if (resData.questionTypeResults != undefined) {
+				this.serverData = resData;
+				this.responses = resData.completedResponses;
+				this.actualResponses = resData.completedResponses;
+				this.completed = resData.totalComplete;
+				this.incomplete = resData.totalIncomplete;
+				this.questionResults = resData.questionTypeResults;
+				this.handleResponses();
+			}
+			//I'll remove once all question-type responses code 
+			//added to SurveyAnalyticsController 
+			else {
+				alert("No question type results found in server");
+				this.serverData = [];
+				this.responses = [];
+				this.actualResponses = [];
+				this.completed = 0;
+				this.incomplete = 0;
+				this.questionResults = [];				
+			}
 		});
 	}
 
