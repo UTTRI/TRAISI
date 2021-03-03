@@ -35,7 +35,7 @@ import { GeoServiceClient, MapLocation } from '../shared/geoservice-api-client.s
 import { GeoLocation } from '../map-question/models/geo-location.model';
 import { MapEndpointService } from '../map-question/services/mapservice.service';
 import { MapQuestionConfiguration } from '../map-question/models/map-question-configuration.model';
-
+import { moment } from 'ngx-bootstrap/chronos/test/chain';
 
 @Component({
 	selector: 'traisi-travel-diary-logger',
@@ -59,14 +59,18 @@ export class TravelDiaryLoggerComponent extends SurveyQuestion<ResponseTypes.Str
 	public tripData: any[] = [];
 
 	//using test data at the moment
-	public getCords(): any[] {
+	public getCords(strDate: string): any[] {
 		var sourceData: any[] = this.getTripSoureData();
-        //For now change the date here, to display routes loaded into the map
-		sourceData = sourceData.filter(item => item["Trip Date Time"].substring(0, 10) == "2017-10-11");
+		//For now change the date here, to display routes loaded into the map
+		sourceData = sourceData.filter(item => item["Trip Date Time"].substring(0, 10) == strDate);
 		console.log(sourceData);
 		var i = 0;
 		//coordinates array
 		var cordArray: any[] = [];
+		//Trip table
+		var tripTable: any[] = [];
+
+		var tripId: number = 1;
 		while (i < sourceData.length) {
 			//trip array
 			var tripArray: any[] = [];
@@ -77,6 +81,11 @@ export class TravelDiaryLoggerComponent extends SurveyQuestion<ResponseTypes.Str
 				tripArray.push(ar);
 
 				if (sourceData[i]["Travel Status"] == "Stop") {
+					var tripObj: any = {};
+					tripObj["Departure Date"] = sourceData[i]["Trip Date Time"];
+					tripObj.Mode = sourceData[i].Mode;
+					tripObj.Purpose = "";
+					tripTable.push(tripObj);
 					i++;
 					break;
 				}
@@ -84,30 +93,18 @@ export class TravelDiaryLoggerComponent extends SurveyQuestion<ResponseTypes.Str
 			}
 			cordArray.push(tripArray);
 		}
+		this.tripData = tripTable;
 		return cordArray;
 	}
-
-	public getTripData(): any[] {
-		return [
-			//Date 11, row in the Trip information table
-			{
-				"Departure Date": "2017-10-11",
-				"Purpose": "",
-				"Mode": "Walk"
-			},
-			//Date 12 row in the Trip information table
-			{
-				"Departure Date": "2017-10-12",
-				"Purpose": "",
-				"Mode": "Walk"
-			}
-		];
-	}
+	//data range (min/max) for the test data set
+	minDate = "2017-10-01"
+	maxDate = "2017-11-30"
 
 	@ViewChild('dateInput', { static: true })
 	public dateInput: BsDatepickerDirective;
 
 	public dateData: Date;
+	public selectedDate: any = "2017-10-11";
 
 	bsInlineValue = new Date();
 	bsInlineRangeValue: Date[];
@@ -137,8 +134,16 @@ export class TravelDiaryLoggerComponent extends SurveyQuestion<ResponseTypes.Str
 	 * on init
 	 */
 	public ngOnInit(): void {
+		//coordinates
+		let coordinates: any[] = this.getCords("2017-10-11");
+		//map
+		this.generateMap(coordinates);
+	}
+
+	//Map
+	public generateMap(coordinates: any[]): void {
+		document.getElementById("map").innerHTML = "";
 		//it's just the test data, getTripData() would call the backend in normal circumstances
-		this.tripData = this.getTripData();
 		(mapboxgl as any).accessToken = this.accessToken;
 
 		var map = new mapboxgl.Map({
@@ -147,9 +152,6 @@ export class TravelDiaryLoggerComponent extends SurveyQuestion<ResponseTypes.Str
 			center: [-79.35, 43.67],
 			zoom: 15
 		});
-
-		//coordinates
-		let coordinates: any[] = this.getCords();
 
 		map.on('load', function () {
 			//Line colors
@@ -205,6 +207,12 @@ export class TravelDiaryLoggerComponent extends SurveyQuestion<ResponseTypes.Str
 	}
 
 	public loadConfigurationData(data: QuestionConfiguration[]): void { }
+
+	//Select a date from the calendar
+	public updateTripDate() {
+		let coordinates: any[] = this.getCords(this.selectedDate);
+		this.generateMap(coordinates);
+	}
 
 	//using test data at the moment
 	public getTripSoureData(): any[] {
@@ -279,105 +287,6 @@ export class TravelDiaryLoggerComponent extends SurveyQuestion<ResponseTypes.Str
 				"Trip Date Time": "2017-10-11 0:37",
 				"Latitude": 43.6764867,
 				"Longitude": -79.3579183,
-				"Mode": "Walk",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714756,
-				"Trip Date Time": "2017-10-11 0:39",
-				"Latitude": 43.6758833,
-				"Longitude": -79.3582633,
-				"Mode": "Walk",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714756,
-				"Trip Date Time": "2017-10-11 0:39",
-				"Latitude": 43.6762819,
-				"Longitude": -79.3580511,
-				"Mode": "Walk",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714756,
-				"Trip Date Time": "2017-10-11 0:40",
-				"Latitude": 43.6759422,
-				"Longitude": -79.3577871,
-				"Mode": "Walk",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714756,
-				"Trip Date Time": "2017-10-11 0:40",
-				"Latitude": 43.6762819,
-				"Longitude": -79.3580511,
-				"Mode": "Walk",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714756,
-				"Trip Date Time": "2017-10-11 0:41",
-				"Latitude": 43.6759422,
-				"Longitude": -79.3577871,
-				"Mode": "Walk",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714756,
-				"Trip Date Time": "2017-10-11 0:42",
-				"Latitude": 43.6762819,
-				"Longitude": -79.3580511,
-				"Mode": "Walk",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714756,
-				"Trip Date Time": "2017-10-11 0:42",
-				"Latitude": 43.6759422,
-				"Longitude": -79.3577871,
-				"Mode": "Walk",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714756,
-				"Trip Date Time": "2017-10-11 0:42",
-				"Latitude": 43.6763149,
-				"Longitude": -79.3580071,
-				"Mode": "Walk",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714756,
-				"Trip Date Time": "2017-10-11 0:44",
-				"Latitude": 43.6764917,
-				"Longitude": -79.3570433,
-				"Mode": "Walk",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714756,
-				"Trip Date Time": "2017-10-11 0:44",
-				"Latitude": 43.6765667,
-				"Longitude": -79.356555,
-				"Mode": "Walk",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714756,
-				"Trip Date Time": "2017-10-11 0:45",
-				"Latitude": 43.676745,
-				"Longitude": -79.3552883,
 				"Mode": "Walk",
 				"Travel Status": "Travel"
 			},
@@ -459,627 +368,6 @@ export class TravelDiaryLoggerComponent extends SurveyQuestion<ResponseTypes.Str
 				"Trip Date Time": "2017-10-11 14:47",
 				"Latitude": 43.6765,
 				"Longitude": -79.3570483,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:48",
-				"Latitude": 43.6762433,
-				"Longitude": -79.3582783,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:48",
-				"Latitude": 43.6761233,
-				"Longitude": -79.3589367,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:48",
-				"Latitude": 43.6760283,
-				"Longitude": -79.35958,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:48",
-				"Latitude": 43.6759133,
-				"Longitude": -79.3601883,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:48",
-				"Latitude": 43.675795,
-				"Longitude": -79.3608983,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:49",
-				"Latitude": 43.6756583,
-				"Longitude": -79.361705,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:49",
-				"Latitude": 43.6755617,
-				"Longitude": -79.3622683,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:49",
-				"Latitude": 43.6754617,
-				"Longitude": -79.36292,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:49",
-				"Latitude": 43.6753117,
-				"Longitude": -79.3635217,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:49",
-				"Latitude": 43.6751783,
-				"Longitude": -79.36423,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:50",
-				"Latitude": 43.6750667,
-				"Longitude": -79.36482,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:50",
-				"Latitude": 43.67491,
-				"Longitude": -79.365545,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:50",
-				"Latitude": 43.6747433,
-				"Longitude": -79.36637,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:50",
-				"Latitude": 43.6745433,
-				"Longitude": -79.3670683,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:50",
-				"Latitude": 43.6742367,
-				"Longitude": -79.3675833,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:50",
-				"Latitude": 43.6739617,
-				"Longitude": -79.3679317,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:51",
-				"Latitude": 43.67337,
-				"Longitude": -79.3688283,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:51",
-				"Latitude": 43.673115,
-				"Longitude": -79.369265,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:52",
-				"Latitude": 43.6728333,
-				"Longitude": -79.3696983,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:52",
-				"Latitude": 43.6725117,
-				"Longitude": -79.37019,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:52",
-				"Latitude": 43.67219,
-				"Longitude": -79.3707017,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:52",
-				"Latitude": 43.6720017,
-				"Longitude": -79.3713633,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:52",
-				"Latitude": 43.6720667,
-				"Longitude": -79.3720433,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:52",
-				"Latitude": 43.6721567,
-				"Longitude": -79.3727083,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:53",
-				"Latitude": 43.6722667,
-				"Longitude": -79.3735317,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:53",
-				"Latitude": 43.6723733,
-				"Longitude": -79.3742333,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:53",
-				"Latitude": 43.6724317,
-				"Longitude": -79.374855,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:53",
-				"Latitude": 43.6724967,
-				"Longitude": -79.375365,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:53",
-				"Latitude": 43.6725233,
-				"Longitude": -79.3764067,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:53",
-				"Latitude": 43.6724133,
-				"Longitude": -79.3769117,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:54",
-				"Latitude": 43.671745,
-				"Longitude": -79.3765717,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:54",
-				"Latitude": 43.6712167,
-				"Longitude": -79.3764083,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:54",
-				"Latitude": 43.6708917,
-				"Longitude": -79.3759283,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:54",
-				"Latitude": 43.6705917,
-				"Longitude": -79.375445,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:55",
-				"Latitude": 43.6698717,
-				"Longitude": -79.37545,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:55",
-				"Latitude": 43.669395,
-				"Longitude": -79.3751783,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:55",
-				"Latitude": 43.6691367,
-				"Longitude": -79.374335,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:55",
-				"Latitude": 43.6688083,
-				"Longitude": -79.3740683,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:55",
-				"Latitude": 43.6684083,
-				"Longitude": -79.3737867,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:55",
-				"Latitude": 43.6677567,
-				"Longitude": -79.3737717,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:56",
-				"Latitude": 43.6671733,
-				"Longitude": -79.374155,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:56",
-				"Latitude": 43.6669067,
-				"Longitude": -79.374515,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:56",
-				"Latitude": 43.66668,
-				"Longitude": -79.375525,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:56",
-				"Latitude": 43.6666283,
-				"Longitude": -79.3760367,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:56",
-				"Latitude": 43.6664767,
-				"Longitude": -79.3768517,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:57",
-				"Latitude": 43.6662167,
-				"Longitude": -79.3784,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:57",
-				"Latitude": 43.666155,
-				"Longitude": -79.379085,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:58",
-				"Latitude": 43.6660033,
-				"Longitude": -79.3795433,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:58",
-				"Latitude": 43.6657333,
-				"Longitude": -79.3803317,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:58",
-				"Latitude": 43.665655,
-				"Longitude": -79.380915,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:59",
-				"Latitude": 43.6655467,
-				"Longitude": -79.3815733,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:59",
-				"Latitude": 43.6652967,
-				"Longitude": -79.382645,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 14:59",
-				"Latitude": 43.6651733,
-				"Longitude": -79.3831583,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 15:00",
-				"Latitude": 43.6650883,
-				"Longitude": -79.3837117,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 15:00",
-				"Latitude": 43.6649933,
-				"Longitude": -79.3843133,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 15:00",
-				"Latitude": 43.6647417,
-				"Longitude": -79.3850717,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 15:00",
-				"Latitude": 43.6645733,
-				"Longitude": -79.3856133,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 15:01",
-				"Latitude": 43.6643317,
-				"Longitude": -79.3867883,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 15:01",
-				"Latitude": 43.66436,
-				"Longitude": -79.3873517,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 15:01",
-				"Latitude": 43.6642267,
-				"Longitude": -79.3881917,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 15:02",
-				"Latitude": 43.6637833,
-				"Longitude": -79.3886683,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 15:02",
-				"Latitude": 43.6633933,
-				"Longitude": -79.3887167,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 15:02",
-				"Latitude": 43.6633067,
-				"Longitude": -79.3897967,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 15:02",
-				"Latitude": 43.66335,
-				"Longitude": -79.3902933,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 15:02",
-				"Latitude": 43.6632533,
-				"Longitude": -79.3913333,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 15:04",
-				"Latitude": 43.6622678,
-				"Longitude": -79.3937442,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 15:04",
-				"Latitude": 43.66166,
-				"Longitude": -79.3959317,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 15:04",
-				"Latitude": 43.6612083,
-				"Longitude": -79.3952733,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 714977,
-				"Trip Date Time": "2017-10-11 15:04",
-				"Latitude": 43.6608283,
-				"Longitude": -79.3946433,
 				"Mode": "Bicycle",
 				"Travel Status": "Travel"
 			},
@@ -1184,24 +472,6 @@ export class TravelDiaryLoggerComponent extends SurveyQuestion<ResponseTypes.Str
 			},
 			{
 				"User Id": 12945,
-				"Trip Id": 715059,
-				"Trip Date Time": "2017-10-11 20:47",
-				"Latitude": 43.666835,
-				"Longitude": -79.3997467,
-				"Mode": "Walk",
-				"Travel Status": "Start"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715059,
-				"Trip Date Time": "2017-10-11 20:48",
-				"Latitude": 43.6674833,
-				"Longitude": -79.3998883,
-				"Mode": "Walk",
-				"Travel Status": "Stop"
-			},
-			{
-				"User Id": 12945,
 				"Trip Id": 715056,
 				"Trip Date Time": "2017-10-11 21:29",
 				"Latitude": 43.6483331,
@@ -1281,79 +551,7 @@ export class TravelDiaryLoggerComponent extends SurveyQuestion<ResponseTypes.Str
 				"Mode": "Walk",
 				"Travel Status": "Stop"
 			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715117,
-				"Trip Date Time": "2017-10-11 22:38",
-				"Latitude": 43.6455967,
-				"Longitude": -79.5069617,
-				"Mode": "Walk",
-				"Travel Status": "Start"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715117,
-				"Trip Date Time": "2017-10-11 22:47",
-				"Latitude": 43.6444547,
-				"Longitude": -79.5068228,
-				"Mode": "Walk",
-				"Travel Status": "Stop"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715132,
-				"Trip Date Time": "2017-10-11 23:11",
-				"Latitude": 43.6442567,
-				"Longitude": -79.5079917,
-				"Mode": "Walk",
-				"Travel Status": "Start"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715132,
-				"Trip Date Time": "2017-10-11 23:13",
-				"Latitude": 43.64405,
-				"Longitude": -79.5090733,
-				"Mode": "Walk",
-				"Travel Status": "Stop"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715142,
-				"Trip Date Time": "2017-10-11 23:35",
-				"Latitude": 43.6441717,
-				"Longitude": -79.5041483,
-				"Mode": "Walk",
-				"Travel Status": "Start"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715142,
-				"Trip Date Time": "2017-10-11 23:36",
-				"Latitude": 43.64447,
-				"Longitude": -79.503805,
-				"Mode": "Walk",
-				"Travel Status": "Stop"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715141,
-				"Trip Date Time": "2017-10-11 23:44",
-				"Latitude": 43.6437,
-				"Longitude": -79.5061317,
-				"Mode": "Walk",
-				"Travel Status": "Start"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715141,
-				"Trip Date Time": "2017-10-11 23:45",
-				"Latitude": 43.6433117,
-				"Longitude": -79.506045,
-				"Mode": "Walk",
-				"Travel Status": "Stop"
-			},
-			//Date 12, few trips from test data set			
+			//Date Oct 12, few trips from test data set			
 			{
 				"User Id": 12945,
 				"Trip Id": 715160,
@@ -1519,114 +717,6 @@ export class TravelDiaryLoggerComponent extends SurveyQuestion<ResponseTypes.Str
 			{
 				"User Id": 12945,
 				"Trip Id": 715187,
-				"Trip Date Time": "2017-10-12 1:06",
-				"Latitude": 43.6529506,
-				"Longitude": -79.4700479,
-				"Mode": "Subway",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715187,
-				"Trip Date Time": "2017-10-12 1:06",
-				"Latitude": 43.6532883,
-				"Longitude": -79.4690733,
-				"Mode": "Subway",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715187,
-				"Trip Date Time": "2017-10-12 1:06",
-				"Latitude": 43.6535217,
-				"Longitude": -79.4683017,
-				"Mode": "Subway",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715187,
-				"Trip Date Time": "2017-10-12 1:06",
-				"Latitude": 43.6536609,
-				"Longitude": -79.4674246,
-				"Mode": "Subway",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715187,
-				"Trip Date Time": "2017-10-12 1:07",
-				"Latitude": 43.6554229,
-				"Longitude": -79.4599399,
-				"Mode": "Subway",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715187,
-				"Trip Date Time": "2017-10-12 1:08",
-				"Latitude": 43.6559285,
-				"Longitude": -79.4587972,
-				"Mode": "Subway",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715187,
-				"Trip Date Time": "2017-10-12 1:08",
-				"Latitude": 43.65599,
-				"Longitude": -79.4579433,
-				"Mode": "Subway",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715187,
-				"Trip Date Time": "2017-10-12 1:08",
-				"Latitude": 43.656055,
-				"Longitude": -79.457205,
-				"Mode": "Subway",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715187,
-				"Trip Date Time": "2017-10-12 1:08",
-				"Latitude": 43.656215,
-				"Longitude": -79.4565933,
-				"Mode": "Subway",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715187,
-				"Trip Date Time": "2017-10-12 1:08",
-				"Latitude": 43.6564033,
-				"Longitude": -79.4561133,
-				"Mode": "Subway",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715187,
-				"Trip Date Time": "2017-10-12 1:08",
-				"Latitude": 43.6566133,
-				"Longitude": -79.455225,
-				"Mode": "Subway",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715187,
-				"Trip Date Time": "2017-10-12 1:08",
-				"Latitude": 43.65676,
-				"Longitude": -79.4546817,
-				"Mode": "Subway",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715187,
 				"Trip Date Time": "2017-10-12 1:08",
 				"Latitude": 43.6570017,
 				"Longitude": -79.4537733,
@@ -1735,69 +825,6 @@ export class TravelDiaryLoggerComponent extends SurveyQuestion<ResponseTypes.Str
 			{
 				"User Id": 12945,
 				"Trip Id": 715212,
-				"Trip Date Time": "2017-10-12 1:33",
-				"Latitude": 43.6642733,
-				"Longitude": -79.3974917,
-				"Mode": "Walk",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715212,
-				"Trip Date Time": "2017-10-12 1:34",
-				"Latitude": 43.663665,
-				"Longitude": -79.3974,
-				"Mode": "Walk",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715212,
-				"Trip Date Time": "2017-10-12 1:35",
-				"Latitude": 43.6630933,
-				"Longitude": -79.3970317,
-				"Mode": "Walk",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715212,
-				"Trip Date Time": "2017-10-12 1:36",
-				"Latitude": 43.6625433,
-				"Longitude": -79.39667,
-				"Mode": "Walk",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715212,
-				"Trip Date Time": "2017-10-12 1:36",
-				"Latitude": 43.6620433,
-				"Longitude": -79.39646,
-				"Mode": "Walk",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715212,
-				"Trip Date Time": "2017-10-12 1:37",
-				"Latitude": 43.6616533,
-				"Longitude": -79.3962833,
-				"Mode": "Walk",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715212,
-				"Trip Date Time": "2017-10-12 1:38",
-				"Latitude": 43.66109,
-				"Longitude": -79.3953967,
-				"Mode": "Walk",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715212,
 				"Trip Date Time": "2017-10-12 1:39",
 				"Latitude": 43.6606067,
 				"Longitude": -79.3950683,
@@ -1870,168 +897,6 @@ export class TravelDiaryLoggerComponent extends SurveyQuestion<ResponseTypes.Str
 			{
 				"User Id": 12945,
 				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:13",
-				"Latitude": 43.6632633,
-				"Longitude": -79.3925767,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:14",
-				"Latitude": 43.6633833,
-				"Longitude": -79.3921033,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:14",
-				"Latitude": 43.6635633,
-				"Longitude": -79.3914717,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:14",
-				"Latitude": 43.6637167,
-				"Longitude": -79.39093,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:14",
-				"Latitude": 43.6638233,
-				"Longitude": -79.3903583,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:14",
-				"Latitude": 43.6638967,
-				"Longitude": -79.3896867,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:15",
-				"Latitude": 43.6641783,
-				"Longitude": -79.3891683,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:15",
-				"Latitude": 43.66442,
-				"Longitude": -79.3887433,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:15",
-				"Latitude": 43.6643567,
-				"Longitude": -79.3882017,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:15",
-				"Latitude": 43.6642117,
-				"Longitude": -79.3876333,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:16",
-				"Latitude": 43.6642817,
-				"Longitude": -79.386785,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:16",
-				"Latitude": 43.6647317,
-				"Longitude": -79.3861133,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:16",
-				"Latitude": 43.6648733,
-				"Longitude": -79.3854467,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:17",
-				"Latitude": 43.665325,
-				"Longitude": -79.3852233,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:17",
-				"Latitude": 43.6653083,
-				"Longitude": -79.384485,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:17",
-				"Latitude": 43.6652867,
-				"Longitude": -79.38392,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:18",
-				"Latitude": 43.66543,
-				"Longitude": -79.3832083,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:18",
-				"Latitude": 43.6656317,
-				"Longitude": -79.3827167,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
 				"Trip Date Time": "2017-10-12 2:18",
 				"Latitude": 43.6654817,
 				"Longitude": -79.3822583,
@@ -2050,514 +915,1832 @@ export class TravelDiaryLoggerComponent extends SurveyQuestion<ResponseTypes.Str
 			{
 				"User Id": 12945,
 				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:18",
-				"Latitude": 43.665935,
-				"Longitude": -79.38076,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:19",
-				"Latitude": 43.6659933,
-				"Longitude": -79.3802083,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:19",
-				"Latitude": 43.6661917,
-				"Longitude": -79.37961,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:19",
-				"Latitude": 43.6663917,
-				"Longitude": -79.3790533,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:19",
-				"Latitude": 43.6665967,
-				"Longitude": -79.37864,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:20",
-				"Latitude": 43.6667617,
-				"Longitude": -79.3778533,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:20",
-				"Latitude": 43.6668067,
-				"Longitude": -79.3772417,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:20",
-				"Latitude": 43.6667717,
-				"Longitude": -79.3765133,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:20",
-				"Latitude": 43.6667433,
-				"Longitude": -79.3759667,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:21",
-				"Latitude": 43.6669783,
-				"Longitude": -79.3754167,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:21",
-				"Latitude": 43.6675233,
-				"Longitude": -79.3753,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:22",
-				"Latitude": 43.6679083,
-				"Longitude": -79.375295,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:22",
-				"Latitude": 43.6682667,
-				"Longitude": -79.3754267,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:22",
-				"Latitude": 43.668815,
-				"Longitude": -79.3757867,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:22",
-				"Latitude": 43.6693667,
-				"Longitude": -79.3759417,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:23",
-				"Latitude": 43.669795,
-				"Longitude": -79.376075,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:23",
-				"Latitude": 43.6702,
-				"Longitude": -79.3762383,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:23",
-				"Latitude": 43.6706517,
-				"Longitude": -79.3763067,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:23",
-				"Latitude": 43.6710883,
-				"Longitude": -79.376575,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:23",
-				"Latitude": 43.6714117,
-				"Longitude": -79.37681,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:24",
-				"Latitude": 43.6717967,
-				"Longitude": -79.376835,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:24",
-				"Latitude": 43.6723133,
-				"Longitude": -79.3758167,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:24",
-				"Latitude": 43.6723267,
-				"Longitude": -79.37508,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:24",
-				"Latitude": 43.672235,
-				"Longitude": -79.374355,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:25",
-				"Latitude": 43.6721733,
-				"Longitude": -79.3735583,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:25",
-				"Latitude": 43.6720933,
-				"Longitude": -79.3728167,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:25",
-				"Latitude": 43.671975,
-				"Longitude": -79.3720817,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:25",
-				"Latitude": 43.6718667,
-				"Longitude": -79.3713967,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:25",
-				"Latitude": 43.671935,
-				"Longitude": -79.3708833,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:25",
-				"Latitude": 43.6722417,
-				"Longitude": -79.3703533,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:26",
-				"Latitude": 43.6726283,
-				"Longitude": -79.3697867,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:26",
-				"Latitude": 43.6729867,
-				"Longitude": -79.3692517,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:26",
-				"Latitude": 43.673325,
-				"Longitude": -79.3687733,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:26",
-				"Latitude": 43.6737417,
-				"Longitude": -79.3682067,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:27",
-				"Latitude": 43.6740717,
-				"Longitude": -79.3677233,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:27",
-				"Latitude": 43.6743917,
-				"Longitude": -79.3672667,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:27",
-				"Latitude": 43.67466,
-				"Longitude": -79.366685,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:27",
-				"Latitude": 43.674785,
-				"Longitude": -79.3659883,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:27",
-				"Latitude": 43.67494,
-				"Longitude": -79.365145,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:28",
-				"Latitude": 43.6750983,
-				"Longitude": -79.3644233,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:28",
-				"Latitude": 43.675235,
-				"Longitude": -79.3637283,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:28",
-				"Latitude": 43.675365,
-				"Longitude": -79.3630483,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:28",
-				"Latitude": 43.6755267,
-				"Longitude": -79.362255,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:28",
-				"Latitude": 43.6756767,
-				"Longitude": -79.3615517,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:29",
-				"Latitude": 43.6758017,
-				"Longitude": -79.3609,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:29",
-				"Latitude": 43.6759633,
-				"Longitude": -79.3602017,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:29",
-				"Latitude": 43.6760767,
-				"Longitude": -79.3595183,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:30",
-				"Latitude": 43.6763,
-				"Longitude": -79.3585817,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:30",
-				"Latitude": 43.6763967,
-				"Longitude": -79.3579967,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:30",
-				"Latitude": 43.67653,
-				"Longitude": -79.35738,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:30",
-				"Latitude": 43.6766817,
-				"Longitude": -79.3567,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:30",
-				"Latitude": 43.67681,
-				"Longitude": -79.3560133,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:31",
-				"Latitude": 43.6769483,
-				"Longitude": -79.3553633,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:31",
-				"Latitude": 43.6770483,
-				"Longitude": -79.35475,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:31",
-				"Latitude": 43.67715,
-				"Longitude": -79.3541567,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
-				"Trip Date Time": "2017-10-12 2:31",
-				"Latitude": 43.67728,
-				"Longitude": -79.35359,
-				"Mode": "Bicycle",
-				"Travel Status": "Travel"
-			},
-			{
-				"User Id": 12945,
-				"Trip Id": 715220,
 				"Trip Date Time": "2017-10-12 2:31",
 				"Latitude": 43.6773817,
 				"Longitude": -79.3530083,
 				"Mode": "Bicycle",
+				"Travel Status": "Stop"
+			},
+			//Date Oct 13
+			{
+				"User Id": 673178448,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 20:04",
+				"Latitude": 43.6861383,
+				"Longitude": -79.3403179,
+				"Mode": "Bicycle",
+				"Travel Status": "Start"
+			},
+			{
+				"User Id": 673178449,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 20:04",
+				"Latitude": 43.68658,
+				"Longitude": -79.3407317,
+				"Mode": "Bicycle",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 673178463,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 20:04",
+				"Latitude": 43.68638,
+				"Longitude": -79.3413667,
+				"Mode": "Bicycle",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 673178471,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 20:05",
+				"Latitude": 43.686235,
+				"Longitude": -79.34189,
+				"Mode": "Bicycle",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 673178479,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 20:05",
+				"Latitude": 43.686135,
+				"Longitude": -79.3423817,
+				"Mode": "Bicycle",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 673178495,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 20:05",
+				"Latitude": 43.6858783,
+				"Longitude": -79.3435033,
+				"Mode": "Bicycle",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 673178503,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 20:05",
+				"Latitude": 43.6857733,
+				"Longitude": -79.3440883,
+				"Mode": "Bicycle",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 673178519,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 20:06",
+				"Latitude": 43.6855733,
+				"Longitude": -79.345075,
+				"Mode": "Bicycle",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 673178527,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 20:06",
+				"Latitude": 43.6854467,
+				"Longitude": -79.34573,
+				"Mode": "Bicycle",
+				"Travel Status": "Travel"
+			},
+
+			{
+				"User Id": 673183600,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 20:12",
+				"Latitude": 43.6777367,
+				"Longitude": -79.3552383,
+				"Mode": "Bicycle",
+				"Travel Status": "Stop"
+			},
+			{
+				"User Id": 673183632,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 20:13",
+				"Latitude": 43.6770783,
+				"Longitude": -79.3544283,
+				"Mode": "Walk",
+				"Travel Status": "Start"
+			},
+			{
+				"User Id": 673183696,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 20:16",
+				"Latitude": 43.6771933,
+				"Longitude": -79.3534417,
+				"Mode": "Walk",
+				"Travel Status": "Stop"
+			},
+			{
+				"User Id": 673188723,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 20:31",
+				"Latitude": 43.6766633,
+				"Longitude": -79.3569733,
+				"Mode": "Bicycle",
+				"Travel Status": "Start"
+			},
+			{
+				"User Id": 673188731,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 20:31",
+				"Latitude": 43.6765567,
+				"Longitude": -79.3575883,
+				"Mode": "Bicycle",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 673188739,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 20:31",
+				"Latitude": 43.676435,
+				"Longitude": -79.3582767,
+				"Mode": "Bicycle",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 673188747,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 20:32",
+				"Latitude": 43.6763683,
+				"Longitude": -79.358825,
+				"Mode": "Bicycle",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 673188755,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 20:32",
+				"Latitude": 43.676245,
+				"Longitude": -79.3595133,
+				"Mode": "Bicycle",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 673188763,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 20:32",
+				"Latitude": 43.67609,
+				"Longitude": -79.3602417,
+				"Mode": "Bicycle",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 673188771,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 20:32",
+				"Latitude": 43.675925,
+				"Longitude": -79.3609817,
+				"Mode": "Bicycle",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 673188779,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 20:32",
+				"Latitude": 43.6757717,
+				"Longitude": -79.36174,
+				"Mode": "Bicycle",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 673188787,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 20:33",
+				"Latitude": 43.6756383,
+				"Longitude": -79.36241,
+				"Mode": "Bicycle",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 673188795,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 20:33",
+				"Latitude": 43.675495,
+				"Longitude": -79.363145,
+				"Mode": "Bicycle",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 673188803,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 20:33",
+				"Latitude": 43.67537,
+				"Longitude": -79.363785,
+				"Mode": "Bicycle",
+				"Travel Status": "Travel"
+			}, {
+				"User Id": 673196584,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 20:45",
+				"Latitude": 43.6604667,
+				"Longitude": -79.3952983,
+				"Mode": "Bicycle",
+				"Travel Status": "Stop"
+			},
+			{
+				"User Id": 673196624,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 20:46",
+				"Latitude": 43.6603333,
+				"Longitude": -79.3968683,
+				"Mode": "Walk",
+				"Travel Status": "Start"
+			},
+			{
+				"User Id": 673196679,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 20:48",
+				"Latitude": 43.6605169,
+				"Longitude": -79.3954049,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 673197246,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 20:50",
+				"Latitude": 43.6600927,
+				"Longitude": -79.3958267,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 673197248,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 20:50",
+				"Latitude": 43.6603576,
+				"Longitude": -79.3962635,
+				"Mode": "Walk",
+				"Travel Status": "Stop"
+			},
+			{
+				"User Id": 673199214,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 20:57",
+				"Latitude": 43.6604153,
+				"Longitude": -79.3961868,
+				"Mode": "Walk",
+				"Travel Status": "Start"
+			},
+			{
+				"User Id": 673199833,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 20:58",
+				"Latitude": 43.6604198,
+				"Longitude": -79.3983217,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 673199845,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 20:59",
+				"Latitude": 43.6603576,
+				"Longitude": -79.3962635,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 673200498,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 20:59",
+				"Latitude": 43.6599718,
+				"Longitude": -79.3959922,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 673200499,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 20:59",
+				"Latitude": 43.6603576,
+				"Longitude": -79.3962635,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 673200502,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 21:00",
+				"Latitude": 43.6605169,
+				"Longitude": -79.3954049,
+				"Mode": "Walk",
+				"Travel Status": "Stop"
+			},
+			{
+				"User Id": 673321757,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 23:44",
+				"Latitude": 43.6607618,
+				"Longitude": -79.3948366,
+				"Mode": "Walk",
+				"Travel Status": "Start"
+			},
+			{
+				"User Id": 673321823,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 23:45",
+				"Latitude": 43.6611417,
+				"Longitude": -79.3942333,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 673321871,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 23:47",
+				"Latitude": 43.6620533,
+				"Longitude": -79.3941467,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 673321903,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 23:47",
+				"Latitude": 43.6624783,
+				"Longitude": -79.3945917,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 673321935,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 23:48",
+				"Latitude": 43.6628167,
+				"Longitude": -79.393945,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 673321967,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-13 23:49",
+				"Latitude": 43.66306,
+				"Longitude": -79.3931767,
+				"Mode": "Walk",
+				"Travel Status": "Stop"
+			},
+			//Date Oct 14
+			{
+				"User Id": 673339214,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-14 0:13",
+				"Latitude": 43.6768033,
+				"Longitude": -79.3559533,
+				"Mode": "Walk",
+				"Travel Status": "Start"
+			},
+			{
+				"User Id": 673339275,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-14 0:16",
+				"Latitude": 43.6769665,
+				"Longitude": -79.3548831,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 673339320,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-14 0:17",
+				"Latitude": 43.67709,
+				"Longitude": -79.35387,
+				"Mode": "Walk",
+				"Travel Status": "Stop"
+			},
+			{
+				"User Id": 673863881,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-14 14:17",
+				"Latitude": 43.6803217,
+				"Longitude": -79.346,
+				"Mode": "Car",
+				"Travel Status": "Start"
+			},
+			{
+				"User Id": 673863886,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-14 14:18",
+				"Latitude": 43.6796683,
+				"Longitude": -79.34655,
+				"Mode": "Car",
+				"Travel Status": "Stop"
+			},
+			{
+				"User Id": 673863892,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-14 14:18",
+				"Latitude": 43.67729,
+				"Longitude": -79.3527417,
+				"Mode": "Walk",
+				"Travel Status": "Start"
+			},
+			{
+				"User Id": 673863920,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-14 14:18",
+				"Latitude": 43.6774233,
+				"Longitude": -79.352085,
+				"Mode": "Walk",
+				"Travel Status": "Stop"
+			},
+			{
+				"User Id": 673863984,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-14 14:20",
+				"Latitude": 43.6782933,
+				"Longitude": -79.3525033,
+				"Mode": "Subway",
+				"Travel Status": "Start"
+			},
+			{
+				"User Id": 673864043,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-14 14:38",
+				"Latitude": 43.6574996,
+				"Longitude": -79.4521513,
+				"Mode": "Subway",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 673864046,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-14 14:38",
+				"Latitude": 43.6571612,
+				"Longitude": -79.452733,
+				"Mode": "Subway",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 673864051,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-14 14:38",
+				"Latitude": 43.6560172,
+				"Longitude": -79.4558635,
+				"Mode": "Subway",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 673864053,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-14 14:38",
+				"Latitude": 43.6563875,
+				"Longitude": -79.4577682,
+				"Mode": "Subway",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 673864054,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-14 14:39",
+				"Latitude": 43.6556963,
+				"Longitude": -79.458094,
+				"Mode": "Subway",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 673864055,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-14 14:39",
+				"Latitude": 43.6555528,
+				"Longitude": -79.4596333,
+				"Mode": "Subway",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 673864075,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-14 14:41",
+				"Latitude": 43.653149,
+				"Longitude": -79.4693887,
+				"Mode": "Subway",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 673864076,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-14 14:41",
+				"Latitude": 43.6530924,
+				"Longitude": -79.4703775,
+				"Mode": "Subway",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 673864144,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-14 14:52",
+				"Latitude": 43.6485158,
+				"Longitude": -79.509257,
+				"Mode": "Subway",
+				"Travel Status": "Stop"
+			},
+			{
+				"User Id": 673864181,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-14 14:56",
+				"Latitude": 43.6486308,
+				"Longitude": -79.5086338,
+				"Mode": "Walk",
+				"Travel Status": "Start"
+			},
+			{
+				"User Id": 673867144,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-14 14:58",
+				"Latitude": 43.6482783,
+				"Longitude": -79.5076617,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 673867146,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-14 14:58",
+				"Latitude": 43.6487267,
+				"Longitude": -79.5082867,
+				"Mode": "Walk",
+				"Travel Status": "Stop"
+			},
+			{
+				"User Id": 674070043,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-14 19:10",
+				"Latitude": 43.647484,
+				"Longitude": -79.5111056,
+				"Mode": "Walk",
+				"Travel Status": "Start"
+			},
+			{
+				"User Id": 674070118,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-14 19:12",
+				"Latitude": 43.6471467,
+				"Longitude": -79.51218,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 674070134,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-14 19:12",
+				"Latitude": 43.647045,
+				"Longitude": -79.5126633,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 674070182,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-14 19:14",
+				"Latitude": 43.646715,
+				"Longitude": -79.5135667,
+				"Mode": "Walk",
+				"Travel Status": "Stop"
+			}, {
+				"User Id": 674170934,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-14 20:55",
+				"Latitude": 43.6470717,
+				"Longitude": -79.51365,
+				"Mode": "Walk",
+				"Travel Status": "Start"
+			},
+			{
+				"User Id": 674170966,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-14 20:56",
+				"Latitude": 43.64708,
+				"Longitude": -79.5129867,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 674171002,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-14 20:56",
+				"Latitude": 43.6473783,
+				"Longitude": -79.51219,
+				"Mode": "Walk",
+				"Travel Status": "Stop"
+			},
+			{
+				"User Id": 674171262,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-14 21:03",
+				"Latitude": 43.6479617,
+				"Longitude": -79.5114783,
+				"Mode": "Walk",
+				"Travel Status": "Start"
+			},
+			{
+				"User Id": 674177957,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-14 21:11",
+				"Latitude": 43.6476598,
+				"Longitude": -79.5106005,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 674177993,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-14 21:11",
+				"Latitude": 43.6478583,
+				"Longitude": -79.509805,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 674178025,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-14 21:12",
+				"Latitude": 43.6480517,
+				"Longitude": -79.5087933,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 674178057,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-10-14 21:13",
+				"Latitude": 43.648255,
+				"Longitude": -79.5082233,
+				"Mode": "Walk",
+				"Travel Status": "Stop"
+			},
+			//Nov 2
+			{
+				"User Id": 697120079,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-02 22:21",
+				"Latitude": 43.6772617,
+				"Longitude": -79.354015,
+				"Mode": "Walk",
+				"Travel Status": "Start"
+			},
+			{
+				"User Id": 697120138,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-02 22:22",
+				"Latitude": 43.6770067,
+				"Longitude": -79.35493,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 697120202,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-02 22:24",
+				"Latitude": 43.677735,
+				"Longitude": -79.3554783,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 697120234,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-02 22:24",
+				"Latitude": 43.6781883,
+				"Longitude": -79.355895,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 697120266,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-02 22:25",
+				"Latitude": 43.6782283,
+				"Longitude": -79.35663,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 697120298,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-02 22:26",
+				"Latitude": 43.677765,
+				"Longitude": -79.3567917,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 697120330,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-02 22:27",
+				"Latitude": 43.6771867,
+				"Longitude": -79.3566117,
+				"Mode": "Walk",
+				"Travel Status": "Stop"
+			},
+			{
+				"User Id": 697120650,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-02 22:35",
+				"Latitude": 43.67688,
+				"Longitude": -79.3560583,
+				"Mode": "Walk",
+				"Travel Status": "Start"
+			},
+			{
+				"User Id": 697120666,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-02 22:35",
+				"Latitude": 43.6769417,
+				"Longitude": -79.355445,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 697120746,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-02 22:38",
+				"Latitude": 43.6768696,
+				"Longitude": -79.3544431,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 697120778,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-02 22:39",
+				"Latitude": 43.6771967,
+				"Longitude": -79.3536817,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 697120810,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-02 22:39",
+				"Latitude": 43.6772833,
+				"Longitude": -79.352985,
+				"Mode": "Walk",
+				"Travel Status": "Stop"
+			},
+			//Nov 3
+			{
+				"User Id": 698354277,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-03 14:46",
+				"Latitude": 43.676313,
+				"Longitude": -79.358777,
+				"Mode": "Bicycle",
+				"Travel Status": "Start"
+			},
+			{
+				"User Id": 698354308,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-03 14:47",
+				"Latitude": 43.6761633,
+				"Longitude": -79.359605,
+				"Mode": "Bicycle",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 698354316,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-03 14:47",
+				"Latitude": 43.6760383,
+				"Longitude": -79.3602517,
+				"Mode": "Bicycle",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 698354324,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-03 14:47",
+				"Latitude": 43.6759167,
+				"Longitude": -79.3608,
+				"Mode": "Bicycle",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 698354332,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-03 14:47",
+				"Latitude": 43.6757917,
+				"Longitude": -79.3614667,
+				"Mode": "Bicycle",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 698354340,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-03 14:47",
+				"Latitude": 43.6756733,
+				"Longitude": -79.3621133,
+				"Mode": "Bicycle",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 698354348,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-03 14:47",
+				"Latitude": 43.6755133,
+				"Longitude": -79.3628767,
+				"Mode": "Bicycle",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 698354356,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-03 14:48",
+				"Latitude": 43.6753817,
+				"Longitude": -79.3635017,
+				"Mode": "Bicycle",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 698355046,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-03 15:03",
+				"Latitude": 43.6610117,
+				"Longitude": -79.39534,
+				"Mode": "Bicycle",
+				"Travel Status": "Stop"
+			},
+			{
+				"User Id": 698883059,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-03 20:05",
+				"Latitude": 43.6604117,
+				"Longitude": -79.3953483,
+				"Mode": "Walk",
+				"Travel Status": "Start"
+			},
+			{
+				"User Id": 698883123,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-03 20:07",
+				"Latitude": 43.6601083,
+				"Longitude": -79.396445,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 698883155,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-03 20:07",
+				"Latitude": 43.6603483,
+				"Longitude": -79.3970483,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 698883187,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-03 20:08",
+				"Latitude": 43.6603333,
+				"Longitude": -79.3978083,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 698883219,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-03 20:09",
+				"Latitude": 43.660215,
+				"Longitude": -79.3986667,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 698883251,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-03 20:09",
+				"Latitude": 43.66077,
+				"Longitude": -79.3991,
+				"Mode": "Walk",
+				"Travel Status": "Stop"
+			},
+			{
+				"User Id": 698941064,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-03 20:53",
+				"Latitude": 43.6609333,
+				"Longitude": -79.3991483,
+				"Mode": "Walk",
+				"Travel Status": "Start"
+			},
+			{
+				"User Id": 698941080,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-03 20:54",
+				"Latitude": 43.6605217,
+				"Longitude": -79.398775,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 698941128,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-03 20:55",
+				"Latitude": 43.66037,
+				"Longitude": -79.3979917,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 698941144,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-03 20:55",
+				"Latitude": 43.6603833,
+				"Longitude": -79.3974167,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 698941160,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-03 20:55",
+				"Latitude": 43.6603183,
+				"Longitude": -79.3968917,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 698941192,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-03 20:56",
+				"Latitude": 43.6599433,
+				"Longitude": -79.3968433,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 698941265,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-03 20:58",
+				"Latitude": 43.6599666,
+				"Longitude": -79.3954391,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 699146849,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-03 21:34",
+				"Latitude": 43.660505,
+				"Longitude": -79.3963867,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 699146865,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-03 21:34",
+				"Latitude": 43.660105,
+				"Longitude": -79.3967717,
+				"Mode": "Walk",
+				"Travel Status": "Stop"
+			},
+			{
+				"User Id": 700517515,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-04 16:30",
+				"Latitude": 43.6778282,
+				"Longitude": -79.3525181,
+				"Mode": "Walk",
+				"Travel Status": "Start"
+			},
+			{
+				"User Id": 700517528,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-04 16:30",
+				"Latitude": 43.6781083,
+				"Longitude": -79.3522017,
+				"Mode": "Walk",
+				"Travel Status": "Stop"
+			},
+			{
+				"User Id": 700517641,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-04 16:42",
+				"Latitude": 43.6819612,
+				"Longitude": -79.3378534,
+				"Mode": "Walk",
+				"Travel Status": "Start"
+			},
+			{
+				"User Id": 700517642,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-04 16:42",
+				"Latitude": 43.680895,
+				"Longitude": -79.33752,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 700517643,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-04 16:42",
+				"Latitude": 43.6820067,
+				"Longitude": -79.3379067,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 700517700,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-04 16:43",
+				"Latitude": 43.6825667,
+				"Longitude": -79.3382183,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 700517732,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-04 16:44",
+				"Latitude": 43.6831283,
+				"Longitude": -79.3384667,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 700517764,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-04 16:44",
+				"Latitude": 43.6835917,
+				"Longitude": -79.3387633,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 700517796,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-04 16:45",
+				"Latitude": 43.684105,
+				"Longitude": -79.3388783,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 700517828,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-04 16:46",
+				"Latitude": 43.6846883,
+				"Longitude": -79.3391033,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 700517860,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-04 16:47",
+				"Latitude": 43.685215,
+				"Longitude": -79.3393083,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 700517892,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-04 16:47",
+				"Latitude": 43.685825,
+				"Longitude": -79.33953,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 700517924,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-04 16:48",
+				"Latitude": 43.6862283,
+				"Longitude": -79.3397217,
+				"Mode": "Walk",
+				"Travel Status": "Stop"
+			},
+			{
+				"User Id": 700952929,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-04 17:15",
+				"Latitude": 43.6873933,
+				"Longitude": -79.340745,
+				"Mode": "Car",
+				"Travel Status": "Start"
+			},
+			{
+				"User Id": 700952945,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-04 17:15",
+				"Latitude": 43.6876933,
+				"Longitude": -79.3402683,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 700952949,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-04 17:15",
+				"Latitude": 43.6880633,
+				"Longitude": -79.340395,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 700952952,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-04 17:17",
+				"Latitude": 43.6919362,
+				"Longitude": -79.3421001,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 700952955,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-04 17:17",
+				"Latitude": 43.6925017,
+				"Longitude": -79.34231,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 700952975,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-04 17:17",
+				"Latitude": 43.6932083,
+				"Longitude": -79.34256,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 700952991,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-04 17:17",
+				"Latitude": 43.6938217,
+				"Longitude": -79.34269,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 700953007,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-04 17:18",
+				"Latitude": 43.6941967,
+				"Longitude": -79.3430017,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 700953023,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-04 17:18",
+				"Latitude": 43.694555,
+				"Longitude": -79.343115,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 700953241,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-04 17:25",
+				"Latitude": 43.7106283,
+				"Longitude": -79.3346067,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 700953309,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-04 17:27",
+				"Latitude": 43.718765,
+				"Longitude": -79.33811,
+				"Mode": "Car",
+				"Travel Status": "Stop"
+			},
+			{
+				"User Id": 700956471,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-04 18:50",
+				"Latitude": 44.1373517,
+				"Longitude": -79.322145,
+				"Mode": "Walk",
+				"Travel Status": "Start"
+			},
+			{
+				"User Id": 700956475,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-04 18:51",
+				"Latitude": 44.1368,
+				"Longitude": -79.3220117,
+				"Mode": "Walk",
+				"Travel Status": "Stop"
+			},
+			{
+				"User Id": 700956486,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-04 19:28",
+				"Latitude": 44.1506417,
+				"Longitude": -79.325305,
+				"Mode": "Car",
+				"Travel Status": "Start"
+			},
+			{
+				"User Id": 700956488,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-04 19:28",
+				"Latitude": 44.1513617,
+				"Longitude": -79.325485,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 700956491,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-04 19:28",
+				"Latitude": 44.1522317,
+				"Longitude": -79.325665,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 700956492,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-04 19:28",
+				"Latitude": 44.15264,
+				"Longitude": -79.325755,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 700956493,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-04 19:28",
+				"Latitude": 44.1530317,
+				"Longitude": -79.32585,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 700956495,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-04 19:28",
+				"Latitude": 44.1534367,
+				"Longitude": -79.3259483,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 700956496,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-04 19:28",
+				"Latitude": 44.1538233,
+				"Longitude": -79.3260383,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 700956499,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-04 19:28",
+				"Latitude": 44.1546033,
+				"Longitude": -79.3262333,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 700956500,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-04 19:28",
+				"Latitude": 44.1549883,
+				"Longitude": -79.326335,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 700957339,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-04 19:48",
+				"Latitude": 44.3240217,
+				"Longitude": -79.2768033,
+				"Mode": "Car",
+				"Travel Status": "Stop"
+			},
+			//Nov 5
+			{
+				"User Id": 702670594,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 16:06",
+				"Latitude": 44.3236833,
+				"Longitude": -79.2766,
+				"Mode": "Car",
+				"Travel Status": "Start"
+			},
+			{
+				"User Id": 702670598,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 16:06",
+				"Latitude": 44.3232433,
+				"Longitude": -79.276385,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702670602,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 16:06",
+				"Latitude": 44.3228133,
+				"Longitude": -79.2762033,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702670606,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 16:06",
+				"Latitude": 44.3223533,
+				"Longitude": -79.275985,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702670613,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 16:10",
+				"Latitude": 44.3112783,
+				"Longitude": -79.3010917,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702670616,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 16:10",
+				"Latitude": 44.3110317,
+				"Longitude": -79.30224,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702670618,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 16:10",
+				"Latitude": 44.3109033,
+				"Longitude": -79.302805,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702670620,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 16:10",
+				"Latitude": 44.310775,
+				"Longitude": -79.3033817,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702670621,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 16:10",
+				"Latitude": 44.3106433,
+				"Longitude": -79.3039683,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702671010,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 16:19",
+				"Latitude": 44.3039783,
+				"Longitude": -79.3588933,
+				"Mode": "Car",
+				"Travel Status": "Stop"
+			},
+			{
+				"User Id": 702671206,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 17:23",
+				"Latitude": 44.3010665,
+				"Longitude": -79.3714401,
+				"Mode": "Car",
+				"Travel Status": "Start"
+			},
+			{
+				"User Id": 702671208,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 17:23",
+				"Latitude": 44.3007867,
+				"Longitude": -79.3719667,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702671211,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 17:23",
+				"Latitude": 44.3009683,
+				"Longitude": -79.3732983,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702671213,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 17:23",
+				"Latitude": 44.3008383,
+				"Longitude": -79.3740367,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702671216,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 17:23",
+				"Latitude": 44.3006583,
+				"Longitude": -79.3748967,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702671220,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 17:23",
+				"Latitude": 44.3004483,
+				"Longitude": -79.375915,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702671226,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 17:23",
+				"Latitude": 44.3001633,
+				"Longitude": -79.377185,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702671228,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 17:23",
+				"Latitude": 44.300035,
+				"Longitude": -79.37776,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702671230,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 17:23",
+				"Latitude": 44.299845,
+				"Longitude": -79.3785483,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702673246,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 18:12",
+				"Latitude": 44.001935,
+				"Longitude": -79.45748,
+				"Mode": "Car",
+				"Travel Status": "Stop"
+			},
+			{
+				"User Id": 702673592,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 18:20",
+				"Latitude": 44.0016567,
+				"Longitude": -79.45873,
+				"Mode": "Car",
+				"Travel Status": "Start"
+			},
+			{
+				"User Id": 702673596,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 18:21",
+				"Latitude": 44.0015383,
+				"Longitude": -79.4593033,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702673600,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 18:21",
+				"Latitude": 44.0014133,
+				"Longitude": -79.4598683,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702673604,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 18:21",
+				"Latitude": 44.0012183,
+				"Longitude": -79.460705,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702673608,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 18:21",
+				"Latitude": 44.001075,
+				"Longitude": -79.4614,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702673610,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 18:21",
+				"Latitude": 44.0009517,
+				"Longitude": -79.4619567,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702673616,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 18:21",
+				"Latitude": 44.00071,
+				"Longitude": -79.4630833,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702673620,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 18:21",
+				"Latitude": 44.0005067,
+				"Longitude": -79.463945,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702673622,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 18:21",
+				"Latitude": 44.0003733,
+				"Longitude": -79.46456,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702674316,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 18:37",
+				"Latitude": 43.9126983,
+				"Longitude": -79.4483833,
+				"Mode": "Car",
+				"Travel Status": "Stop"
+			},
+			{
+				"User Id": 702674602,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 19:00",
+				"Latitude": 43.9136687,
+				"Longitude": -79.4492814,
+				"Mode": "Car",
+				"Travel Status": "Start"
+			},
+			{
+				"User Id": 702674603,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 19:00",
+				"Latitude": 43.9119848,
+				"Longitude": -79.4468418,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702674604,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 19:00",
+				"Latitude": 43.9119583,
+				"Longitude": -79.447825,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702674618,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 19:00",
+				"Latitude": 43.9115333,
+				"Longitude": -79.4470533,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702674626,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 19:00",
+				"Latitude": 43.9111667,
+				"Longitude": -79.446635,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702674630,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 19:00",
+				"Latitude": 43.9105367,
+				"Longitude": -79.4464683,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702674632,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 19:00",
+				"Latitude": 43.9101233,
+				"Longitude": -79.4463683,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702674634,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 19:00",
+				"Latitude": 43.90957,
+				"Longitude": -79.4462383,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702674638,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 19:01",
+				"Latitude": 43.908875,
+				"Longitude": -79.446075,
+				"Mode": "Car",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702678302,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 20:29",
+				"Latitude": 43.6864,
+				"Longitude": -79.3406183,
+				"Mode": "Car",
+				"Travel Status": "Stop"
+			},
+			{
+				"User Id": 702678706,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 20:39",
+				"Latitude": 43.6863717,
+				"Longitude": -79.33982,
+				"Mode": "Walk",
+				"Travel Status": "Start"
+			},
+			{
+				"User Id": 702678738,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 20:40",
+				"Latitude": 43.6859267,
+				"Longitude": -79.3396767,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702678770,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 20:41",
+				"Latitude": 43.6854383,
+				"Longitude": -79.33946,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702678802,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 20:41",
+				"Latitude": 43.6849,
+				"Longitude": -79.3391917,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702678834,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 20:42",
+				"Latitude": 43.6843617,
+				"Longitude": -79.338965,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702678866,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 20:43",
+				"Latitude": 43.6838467,
+				"Longitude": -79.3387883,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702678898,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 20:43",
+				"Latitude": 43.6833567,
+				"Longitude": -79.3385717,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702678930,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 20:44",
+				"Latitude": 43.6827833,
+				"Longitude": -79.3383133,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702678962,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 20:45",
+				"Latitude": 43.6821483,
+				"Longitude": -79.338005,
+				"Mode": "Walk",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702679234,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 20:51",
+				"Latitude": 43.6792433,
+				"Longitude": -79.3439733,
+				"Mode": "Walk",
+				"Travel Status": "Stop"
+			},
+			{
+				"User Id": 702679266,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 20:52",
+				"Latitude": 43.679,
+				"Longitude": -79.3450433,
+				"Mode": "Subway",
+				"Travel Status": "Start"
+			},
+			{
+				"User Id": 702679282,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 20:52",
+				"Latitude": 43.6788917,
+				"Longitude": -79.3458167,
+				"Mode": "Subway",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702679290,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 20:52",
+				"Latitude": 43.67879,
+				"Longitude": -79.34633,
+				"Mode": "Subway",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702679298,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 20:52",
+				"Latitude": 43.67869,
+				"Longitude": -79.346885,
+				"Mode": "Subway",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702679306,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 20:53",
+				"Latitude": 43.678565,
+				"Longitude": -79.3474917,
+				"Mode": "Subway",
+				"Travel Status": "Travel"
+			},
+			{
+				"User Id": 702679370,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 20:54",
+				"Latitude": 43.6778317,
+				"Longitude": -79.350975,
+				"Mode": "Subway",
+				"Travel Status": "Stop"
+			},
+			{
+				"User Id": 702679458,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 20:56",
+				"Latitude": 43.6776567,
+				"Longitude": -79.3520717,
+				"Mode": "Walk",
+				"Travel Status": "Start"
+			},
+			{
+				"User Id": 702679522,
+				"Trip Id": 12945,
+				"Trip Date Time": "2017-11-05 20:57",
+				"Latitude": 43.6771467,
+				"Longitude": -79.3530133,
+				"Mode": "Walk",
 				"Travel Status": "Stop"
 			}
 		];
