@@ -9,7 +9,6 @@ module.exports = {
 		plugins: [new TsConfigPathsPlugin /* { tsconfig, compiler } */()],
 	},
 
-
 	module: {
 		rules: [
 			{

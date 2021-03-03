@@ -36,6 +36,8 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 	@Input()
 	public model: TimelineSchedulerData;
 
+	private _prevModel: TimelineSchedulerData;
+
 	@Input()
 	public scheduleIndex: number;
 
@@ -145,6 +147,8 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 		this._defaultDate.setMinutes(0);
 		this._defaultDate.setSeconds(0);
 		this._defaultDate.setMilliseconds(0);
+
+		this._prevModel = this.model;
 	}
 
 	/**
@@ -155,7 +159,10 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 		let purpose = this.model.purpose;
 		let workPurpose = this.definedWorkLocations.find((x) => x.purpose.id === purpose);
 		let schoolPurpose = this.definedSchoolLocations.find((x) => x.purpose.id === purpose);
-		this.model.meta = {};
+		if(this.model.purpose === this._prevModel.purpose) {
+			this.model.meta = this._prevModel.meta;
+		}
+		
 		if (purpose === this.definedHomeLocation.purpose.id) {
 			this.model.purpose = purpose;
 			this.model.address = this.definedHomeLocation.address;
@@ -185,6 +192,7 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 	 */
 	public purposeModelChange(purpose: string): void {
 		this.model.purpose = purpose;
+		this._prevModel = Object.assign({}, this.model);
 	}
 
 	/**

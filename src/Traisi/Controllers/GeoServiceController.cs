@@ -34,16 +34,16 @@ namespace Traisi.Controllers
         private readonly IConfiguration _configuration;
         private readonly string TRIPLINX_API_KEY;
         private readonly string GOOGLE_API_KEY;
-
         private readonly RestClient _ipApi;
         public GeoServiceController(IGeoServiceProvider geoService, IConfiguration configuration)
         {
             this._geoService = geoService;
-            //this._triplinx = new RestClient("https://api.triplinx.cityway.ca/api/journeyplanner/opt");
+            this._triplinx = new RestClient("https://api.triplinx.cityway.ca/api/journeyplanner/opt");
             this._googleGeocoding = new RestClient("https://maps.googleapis.com/maps/api");
             this._ipApi = new RestClient("http://ip-api.com/");
             this._configuration = configuration;
             this.GOOGLE_API_KEY = configuration.GetValue<string>("GeoConfig:GoogleApiKey");
+            this.TRIPLINX_API_KEY  = configuration.GetValue<string>("GeoConfig:TripLinxApiKey");
             return;
 
         }
@@ -264,7 +264,7 @@ namespace Traisi.Controllers
 
 
             var request = new RestRequest("PlanTrips/json", Method.GET);
-            request.AddParameter("user_key", "e447b4a0ad00018a370c7ab0760e3cfd");
+            request.AddParameter("user_key", this.TRIPLINX_API_KEY);
             request.AddParameter("DepartureLatitude", departureLat);
             request.AddParameter("DepartureLongitude", departureLng);
             request.AddParameter("DepartureType", "COORDINATES");
