@@ -157,6 +157,9 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 	 */
 	public purposeSelected(): void {
 		let purpose = this.model.purpose;
+		if(!purpose) {
+			return;
+		}
 		let workPurpose = this.definedWorkLocations.find((x) => x.purpose.id === purpose);
 		let schoolPurpose = this.definedSchoolLocations.find((x) => x.purpose.id === purpose);
 		if (this.model.purpose === this._prevModel.purpose) {
