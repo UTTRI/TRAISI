@@ -34,7 +34,8 @@ declare var $: any;
 	styles: ['' + styleString + selectStyleString],
 	encapsulation: ViewEncapsulation.None,
 })
-export class SelectQuestionComponent extends SurveyQuestion<ResponseTypes.OptionSelect>
+export class SelectQuestionComponent
+	extends SurveyQuestion<ResponseTypes.OptionSelect>
 	implements OnInit, OnOptionsLoaded, AfterViewInit {
 	public readonly QUESTION_TYPE_NAME: string = 'Select Question';
 
@@ -75,10 +76,10 @@ export class SelectQuestionComponent extends SurveyQuestion<ResponseTypes.Option
 	/**
 	 * Determines whether saved response data on
 	 */
-	private onSavedResponseData: (response: ResponseData<ResponseTypes.OptionSelect>[] | 'none') => void = (
-		response: ResponseData<ResponseTypes.OptionSelect>[] | 'none'
+	private onSavedResponseData: (response: ResponseData<ResponseTypes.OptionSelect>[]) => void = (
+		response: ResponseData<ResponseTypes.OptionSelect>[]
 	) => {
-		if (response !== 'none') {
+		if (response.length > 0) {
 			let optionResponse = <OptionSelectResponseData>response[0];
 			this.selectedOptionId = optionResponse.code;
 			this.validationState.emit(ResponseValidationState.VALID);
@@ -98,8 +99,7 @@ export class SelectQuestionComponent extends SurveyQuestion<ResponseTypes.Option
 			option.value = option.code;
 			// this.validationState.emit(ResponseValidationState.VALID);
 			this.response.emit([option]);
-		}
-		else {
+		} else {
 			this.validationState.emit(ResponseValidationState.INVALID);
 		}
 	}

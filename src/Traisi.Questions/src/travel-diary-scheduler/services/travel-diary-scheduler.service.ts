@@ -1,16 +1,20 @@
 import { Inject, Injectable, Injector } from '@angular/core';
 import { EventEmitter } from 'events';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { TimelineResponseData, TraisiValues, SurveyRespondent, SurveyViewQuestion } from 'traisi-question-sdk';
+import { TimelineResponseData, TraisiValues, SurveyRespondent, SurveyViewQuestion, Address, ResponseValidationState } from 'traisi-question-sdk';
 import { TravelDiarySchedulerConfiguration } from 'travel-diary-scheduler/models/config.model';
 import { RespondentData } from 'travel-diary-scheduler/models/respondent-data.model';
+import { TimelineSchedulerData } from 'travel-diary-scheduler/models/timeline-scheduler-data.model';
 import { TravelDiarySchedulerQuestionComponent } from 'travel-diary-scheduler/travel-diary-scheduler-question.component';
 import { TravelDiaryScheduleRespondentDataService } from './travel-diary-scheduler-respondent-data.service';
 // import { TravelDiaryScheduleItem } from 'travel-diary-scheduler/models/services/travel-diary-schedule-item.model';
 
+/**
+ *
+ */
 @Injectable()
 export class TravelDiaryScheduler {
-	public scheduleItems: TimelineResponseData[];
+	public scheduleItems: TimelineSchedulerData[];
 
 	public activeScheduleItem: BehaviorSubject<number> = new BehaviorSubject<number>(0);
 
@@ -24,6 +28,9 @@ export class TravelDiaryScheduler {
 	 *
 	 * @param _surveyAccessTime
 	 * @param _configuration
+	 * @param _primaryRespondent
+	 * @param _respondentData
+	 * @param _injector
 	 */
 	public constructor(
 		@Inject(TraisiValues.SurveyAccessTime) private _surveyAccessTime: Date,
@@ -73,11 +80,14 @@ export class TravelDiaryScheduler {
 	public confirmSchedule(): void {
 		this.isScheduleConfirmed = true;
 		this.activeScheduleItem.next(-1);
+		for (let item of this.scheduleItems) {
+			item.isConfirmed = true;
+		}
 		(<Subject<void>>this.onScheduleConfirmed).next();
 	}
 
 	/**
-	 *
+	 * Adds an ew blank schedule item
 	 */
 	public addItem(): void {
 		this.scheduleItems.push({
@@ -87,8 +97,28 @@ export class TravelDiaryScheduler {
 			name: null,
 			order: 0,
 			purpose: null,
-			timeA: new Date(new Date(this._surveyAccessTime).setHours(0, 0, 0, 0)),
-			timeB: new Date(new Date(this._surveyAccessTime).setHours(0, 0, 0, 0)),
+			timeA: undefined,
+			timeB: undefined,
+			identifier: null,
+			meta: {},
+			mode: null,
+		});
+		this.activeScheduleItem.next(this.scheduleItems.length - 1);
+	}
+
+	/**
+	 * Adds a prefilled home trip to the end of the schedule.
+	 */
+	public addHomeItem(homeAddress: Address, latitude: number, longitude: number): void {
+		this.scheduleItems.push({
+			address: homeAddress,
+			latitude: latitude,
+			longitude: longitude,
+			name: null,
+			order: 0,
+			purpose: 'home-defined',
+			timeA: undefined,
+			timeB: undefined,
 			identifier: null,
 			meta: {},
 			mode: null,
@@ -103,11 +133,18 @@ export class TravelDiaryScheduler {
 	public initialize(): void {
 		this.component.savedResponse.subscribe((response: TimelineResponseData[]) => {
 			this.scheduleItems = this.scheduleItems.concat(response);
+			for (let item of this.scheduleItems) {
+				item.isConfirmed = true;
+			}
+
 			if (this.scheduleItems.length === 0) {
 				// add default item at start of day
 				this.addItem();
+			} else {
+				this.isScheduleConfirmed = true;
+				this.activeScheduleItem.next(-1);
+				this.component.validationState.emit(ResponseValidationState.VALID);
 			}
-			console.log(this.scheduleItems);
 		});
 	}
 }

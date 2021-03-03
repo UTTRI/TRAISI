@@ -211,10 +211,10 @@ export class StatedPreferenceQuestionComponent extends SurveyQuestion<ResponseTy
 	 * @private
 	 * @memberof StatedPreferenceQuestionComponent
 	 */
-	private onSavedResponseData: (response: ResponseData<any>[] | 'none') => void = (
-		response: ResponseData<any>[] | 'none'
+	private onSavedResponseData: (response: ResponseData<any>[] ) => void = (
+		response: ResponseData<any>[] 
 	) => {
-		if (response !== 'none') {
+		if (response.length > 0) {
 			let r = JSON.parse(response[0]['value']).value;
 			this.inputModel.value = r;
 			this.validationState.emit(ResponseValidationState.VALID);

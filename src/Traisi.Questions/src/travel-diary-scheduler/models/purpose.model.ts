@@ -4,5 +4,7 @@ export interface Purpose {
 	label: string;
 	allowFirstLocation: boolean;
 	askIfOtherPassengers: boolean;
+	isDropOffOrPickup: boolean;
+	respondentId?: number;
 	
 }

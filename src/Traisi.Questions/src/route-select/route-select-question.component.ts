@@ -120,10 +120,10 @@ export class RouteSelectQuestionComponent extends SurveyQuestion<ResponseTypes.J
 			});
 	}
 
-	private onSavedResponseData: (response: ResponseData<ResponseTypes.Json> | 'none') => void = (
-		response: ResponseData<ResponseTypes.Json>[] | 'none'
+	private onSavedResponseData: (response: ResponseData<ResponseTypes.Json> ) => void = (
+		response: ResponseData<ResponseTypes.Json>[] 
 	) => {
-		if (response !== 'none') {
+		if (response.length>0) {
 			let jsonResponse = <JsonResponseData>response[0];
 			if (jsonResponse) {
 				let jsonObj = JSON.parse(jsonResponse.value);

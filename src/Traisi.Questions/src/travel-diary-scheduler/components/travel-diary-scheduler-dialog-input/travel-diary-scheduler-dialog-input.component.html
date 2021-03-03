@@ -4,6 +4,7 @@
 	class="modal fade"
 	[config]="{ ignoreBackdropClick: true }"
 	(onShown)="modalShown($event)"
+	(onHidden)="modalHidden($event)"
 >
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
@@ -14,31 +15,107 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				<div [class.missingMap]="model && !model.address">
-					<ng-template #mapTemplate>
-						<ng-container #container></ng-container>
-					</ng-template>
-				</div>
-				<div class="form-group row" >
-					<div class="col-12" *ngIf="state.collectFamilyMembers">
-						<label for="members" class="col-form-label">Family members who attended this activity</label>
+				<div class="form-group row">
+					<div class="col-12" *ngIf="state.collectFamilyMembers && scheduleIndex > 0">
+						<label for="members" class="col-form-label">Is there any other family members who also traveled with {{respondentName}} to this location? Please leave it blank if travelled alone.</label>
 						<ng-select
 							appearance="outline"
 							#memberSelect
 							[items]="respondents$ | async"
 							name="members"
 							(change)="onMembersChanged($event)"
-							[(ngModel)]="model.meta.familyMembers"
+							[(ngModel)]="model.meta.passengers"
 							[multiple]="true"
 							bindLabel="name"
-							bindValue="id"
 							[selectOnTab]="true"
 							labelForId="members"
 							placeholder="Select Household Members"
 							required
 						>
-						</ng-select> 
+						</ng-select>
 					</div>
+					<div class="col-12" *ngIf="state.isDropOffOrPickup">
+						<label for="members" class="col-form-label">
+							Who is being dropped off or picked up by {{respondentName}}?</label
+						>
+						<ng-select
+							appearance="outline"
+							#memberSelectl
+							name="members"
+							(change)="onMembersChanged($event)"
+							[(ngModel)]="model.meta.passengers"
+							[multiple]="true"
+							bindLabel="name"
+							[selectOnTab]="true"
+							labelForId="members"
+							placeholder="Select Household Members"
+							required
+						>
+							<ng-option [value]="respondent" *ngFor="let respondent of respondents$ | async">{{
+								respondent.name
+							}}</ng-option>
+							<ng-option [value]="-1">Facilitate non-family member</ng-option>
+						</ng-select>
+					</div>
+
+					<ng-container *ngIf="state.isDropOffOrPickup && model.meta.passengers?.length > 0">
+						<div class="col-12">
+							<label for="members" class="col-form-label">What is the member's activity purpose at this location?</label>
+							<ng-select
+								placeholder="Enter a purpose"
+								bindLabel="label"
+								bindValue="id"
+								required
+								(change)="onFacilitatePassengerPurposeChanged($event)"
+							>
+								<ng-option
+									*ngIf="respondentsData.respondent[primaryRespondent.id]"
+									[value]="respondentsData.homeLocation?.purpose"
+									><div class="purpose-label">
+										<i class="fas fa-star star-location"></i
+										>{{ respondentsData.homeLocation?.purpose.label }}
+									</div>
+									<div class="purpose-address">
+										{{ respondentsData.homeLocation?.address | addressDisplay }}
+									</div></ng-option
+								>
+								<ng-container *ngFor="let respondent of respondents$ | async">
+									<ng-option
+										*ngFor="let school of respondentsData.respondent[respondent.id]?.schoolLocations"
+										[value]="school.purpose"
+										><div class="purpose-label">
+											<i class="fas fa-star star-location"></i>{{ school.purpose.label }} -
+											{{ respondent.name }}
+										</div>
+										<div class="purpose-address">
+											{{ school.address | addressDisplay }}
+										</div></ng-option
+									>
+									<ng-option
+										*ngFor="let work of respondentsData.respondent[respondent.id]?.workLocations"
+										[value]="work.purpose"
+										><div class="purpose-label">
+											<i class="fas fa-star star-location"></i>{{ work.purpose.label }} -
+											{{ respondent.name }}
+										</div>
+										<div class="purpose-address">
+											{{ work.address | addressDisplay }}
+										</div></ng-option
+									>
+								</ng-container>
+								<ng-container *ngFor="let purpose of purposes">
+									<ng-option [value]="purpose" *ngIf="!purpose.isDropOffOrPickup"
+										><div class="purpose-label">{{ purpose.label }}</div></ng-option
+									>
+								</ng-container>
+							</ng-select>
+						</div>
+					</ng-container>
+				</div>
+				<div [class.missingMap]="model && !model.address">
+					<ng-template #mapTemplate>
+						<ng-container #container></ng-container>
+					</ng-template>
 				</div>
 			</div>
 			<div class="modal-footer">

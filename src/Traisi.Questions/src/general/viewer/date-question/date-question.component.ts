@@ -99,9 +99,9 @@ export class DateQuestionComponent extends SurveyQuestion<ResponseTypes.Date>
 	 * Determines whether saved response data on
 	 */
 	private onSavedResponseData: (
-		response: DateResponseData[] | 'none'
-	) => void = (response: DateResponseData[] | 'none') => {
-		if (response !== 'none') {
+		response: DateResponseData[] 
+	) => void = (response: DateResponseData[]) => {
+		if (response.length > 0) {
 			let dateValue = new Date(response[0].value);
 
 			this.dateData = dateValue;

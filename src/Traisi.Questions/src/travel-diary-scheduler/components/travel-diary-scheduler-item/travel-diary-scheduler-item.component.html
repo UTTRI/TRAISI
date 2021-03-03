@@ -1,5 +1,5 @@
 <div class="schedule-item-container">
-	<div *ngIf="state.isConfirmed">
+	<div *ngIf="state.model.isConfirmed">
 		<div class="schedule-item">
 			<span class="purpose-label">{{ model.purpose }}</span>
 			<span *ngIf="scheduleIndex > 0" class="departure-time-label">{{ model.timeA | date: 'shortTime' }} </span>
@@ -9,13 +9,13 @@
 		</div>
 	</div>
 
-	<div *ngIf="!state.isConfirmed">
+	<div *ngIf="!state.model.isConfirmed">
 		<div *ngIf="scheduleIndex === 0">
-			<span class="begin-day-message trip-message">Where did you begin your day?</span>
+			<span class="begin-day-message trip-message">Where did {{ respondent.name }} begin their day?</span>
 		</div>
 		<div *ngIf="scheduleIndex > 0">
 			<span class="begin-day-message trip-message">
-				Where did you go after
+				Where did {{ respondent.name }} go after
 				<span class="trip-purpose-label">{{ scheduleItems[scheduleIndex - 1].purpose }}?</span></span
 			>
 		</div>
@@ -26,8 +26,10 @@
 					placeholder="Enter a purpose"
 					bindLabel="label"
 					bindValue="id"
+					[clearable]="false"
 					[ngModel]="model.purpose"
-					(change)="onPurposeChanged($event)"
+					(ngModelChange)="purposeModelChange($event)"
+					(close)="purposeSelected($event)"
 				>
 					<ng-option *ngIf="definedHomeLocation" [value]="definedHomeLocation?.purpose"
 						><div class="purpose-label">
@@ -39,28 +41,42 @@
 					>
 
 					<ng-option *ngFor="let school of definedSchoolLocations" [value]="school.purpose"
-						><div class="purpose-label"><i class="fas fa-star star-location"></i>{{school.purpose.label}}</div>
+						><div class="purpose-label">
+							<i class="fas fa-star star-location"></i>{{ respondent.name }} - {{ school.purpose.label }}
+						</div>
 						<div class="purpose-address">
 							{{ school.address | addressDisplay }}
 						</div></ng-option
 					>
 					<ng-option *ngFor="let work of definedWorkLocations" [value]="work.purpose"
-						><div class="purpose-label"><i class="fas fa-star star-location"></i>{{work.purpose.label}}</div>
+						><div class="purpose-label">
+							<i class="fas fa-star star-location"></i>{{ respondent.name }} - {{ work.purpose.label }}
+						</div>
 						<div class="purpose-address">
 							{{ work.address | addressDisplay }}
 						</div></ng-option
 					>
-					<ng-option *ngFor="let purpose of purposes" [value]="purpose"
-						><div class="purpose-label">{{ purpose.label }}</div></ng-option
-					>
+					<ng-container *ngFor="let purpose of purposes">
+						<ng-option
+							[value]="purpose"
+							*ngIf="(purpose.allowFirstLocation && scheduleIndex === 0) || scheduleIndex > 0"
+							><div class="purpose-label">{{ purpose.label }}</div>
+						</ng-option>
+					</ng-container>
 				</ng-select>
+				<div class="purpose-address" *ngIf="model.address">
+					{{ model.address | addressDisplay }}
+				</div>
+				<div class="adjacent-location-error-message error" *ngIf="state.errorState?.adjacentLocations">
+					There cannot be two consecutive trips at the same location.
+				</div>
 			</div>
 		</div>
 
 		<div class="form-group row confirm-last-location" *ngIf="model.purpose === 'lastLocation'">
 			<div class="col-12">
 				<span class="trip-message"
-					>Did you return home after {{ scheduleItems[scheduleIndex - 1].purpose }}?</span
+					>Did {{ respondent.name }} return home after {{ scheduleItems[scheduleIndex - 1].purpose }}?</span
 				>
 			</div>
 			<div class="col-12">
@@ -83,7 +99,10 @@
 				[class.has-error]="state.errorState?.invalidTime"
 				[class.no-error]="!state.errorState?.invalidTime"
 			>
-				<label for="timeA" class="col-form-label">Departure time for the trip </label>
+				<label for="timeA" class="col-form-label"
+					>Departure time for the trip
+					<span *ngIf="model.timeA" class="time-display">({{ model.timeA | date: 'short' }})</span>
+				</label>
 				<div class="input-group" [class.ng-invalid]="!model.timeA">
 					<div class="input-group-prepend">
 						<span class="input-group-text" id="inputGroupPrepend2"><i class="far fa-clock"></i></span>
@@ -95,6 +114,7 @@
 						name="timeA"
 						mwlFlatpickr
 						(ngModelChange)="onDepartureTimeChanged($event)"
+						(click)="initTimeInput()"
 						[(ngModel)]="model.timeA"
 						[noCalendar]="true"
 						[enableTime]="true"
@@ -127,43 +147,59 @@
 				</ng-select>
 			</div>
 		</div>
-		<div class="button-footer-container" *ngIf="!state.isConfirmed">
+
+		<div class="button-footer-container" *ngIf="!state.model.isConfirmed">
 			<button
 				type="button"
-				class="btn btn-primary confirm-complete-schedule"
-				(click)="confirmScheduleItemAndComplete()"
-				*ngIf="scheduleIndex > 0"
-			>
-				I made no more trips
-			</button>
-			<button
-				type="button"
-				class="btn btn-danger delete-schedule"
+				class="btn btn-danger delete-schedule float-left"
 				(click)="removeScheduleItem()"
 				*ngIf="scheduleIndex > 0"
 			>
 				Delete
 			</button>
-			<button type="button" class="btn btn-secondary" [disabled]="!state.isValid" (click)="confirmScheduleItem()">
-				Confirm
-			</button>
+			<div class="button-container-inner">
+				<button
+					type="button"
+					class="btn btn-primary confirm-complete-schedule"
+					(click)="confirmScheduleItemAndComplete()"
+					*ngIf="scheduleItemsCount === 1 && scheduleIndex === 0"
+				>
+					{{ respondent.name }} was at this location all day
+				</button>
+				<button
+					type="button"
+					[disabled]="!state.isValid"
+					class="btn btn-primary confirm-complete-schedule"
+					(click)="confirmScheduleItemAndComplete()"
+					*ngIf="scheduleIndex > 0"
+				>
+					This was the last location
+				</button>
+
+				<button
+					type="button"
+					class="btn btn-secondary"
+					[disabled]="!state.isValid"
+					(click)="confirmScheduleItem()"
+				>
+					Proceed to next location
+				</button>
+			</div>
 		</div>
 	</div>
 </div>
-<ng-template #addressInputDialogTemplate>
-	<div class="modal-header">
-		<h4 class="modal-title pull-left">Please enter the address</h4>
-		<button type="button" class="close pull-right" aria-label="Close" (click)="closeAddressInputDialog()">
-			<span aria-hidden="true">&times;</span>
-		</button>
-	</div>
-	<div class="modal-body text-left">
-		<div class="location-query"></div>
-	</div>
-	<div class="modal-footer text-center">
-		<button type="button" class="btn btn-primary" (click)="saveAddressInputDialog()">Save</button>
-		<button type="button" class="btn btn-secondary" (click)="closeAddressInputDialog()">Cancel</button>
-	</div>
-</ng-template>
 
-<traisi-travel-diary-scheduler-dialog-input #dialogInput></traisi-travel-diary-scheduler-dialog-input>
+<traisi-travel-diary-scheduler-dialog-input scheduleIndex="scheduleIndex" #dialogInput></traisi-travel-diary-scheduler-dialog-input>
+
+<div bsModal #confirmModal="bs-modal" class="modal fade" [config]="{ ignoreBackdropClick: true }" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header"></div>
+			<div class="modal-body text-center">
+				<p>Did {{ respondent.name }} return home at the end of the day?</p>
+				<button type="button" class="btn btn-primary" (click)="confirmReturnHome()">Yes</button>
+				<button type="button" class="btn btn-default" (click)="declineReturnHome()">No</button>
+			</div>
+		</div>
+	</div>
+</div>

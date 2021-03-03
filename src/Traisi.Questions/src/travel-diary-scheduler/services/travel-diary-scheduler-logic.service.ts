@@ -9,8 +9,6 @@ import { TravelDiaryScheduler } from './travel-diary-scheduler.service';
 export class TravelDiarySchedulerLogic {
 	public inputState: ScheduleInputState;
 
-	
-
 	/**
 	 *
 	 * @param _scheduler
@@ -25,7 +23,7 @@ export class TravelDiarySchedulerLogic {
 	 */
 	private _onActiveScheduleItemChanged = (idx: number) => {
 		if (this.inputState?.scheduleIndex === idx) {
-			this.inputState.isConfirmed = false;
+			this.inputState.model.isConfirmed = false;
 		}
 	};
 
@@ -36,7 +34,7 @@ export class TravelDiarySchedulerLogic {
 	/**
 	 *
 	 */
-	public confirmSchedule(): void {
+	public confirmSchedule(addItem: boolean = true): void {
 		if (this.inputState.returnHomeResponse === 'yes') {
 			this.inputState.model.purpose = 'Home';
 			this._scheduler.isScheduleConfirmed = true;
@@ -47,9 +45,11 @@ export class TravelDiarySchedulerLogic {
 			this.inputState.model.purpose = 'Home';
 			this._scheduler.isScheduleConfirmed = true;
 		} else {
-			this._scheduler.addItem();
+			if (addItem) {
+				this._scheduler.addItem();
+			}
 		}
-		this.inputState.isConfirmed = true;
+		this.inputState.model.isConfirmed = true;
 	}
 
 	/**
@@ -57,12 +57,9 @@ export class TravelDiarySchedulerLogic {
 	 */
 	public confirmAndCompleteSchedule(): void {
 		// remove last item
-		this._scheduler.removeItem(this._scheduler.scheduleItems.length - 1);
+		// this._scheduler.removeItem(this._scheduler.scheduleItems.length - 1);
 		this._scheduler.confirmSchedule();
-		this.inputState.isConfirmed = true;
-		
-
-
+		this.inputState.model.isConfirmed = true;
 	}
 
 	/**
@@ -82,6 +79,7 @@ export class TravelDiarySchedulerLogic {
 		let state: TravelDiarySchedulerErrorState = {
 			invalidTime: false,
 			isValid: true,
+			adjacentLocations: false,
 		};
 
 		let idx = this.inputState.scheduleIndex;
@@ -98,6 +96,37 @@ export class TravelDiarySchedulerLogic {
 				state.isValid = false;
 			}
 		}
+
+		if (this._scheduler.scheduleItems[idx].latitude === -1 || this._scheduler.scheduleItems[idx].longitude === -1) {
+			state.isValid = false;
+		}
+		if (this.checkHasAdjacentLocations()) {
+			state.adjacentLocations = true;
+			state.isValid = false;
+		}
+		if (!this._scheduler.scheduleItems[idx].timeA && idx > 0) {
+			console.log('fail time');
+			state.isValid = false;
+		}
+		console.log(state);
 		return state;
+	}
+
+	/**
+	 * Roughly determines if two locations are adjacent to eachother on the schedule using
+	 * address information.
+	 */
+	private checkHasAdjacentLocations(): boolean {
+		for (let i = 0; i < this._scheduler.scheduleItems.length - 1; i++) {
+			if (
+				this._scheduler.scheduleItems[i].address.streetAddress ===
+					this._scheduler.scheduleItems[i + 1].address.streetAddress &&
+				this._scheduler.scheduleItems[i].address.streetNumber ===
+					this._scheduler.scheduleItems[i + 1].address.streetNumber
+			) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

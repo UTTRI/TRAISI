@@ -1,29 +1,25 @@
-<div class="">
-  <strong>Date Selection:</strong>
-  <input type="date" placeholder="Datepicker" class="" style="margin-left: 0.5rem;" />
+<!-- Date selection calendar with October and November 2017 months -->
+<div class="row" style="margin-left: 0.5rem; height: 2.5rem;">
+  <h5>Date Selection:</h5>
+  <input [(ngModel)] = "selectedDate" class="form-control" type="date" style="margin-left: 0.5rem; width: 10rem" (change) = "updateTripDate()" [min]="minDate" [max]="maxDate">
 </div>
 <br />
-<div>
+<!-- Trip Information -->
+<div class="">
   <h5>Trip Information: </h5>
   <table width="750" border="1">
     <tr>
-      <th>#</th>
-      <th>User Id</th>
-      <th>Trip Id</th>
-      <th>Started At</th>
-      <th>Finished At</th>
+      <th>Trip No #</th>
+      <th>Departure Time</th>
       <th>Mode</th>
-      <th>Travel Status</th>
+      <th>Purpose</th>
       <th>Action</th>
     </tr>
     <tr *ngFor="let item of tripData; let i = index; ">
-      <td>{{i + 1}}</td>
-      <td>{{item["User Id"]}}</td>
-      <td>{{item["Trip Id"]}}</td>
-      <td>{{item["Started At"]}}</td>
-      <td>{{item["Finished At"]}}</td>
+      <td> <a href="javascript:void(0);">Trip_{{i + 1}}</a> </td>
+      <td>{{item["Departure Date"]}}</td>
       <td>{{item.Mode}}</td>
-      <td>{{item["Travel Status"]}}</td>
+      <td>{{item.Purpose}}</td>
       <td>
         <a href="javascript:void(0);" (click)="onConfirmClick()">Confirm</a> <br />
         <a href="javascript:void(0);">Modify</a>

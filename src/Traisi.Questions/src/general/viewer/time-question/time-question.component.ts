@@ -7,7 +7,7 @@ import {
 	TimeResponseData,
 	ResponseValidationState,
 	SurveyRespondentService,
-	TraisiValues
+	TraisiValues,
 } from 'traisi-question-sdk';
 
 import { Time } from '@angular/common';
@@ -17,8 +17,8 @@ import styleString from './time-question.component.scss';
 
 @Component({
 	selector: 'traisi-time-question',
-	template: ''+templateString,
-	styles: [''+styleString]
+	template: '' + templateString,
+	styles: ['' + styleString],
 })
 export class TimeQuestionComponent extends SurveyQuestion<ResponseTypes.Time> implements OnInit {
 	public readonly QUESTION_TYPE_NAME: string = 'Time Question';
@@ -52,8 +52,7 @@ export class TimeQuestionComponent extends SurveyQuestion<ResponseTypes.Time> im
 	 * Loads configuration data once it is available.
 	 * @param data
 	 */
-	public loadConfigurationData(data: QuestionConfiguration[]) {
-	}
+	public loadConfigurationData(data: QuestionConfiguration[]) {}
 
 	public ngOnInit(): void {
 		this.hours = 12;
@@ -69,7 +68,7 @@ export class TimeQuestionComponent extends SurveyQuestion<ResponseTypes.Time> im
 	 */
 	public ngModelChange(timeValue): void {
 		let data = {
-			value: timeValue
+			value: timeValue,
 		};
 		if (timeValue !== null) {
 			this.response.emit(data);
@@ -79,8 +78,8 @@ export class TimeQuestionComponent extends SurveyQuestion<ResponseTypes.Time> im
 		}
 	}
 
-	private onSavedResponseData: (response: TimeResponseData[] | 'none') => void = (response: TimeResponseData[] | 'none') => {
-		if (response !== 'none') {
+	private onSavedResponseData: (response: TimeResponseData[]) => void = (response: TimeResponseData[]) => {
+		if (response.length > 0) {
 			let timeValue = new Date(response[0].value);
 			this.inputTime = timeValue;
 		}

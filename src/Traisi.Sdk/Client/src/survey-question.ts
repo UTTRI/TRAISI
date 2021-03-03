@@ -72,7 +72,7 @@ export abstract class SurveyQuestion<
   /**
    * The saved response - if any
    */
-  public savedResponse: ReplaySubject<ResponseData<T> | 'none'>
+  public savedResponse: ReplaySubject<ResponseData<T> >
 
   public isLoaded: BehaviorSubject<boolean>
 
@@ -125,7 +125,7 @@ export abstract class SurveyQuestion<
     }>()
     this.autoAdvance = new EventEmitter<number>()
     this.validationState = new EventEmitter<ResponseValidationState>()
-    this.savedResponse = new ReplaySubject<ResponseData<T> | 'none'>(1)
+    this.savedResponse = new ReplaySubject<ResponseData<T> >(1)
     this.questionId = -1
     this.surveyId = -1
     this.configuration = <QuestionConfiguration>{}

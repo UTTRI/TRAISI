@@ -42,7 +42,8 @@ import { LocationLookupComponent } from 'shared/components/location-lookup.compo
 	encapsulation: ViewEncapsulation.None,
 	styles: ['' + styleString],
 })
-export class MapQuestionComponent extends SurveyQuestion<ResponseTypes.Location>
+export class MapQuestionComponent
+	extends SurveyQuestion<ResponseTypes.Location>
 	implements OnInit, AfterViewInit, OnVisibilityChanged {
 	public locationSearch: string;
 	public locationLoaded: boolean = false;
@@ -113,7 +114,7 @@ export class MapQuestionComponent extends SurveyQuestion<ResponseTypes.Location>
 
 	protected accessToken: string;
 
-	public loadGeocoder: boolean = true;
+	public onInit: () => void;
 
 	/**
 	 * Creates an instance of map question component.
@@ -168,10 +169,10 @@ export class MapQuestionComponent extends SurveyQuestion<ResponseTypes.Location>
 	/**
 	 * Called when response data is ready
 	 */
-	private onSavedResponseData: (response: Array<LocationResponseData> | 'none') => void = (
-		response: Array<LocationResponseData> | 'none'
+	private onSavedResponseData: (response: Array<LocationResponseData> ) => void = (
+		response: Array<LocationResponseData> 
 	) => {
-		if (response !== 'none') {
+		if (response.length > 0) {
 			let locationResponse = response[0];
 			let coords = new LngLat(locationResponse['longitude'], locationResponse['latitude']);
 
@@ -229,8 +230,15 @@ export class MapQuestionComponent extends SurveyQuestion<ResponseTypes.Location>
 		this._marker = new mapboxgl.Marker(el, {
 			anchor: 'bottom',
 		});
+		if (this.onInit) {
+			this.onInit();
+		}
 	}
 
+	/**
+	 *
+	 * @param lngLat
+	 */
 	public setMarkerLocation(lngLat: LngLat): void {
 		if (this._marker) {
 			this._marker.setLngLat(lngLat);
@@ -415,13 +423,20 @@ export class MapQuestionComponent extends SurveyQuestion<ResponseTypes.Location>
 		// this.accessToken = mapConfig.AccessToken;
 	}
 
+	/**
+	 *
+	 */
 	public resetInput(): void {
 		this._isMarkerAdded = false;
 		if (this._marker) {
 			this._marker.remove();
 		}
+		this.locationSelect.addressInputModel = undefined;
 	}
 
+	/**
+	 *
+	 */
 	public clearLocation(): void {
 		this.resetInput();
 		this.validationState.emit(ResponseValidationState.INVALID);

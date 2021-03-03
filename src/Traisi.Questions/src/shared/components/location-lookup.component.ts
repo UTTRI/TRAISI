@@ -33,9 +33,11 @@ export class LocationLookupComponent implements OnInit {
 		this._initializeAddressSearch();
 	}
 
+	public staticAddressResults: MapLocation[] = [];
+
 	private _initializeAddressSearch(): void {
 		this.addressResults$ = concat(
-			of([]), // default items
+			of(this.staticAddressResults), // default items
 			this.addressInput$.pipe(
 				distinctUntilChanged(),
 				tap(() => (this.addressesLoading = true)),
@@ -45,7 +47,10 @@ export class LocationLookupComponent implements OnInit {
 						catchError((err) => {
 							return of([]);
 						}),
-
+						map((results) => {
+							// append static results
+							return results.concat(this.staticAddressResults);
+						}),
 						// empty list on error
 						tap((x) => {
 							this.addressesLoading = false;

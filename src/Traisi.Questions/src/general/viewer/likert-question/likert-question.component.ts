@@ -40,10 +40,10 @@ export class LikertQuestionComponent extends SurveyQuestion<ResponseTypes.Option
 	 * @private
 	 * @memberof LikertQuestionComponent
 	 */
-	private onSavedResponseData: (response: ResponseData<ResponseTypes.String>[] | 'none') => void = (
-		response: ResponseData<ResponseTypes.String>[] | 'none'
+	private onSavedResponseData: (response: ResponseData<ResponseTypes.String>[] ) => void = (
+		response: ResponseData<ResponseTypes.String>[] 
 	) => {
-		if (response !== 'none') {
+		if (response.length>0) {
 			this.selectedOption = response[0];
 			this.validationState.emit(ResponseValidationState.VALID);
 		}

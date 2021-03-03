@@ -88,7 +88,7 @@ export class NumberQuestionComponent extends SurveyQuestion<ResponseTypes.Number
 	 */
 	public ngOnInit(): void {
 		const format: any = this.configuration.numberFormat;
-		
+
 		switch (format.id) {
 			case 'Integer':
 				this.numberMask = {
@@ -101,20 +101,20 @@ export class NumberQuestionComponent extends SurveyQuestion<ResponseTypes.Number
 				break;
 			case 'Currency':
 				this.numberMask = {
-					mask: this.numberMask = createNumberMask({
+					mask: (this.numberMask = createNumberMask({
 						prefix: '$ ',
 						suffix: '',
 						allowDecimal: true,
-					}),
+					})),
 				};
 				break;
 			case 'Decimal':
 				this.numberMask = {
-					mask: this.numberMask = createNumberMask({
+					mask: (this.numberMask = createNumberMask({
 						prefix: '',
 						suffix: '',
 						allowDecimal: true,
-					}),
+					})),
 				};
 				break;
 			default:
@@ -134,10 +134,10 @@ export class NumberQuestionComponent extends SurveyQuestion<ResponseTypes.Number
 	/**
 	 * Determines whether saved response data on
 	 */
-	private onSavedResponseData: (response: ResponseData<ResponseTypes.Number>[] | 'none') => void = (
-		response: ResponseData<ResponseTypes.Number>[] | 'none'
+	private onSavedResponseData: (response: ResponseData<ResponseTypes.Number>[]) => void = (
+		response: ResponseData<ResponseTypes.Number>[]
 	) => {
-		if (response !== 'none') {
+		if (response.length > 0) {
 			let decimalResponse = <NumberResponseData>response[0];
 			this.model = '' + decimalResponse.value;
 			this._numberModel = Number(this.model.replace(/[^0-9\.]+/g, ''));

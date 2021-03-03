@@ -1,121 +1,138 @@
 [
 	{
-		"label": "home",
+		"label": "non-primary home",
 		"icon": "fas fa-house-night",
 		"id": "home",
 		"allowFirstLocation": true,
-		"askIfOtherPassengers": false
+		"askIfOtherPassengers": false,
+		"isDropOffOrPickup": false
 	},
 	{
 		"label": "usual work location",
 		"icon": "fas fa-building",
 		"id": "work",
-		"allowFirstLocation": true,
-		"askIfOtherPassengers": false
+		"allowFirstLocation": false,
+		"askIfOtherPassengers": false,
+		"isDropOffOrPickup": false
 	},
 	{
 		"label": "work-related/business meeting",
 		"icon": "fas fa-briefcase",
 		"id": "work-related",
 		"allowFirstLocation": true,
-		"askIfOtherPassengers": false
+		"askIfOtherPassengers": false,
+		"isDropOffOrPickup": false
 	},
 	{
 		"label": "school/education",
 		"icon": "fas fa-school",
 		"id": "school",
-		"allowFirstLocation": true,
-		"askIfOtherPassengers": false
+		"allowFirstLocation": false,
+		"askIfOtherPassengers": false,
+		"isDropOffOrPickup": false
 	},
 	{
-		"label": "school-related/school-trip",
+		"label": "school-related",
 		"icon": "fas fa-bus-school",
 		"id": "school-related",
 		"allowFirstLocation": true,
-		"askIfOtherPassengers": false
+		"askIfOtherPassengers": false,
+		"isDropOffOrPickup": false
 	},
 	{
 		"label": "restaurant, bar, coffee",
 		"icon": "fas fa-utensils",
 		"id": "restaurant",
 		"allowFirstLocation": false,
-		"askIfOtherPassengers": true
+		"askIfOtherPassengers": true,
+		"isDropOffOrPickup": false
 	},
 	{
 		"label": "pick up food",
 		"icon": "fas fa-utensils",
 		"id": "pick-up-food",
 		"allowFirstLocation": false,
-		"askIfOtherPassengers": true
+		"askIfOtherPassengers": true,
+		"isDropOffOrPickup": false
 	},
 	{
 		"label": "visiting friends, family",
 		"icon": "fas fa-users",
 		"id": "vsiting",
-		"allowFirstLocation": false,
-		"askIfOtherPassengers": false
+		"allowFirstLocation": true,
+		"askIfOtherPassengers": true,
+		"isDropOffOrPickup": false
 	},
 	{
 		"label": "recreation, sports, leisure, arts",
 		"icon": "fas fa-hockey-sticks",
 		"id": "recreation",
-		"allowFirstLocation": false,
-		"askIfOtherPassengers": true
+		"allowFirstLocation": true,
+		"askIfOtherPassengers": true,
+		"isDropOffOrPickup": false
 	},
 	{
 		"label": "worship, religion",
 		"icon": "fas fa-place-of-worship",
 		"id": "worship",
-		"allowFirstLocation": false,
-		"askIfOtherPassengers": true
+		"allowFirstLocation": true,
+		"askIfOtherPassengers": true,
+		"isDropOffOrPickup": false
 	},
 	{
 		"label": "health and personal care",
 		"icon": "fas fa-head-side-medical",
 		"id": "health",
-		"allowFirstLocation": false,
-		"askIfOtherPassengers": true
+		"allowFirstLocation": true,
+		"askIfOtherPassengers": true,
+		"isDropOffOrPickup": false
 	},
 	{
 		"label": "drop someone off",
 		"icon": "fas car-bus",
 		"id": "dropoff",
 		"allowFirstLocation": false,
-		"askIfOtherPassengers": true
+		"askIfOtherPassengers": false,
+		"isDropOffOrPickup": true
 	},
 	{
 		"label": "pick someone up",
 		"icon": "fas car-garage",
 		"id": "pickup",
 		"allowFirstLocation": false,
-		"askIfOtherPassengers": true
+		"askIfOtherPassengers": false,
+		"isDropOffOrPickup": true
 	},
 	{
 		"label": "education (including TA/RA work)",
 		"icon": "fas fa-home",
 		"id": "education-work",
 		"allowFirstLocation": false,
-		"askIfOtherPassengers": false
+		"askIfOtherPassengers": false,
+		"isDropOffOrPickup": false
 	},
 	{
 		"label": "shopping and errands (groceries, corner store, shopping center, gas station, etc.)",
 		"icon": "fas fa-home",
 		"id": "shopping",
 		"allowFirstLocation": false,
-		"askIfOtherPassengers": true
+		"askIfOtherPassengers": true,
+		"isDropOffOrPickup": false
 	},
 	{
 		"label": "services (bank, hairdresser, lawyer, notary, mechanic, etc.)",
 		"icon": "fas fa-car-mechanic",
 		"id": "services",
 		"allowFirstLocation": false,
-		"askIfOtherPassengers": true
+		"askIfOtherPassengers": true,
+		"isDropOffOrPickup": false
 	},
 	{
 		"label": "other",
 		"icon": "fas fa-cogs",
 		"id": "other",
-		"allowFirstLocation": false,
-		"askIfOtherPassengers": true
+		"allowFirstLocation": true,
+		"askIfOtherPassengers": false,
+		"isDropOffOrPickup": false
 	}
 ]

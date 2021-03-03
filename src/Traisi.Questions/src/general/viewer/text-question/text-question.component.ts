@@ -59,10 +59,10 @@ export class TextQuestionComponent extends SurveyQuestion<ResponseTypes.String>
 	/**
 	 * Determines whether saved response data on
 	 */
-	private onSavedResponseData: (response: ResponseData<ResponseTypes.String>[] | 'none') => void = (
-		response: ResponseData<ResponseTypes.String>[] | 'none'
+	private onSavedResponseData: (response: ResponseData<ResponseTypes.String>[] ) => void = (
+		response: ResponseData<ResponseTypes.String>[] 
 	) => {
-		if (response !== 'none') {
+		if (response.length > 0) {
 			let stringResponse = <StringResponseData>response[0];
 			this.textInput = stringResponse.value;
 			if (this.isInputValid(this.textInput)) {
