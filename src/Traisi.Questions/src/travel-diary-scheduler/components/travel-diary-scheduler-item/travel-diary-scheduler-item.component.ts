@@ -159,10 +159,12 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 		let purpose = this.model.purpose;
 		let workPurpose = this.definedWorkLocations.find((x) => x.purpose.id === purpose);
 		let schoolPurpose = this.definedSchoolLocations.find((x) => x.purpose.id === purpose);
-		if(this.model.purpose === this._prevModel.purpose) {
+		if (this.model.purpose === this._prevModel.purpose) {
 			this.model.meta = this._prevModel.meta;
+		} else {
+			this.model.meta = {};
 		}
-		
+
 		if (purpose === this.definedHomeLocation.purpose.id) {
 			this.model.purpose = purpose;
 			this.model.address = this.definedHomeLocation.address;
@@ -182,6 +184,7 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 			this.model.purpose = purpose;
 			this.openModal(this.addressInputDialogTemplate);
 		}
+		this._prevModel.purpose = purpose;
 
 		this.updateState();
 	}
