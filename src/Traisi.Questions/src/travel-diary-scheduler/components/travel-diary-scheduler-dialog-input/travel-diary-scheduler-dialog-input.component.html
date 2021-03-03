@@ -16,7 +16,7 @@
 			</div>
 			<div class="modal-body">
 				<div class="form-group row">
-					<div class="col-12" *ngIf="state.collectFamilyMembers">
+					<div class="col-12" *ngIf="state.collectFamilyMembers && scheduleIndex > 0">
 						<label for="members" class="col-form-label">Is there any other family members who also traveled with {{respondentName}} to this location? Please leave it blank if travelled alone.</label>
 						<ng-select
 							appearance="outline"

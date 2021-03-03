@@ -43,6 +43,9 @@ export class TravelDiarySchedulerDialogInput implements OnInit {
 	@ViewChild('mapTemplate', { read: ViewContainerRef })
 	public mapTemplate: ViewContainerRef;
 
+	@Input()
+	public scheduleIndex: number;
+
 	public modalRef: BsModalRef;
 
 	public isValid: boolean = false;
