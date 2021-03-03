@@ -5,7 +5,7 @@
 		"id": "home",
 		"allowFirstLocation": true,
 		"askIfOtherPassengers": false,
-		"isDropOffOrPickup":false
+		"isDropOffOrPickup": false
 	},
 	{
 		"label": "usual work location",
@@ -13,15 +13,15 @@
 		"id": "work",
 		"allowFirstLocation": false,
 		"askIfOtherPassengers": false,
-		"isDropOffOrPickup":false
+		"isDropOffOrPickup": false
 	},
 	{
 		"label": "work-related/business meeting",
 		"icon": "fas fa-briefcase",
 		"id": "work-related",
-		"allowFirstLocation": false,
+		"allowFirstLocation": true,
 		"askIfOtherPassengers": false,
-		"isDropOffOrPickup":false
+		"isDropOffOrPickup": false
 	},
 	{
 		"label": "school/education",
@@ -29,15 +29,15 @@
 		"id": "school",
 		"allowFirstLocation": false,
 		"askIfOtherPassengers": false,
-		"isDropOffOrPickup":false
+		"isDropOffOrPickup": false
 	},
 	{
 		"label": "school-related",
 		"icon": "fas fa-bus-school",
 		"id": "school-related",
-		"allowFirstLocation": false,
+		"allowFirstLocation": true,
 		"askIfOtherPassengers": false,
-		"isDropOffOrPickup":false
+		"isDropOffOrPickup": false
 	},
 	{
 		"label": "restaurant, bar, coffee",
@@ -45,7 +45,7 @@
 		"id": "restaurant",
 		"allowFirstLocation": false,
 		"askIfOtherPassengers": true,
-		"isDropOffOrPickup":false
+		"isDropOffOrPickup": false
 	},
 	{
 		"label": "pick up food",
@@ -53,39 +53,39 @@
 		"id": "pick-up-food",
 		"allowFirstLocation": false,
 		"askIfOtherPassengers": true,
-		"isDropOffOrPickup":false
+		"isDropOffOrPickup": false
 	},
 	{
 		"label": "visiting friends, family",
 		"icon": "fas fa-users",
 		"id": "vsiting",
-		"allowFirstLocation": false,
+		"allowFirstLocation": true,
 		"askIfOtherPassengers": true,
-		"isDropOffOrPickup":false
+		"isDropOffOrPickup": false
 	},
 	{
 		"label": "recreation, sports, leisure, arts",
 		"icon": "fas fa-hockey-sticks",
 		"id": "recreation",
-		"allowFirstLocation": false,
+		"allowFirstLocation": true,
 		"askIfOtherPassengers": true,
-		"isDropOffOrPickup":false
+		"isDropOffOrPickup": false
 	},
 	{
 		"label": "worship, religion",
 		"icon": "fas fa-place-of-worship",
 		"id": "worship",
-		"allowFirstLocation": false,
+		"allowFirstLocation": true,
 		"askIfOtherPassengers": true,
-		"isDropOffOrPickup":false
+		"isDropOffOrPickup": false
 	},
 	{
 		"label": "health and personal care",
 		"icon": "fas fa-head-side-medical",
 		"id": "health",
-		"allowFirstLocation": false,
+		"allowFirstLocation": true,
 		"askIfOtherPassengers": true,
-		"isDropOffOrPickup":false
+		"isDropOffOrPickup": false
 	},
 	{
 		"label": "drop someone off",
@@ -93,7 +93,7 @@
 		"id": "dropoff",
 		"allowFirstLocation": false,
 		"askIfOtherPassengers": false,
-		"isDropOffOrPickup":true
+		"isDropOffOrPickup": true
 	},
 	{
 		"label": "pick someone up",
@@ -101,7 +101,7 @@
 		"id": "pickup",
 		"allowFirstLocation": false,
 		"askIfOtherPassengers": false,
-		"isDropOffOrPickup":true
+		"isDropOffOrPickup": true
 	},
 	{
 		"label": "education (including TA/RA work)",
@@ -109,7 +109,7 @@
 		"id": "education-work",
 		"allowFirstLocation": false,
 		"askIfOtherPassengers": false,
-		"isDropOffOrPickup":false
+		"isDropOffOrPickup": false
 	},
 	{
 		"label": "shopping and errands (groceries, corner store, shopping center, gas station, etc.)",
@@ -117,7 +117,7 @@
 		"id": "shopping",
 		"allowFirstLocation": false,
 		"askIfOtherPassengers": true,
-		"isDropOffOrPickup":false
+		"isDropOffOrPickup": false
 	},
 	{
 		"label": "services (bank, hairdresser, lawyer, notary, mechanic, etc.)",
@@ -125,7 +125,7 @@
 		"id": "services",
 		"allowFirstLocation": false,
 		"askIfOtherPassengers": true,
-		"isDropOffOrPickup":false
+		"isDropOffOrPickup": false
 	},
 	{
 		"label": "other",
@@ -133,6 +133,6 @@
 		"id": "other",
 		"allowFirstLocation": true,
 		"askIfOtherPassengers": false,
-		"isDropOffOrPickup":false
+		"isDropOffOrPickup": false
 	}
 ]
