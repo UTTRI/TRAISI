@@ -257,10 +257,10 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 	}
 
 	/**
-	 *
+	 * Confirms the schedule and completes the input. Will ask if a return home trip needs to be made.
 	 */
 	public confirmScheduleItemAndComplete(): void {
-		if (!this._scheduler.scheduleItems[this._scheduler.scheduleItems.length - 1].purpose.startsWith('home')) {
+		if (!this._scheduler.scheduleItems[this._scheduler.scheduleItems.length - 1].purpose.startsWith('home') && this.scheduleIndex > 0) {
 			this.confirmModal.show();
 		} else {
 			this._schedulerLogic.confirmAndCompleteSchedule();
