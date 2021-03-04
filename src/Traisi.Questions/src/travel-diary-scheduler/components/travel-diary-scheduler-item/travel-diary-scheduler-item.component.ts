@@ -148,7 +148,8 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 		this._defaultDate.setSeconds(0);
 		this._defaultDate.setMilliseconds(0);
 
-		this._prevModel = this.model;
+		this._prevModel = Object.assign({},this.model);
+		
 	}
 
 	/**
@@ -163,9 +164,14 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 		let workPurpose = this.definedWorkLocations.find((x) => x.purpose.id === purpose);
 		let schoolPurpose = this.definedSchoolLocations.find((x) => x.purpose.id === purpose);
 		if (this.model.purpose === this._prevModel.purpose) {
-			this.model.meta = this._prevModel.meta;
+			// this.model.meta =  this._prevModel.meta;
+			console.log('here');
 		} else {
+			this.model.address = {};
+			this.model.latitude = undefined;
+			this.model.longitude = undefined;
 			this.model.meta = {};
+			console.log('resetting');
 		}
 
 		if (purpose === this.definedHomeLocation.purpose.id) {
@@ -198,7 +204,7 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 	 */
 	public purposeModelChange(purpose: string): void {
 		this.model.purpose = purpose;
-		this._prevModel = Object.assign({}, this.model);
+		// this._prevModel = Object.assign({}, this.model);
 	}
 
 	/**
@@ -302,10 +308,10 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 	 */
 	public openModal(template: TemplateRef<any>): void {
 		this.dialogInput.onSaved = (data) => {
-			this.model.address = data.address;
+			this.model.address = Object.assign({},data.address);
 			this.model.latitude = data.latitude;
 			this.model.longitude = data.longitude;
-			this.model.meta = data.meta;
+			this.model.meta = Object.assign({},data.meta);
 			this.updateState();
 		};
 

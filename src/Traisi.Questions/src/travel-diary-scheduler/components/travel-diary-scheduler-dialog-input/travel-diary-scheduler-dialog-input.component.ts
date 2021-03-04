@@ -106,7 +106,7 @@ export class TravelDiarySchedulerDialogInput implements OnInit {
 	public validate(): boolean {
 		// determine that another passenger is selected
 		this.isValid = true;
-		if (!this.state.isDropOffOrPickup && !this.model.address) {
+		if (!this.state.isDropOffOrPickup && !this.model.address || !this.model.latitude || !this.model.longitude) {
 			this.isValid = false;
 		} else if (
 			this.state.isDropOffOrPickup &&
@@ -114,6 +114,7 @@ export class TravelDiarySchedulerDialogInput implements OnInit {
 		) {
 			this.isValid = false;
 		}
+
 		return this.isValid;
 	}
 
