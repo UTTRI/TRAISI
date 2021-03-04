@@ -110,7 +110,6 @@ export class TravelDiarySchedulerLogic {
 		if (!this._scheduler.scheduleItems[idx].latitude || !this._scheduler.scheduleItems[idx].longitude) {
 			state.isValid = false;
 		}
-		console.log(state);
 		return state;
 	}
 

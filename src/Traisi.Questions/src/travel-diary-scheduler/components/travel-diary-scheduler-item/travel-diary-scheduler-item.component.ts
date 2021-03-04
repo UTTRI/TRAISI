@@ -148,8 +148,7 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 		this._defaultDate.setSeconds(0);
 		this._defaultDate.setMilliseconds(0);
 
-		this._prevModel = Object.assign({},this.model);
-		
+		this._prevModel = Object.assign({}, this.model);
 	}
 
 	/**
@@ -158,20 +157,16 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 	 */
 	public purposeSelected(): void {
 		let purpose = this.model.purpose;
-		if(!purpose) {
+		if (!purpose) {
 			return;
 		}
 		let workPurpose = this.definedWorkLocations.find((x) => x.purpose.id === purpose);
 		let schoolPurpose = this.definedSchoolLocations.find((x) => x.purpose.id === purpose);
-		if (this.model.purpose === this._prevModel.purpose) {
-			// this.model.meta =  this._prevModel.meta;
-			console.log('here');
-		} else {
+		if (this.model.purpose !== this._prevModel.purpose) {
 			this.model.address = {};
 			this.model.latitude = undefined;
 			this.model.longitude = undefined;
 			this.model.meta = {};
-			console.log('resetting');
 		}
 
 		if (purpose === this.definedHomeLocation.purpose.id) {
@@ -266,7 +261,10 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 	 * Confirms the schedule and completes the input. Will ask if a return home trip needs to be made.
 	 */
 	public confirmScheduleItemAndComplete(): void {
-		if (!this._scheduler.scheduleItems[this._scheduler.scheduleItems.length - 1].purpose.startsWith('home') && this.scheduleIndex > 0) {
+		if (
+			!this._scheduler.scheduleItems[this._scheduler.scheduleItems.length - 1].purpose.startsWith('home') &&
+			this.scheduleIndex > 0
+		) {
 			this.confirmModal.show();
 		} else {
 			this._schedulerLogic.confirmAndCompleteSchedule();
@@ -308,10 +306,10 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 	 */
 	public openModal(template: TemplateRef<any>): void {
 		this.dialogInput.onSaved = (data) => {
-			this.model.address = Object.assign({},data.address);
+			this.model.address = Object.assign({}, data.address);
 			this.model.latitude = data.latitude;
 			this.model.longitude = data.longitude;
-			this.model.meta = Object.assign({},data.meta);
+			this.model.meta = Object.assign({}, data.meta);
 			this.updateState();
 		};
 
