@@ -316,8 +316,9 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 		};
 
 		this.dialogInput.onCancelled = () => {
-			this.model.purpose = undefined;
-			this.model.meta = {};
+			//this.model.purpose = undefined;
+			// this.model.meta = {};
+			this.updateState();
 		};
 
 		this.dialogInput.show(this.model);
