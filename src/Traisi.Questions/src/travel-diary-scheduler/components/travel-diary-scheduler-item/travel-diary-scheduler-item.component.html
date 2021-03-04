@@ -160,6 +160,7 @@
 			<div class="button-container-inner">
 				<button
 					type="button"
+					[disabled]="!state.isValid"
 					class="btn btn-primary confirm-complete-schedule"
 					(click)="confirmScheduleItemAndComplete()"
 					*ngIf="scheduleItemsCount === 1 && scheduleIndex === 0"
