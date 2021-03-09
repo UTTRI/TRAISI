@@ -44,6 +44,12 @@ export class SurveyAnalyzeComponent implements OnInit {
 	public selectedRegion: string = "";
 	public selectedQuestion: string = "1";
 
+	public matrixResults: any = [];
+	
+	//question type tables
+	public x:boolean = false;
+	public y:boolean = false;
+	
 	public ngOnInit(): void {
 		//Load Question names				
 		//api analytics controller url
@@ -67,8 +73,10 @@ export class SurveyAnalyzeComponent implements OnInit {
 		//api analytics controller url
 		let url = "/api/SurveyAnalytics/" + this.surveyId + "/" + this.selectedQuestion;
 		this.httpObj.get(url).subscribe((resData: any) => {
-
+			//Radio, Checkbox question type results
 			if (resData.questionTypeResults != undefined) {
+				this.x = true;
+				this.y = false;
 				this.serverData = resData;
 				this.responses = resData.completedResponses;
 				this.actualResponses = resData.completedResponses;
@@ -77,6 +85,12 @@ export class SurveyAnalyzeComponent implements OnInit {
 				this.questionResults = resData.questionTypeResults;
 				this.handleResponses();
 			}
+			//Matrix question type results
+			else  if (resData.matrixResults != undefined) {
+				this.x = false;
+				this.y = true;
+				this.matrixResults = resData.matrixResults;
+			} 
 			//I'll remove once all question-type responses code 
 			//added to SurveyAnalyticsController 
 			else {

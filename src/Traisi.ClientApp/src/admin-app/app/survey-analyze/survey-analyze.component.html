@@ -43,7 +43,8 @@
                     <div>
                         <h6 style="margin-left: 1.2rem; height: 2.0rem;">Question Based Responses</h6>
                     </div>
-                    <table width="750" cellpadding="5" border="1" style="margin-left: 1rem;">
+                    <!-- Radio/Checkbox Question Type Table -->
+                    <table *ngIf="x" width="750" cellpadding="5" border="1" style="margin-left: 1rem;">
                         <tr>
                             <th>Question Option Code</th>
                             <th>Question Option Label</th>
@@ -57,6 +58,17 @@
                             <td style="text-align: right;">{{item.percentage}}</td>
                         </tr>
                     </table>
+                    <!-- Matrix Question Type Table -->
+                    <table *ngIf="y" width="750" cellpadding="5" border="1" style="margin-left: 1rem;">
+                        <tr>
+                            <th>Question</th>
+                            <th>Responses</th>
+                        </tr>
+                        <tr *ngFor="let item of questionResults">
+                            <td>{{matrixResults.label}}</td>                          
+                            <td style="text-align: right;">{{matrixResults.count}}</td>
+                        </tr>
+                    </table> 
                 </div>
                 <!-- Will enable this code for Region Based Filtering -->
                 <!-- <div style="height: 2.5rem; margin-left: 1.2rem;"></div>
