@@ -36,6 +36,7 @@ import { GeoLocation } from '../map-question/models/geo-location.model';
 import { MapEndpointService } from '../map-question/services/mapservice.service';
 import { MapQuestionConfiguration } from '../map-question/models/map-question-configuration.model';
 import { moment } from 'ngx-bootstrap/chronos/test/chain';
+import { countReset } from 'console';
 
 @Component({
 	selector: 'traisi-travel-diary-logger',
@@ -85,6 +86,8 @@ export class TravelDiaryLoggerComponent extends SurveyQuestion<ResponseTypes.Str
 					tripObj["Departure Date"] = sourceData[i]["Trip Date Time"];
 					tripObj.Mode = sourceData[i].Mode;
 					tripObj.Purpose = "";
+					tripObj.Longitude = sourceData[i].Longitude;
+					tripObj.Latitude = sourceData[i].Latitude;
 					tripTable.push(tripObj);
 					i++;
 					break;
@@ -137,11 +140,23 @@ export class TravelDiaryLoggerComponent extends SurveyQuestion<ResponseTypes.Str
 		//coordinates
 		let coordinates: any[] = this.getCords("2017-10-11");
 		//map
-		this.generateMap(coordinates);
+		var centerLong:any = coordinates[0][0][0];
+		var centerLat:any = coordinates[0][0][1];
+		this.generateMap(coordinates, centerLong, centerLat);
+		// console.log(coordinates[0][0][0]);
+	}
+
+
+	public gotoTripOnMap(index:number):void
+	{
+		let coordinates: any[] = this.getCords(this.selectedDate);
+		var centerLong:any = this.tripData[index].Longitude;
+		var centerLat:any = this.tripData[index].Latitude;
+		this.generateMap(coordinates, centerLong, centerLat);	
 	}
 
 	//Map
-	public generateMap(coordinates: any[]): void {
+	public generateMap(coordinates: any[], centerLong:any, centerLat:any): void {
 		document.getElementById("map").innerHTML = "";
 		//it's just the test data, getTripData() would call the backend in normal circumstances
 		(mapboxgl as any).accessToken = this.accessToken;
@@ -149,7 +164,7 @@ export class TravelDiaryLoggerComponent extends SurveyQuestion<ResponseTypes.Str
 		var map = new mapboxgl.Map({
 			container: 'map',
 			style: 'mapbox://styles/mapbox/streets-v11',
-			center: [-79.35, 43.67],
+			center: [centerLong, centerLat],
 			zoom: 15
 		});
 
@@ -210,8 +225,18 @@ export class TravelDiaryLoggerComponent extends SurveyQuestion<ResponseTypes.Str
 
 	//Select a date from the calendar
 	public updateTripDate() {
+		
 		let coordinates: any[] = this.getCords(this.selectedDate);
-		this.generateMap(coordinates);
+		if(coordinates.length <= 0)
+		{
+			document.getElementById("map").innerHTML = "";
+			return;
+		}
+		
+		var centerLong:any = coordinates[0][0][0];
+		var centerLat:any = coordinates[0][0][1];
+		this.generateMap(coordinates, centerLong, centerLat);
+		
 	}
 
 	//using test data at the moment

@@ -16,7 +16,7 @@
       <th>Action</th>
     </tr>
     <tr *ngFor="let item of tripData; let i = index; ">
-      <td> <a href="javascript:void(0);">Trip_{{i + 1}}</a> </td>
+      <td> <a href="javascript:void(0);"  (click)="gotoTripOnMap(i)">Trip_{{i + 1}}</a> </td>
       <td>{{item["Departure Date"]}}</td>
       <td>{{item.Mode}}</td>
       <td>{{item.Purpose}}</td>
