@@ -45,10 +45,13 @@ export class SurveyAnalyzeComponent implements OnInit {
 	public selectedQuestion: string = "1";
 
 	public matrixResults: any = [];
+	public travelDiaryResults: any = [];
+	public transitRoutesResults: any = [];
+	public locationResults: any = [];
+	public householdResults: any = [];
 	
-	//question type tables
-	public x:boolean = false;
-	public y:boolean = false;
+	//Question type tables
+	public questionTable:boolean = false;
 	
 	public ngOnInit(): void {
 		//Load Question names				
@@ -71,13 +74,14 @@ export class SurveyAnalyzeComponent implements OnInit {
 
 	public filterByQuestion() {
 		//api analytics controller url
+		this.questionTable = false;
+		this.questionResults = [];
 		let url = "/api/SurveyAnalytics/" + this.surveyId + "/" + this.selectedQuestion;
 		this.httpObj.get(url).subscribe((resData: any) => {
 			//Radio, Checkbox question type results
 			if (resData.questionTypeResults != undefined) {
-				this.x = true;
-				this.y = false;
-				this.serverData = resData;
+				this.questionTable = true;
+ 				this.serverData = resData;
 				this.responses = resData.completedResponses;
 				this.actualResponses = resData.completedResponses;
 				this.completed = resData.totalComplete;
@@ -87,12 +91,40 @@ export class SurveyAnalyzeComponent implements OnInit {
 			}
 			//Matrix question type results
 			else  if (resData.matrixResults != undefined) {
-				this.x = false;
-				this.y = true;
-				this.matrixResults = resData.matrixResults;
+ 				var ar:any[] = [];
+				ar.push(  resData.matrixResults );
+				this.questionResults = ar;
 			} 
-			//I'll remove once all question-type responses code 
-			//added to SurveyAnalyticsController 
+			//Travel diary question type results
+			else  if (resData.travelDiaryResults != undefined) {
+				this.questionTable = false;
+				var ar:any[] = [];
+				ar.push(  resData.travelDiaryResults );
+				this.questionResults = ar;
+			} 
+			//Transit routes question type results
+			else  if (resData.transitRoutesResults != undefined) {
+				this.questionTable = false;
+				var ar:any[] = [];
+				ar.push(  resData.transitRoutesResults );
+				this.questionResults = ar;
+			}
+			//Location question type results
+			else  if (resData.locationResults != undefined) {
+				this.questionTable = false;
+				var ar:any[] = [];
+				ar.push(  resData.locationResults );
+				this.questionResults = ar;
+			} 
+			//Household question type results
+			else  if (resData.householdResults != undefined) {
+				this.questionTable = false;
+				var ar:any[] = [];
+				ar.push(  resData.householdResults );
+				this.questionResults = ar;
+			} 
+			//Added all question-type responses code 
+			//In case if any questions data is not found 
 			else {
 				alert("No question type results found in server");
 				this.serverData = [];

@@ -187,9 +187,8 @@ namespace Traisi.Controllers
                                 .QuestionOptionLabels["en"]
                                 .Value
                     };
-
+                    
                 //Final results
-
                 var finalResults =
                     new {
                         totalComplete = completedResponse.Count(),
@@ -224,6 +223,73 @@ namespace Traisi.Controllers
                 var result  = new {   matrixResults  = matrixResults};
                 return Ok(result); 
             } 
+            //Travel-diary
+            else if (
+                this
+                ._questionTypeManager
+                .QuestionTypeDefinitions[question.QuestionType]
+                .ResponseType == QuestionResponseType.Timeline)
+            {
+                var travelDiaryResponses = surveyResponses
+                                                .Where(r => this._questionTypeManager.QuestionTypeDefinitions[question.QuestionType]
+                                                .ResponseType == QuestionResponseType.Timeline)
+                                                .GroupBy(r => r.Respondent)
+                                                .ToList();
+                //Travel-diary question type responses
+                var travelDiaryResults = new
+                                         {
+                                            Label = question.Name,
+                                            Count = travelDiaryResponses.Count()
+                                         };
+                var result  = new {   travelDiaryResults  = travelDiaryResults};
+                return Ok(result);  
+            }
+            //Transit-Routes
+            else if(
+                this
+                ._questionTypeManager
+                .QuestionTypeDefinitions[question.QuestionType]
+                .ClassName == typeof(RouteSelectQuestion).Name)
+            {
+                //Transit-routes question type responses
+                var transitRoutesResults = new
+                {
+                    Label = question.Name,
+                    Count = completedResponse.Count()
+                };
+                var result  = new {   transitRoutesResults  = transitRoutesResults};
+                return Ok(result); 
+            }
+            //Location
+            else if (
+                this
+                ._questionTypeManager.QuestionTypeDefinitions[question.QuestionType]
+                .ResponseType == QuestionResponseType.Location)
+            {
+                //Location question type responses
+                var locationResults = new
+                {
+                    Label = question.Name,
+                    Count = completedResponse.Count()
+                };
+                var result  = new {   locationResults  = locationResults};
+                return Ok(result); 
+            }
+            //Household members
+            else  if (
+                this
+                ._questionTypeManager.QuestionTypeDefinitions[question.QuestionType]
+                .ClassName == typeof(HouseholdQuestion).Name)
+            {
+                 //Household question type responses
+                var householdResults = new
+                {
+                    Label = question.Name,
+                    Count = completedResponse.Count()
+                };
+                var result  = new {   householdResults  = householdResults};
+                return Ok(result); 
+            }
             else
             {
                 // default case count how many answers exist
@@ -249,6 +315,7 @@ namespace Traisi.Controllers
                     .GetAll()
                     .Where(item => item.SurveyId == surveyId)
                     .ToList();
+            questionParts.RemoveAll(x => x.QuestionType == "heading");
             var result =
                 from item in questionParts
                 select
