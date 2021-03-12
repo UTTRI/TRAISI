@@ -32,7 +32,7 @@ export class SurveyAnalyzeComponent implements OnInit {
 	public completed = 0;
 	public incomplete: number = 0;
 
-	public colorClasses: string[] = ["progress-bar bg-success", "progress-bar bg-info", "progress-bar bg-warning", "progress-bar bg-primary"];
+	public colorClasses: string[] = ['progress-bar bg-success', 'progress-bar bg-info', 'progress-bar bg-warning', 'progress-bar bg-primary'];
 	public responses: any = [];
 	public serverData: any = {};
 	public actualResponses: any = [];
@@ -41,8 +41,8 @@ export class SurveyAnalyzeComponent implements OnInit {
 	public questionResults: any = [];
 	public questionOptionLabels: any = [];
 
-	public selectedRegion: string = "";
-	public selectedQuestion: string = "1";
+	public selectedRegion: string = '';
+	public selectedQuestion: string = '1';
 
 	public matrixResults: any = [];
 	public travelDiaryResults: any = [];
@@ -56,7 +56,7 @@ export class SurveyAnalyzeComponent implements OnInit {
 	public ngOnInit(): void {
 		//Load Question names				
 		//api analytics controller url
-		let url = "/api/SurveyAnalytics/" + this.surveyId;
+		let url = '/api/SurveyAnalytics/' + this.surveyId;
 		this.httpObj.get(url).subscribe((resData: any[]) => {
 			this.questions = resData;
 		});
@@ -64,7 +64,7 @@ export class SurveyAnalyzeComponent implements OnInit {
 	}
 
 	public filterByCity() {
-		if (this.selectedRegion == "")
+		if (this.selectedRegion == '')
 			this.responses = this.actualResponses;
 		else
 			this.responses = this.actualResponses.filter(item => item.city == this.selectedRegion);
@@ -76,7 +76,7 @@ export class SurveyAnalyzeComponent implements OnInit {
 		//api analytics controller url
 		this.questionTable = false;
 		this.questionResults = [];
-		let url = "/api/SurveyAnalytics/" + this.surveyId + "/" + this.selectedQuestion;
+		let url = '/api/SurveyAnalytics/' + this.surveyId + '/' + this.selectedQuestion;
 		this.httpObj.get(url).subscribe((resData: any) => {
 			//Radio, Checkbox question type results
 			if (resData.questionTypeResults != undefined) {
@@ -126,7 +126,7 @@ export class SurveyAnalyzeComponent implements OnInit {
 			//Added all question-type responses code 
 			//In case if any questions data is not found 
 			else {
-				alert("No question type results found in server");
+				alert('No question type results found in server');
 				this.serverData = [];
 				this.responses = [];
 				this.actualResponses = [];
@@ -145,8 +145,8 @@ export class SurveyAnalyzeComponent implements OnInit {
 
 			this.responses[i].compSurveyByCity = compSurveyByCity;
 			this.responses[i].incompSurveyByCity = incompSurveyByCity;
-			this.responses[i].percentage = Math.round(rPercent) + "%";
-			this.responses[i].pending = (100 - Math.round(rPercent)) + "%";
+			this.responses[i].percentage = Math.round(rPercent) + '%';
+			this.responses[i].pending = (100 - Math.round(rPercent)) + '%';
 
 			j++;
 			if (j >= this.colorClasses.length) j = 0;
@@ -159,7 +159,7 @@ export class SurveyAnalyzeComponent implements OnInit {
 		//Percentage calculation
 		for (let i = 0; i < this.questionResults.length; i++) {
 			let rPercent = (this.questionResults[i].count / total) * 100;
-			this.questionResults[i].percentage = Math.round(rPercent) + "%";
+			this.questionResults[i].percentage = Math.round(rPercent) + '%';
 		}
 	}
 }
