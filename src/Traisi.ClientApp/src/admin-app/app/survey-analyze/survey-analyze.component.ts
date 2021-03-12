@@ -8,23 +8,17 @@ import { NgSelectModule } from '@ng-select/ng-select';
 	selector: 'app-survey-analyze',
 	templateUrl: './survey-analyze.component.html',
 	styleUrls: ['./survey-analyze.component.scss'],
-	animations: [fadeInOut]
+	animations: [fadeInOut],
 })
-
 @NgModule({
-	imports: [
-		NgSelectModule,
-	]
+	imports: [NgSelectModule],
 })
-
 export class SurveyAnalyzeComponent implements OnInit {
-
 	public surveyId: number;
 
 	constructor(private httpObj: HttpClient, private route: ActivatedRoute) {
-
-		this.route.params.subscribe(params => this.surveyId = params['id']);
-	};
+		this.route.params.subscribe((params) => (this.surveyId = params['id']));
+	}
 
 	//Sample Distribution Analysis
 	public daysInField: number = 10;
@@ -32,7 +26,12 @@ export class SurveyAnalyzeComponent implements OnInit {
 	public completed = 0;
 	public incomplete: number = 0;
 
-	public colorClasses: string[] = ['progress-bar bg-success', 'progress-bar bg-info', 'progress-bar bg-warning', 'progress-bar bg-primary'];
+	public colorClasses: string[] = [
+		'progress-bar bg-success',
+		'progress-bar bg-info',
+		'progress-bar bg-warning',
+		'progress-bar bg-primary',
+	];
 	public responses: any = [];
 	public serverData: any = {};
 	public actualResponses: any = [];
@@ -53,8 +52,13 @@ export class SurveyAnalyzeComponent implements OnInit {
 	//Question type tables
 	public questionTable:boolean = false;
 	
+
+	//question type tables
+	public x: boolean = false;
+	public y: boolean = false;
+
 	public ngOnInit(): void {
-		//Load Question names				
+		//Load Question names
 		//api analytics controller url
 		let url = '/api/SurveyAnalytics/' + this.surveyId;
 		this.httpObj.get(url).subscribe((resData: any[]) => {
@@ -68,6 +72,8 @@ export class SurveyAnalyzeComponent implements OnInit {
 			this.responses = this.actualResponses;
 		else
 			this.responses = this.actualResponses.filter(item => item.city == this.selectedRegion);
+		if (this.selectedRegion == '') this.responses = this.actualResponses;
+		else this.responses = this.actualResponses.filter((item) => item.city == this.selectedRegion);
 
 		this.handleResponses();
 	}
@@ -125,6 +131,13 @@ export class SurveyAnalyzeComponent implements OnInit {
 			} 
 			//Added all question-type responses code 
 			//In case if any questions data is not found 
+			else if (resData.matrixResults != undefined) {
+				this.x = false;
+				this.y = true;
+				this.matrixResults = resData.matrixResults;
+			}
+			//I'll remove once all question-type responses code
+			//added to SurveyAnalyticsController
 			else {
 				alert('No question type results found in server');
 				this.serverData = [];
@@ -132,7 +145,7 @@ export class SurveyAnalyzeComponent implements OnInit {
 				this.actualResponses = [];
 				this.completed = 0;
 				this.incomplete = 0;
-				this.questionResults = [];				
+				this.questionResults = [];
 			}
 		});
 	}
@@ -140,13 +153,16 @@ export class SurveyAnalyzeComponent implements OnInit {
 	public handleResponses() {
 		for (let i = 0, j = 0; i < this.responses.length; i++) {
 			let compSurveyByCity = this.responses[i].surveyCompleted;
-			let incompSurveyByCity = this.serverData.incompletedResponses.find(item => item.city == this.responses[i].city).surveyIncompleted;
+			let incompSurveyByCity = this.serverData.incompletedResponses.find(
+				(item) => item.city == this.responses[i].city
+			).surveyIncompleted;
 			let rPercent = (compSurveyByCity / incompSurveyByCity) * 100;
 
 			this.responses[i].compSurveyByCity = compSurveyByCity;
 			this.responses[i].incompSurveyByCity = incompSurveyByCity;
 			this.responses[i].percentage = Math.round(rPercent) + '%';
 			this.responses[i].pending = (100 - Math.round(rPercent)) + '%';
+			this.responses[i].pending = 100 - Math.round(rPercent) + '%';
 
 			j++;
 			if (j >= this.colorClasses.length) j = 0;
