@@ -68,11 +68,10 @@ namespace Traisi.Controllers
         {
             //Surveys
             var surveys =
-                await this._unitOfWork.Surveys.GetSurveyFullAsync(surveyId, 0);
+                await this._unitOfWork.Surveys.GetSurveyForAnalyticsUse(surveyId, 0);
 
             //Survey Responses
-            var surveyResponses =
-                await this
+            var surveyResponses = this
                     ._unitOfWork
                     .DbContext
                     .SurveyResponses
@@ -80,11 +79,13 @@ namespace Traisi.Controllers
                     .Include(r => r.ResponseValues)
                     .Include(r => r.Respondent)
                     .ThenInclude(srg => srg.SurveyRespondentGroup)
-                    .Include(r => r.QuestionPart).ToListAsync();
+                    .Include(r => r.QuestionPart);
+
+            //ToListAsync();
 
             //Survey Response Values
             var surveyResponseValues =
-                await this
+                 this
                     ._unitOfWork
                     .DbContext
                     .SurveyResponseValues
@@ -92,53 +93,52 @@ namespace Traisi.Controllers
                     .Include(sr => sr.SurveyResponse)
                     .ThenInclude(qp => qp.QuestionPart)
                     .ThenInclude(qo => qo.QuestionOptions)
-                    .ThenInclude(qol => qol.QuestionOptionLabels)
-                    .ToListAsync();
+                    .ThenInclude(qol => qol.QuestionOptionLabels);
+            //.ToListAsync();
 
             //Survey Respondents
-            var surveyRespondents =
-                await this
-                    ._unitOfWork
-                    .DbContext
-                    .PrimaryRespondents
-                    .AsQueryable()
-                    .Include(s => s.Survey)
-                    .Where(item => item.Survey.Id == surveyId)
-                    .ToListAsync();
+            /* var surveyRespondents =
+                 await this
+                     ._unitOfWork
+                     .DbContext
+                     .PrimaryRespondents
+                     .AsQueryable()
+                     .Include(s => s.Survey)
+                     .Where(item => item.Survey.Id == surveyId)
+                     .ToListAsync(); */
 
             //complete
             var completedResponse =
                     surveyResponses
                     .Where(item =>
                         item.QuestionPart.Id == questionId &&
-                        item.QuestionPart.SurveyId == surveyId).ToList();
-                    
+                        item.QuestionPart.SurveyId == surveyId);
+
             var surveyCompleted =
                 completedResponse
                     .Where(item => item.Respondent.HomeAddress != null)
                     .GroupBy(item => item.Respondent.HomeAddress.City);
 
-            var completedResult =
-                from item in surveyCompleted
-                select new { City = item.Key, surveyCompleted = item.Count() };
+            var completedResult = await
+                (from item in surveyCompleted
+                 select new { City = item.Key, surveyCompleted = item.Count() }).ToListAsync();
 
             //incomplete
             var incompleteResponse =
                 surveyResponses
                     .Where(item =>
                         item.QuestionPart.Id != questionId &&
-                        item.QuestionPart.SurveyId == surveyId)
-                    .ToList();
+                        item.QuestionPart.SurveyId == surveyId);
 
             var surveyIncompleted =
                 incompleteResponse
                     .Where(item => item.Respondent.HomeAddress != null)
                     .GroupBy(item => item.Respondent.HomeAddress.City);
 
-            var incompletedResult =
-                from item in surveyIncompleted
-                select
-                new { City = item.Key, surveyIncompleted = item.Count() };
+            var incompletedResult = await
+                (from item in surveyIncompleted
+                 select
+                 new { City = item.Key, surveyIncompleted = item.Count() }).ToListAsync();
 
             //Responses based on QuestionType
             var question =
@@ -157,51 +157,42 @@ namespace Traisi.Controllers
             )
             {
                 //QuestionType Responses
-                var questTypeResponses =
-                    surveyResponseValues
+                var questTypeResponses = 
+                    (await surveyResponseValues
                         .Where(item =>
                             item.SurveyResponse.QuestionPart.Id == questionId &&
                             item.SurveyResponse.QuestionPart.SurveyId ==
-                            surveyId)
-                        .GroupBy(item => ((OptionSelectResponse) item).Code);
+                            surveyId).ToListAsync()).Select(p => new
+                            {
+                                Label = p.SurveyResponse.QuestionPart.QuestionOptions.FirstOrDefault(x => x.Code == ((OptionSelectResponse)p).Code).QuestionOptionLabels.FirstOrDefault(x => x.Language == "en").Value,
+                                Code = ((OptionSelectResponse)p).Code,
+                                Value = ((OptionSelectResponse)p).Value
+                            })
+                        .GroupBy(item => new { item.Code, item.Label });
 
-                //Question Options Labels
-                var questionNames = question.QuestionOptions.ToList();
-                var questOptionNames =
-                    questionNames
-                        .Where(x => x.Name == "Response Options")
-                        .OrderBy(x => x.Order)
-                        .ToList();
+
 
                 //QuestionType results
                 var questionTypeResults =
-                    from item in questTypeResponses
-                    select
-                    new {
-                        QuestionOption = item.Key,
-                        Count = item.Count(),
-                        Label =
-                            question
-                                .QuestionOptions
-                                .FirstOrDefault(x => x.Code == item.Key)?
-                                .QuestionOptionLabels["en"]
-                                .Value
-                    };
-                    
+                    (from item in questTypeResponses
+                     select
+                     new
+                     {
+                         QuestionOption = item.Key.Code,
+                         Count = item.Count(),
+                         Label = item.Key.Label
+                     }).ToList();
+
+
                 //Final results
                 var finalResults =
-                    new {
+                    new
+                    {
                         totalComplete = completedResponse.Count(),
                         totalIncomplete = incompleteResponse.Count(),
                         completedResponses = completedResult,
-                        incompletedResponses = incompletedResult,
-                        questionTypeResults =
-                            questionTypeResults
-                                .OrderBy(x =>
-                                    questionNames
-                                        .FirstOrDefault(y =>
-                                            y.Code == x.QuestionOption)?
-                                        .Order)
+                        incompletedResponses = incompletedResult.ToList(),
+                        questionTypeResults = questionTypeResults
                     };
                 return Ok(finalResults);
             }
@@ -211,18 +202,18 @@ namespace Traisi.Controllers
                     ._questionTypeManager
                     .QuestionTypeDefinitions[question.QuestionType]
                     .ClassName ==
-                typeof (MatrixQuestion).Name
+                typeof(MatrixQuestion).Name
             )
-            { 
+            {
                 //Matrix question type responses
                 var matrixResults = new
                 {
                     Label = question.Name,
                     Count = completedResponse.Count()
                 };
-                var result  = new {   matrixResults  = matrixResults};
-                return Ok(result); 
-            } 
+                var result = new { matrixResults = matrixResults };
+                return Ok(result);
+            }
             //Travel-diary
             else if (
                 this
@@ -237,15 +228,15 @@ namespace Traisi.Controllers
                                                 .ToList();
                 //Travel-diary question type responses
                 var travelDiaryResults = new
-                                         {
-                                            Label = question.Name,
-                                            Count = travelDiaryResponses.Count()
-                                         };
-                var result  = new {   travelDiaryResults  = travelDiaryResults};
-                return Ok(result);  
+                {
+                    Label = question.Name,
+                    Count = travelDiaryResponses.Count()
+                };
+                var result = new { travelDiaryResults = travelDiaryResults };
+                return Ok(result);
             }
             //Transit-Routes
-            else if(
+            else if (
                 this
                 ._questionTypeManager
                 .QuestionTypeDefinitions[question.QuestionType]
@@ -257,8 +248,8 @@ namespace Traisi.Controllers
                     Label = question.Name,
                     Count = completedResponse.Count()
                 };
-                var result  = new {   transitRoutesResults  = transitRoutesResults};
-                return Ok(result); 
+                var result = new { transitRoutesResults = transitRoutesResults };
+                return Ok(result);
             }
             //Location
             else if (
@@ -272,30 +263,31 @@ namespace Traisi.Controllers
                     Label = question.Name,
                     Count = completedResponse.Count()
                 };
-                var result  = new {   locationResults  = locationResults};
-                return Ok(result); 
+                var result = new { locationResults = locationResults };
+                return Ok(result);
             }
             //Household members
-            else  if (
-                this
-                ._questionTypeManager.QuestionTypeDefinitions[question.QuestionType]
-                .ClassName == typeof(HouseholdQuestion).Name)
+            else if (
+               this
+               ._questionTypeManager.QuestionTypeDefinitions[question.QuestionType]
+               .ClassName == typeof(HouseholdQuestion).Name)
             {
-                 //Household question type responses
+                //Household question type responses
                 var householdResults = new
                 {
                     Label = question.Name,
                     Count = completedResponse.Count()
                 };
-                var result  = new {   householdResults  = householdResults};
-                return Ok(result); 
+                var result = new { householdResults = householdResults };
+                return Ok(result);
             }
             else
             {
                 // default case count how many answers exist
                 //final result
                 var finalResults =
-                    new {
+                    new
+                    {
                         totalComplete = completedResponse.Count(),
                         totalIncomplete = incompleteResponse.Count(),
                         completedResponses = completedResult,
@@ -319,7 +311,8 @@ namespace Traisi.Controllers
             var result =
                 from item in questionParts
                 select
-                new {
+                new
+                {
                     Id = item.Id,
                     Name = item.Name,
                     Type = item.QuestionType
