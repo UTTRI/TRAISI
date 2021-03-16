@@ -157,7 +157,7 @@ namespace Traisi.Controllers
             )
             {
                 //QuestionType Responses
-                var questTypeResponses = 
+                var questTypeResponses =
                     (await surveyResponseValues
                         .Where(item =>
                             item.SurveyResponse.QuestionPart.Id == questionId &&
@@ -221,12 +221,16 @@ namespace Traisi.Controllers
                 .QuestionTypeDefinitions[question.QuestionType]
                 .ResponseType == QuestionResponseType.Timeline)
             {
-                var travelDiaryResponses = surveyResponses
-                                                .Where(r => this._questionTypeManager.QuestionTypeDefinitions[question.QuestionType]
-                                                .ResponseType == QuestionResponseType.Timeline)
-                                                .GroupBy(r => r.Respondent)
-                                                .ToList();
-                //Travel-diary question type responses
+
+                var travelDiaryResponses = this._unitOfWork
+                    .DbContext
+                    .SurveyResponses
+                    .Include(r => r.ResponseValues)
+                    .Include(r => r.Respondent)
+                    .Include(r => r.QuestionPart)
+                    .Where(r => r.QuestionPart.QuestionType == "travel-diary")
+                                                .ToList()
+                                                .GroupBy(r => r.Respondent);
                 var travelDiaryResults = new
                 {
                     Label = question.Name,
