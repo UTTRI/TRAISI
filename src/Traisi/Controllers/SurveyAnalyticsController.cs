@@ -191,9 +191,9 @@ namespace Traisi.Controllers
                             else
                             {
                                 return new {
-                                    Label = "NOTA",
-                                    Code = "NOTA",
-                                    Value = "NOTA",
+                                    Label = QuestionContants.NOTA,
+                                    Code = QuestionContants.NOTA,
+                                    Value = QuestionContants.NOTA,
                                     Order =
                                         p
                                             .SurveyResponse
