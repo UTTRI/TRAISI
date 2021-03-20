@@ -8,6 +8,6 @@ namespace Traisi.Data
 {
     public class QuestionContants
     {
-        public const string NOTA = "NOTA";
+        public const string NOTA = "nota";
     }
 }

@@ -160,7 +160,7 @@ namespace Traisi.Controllers
                     )
                         .Select(p =>
                         {
-                            if (((OptionSelectResponse) p).Code != "nota")
+                            if (((OptionSelectResponse) p).Code != QuestionContants.NOTA)
                             {
                                 return new {
                                     Label =
