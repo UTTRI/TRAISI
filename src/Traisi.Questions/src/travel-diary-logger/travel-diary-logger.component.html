@@ -1,30 +1,62 @@
-<!-- Date selection calendar with October and November 2017 months -->
+<!-- Date selection calendar with October, November 2017 months -->
 <div class="row" style="margin-left: 0.5rem; height: 2.5rem;">
-  <h5>Date Selection:</h5>
-  <input [(ngModel)] = "selectedDate" class="form-control" type="date" style="margin-left: 0.5rem; width: 10rem" (change) = "updateTripDate()" [min]="minDate" [max]="maxDate">
+	<h5>Date Selection:</h5>
+	<input
+		[(ngModel)]="selectedDate"
+		class="form-control"
+		type="date"
+		style="margin-left: 0.5rem; width: 10rem;"
+		(change)="updateTripDate()"
+		[min]="minDate"
+		[max]="maxDate"
+	/>
 </div>
 <br />
 <!-- Trip Information -->
 <div class="">
-  <h5>Trip Information: </h5>
-  <table width="750" border="1">
-    <tr>
-      <th>Trip No #</th>
-      <th>Departure Time</th>
-      <th>Mode</th>
-      <th>Purpose</th>
-      <th>Action</th>
-    </tr>
-    <tr *ngFor="let item of tripData; let i = index; ">
-      <td> <a href="javascript:void(0);"  (click)="gotoTripOnMap(i)">Trip_{{i + 1}}</a> </td>
-      <td>{{item["Departure Date"]}}</td>
-      <td>{{item.Mode}}</td>
-      <td>{{item.Purpose}}</td>
-      <td>
-        <a href="javascript:void(0);" (click)="onConfirmClick()">Confirm</a> <br />
-        <a href="javascript:void(0);">Modify</a>
-    </tr>
-  </table>
+	<h5>Trip Information:</h5>
+	<table width="980" border="1">
+		<tr style="text-align: justify;">
+			<th>Trip No #</th>
+			<th>Departure Time</th>
+			<th>Mode</th>
+			<th>Purpose</th>
+			<th>Confirm Trip</th>
+			<th>Trip Checked</th>
+		</tr>
+		<tr *ngFor="let item of tripData; let i = index">
+			<td style="width: 80px; text-align: justify;">
+				<a href="javascript:void(0);" (click)="gotoTripOnMap(i)">Trip_{{ i + 1 }}</a>
+			</td>
+			<td style="text-align: justify;">
+				<input
+					type="datetime-local"
+					[(ngModel)]="item['Departure Date']"
+					[min]="minDateTime"
+					[max]="maxDateTime"
+				/>
+			</td>
+			<td>
+				<select style="width: 200px; text-align: justify;" [(ngModel)]="item.Mode">
+					<option>Select mode</option>
+					<option *ngFor="let item of travelModeData">{{ item.label }}</option>
+				</select>
+			</td>
+			<td>
+				<select style="width: 260px; text-align: justify;" [(ngModel)]="item.Purpose">
+					<option>Select purpose</option>
+					<option *ngFor="let item of travelPurposeData">{{ item.label }}</option>
+				</select>
+			</td>
+			<td style="width: 100px; text-align: center;">
+				<a href="javascript:void(0);" (click)="onConfirmClick(i)">Confirm</a> <br />
+				<!-- <a href="javascript:void(0);">Modify</a> -->
+			</td>
+			<td style="width: 110px; text-align: center;">
+				<input type="checkbox" [(ngModel)]="item.isDataValid"  />
+			</td>
+		</tr>
+	</table>
 </div>
 <br />
-<div style="height:500px;" id="map"></div>
+<div style="height: 500px;" id="map"></div>
