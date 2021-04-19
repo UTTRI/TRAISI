@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 using Traisi.Data;
 using Traisi.Data.Core.Interfaces;
+using Traisi.Data.Models.Municipality;
 using Traisi.Data.Models.Questions;
 using Traisi.Data.Models.ResponseTypes;
 using Traisi.Data.Models.Surveys;
@@ -21,6 +22,7 @@ using Traisi.Sdk.Interfaces;
 using Traisi.Sdk.Questions;
 using Traisi.Sdk.Services;
 using Traisi.ViewModels;
+using Newtonsoft.Json;
 
 namespace Traisi.Controllers
 {
@@ -160,7 +162,10 @@ namespace Traisi.Controllers
                     )
                         .Select(p =>
                         {
-                            if (((OptionSelectResponse) p).Code != QuestionContants.NOTA)
+                            if (
+                                ((OptionSelectResponse) p).Code !=
+                                QuestionContants.NOTA
+                            )
                             {
                                 return new {
                                     Label =
@@ -364,5 +369,84 @@ namespace Traisi.Controllers
                 };
             return Ok(result);
         }
+
+        //Adding Regions to Database
+        [HttpGet("GetRegions")]
+        public IActionResult AddRegions()
+        {
+            string[] regionArr = {"Barrie", "Brant", "Brantford", "CFB Borden", "City of Kawartha Lakes", "City of Peterborough", 
+                                   "Dufferin", "Durham", "Guelph", "Halton", "Hamilton", "Niagara", "Orangeville", "Orillia",
+                                   "Peel", "Peterborough County", "Simcoe", "Toronto", "Waterloo", "Wellington", "York"};
+            var n = 1;
+            foreach(string item in regionArr)
+            { 
+                var region = new Regional();
+                region.Name = item; 
+                region.Id = n;
+                n++;
+                _unitOfWork.DbContext.Regionals.Add(region);                
+            }
+            _unitOfWork.DbContext.SaveChanges();
+            return Ok("Region added to database");
+        } 
+
+        //Adding Locals to Database
+        [HttpGet("GetLocals")]
+        public IActionResult AddLocals()
+        {
+            string[] localArr = {"Ajax", "Aurora", "Brampton", "Brock", "Burlington", "Caledon", "Clarington", 
+                                  "Durham", "East Gwillimbury", "Georgina", "Halton", "Halton Hills", 
+                                  "King", "Markham", "Milton", "Mississauga", "Newmarket", "Oakville", 
+                                  "Oshawa", "Peel", "Pickering", "Richmond Hill", "Scugog", "Toronto", 
+                                  "Uxbridge", "Vaughan", "Whitby", "Whitchurch-Stouffville", "York"};
+            var n = 1;
+            foreach(string item in localArr)
+            { 
+                var local = new Local();
+                local.Name = item; 
+                local.Id = n;
+                n++;
+                _unitOfWork.DbContext.Locals.Add(local);                
+            }
+            _unitOfWork.DbContext.SaveChanges();
+            return Ok("Local added to database");
+        } 
+
+        //Adding Metropolitans to Database
+        [HttpGet("GetMetropolitans")]
+        public IActionResult AddMetropolitans()
+        {
+            string[] metropolitanArr = {"Greater Toronto Area", "Greater Toronto and Hamilton Area",
+                                         "Greater Golden Horseshoe Area"};
+            var n = 1;
+            foreach(string item in metropolitanArr)
+            { 
+                var metropolitan = new Metropolitan();
+                metropolitan.Name = item; 
+                metropolitan.Id = n;
+                n++;
+                _unitOfWork.DbContext.Metropolitans.Add(metropolitan);                
+            }
+            _unitOfWork.DbContext.SaveChanges();
+            return Ok("Metropolitan added to database");
+        } 
+
+        //Adding Metas to Database
+        [HttpGet("GetMetas")]
+        public IActionResult AddMetas()
+        {
+            string[] metaArr = {"Ontario"};          
+            var n = 1;
+            foreach(string item in metaArr)
+            { 
+                var meta = new Meta();
+                meta.Name = item; 
+                meta.Id = n;
+                n++;
+                _unitOfWork.DbContext.Metas.Add(meta);                
+            }
+            _unitOfWork.DbContext.SaveChanges();
+            return Ok("Meta added to database");
+        } 
     }
 }
