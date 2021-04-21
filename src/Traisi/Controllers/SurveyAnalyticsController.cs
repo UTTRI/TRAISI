@@ -21,7 +21,6 @@ using Traisi.Sdk.Interfaces;
 using Traisi.Sdk.Questions;
 using Traisi.Sdk.Services;
 using Traisi.ViewModels;
-using Newtonsoft.Json;
 
 namespace Traisi.Controllers
 {
@@ -161,7 +160,10 @@ namespace Traisi.Controllers
                     )
                         .Select(p =>
                         {
-                            if (((OptionSelectResponse) p).Code != QuestionContants.NOTA)
+                            if (
+                                ((OptionSelectResponse) p).Code !=
+                                QuestionContants.NOTA
+                            )
                             {
                                 return new {
                                     Label =
@@ -365,31 +367,5 @@ namespace Traisi.Controllers
                 };
             return Ok(result);
         }
-
-        [HttpGet("GetTripSourceData/{userId}")]
-        public IActionResult GetTripSourceData(string userId)
-        {
-            string webRootPath = _hostingEnvironment.WebRootPath;
-            string csvFilePath = webRootPath + "\\Upload\\Temp\\Complete Diary Samples.csv";
-
-            var csv = new List<string[]>();
-            var lines = System.IO.File.ReadAllLines(csvFilePath);
-
-            foreach (string line in lines) csv.Add(line.Split(','));
-
-            var properties = lines[0].Split(',');
-            var listObjResult = new List<Dictionary<string, string>>();
-
-            for (int i = 1; i < lines.Length; i++)
-            {
-                var objResult = new Dictionary<string, string>();
-                for (int j = 0; j < properties.Length; j++)
-                objResult.Add(properties[j], csv[i][j]);
-                listObjResult.Add (objResult);
-            }
-            string result = JsonConvert.SerializeObject(listObjResult.Where(item => item["user_id"] == userId));
-            return Ok(result);
-        }
-
     }
 }

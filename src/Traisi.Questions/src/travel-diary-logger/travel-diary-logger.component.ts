@@ -129,7 +129,7 @@ export class TravelDiaryLoggerComponent extends SurveyQuestion<ResponseTypes.Str
 		//userId should be taken from the logged in user
 		let userId = '8ebd1ad8-d64d-4eba-80f9-6cac5c04af04';
 		//map
-		let url = '/api/SurveyAnalytics/GetTripSourceData/' + userId;
+		let url = '/api/TravelLogger/GetTripSourceData/' + userId;
 		this.httpObj.get(url).subscribe((resData: any[]) => {
 			this.serverData = resData;
 			let coordinates: any[] = this.getCords('2017-10-27', this.serverData);
