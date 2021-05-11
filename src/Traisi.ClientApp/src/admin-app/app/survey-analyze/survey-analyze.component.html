@@ -27,6 +27,7 @@
                     <!-- Questions dropdown list -->
                     Select Question : <select [(ngModel)]="selectedQuestion" style="height: 1.5rem;"
                         (change)="filterByQuestion()">
+                        <option>Select Question</option>
                         <option *ngFor="let item of questions;" value="{{item.id}}">{{item.name}}</option>
                     </select>
                     <!-- Regions dropdown list-->
@@ -43,18 +44,19 @@
                     <div>
                         <h6 style="margin-left: 1.2rem; height: 2.0rem;">Question Based Responses</h6>
                     </div>
-                    <table width="750" cellpadding="5" border="1" style="margin-left: 1rem;">
+                    <!-- All Question Types Responses Table -->
+                    <table  width="750" cellpadding="5" border="1" style="margin-left: 1rem;">
                         <tr>
-                            <th>Question Option Code</th>
-                            <th>Question Option Label</th>
+                            <th *ngIf="questionTable">Question Code</th>
+                            <th>Question Label</th>
                             <th>Count</th>
-                            <th>Percentage</th>
+                            <th *ngIf="questionTable">Percentage</th>
                         </tr>
                         <tr *ngFor="let item of questionResults">
-                            <td>{{item.questionOption}}</td>
+                            <td *ngIf="questionTable">{{item.questionOption}}</td>
                             <td>{{item.label}}</td>
                             <td style="text-align: right;">{{item.count}}</td>
-                            <td style="text-align: right;">{{item.percentage}}</td>
+                            <td *ngIf="questionTable" style="text-align: right;">{{item.percentage}}</td>
                         </tr>
                     </table>
                 </div>

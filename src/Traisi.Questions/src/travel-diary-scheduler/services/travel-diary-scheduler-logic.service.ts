@@ -105,10 +105,11 @@ export class TravelDiarySchedulerLogic {
 			state.isValid = false;
 		}
 		if (!this._scheduler.scheduleItems[idx].timeA && idx > 0) {
-			console.log('fail time');
 			state.isValid = false;
 		}
-		console.log(state);
+		if (!this._scheduler.scheduleItems[idx].latitude || !this._scheduler.scheduleItems[idx].longitude) {
+			state.isValid = false;
+		}
 		return state;
 	}
 

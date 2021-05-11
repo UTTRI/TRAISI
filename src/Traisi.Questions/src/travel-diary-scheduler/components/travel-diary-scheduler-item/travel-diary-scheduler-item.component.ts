@@ -148,7 +148,7 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 		this._defaultDate.setSeconds(0);
 		this._defaultDate.setMilliseconds(0);
 
-		this._prevModel = this.model;
+		this._prevModel = Object.assign({}, this.model);
 	}
 
 	/**
@@ -157,14 +157,15 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 	 */
 	public purposeSelected(): void {
 		let purpose = this.model.purpose;
-		if(!purpose) {
+		if (!purpose) {
 			return;
 		}
 		let workPurpose = this.definedWorkLocations.find((x) => x.purpose.id === purpose);
 		let schoolPurpose = this.definedSchoolLocations.find((x) => x.purpose.id === purpose);
-		if (this.model.purpose === this._prevModel.purpose) {
-			this.model.meta = this._prevModel.meta;
-		} else {
+		if (this.model.purpose !== this._prevModel.purpose) {
+			this.model.address = {};
+			this.model.latitude = undefined;
+			this.model.longitude = undefined;
 			this.model.meta = {};
 		}
 
@@ -198,7 +199,7 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 	 */
 	public purposeModelChange(purpose: string): void {
 		this.model.purpose = purpose;
-		this._prevModel = Object.assign({}, this.model);
+		// this._prevModel = Object.assign({}, this.model);
 	}
 
 	/**
@@ -257,10 +258,13 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 	}
 
 	/**
-	 *
+	 * Confirms the schedule and completes the input. Will ask if a return home trip needs to be made.
 	 */
 	public confirmScheduleItemAndComplete(): void {
-		if (!this._scheduler.scheduleItems[this._scheduler.scheduleItems.length - 1].purpose.startsWith('home')) {
+		if (
+			!this._scheduler.scheduleItems[this._scheduler.scheduleItems.length - 1].purpose.startsWith('home') &&
+			this.scheduleIndex > 0
+		) {
 			this.confirmModal.show();
 		} else {
 			this._schedulerLogic.confirmAndCompleteSchedule();
@@ -302,16 +306,17 @@ export class TravelDiarySchedulerItemComponent implements OnInit {
 	 */
 	public openModal(template: TemplateRef<any>): void {
 		this.dialogInput.onSaved = (data) => {
-			this.model.address = data.address;
+			this.model.address = Object.assign({}, data.address);
 			this.model.latitude = data.latitude;
 			this.model.longitude = data.longitude;
-			this.model.meta = data.meta;
+			this.model.meta = Object.assign({}, data.meta);
 			this.updateState();
 		};
 
 		this.dialogInput.onCancelled = () => {
-			this.model.purpose = undefined;
-			this.model.meta = {};
+			//this.model.purpose = undefined;
+			// this.model.meta = {};
+			this.updateState();
 		};
 
 		this.dialogInput.show(this.model);
