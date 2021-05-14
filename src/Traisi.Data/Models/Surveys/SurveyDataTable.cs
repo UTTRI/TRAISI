@@ -12,6 +12,8 @@ namespace Traisi.Data.Models.Surveys
 
         public string Name {get;set;}
 
+        public Survey Survey{get;set;}
+
 
     }
 }

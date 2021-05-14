@@ -81,7 +81,7 @@ namespace Traisi.Data
 
         public DbSet<SurveyLogic> SurveyLogic { get; set; }
 
-        public DbSet<SurveyDataTable> SurveyDataTables {get;set;}
+        public DbSet<SurveyDataTable> SurveyDataTables { get; set; }
 
         public ApplicationDbContext(DbContextOptions options) : base(options) { }
 
@@ -154,6 +154,7 @@ namespace Traisi.Data
             builder.Entity<Groupcode>().ToTable($"{nameof(this.Groupcodes)}");
 
             builder.Entity<SurveyDataTable>().ToTable($"{nameof(this.SurveyDataTables)}");
+            builder.Entity<Survey>().HasMany<SurveyDataTable>().WithOne();
 
 
             builder.Entity<QuestionPart>().HasMany(q => q.QuestionConfigurations).WithOne().OnDelete(DeleteBehavior.Cascade);
