@@ -33,7 +33,7 @@ namespace Traisi.Sdk.Questions
 
         public string TypeName
         {
-            get => "stated_preference";
+            get => "static_stated_preference";
         }
         public string Icon
         {

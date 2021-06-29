@@ -2,8 +2,8 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { ResponseData, ResponseValidationState, OptionSelectResponseData } from 'traisi-question-sdk';
 import { SurveyQuestion, ResponseTypes, QuestionConfiguration, SurveyViewer, QuestionOption } from 'traisi-question-sdk';
 
-import templateString from './likert-question.component.html';
-import styleString from './likert-question.component.scss';
+import templateString from './static-stated-preference-question.component.html';
+import styleString from './static-stated-preference-question.component.scss';
 /**
  *
  * @export
@@ -16,7 +16,7 @@ import styleString from './likert-question.component.scss';
 	template: '' + templateString,
 	styles: ['' + styleString],
 })
-export class StaticStatedPreference extends SurveyQuestion<ResponseTypes.Json> implements OnInit {
+export class StaticStatedPreferenceQuestionComponent extends SurveyQuestion<ResponseTypes.Json> implements OnInit {
 	public readonly QUESTION_TYPE_NAME: string = 'Static Stated Preference Question';
 
 	public selectedOption: any;

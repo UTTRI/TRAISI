@@ -171,7 +171,7 @@
     "traisi-question-sdk": "file:../Traisi.Sdk/Client/dist",
     "ts-node": "~8.5.4",
     "tslint": "~6.1.2",
-    "typescript": "^3.8.3",
+    "typescript": "^3.8.2",
     "webpack-bundle-analyzer": "^3.6.0"
   },
   "browser": {

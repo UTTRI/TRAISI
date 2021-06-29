@@ -17,8 +17,11 @@ import * as MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import { MapComponent } from 'ngx-mapbox-gl';
 import { Result } from 'ngx-mapbox-gl/lib/control/geocoder-control.directive';
 import { concat, Observable, of, ReplaySubject, Subject, timer } from 'rxjs';
-import * as mode from '../resources/traveldiary-modes.json';
-import * as purpose from '../resources/mapquestion-purpose.json';
+//import * as mode from '../resources/traveldiary-modes.json';
+//import * as purpose from '../resources/mapquestion-purpose.json';
+
+var mode;
+var purpose;
 
 import {
 	SurveyQuestion,

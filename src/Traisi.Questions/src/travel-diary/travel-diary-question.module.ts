@@ -18,7 +18,7 @@ import { ReturnTimeValidatorDirective } from './validators/return-time.directive
 import { PopoverModule } from 'ngx-bootstrap/popover';
 import { TravelDiaryLinearViewComponent } from './components/travel-diary-linear-view.component';
 import { TravelDiaryLinearViewEventDisplayComponent } from './components/travel-diary-linear-view-event-display/travel-diary-linear-view-event-display.component';
-import {TravelDiaryLoggerComponent} from 'travel-diary-logger/travel-diary-logger.component';
+// import {TravelDiaryLoggerComponent} from 'travel-diary-logger/travel-diary-logger.component';
 import { LocationLookupComponent } from 'shared/components/location-lookup.component';
 
 export const calendarProps = {
@@ -36,7 +36,7 @@ export const calModule: ModuleWithProviders = CalendarModule.forRoot(calendarPro
 		ReturnTimeValidatorDirective,
 		TravelDiaryLinearViewComponent,
 		TravelDiaryLinearViewEventDisplayComponent,
-		TravelDiaryLoggerComponent,
+		//TravelDiaryLoggerComponent,
 		LocationLookupComponent
 	],
 	entryComponents: [
@@ -46,7 +46,7 @@ export const calModule: ModuleWithProviders = CalendarModule.forRoot(calendarPro
 		TravelDiaryEventDisplayComponent,
 		TravelDiaryLinearViewComponent,
 		TravelDiaryLinearViewEventDisplayComponent,
-		TravelDiaryLoggerComponent,
+		//TravelDiaryLoggerComponent,
 		LocationLookupComponent
 	],
 	providers: [
@@ -83,11 +83,11 @@ export const calModule: ModuleWithProviders = CalendarModule.forRoot(calendarPro
 					id: 'travel-diary-linear-view-event-display',
 					component: TravelDiaryLinearViewEventDisplayComponent,
 				},
-				{
+				/*{
 					name: 'traisi-travel-diary-logger',
 					id: 'travel-diary-logger',
 					component: TravelDiaryLoggerComponent
-				},
+				},*/
 				{
 					name: 'returnTime',
 					id: 'travel-diary-returnTime',
