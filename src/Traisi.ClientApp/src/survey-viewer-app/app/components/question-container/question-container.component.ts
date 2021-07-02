@@ -161,7 +161,9 @@ export class QuestionContainerComponent implements OnInit, OnDestroy {
 		@Inject(TraisiValues.SurveyRespondentService) private _respondentService: SurveyViewerRespondentService,
 		private _elementRef: ElementRef,
 		private _injector: Injector
-	) {}
+	) {
+		console.log('in loader');
+	}
 
 	/**
 	 * Calcs unique repeat number
@@ -257,6 +259,7 @@ export class QuestionContainerComponent implements OnInit, OnDestroy {
 		this.processPipedQuestionLabel(this.question.label, this.titleLabel);
 		this.processPipedQuestionLabel(this.question.descriptionLabel, this.descriptionLabel);
 
+		console.log('in here');
 		this.questionLoaderService.loadQuestionComponentFactory(this.question).subscribe(
 			(componentFactoryRef) => {
 				let componentRef = this.questionOutlet.createComponent(

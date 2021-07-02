@@ -154,6 +154,7 @@ export class QuestionLoaderService {
 	public getQuestionComponentFactory(questionType: string): Observable<ComponentFactoryBoundToModule<any>> {
 		// reuse the preloaded component factory
 
+		console.log('loading question type:  ' +questionType);
 		if (questionType in this._componentFactories) {
 			return of(this._componentFactories[questionType]);
 		}
@@ -177,6 +178,8 @@ export class QuestionLoaderService {
 						return this._moduleRefs[module.default.moduleName];
 					}
 
+					console.log(module);
+
 					const moduleFactory = this.compiler.compileModuleAndAllComponentsSync(module.default);
 					const moduleRef: any = moduleFactory.ngModuleFactory.create(this.injector);
 					this._moduleRefs[<string>module.default.moduleName] = moduleRef;
@@ -196,13 +199,17 @@ export class QuestionLoaderService {
 						return EMPTY;
 					}
 					let hasDependency: boolean = false;
-					for (let key of Object.keys(componentFactory['ngModule']._providers)) {
-						let provider = componentFactory['ngModule']._providers[key];
-						if (provider !== undefined && provider.hasOwnProperty('dependency')) {
-							hasDependency = true;
-							return this.getQuestionComponentFactory(provider.name);
+					console.log(componentFactory);
+					if(componentFactory['ngModule'].hasOwnProperty('_providers')){
+						for (let key of Object.keys(componentFactory['ngModule']._providers)) {
+							let provider = componentFactory['ngModule']._providers[key];
+							if (provider !== undefined && provider.hasOwnProperty('dependency')) {
+								hasDependency = true;
+								return this.getQuestionComponentFactory(provider.name);
+							}
 						}
 					}
+					
 					return of(componentFactory);
 				})
 			);
@@ -300,6 +307,7 @@ export class QuestionLoaderService {
 				this.getQuestionConfiguration(question),
 			]).subscribe({
 				next: ([componentFactory, configuration]) => {
+					console.log(componentFactory);
 					this._questionConfigurationService.setQuestionServerConfiguration(question, configuration);
 				},
 				error: (r) => {

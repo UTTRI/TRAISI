@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { ModuleWithProviders, NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { StatedPreferenceQuestionComponent } from './stated-preference-question.component';
@@ -29,4 +29,15 @@ import { StaticStatedPreferenceQuestionComponent } from './static-stated-prefere
 	],
 	imports: [CommonModule, HttpClientModule, FormsModule, CdkTableModule]
 })
-export default class TraisiStatedPreferenceQuestionViewerModule { }
+export default class TraisiStatedPreferenceQuestionViewerModule {
+	static moduleName = "stated-preference";
+	static forRoot(): ModuleWithProviders<StaticStatedPreferenceQuestionComponent> {
+		return {
+			ngModule: StaticStatedPreferenceQuestionComponent,
+			providers: [],
+		};
+	}
+}
+
+
+export const moduleName = "stated-preference";
