@@ -90,7 +90,7 @@ export class SurveyViewerResponseService extends SurveyResponseService {
 	 * @param respondent
 	 */
 	public hasStoredResponse(question: SurveyViewQuestion, respondent: SurveyRespondent): boolean {
-		if (!respondent) {
+		if (!respondent || !question) {
 			return false;
 		} else if (this._responses[respondent.id]?.[question.questionId]) {
 			return true;
