@@ -1,3 +1,27 @@
 <div class="static-sp-container">
+    <div class="no-data-error" *ngIf="error">
+        Please upload valid data for this question to the survey builder.
+    </div>
 
+    <div class="static-sp-body table" *ngIf="selectedOption">
+        <div class="table-header">
+            <div class="table-cell"></div>
+            <div *ngFor="let columnHeader of selectedOption.columnHeaders" class="table-cell">
+                {{columnHeader}}
+            </div>
+            <div *ngFor="let row of selectedOption.cellData; let index = index" class="table-row">
+                <div class="table-cell row-header">
+                    {{selectedOption.rowHeaders[index]}}
+                </div>
+                <div *ngFor="let cell of selectedOption.cellData[index]" class="table-cell">
+                    {{cell}}
+                </div>
+            </div>
+            <div class="table-row response-row">
+                <div *ngFor="let number of selectedOption.cellData[0].length" class="table-cell">
+                    <input type="radio" name="test" value="number">
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

@@ -1,0 +1,7 @@
+<div class="static-sp-builder-container">
+  <input type="file" class="file-upload" (change)="readCsvFile($event.target.files[0])">
+
+  <div *ngIf="fileLoaded">
+    Data loaded successfully.
+  </div>
+</div>

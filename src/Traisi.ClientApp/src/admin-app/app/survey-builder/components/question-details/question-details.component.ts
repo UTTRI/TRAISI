@@ -166,8 +166,7 @@ export class QuestionDetailsComponent implements OnInit, AfterViewInit {
 		this.initCustomBuilderView();
 
 		this.loadOptionData();
-		this.dropZoneconfig.url = `${this.baseUrl}/api/SurveyBuilder/${this.surveyId}/QuestionOptions/${
-			this.question.id
+		this.dropZoneconfig.url = `${this.baseUrl}/api/SurveyBuilder/${this.surveyId}/QuestionOptions/${this.question.id
 			}/massImport`;
 		this.dropZoneconfig.headers = {
 			Authorization: 'Bearer ' + this.authService.accessToken
@@ -207,6 +206,8 @@ export class QuestionDetailsComponent implements OnInit, AfterViewInit {
 			this.question.questionType
 		).hasCustomBuilderView);
 
+		console.log(this._editorData.questionTypeMap.get(
+			this.question.questionType));
 		if (!hasCustomBuilderView) {
 			return;
 		} else {

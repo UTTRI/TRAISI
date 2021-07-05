@@ -11,25 +11,17 @@ namespace Traisi.Sdk.Questions
     [SurveyQuestion(QuestionResponseType.Json,
     CodeBundleName = "traisi-questions-sp.module.js",
     CustomBuilderCodeBundleName = "traisi-questions-sp-builder.module.js",
-    CustomBuilderView = "static_stated_preference_custom_builder"),
+    CustomBuilderView = "stated_preference_custom_builder"),
    ]
     public class StaticStatedPreferenceQuestion : ISurveyQuestion
     {
+
         [QuestionOption(QuestionOptionValueType.KeyValuePair,
-        IsMultipleAllowed = true,
-            Name = "Response Options",
-            Description = "Responce choices for the SP selections.",
-            SurveyBuilderValueType = QuestionOptionValueType.KeyValuePair)]
+       IsMultipleAllowed = true,
+           Name = "Response Options",
+           Description = "Responce choices for the SP selections.",
+           SurveyBuilderValueType = QuestionOptionValueType.KeyValuePair)]
         public ICollection ResponseOptions;
-
-        [QuestionOption(QuestionOptionValueType.String,
-        IsMultipleAllowed = true,
-            Name = "Row Headers",
-            Description = "Row header information",
-            SurveyBuilderValueType = QuestionOptionValueType.KeyValuePair)]
-        public ICollection<string> RowHeaders;
-
-
 
         public string TypeName
         {

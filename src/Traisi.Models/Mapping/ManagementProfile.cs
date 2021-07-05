@@ -280,6 +280,8 @@ namespace Traisi.Models.Mapping
 
             CreateMap<QuestionTypeDefinition, SBQuestionTypeDefinitionViewModel>()
                 .ForMember(q => q.ResponseType, map => map.MapFrom<string>((s, d) => s.ResponseType.ToString()))
+                .ForMember( q=> q.CustomBuilderViewName, map => map.MapFrom(x=>x.CustomBuilderViewName))
+                .ForMember( q=> q.HasCustomBuilderView, map => map.MapFrom(x=>x.CustomBuilderViewName != null))
                 .ReverseMap();
 
             CreateMap<QuestionConfigurationDefinition, QuestionConfigurationDefinitionViewModel>()

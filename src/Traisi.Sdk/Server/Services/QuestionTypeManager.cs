@@ -87,6 +87,8 @@ namespace Traisi.Sdk.Services
             var parameterOptions = ReadQuestionOptionData(questionType, sourceAssembly);
             typeDefinition.QuestionOptions = parameterOptions;
             typeDefinition.QuestionPartSlots = ListQuestionSlots(questionType);
+            typeDefinition.HasCustomBuilderView = attribute.CustomBuilderCodeBundleName != null;
+            typeDefinition.CustomBuilderViewName = attribute.CustomBuilderCodeBundleName;
             QuestionTypeDefinitions[typeDefinition.TypeName] = typeDefinition;
 
 

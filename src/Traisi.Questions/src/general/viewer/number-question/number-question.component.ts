@@ -87,8 +87,12 @@ export class NumberQuestionComponent extends SurveyQuestion<ResponseTypes.Number
 	 * on init
 	 */
 	public ngOnInit(): void {
-		const format: any = this.configuration.numberFormat;
+		let format: any = this.configuration.numberFormat;
 
+		if(!format) {
+			format = {};
+			format.id = 'Integer';
+		}
 		switch (format.id) {
 			case 'Integer':
 				this.numberMask = {

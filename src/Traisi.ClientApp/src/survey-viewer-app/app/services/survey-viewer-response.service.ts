@@ -265,7 +265,7 @@ export class SurveyViewerResponseService extends SurveyResponseService {
 	public loadSavedResponses(questions: Array<SurveyViewQuestion>, respondent: SurveyRespondent): Observable<void> {
 		let queryIds = [];
 		for (let question of questions) {
-			if (!this.hasStoredResponse(question, respondent)) {
+			if (!this.hasStoredResponse(question, respondent) && question) {
 				queryIds.push(question.questionId);
 			}
 		}

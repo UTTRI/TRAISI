@@ -19,11 +19,18 @@ import styleString from './static-stated-preference-question.component.scss';
 export class StaticStatedPreferenceQuestionComponent extends SurveyQuestion<ResponseTypes.Json> implements OnInit {
 	public readonly QUESTION_TYPE_NAME: string = 'Static Stated Preference Question';
 
-	public selectedOption: any;
+
+	public error: boolean = false;
+
+	public selectedOption: {
+		rowHeaders: [],
+		cellData: [[]],
+		columnHeaders: []
+	}
 
 	constructor() {
 		super();
-		this.selectedOption = { id: -1 };
+		// this.selectedOption = { id: -1 };
 	}
 
 	/**
@@ -31,19 +38,17 @@ export class StaticStatedPreferenceQuestionComponent extends SurveyQuestion<Resp
 	 */
 	public ngOnInit(): void {
 		this.savedResponse.subscribe(this.onSavedResponseData);
-		this.configuration = {
-			options: ['A', 'B', 'C', 'D', 'E'],
-		};
+
 	}
 
 	/**
 	 * @private
 	 * @memberof LikertQuestionComponent
 	 */
-	private onSavedResponseData: (response: ResponseData<ResponseTypes.String>[] ) => void = (
-		response: ResponseData<ResponseTypes.String>[] 
+	private onSavedResponseData: (response: ResponseData<ResponseTypes.String>[]) => void = (
+		response: ResponseData<ResponseTypes.String>[]
 	) => {
-		if (response.length>0) {
+		if (response.length > 0) {
 			// this.selectedOption = response[0];
 			this.validationState.emit(ResponseValidationState.VALID);
 		}
@@ -66,4 +71,15 @@ export class StaticStatedPreferenceQuestionComponent extends SurveyQuestion<Resp
 		// this.validationState.emit(ResponseValidationState.VALID);
 		// this.autoAdvance.emit(500);
 	}
+
+	public onOptionsLoaded(options: QuestionOption[]): void {
+		if(options.length == 0) {
+			this.error = true;
+			return;
+		}
+		let data = JSON.parse(options[0].label);
+		this.selectedOption = data[Math.floor(Math.random() * data.length)];
+		console.log(this.selectedOption);
+	}
+
 }

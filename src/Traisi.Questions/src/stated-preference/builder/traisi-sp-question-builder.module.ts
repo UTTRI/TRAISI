@@ -5,23 +5,24 @@ import { StatedPreferenceBuilderComponent } from './stated-preference-builder.co
 import { FormsModule } from '@angular/forms';
 import { CdkTableModule } from '@angular/cdk/table';
 import { NgJsonEditorModule } from 'ang-jsoneditor';
+import { StaticStatedPreferenceBuilderComponent } from './static-stated-preference-builder.component';
 require('jsoneditor');
 @NgModule({
-	declarations: [ StatedPreferenceBuilderComponent],
-	entryComponents: [ StatedPreferenceBuilderComponent],
+	declarations: [StaticStatedPreferenceBuilderComponent],
+	entryComponents: [StaticStatedPreferenceBuilderComponent],
 	providers: [
 		{
 			provide: 'widgets',
 			useValue: [
 				{
-					name: 'traisi-sp-custom-builder',
-					id: 'stated_preference_custom_builder',
-					component: StatedPreferenceBuilderComponent
+					name: 'traisi-static-sp-custom-builder',
+					id: 'traisi-questions-sp-builder.module.js',
+					component: StaticStatedPreferenceBuilderComponent
 				}
 			],
 			multi: true
 		}
 	],
-	imports: [CommonModule, HttpClientModule, FormsModule, CdkTableModule,NgJsonEditorModule]
+	imports: [CommonModule, HttpClientModule, FormsModule]
 })
-export default class TraisiStatedPreferenceQuestionBuilderModule {}
+export default class TraisiStatedPreferenceQuestionBuilderModule { }

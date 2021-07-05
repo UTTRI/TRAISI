@@ -1,3 +1,21 @@
 :host {
 	
 }
+
+.static-sp-container {
+    .table-row {
+        display: table-row;
+    }
+
+    .table-cell {
+        display: table-cell;
+    }
+
+    .table-header {
+        display: table-header-group;
+    }
+
+    .table {
+        display: table;
+    }
+}
