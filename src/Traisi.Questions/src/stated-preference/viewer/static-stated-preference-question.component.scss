@@ -9,13 +9,32 @@
 
     .table-cell {
         display: table-cell;
+        padding: 5px;
+        border-right: solid 1px #AAA;
+        text-align: center;
+        border-bottom: solid 1px #EEE;
     }
 
     .table-header {
         display: table-header-group;
+        border-bottom: solid 1px black;
     }
 
     .table {
         display: table;
+    }
+
+    .column-header {
+        font-weight: bold;
+    }
+
+    .row-header {
+        font-weight: bold;
+        text-align: right;
+    }
+
+    .table-radio {
+        text-align: center;
+        border-top: solid 1px #BBB;
     }
 }

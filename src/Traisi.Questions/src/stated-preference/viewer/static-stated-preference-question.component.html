@@ -6,7 +6,7 @@
     <div class="static-sp-body table" *ngIf="selectedOption">
         <div class="table-header">
             <div class="table-cell"></div>
-            <div *ngFor="let columnHeader of selectedOption.columnHeaders" class="table-cell">
+            <div *ngFor="let columnHeader of selectedOption.columnHeaders" class="table-cell column-header">
                 {{columnHeader}}
             </div>
             <div *ngFor="let row of selectedOption.cellData; let index = index" class="table-row">
@@ -18,7 +18,8 @@
                 </div>
             </div>
             <div class="table-row response-row">
-                <div *ngFor="let number of selectedOption.cellData[0].length" class="table-cell">
+                <div class="table-cell"></div>
+                <div *ngFor="let number of selectedOption.cellData[0]" class="table-cell table-radio">
                     <input type="radio" name="test" value="number">
                 </div>
             </div>
