@@ -1,4 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
+import { throws } from 'assert';
 import { ResponseData, ResponseValidationState, OptionSelectResponseData } from 'traisi-question-sdk';
 import { SurveyQuestion, ResponseTypes, QuestionConfiguration, SurveyViewer, QuestionOption } from 'traisi-question-sdk';
 
@@ -28,6 +29,16 @@ export class StaticStatedPreferenceQuestionComponent extends SurveyQuestion<Resp
 		columnHeaders: []
 	}
 
+	public selectedIndex: number = -1;
+
+	public optionIndex: number = -1;
+
+	public options;
+
+	private startTime: Date;
+
+	private elapsedTime: number;
+
 	constructor() {
 		super();
 		// this.selectedOption = { id: -1 };
@@ -41,27 +52,52 @@ export class StaticStatedPreferenceQuestionComponent extends SurveyQuestion<Resp
 
 	}
 
+	public onResponseChanged($event, index: number): void {
+		this.selectedIndex = index;
+		let endTime = new Date();
+		let elapsedTime = endTime.getTime() - this.startTime.getTime();
+		this.response.emit([{ index: this.selectedIndex, optionIndex: this.optionIndex, selectionTime: this.elapsedTime ?? elapsedTime }]);
+	}
+
+	public onModelChanged($event): void {
+		this.onResponseChanged($event, $event);
+	}
+
 	/**
 	 * @private
 	 * @memberof LikertQuestionComponent
 	 */
-	private onSavedResponseData: (response: ResponseData<ResponseTypes.String>[]) => void = (
-		response: ResponseData<ResponseTypes.String>[]
+	private onSavedResponseData: (response: ResponseData<ResponseTypes.Json>[]) => void = (
+		response: ResponseData<ResponseTypes.Json>[]
 	) => {
-		if (response.length > 0) {
-			// this.selectedOption = response[0];
-			this.validationState.emit(ResponseValidationState.VALID);
-		}
-	};
 
-	/**
-	 *
-	 * @param option
-	 */
-	public onModelChanged(option: OptionSelectResponseData): void {
-		//option.value = option.code;
-		//this.response.emit([option]);
-	}
+		this.questionOptions.subscribe(options => {
+
+			let data = JSON.parse(options[0].label);
+
+			if (response.length > 0) {
+				// this.selectedOption = response[0];
+				this.validationState.emit(ResponseValidationState.VALID);
+				let responseData = JSON.parse(response[0]['value'])[0];
+				this.selectedOption = data[responseData.optionIndex];
+				this.optionIndex = responseData.optionIndex;
+				this.selectedIndex = responseData.index;
+				this.elapsedTime = responseData.selectionTime;
+			}
+			else {
+				if (options.length == 0) {
+					this.error = true;
+					return;
+				}
+				let data = JSON.parse(options[0].label);
+				let optionIndex = Math.floor(Math.random() * data.length);
+				this.selectedOption = data[optionIndex];
+				this.optionIndex = optionIndex;
+				this.startTime = new Date();
+			}
+		});
+
+	};
 
 	/**
 	 * Response saved callback.
@@ -73,13 +109,7 @@ export class StaticStatedPreferenceQuestionComponent extends SurveyQuestion<Resp
 	}
 
 	public onOptionsLoaded(options: QuestionOption[]): void {
-		if(options.length == 0) {
-			this.error = true;
-			return;
-		}
-		let data = JSON.parse(options[0].label);
-		this.selectedOption = data[Math.floor(Math.random() * data.length)];
-		console.log(this.selectedOption);
+		this.options = options;
 	}
 
 }

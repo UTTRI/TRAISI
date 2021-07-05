@@ -6,21 +6,21 @@
     <div class="static-sp-body table" *ngIf="selectedOption">
         <div class="table-header">
             <div class="table-cell"></div>
-            <div *ngFor="let columnHeader of selectedOption.columnHeaders" class="table-cell column-header">
+            <div *ngFor="let columnHeader of selectedOption.columnHeaders" class="table-cell column-header clickable">
                 {{columnHeader}}
             </div>
             <div *ngFor="let row of selectedOption.cellData; let index = index" class="table-row">
                 <div class="table-cell row-header">
                     {{selectedOption.rowHeaders[index]}}
                 </div>
-                <div *ngFor="let cell of selectedOption.cellData[index]" class="table-cell">
+                <div (click)="onResponseChanged($event,jindex)" *ngFor="let cell of selectedOption.cellData[index]; let jindex = index" class="table-cell clickable" [class.highlight]="selectedIndex==jindex">
                     {{cell}}
                 </div>
             </div>
             <div class="table-row response-row">
                 <div class="table-cell"></div>
-                <div *ngFor="let number of selectedOption.cellData[0]" class="table-cell table-radio">
-                    <input type="radio" name="test" value="number">
+                <div *ngFor="let number of selectedOption.cellData[0];let index = index" class="table-cell table-radio clickable">
+                    <input type="radio" [value]="index" name="{{questionId}}-static-sp" (ngModelChange)="onModelChanged($event)"  [(ngModel)]="selectedIndex" (change)="onResponseChanged($event,index)">
                 </div>
             </div>
         </div>
