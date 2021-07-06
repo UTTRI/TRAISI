@@ -1495,7 +1495,7 @@ namespace TRAISI.Export
                     for (var i = 0; i < filteredColNames.Count; i++)
                     {
                         // matrixMap[""]
-                        worksheet.Cells[1, columnNum + i ].Value = filteredColNames[i]?.Code + "-" + filteredColNames[i]?.QuestionOptionLabels["en"].Value;
+                        worksheet.Cells[1, columnNum + i].Value = filteredColNames[i]?.Code + "-" + filteredColNames[i]?.QuestionOptionLabels["en"].Value;
                         matrixColMap[questionPart][filteredColNames[i]?.QuestionOptionLabels["en"].Value] = i;
                     }
                     for (var i = 0; i < filteredRowNames.Count; i++)
@@ -1506,6 +1506,12 @@ namespace TRAISI.Export
                     columnNum += filteredColNames.Count;
                     continue;
 
+                }
+                else if (this._questionTypeManager.QuestionTypeDefinitions[questionPart.QuestionType].ClassName == typeof(StaticStatedPreferenceQuestion).Name)
+                {
+                    worksheet.Cells[1, columnNum].Value = questionPart.Name + "-Table";
+                    worksheet.Cells[1, columnNum + 1].Value = questionPart.Name + "-Column";
+                    columnNum += 1;
                 }
                 else
                 {
@@ -1646,12 +1652,21 @@ namespace TRAISI.Export
                                     questionColumnDict[response.QuestionPart] + 3].Value
                         = ReadSingleResponse(response);
                     }
+                    else if (this._questionTypeManager.QuestionTypeDefinitions[response.QuestionPart.QuestionType].ClassName ==
+                                typeof(StaticStatedPreferenceQuestion).Name)
+                    {
+                        worksheet.Cells[respondentRowNum[respondent],
+                                    questionColumnDict[response.QuestionPart]].Value = "HELLO";
+                        worksheet.Cells[respondentRowNum[respondent],
+                                    questionColumnDict[response.QuestionPart] + 1].Value = "HELLO";
+                    }
                     else
                     {
                         worksheet.Cells[respondentRowNum[respondent],
                                         questionColumnDict[response.QuestionPart]].Value
                             = ReadSingleResponse(response);
                     }
+
                 }
             }
         }
@@ -1705,7 +1720,13 @@ namespace TRAISI.Export
                     //Adding Longitude to School and Work Location Questions Parts
                     worksheet.Cells[1, columnNum].Value = questionPart.Name + ": Lng";
                 }
-
+                else if (this._questionTypeManager.QuestionTypeDefinitions[questionPart.QuestionType].ClassName == typeof(StaticStatedPreferenceQuestion).Name)
+                {
+                    worksheet.Cells[1, columnNum].Value = questionPart.Name + "Sp-TableIndex";
+                    worksheet.Cells[1, columnNum + 1].Value = questionPart.Name + "Sp-OptionIndex";
+                    worksheet.Cells[1, columnNum + 2].Value = questionPart.Name + "Sp-SelectionTime";
+                    columnNum += 2;
+                }
                 //checkbox
                 else if (this._questionTypeManager.QuestionTypeDefinitions[questionPart.QuestionType].ClassName == typeof(CheckboxQuestion).Name)
                 {
@@ -1732,7 +1753,7 @@ namespace TRAISI.Export
                         worksheet.Cells[1, columnNum].Value = "NOTA";
                         checkCodeMap[questionPart]["nota"] = filteredColNames.Count;
                         columnNum++;
-                        
+
                     }
                     continue;
 
@@ -1892,6 +1913,34 @@ namespace TRAISI.Export
                             worksheet.Cells[respondentRowNum[respondent],
                                         questionColumnDict[response.QuestionPart] + 3].Value
                             = ReadSingleResponse(response);
+                        }
+                        else if (this._questionTypeManager.QuestionTypeDefinitions[response.QuestionPart.QuestionType].ClassName ==
+                                                    typeof(StaticStatedPreferenceQuestion).Name)
+                        {
+                            try
+                            {
+                                var jsonResponse = ReadSingleResponse(response);
+                                var arrayResponse = JArray.Parse(jsonResponse as string)[0];
+
+                                var val = JArray.Parse(arrayResponse.Value<string>("Value"))[0];
+                                worksheet.Cells[respondentRowNum[respondent], questionColumnDict[response.QuestionPart]].Value = val.Value<int>("optionIndex");
+                                worksheet.Cells[respondentRowNum[respondent], questionColumnDict[response.QuestionPart] + 1].Value = val.Value<int>("index");
+                                worksheet.Cells[respondentRowNum[respondent], questionColumnDict[response.QuestionPart] + 2].Value = val.Value<int>("selectionTime");
+                            }
+                            catch (Exception e)
+                            {
+                                worksheet.Cells[respondentRowNum[respondent],
+                                                                        questionColumnDict[response.QuestionPart]].Value
+                                                            = "<ERROR PARSING>";
+                                worksheet.Cells[respondentRowNum[respondent],
+                                            questionColumnDict[response.QuestionPart] + 1].Value
+                                = "<ERROR PARSING>";
+                                worksheet.Cells[respondentRowNum[respondent],
+                                           questionColumnDict[response.QuestionPart] + 2].Value
+                               = "<ERROR PARSING>";
+                            }
+
+                            continue;
                         }
                         //Shopping frequency responses
                         else if (this._questionTypeManager.QuestionTypeDefinitions[response.QuestionPart.QuestionType].ClassName ==
