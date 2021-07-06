@@ -294,17 +294,18 @@ namespace Traisi.Controllers
         public async Task<IActionResult> ExportResponses(int id, string fileFormat)
         {
             var survey = await this._unitOfWork.Surveys.GetAsync(id);
-            string[] args = new string[] { survey.Code };
+
+            string folderName = Path.Combine("Download","surveyexportfiles",$"{survey.Id}");
+            string webRootPath = _hostingEnvironment.WebRootPath;
+            string newPath = Path.Combine(webRootPath, folderName);
+            Directory.CreateDirectory(newPath);
+            string[] args = new string[] { survey.Code, newPath };
             TRAISI.Export.Program.Main(args);
 
             string client_fileName = survey.Code + "_" + fileFormat + ".zip";
 
-            string folderName = "Download\\surveyexportfiles";
-            string webRootPath = _hostingEnvironment.WebRootPath;
-            string newPath = Path.Combine(webRootPath, folderName);
-
-            var zipFileName = newPath + "\\" + survey.Code + ".zip";
-            var directoryInfo = new DirectoryInfo(@"..\..\src\TRAISI.Export\surveyexportfiles");
+            var zipFileName = Path.Combine(webRootPath, "Download","surveyexportfiles",$"{survey.Code}.zip");
+            var directoryInfo = new DirectoryInfo(newPath);
             var zFile = new FileInfo(zipFileName);
             if (zFile.Exists)
             {
@@ -317,8 +318,8 @@ namespace Traisi.Controllers
                 zipFileDirectory = GenerateCsvFromExcel(directoryInfo.FullName, newPath);
             }
 
-            ZipFile.CreateFromDirectory(zipFileDirectory, zipFileName);
-            var stream = new FileStream(zipFileName, FileMode.Open);
+            ZipFile.CreateFromDirectory(zipFileDirectory, Path.Combine(webRootPath, "Download","surveyexportfiles",$"{survey.Code}.zip"));
+            var stream = new FileStream(Path.Combine(webRootPath, Path.Combine("Download","surveyexportfiles",$"{survey.Code}.zip")), FileMode.Open);
             return File(stream, "application/octet-stream", client_fileName);
         }
 

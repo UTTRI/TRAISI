@@ -24,7 +24,13 @@ namespace TRAISI.Export
             var contextFactory = new DesignTimeDbContextFactory();
             var context = contextFactory.CreateDbContext(args);
             var questionTypeManager = new QuestionTypeManager(null, new NullLoggerFactory());
-            questionTypeManager.LoadQuestionExtensions("../TRAISI/extensions");
+            if(Directory.Exists("../TRAISI/extensions")) {
+                 questionTypeManager.LoadQuestionExtensions("../TRAISI/extensions");
+            }
+            else {
+                 questionTypeManager.LoadQuestionExtensions("extensions");
+            }
+           
             var questionExporter = new QuestionTableExporter(context, questionTypeManager);
             var responseTableExporter = new ResponseTableExporter(context, questionTypeManager);
             var responderTableExporter = new ResponderTableExporter(context);
@@ -34,6 +40,8 @@ namespace TRAISI.Export
                 Console.Error.WriteLine("Please specify the survey code as an input argument.");
                 return 1;
             }
+
+            string path = args.Length > 1 ? args[1] : @"..\..\src\TRAISI.Export\surveyexportfiles\";
 
             // Read survey name
             var survey = context.Surveys
@@ -132,7 +140,7 @@ namespace TRAISI.Export
             var questionParts_houseHold = questionPartViews_houseHold.Select(x => x.QuestionPart).ToList();
 
             // Household Questions Excel file
-            var hfi = new FileInfo(@"..\..\src\TRAISI.Export\surveyexportfiles\HouseholdQuestions.xlsx");
+            var hfi = new FileInfo(Path.Combine(path,"HouseholdQuestions.xlsx"));
             if (hfi.Exists)
             {
                 hfi.Delete();
@@ -154,7 +162,7 @@ namespace TRAISI.Export
             }
 
             // Personal Questions Excel file
-            var pfi = new FileInfo(@"..\..\src\TRAISI.Export\surveyexportfiles\PersonalQuestions.xlsx");
+            var pfi = new FileInfo(Path.Combine(path,"PersonalQuestions.xlsx"));
             if (pfi.Exists)
             {
                 pfi.Delete();
@@ -176,7 +184,7 @@ namespace TRAISI.Export
             }
 
             // Travel Diary Excel file
-            var tfi = new FileInfo(@"..\..\src\TRAISI.Export\surveyexportfiles\TravelDiary.xlsx");
+            var tfi = new FileInfo(Path.Combine(path,"TravelDiary.xlsx"));
             if (tfi.Exists)
             {
                 tfi.Delete();
@@ -194,7 +202,7 @@ namespace TRAISI.Export
                 eXp.Save();
             }
             // Transit Routes Excel file
-            var rfi = new FileInfo(@"..\..\src\TRAISI.Export\surveyexportfiles\TransitRoutes.xlsx");
+            var rfi = new FileInfo(Path.Combine(path,"TransitRoutes.xlsx"));
             if (rfi.Exists)
             {
                 rfi.Delete();

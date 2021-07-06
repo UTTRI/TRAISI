@@ -72,7 +72,7 @@
 		"isDropOffOrPickup": false
 	},
 	{
-		"label": "pick up food",
+		"label": "pick up cooked meal",
 		"icon": "fas fa-utensils",
 		"id": "pick-up-food",
 		"allowFirstLocation": false,
