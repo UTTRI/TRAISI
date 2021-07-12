@@ -76,6 +76,16 @@
 		"id": "bicycle"
 	},
 	{
+		"label": "E-Bike",
+		"icon": "fas fa-biking",
+		"id": "ebike"
+	},
+	{
+		"label": "E-Scooter",
+		"icon": "fas fa-motorcyclei",
+		"id": "escooter"
+	},
+	{
 		"label": "Cycling (bikeshare)",
 		"icon": "fas fa-biking",
 		"id": "cycling-bikeshare"
