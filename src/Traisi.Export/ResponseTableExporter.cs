@@ -602,38 +602,48 @@ namespace TRAISI.Export
                     //Trip Destination Purpose
                     worksheet.Cells[rowNumber, 45].Value = response_dest.Purpose;
 
-                    //Departure columns 
-                    string timeA = response_dest.TimeA.ToString();
-                    if (Regex.IsMatch(timeA, @"([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))", RegexOptions.IgnoreCase))
+                    //Departure columns
+                    try
                     {
+                        DateTimeOffset timeA = response_dest.TimeA;
+                        //if (Regex.IsMatch(timeA, @"([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))", RegexOptions.IgnoreCase))
+                        // {
                         //Departure Date 
-                        Match dA = Regex.Match(timeA, @"([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))", RegexOptions.IgnoreCase);
-                        Match tA = Regex.Match(timeA, @"(1[0-2]|0?[1-9]):(?:[012345]\d):(?:[012345]\d) ([AaPp][Mm])", RegexOptions.IgnoreCase);
-                        worksheet.Cells[rowNumber, 46].Value = Convert.ToString(dA.Value);
+                        //Match dA = Regex.Match(timeA, @"([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))", RegexOptions.IgnoreCase);
+                        //Match tA = Regex.Match(timeA, @"(1[0-2]|0?[1-9]):(?:[012345]\d):(?:[012345]\d) ([AaPp][Mm])", RegexOptions.IgnoreCase);
+                        worksheet.Cells[rowNumber, 46].Value = timeA.Date.ToString();
 
                         //Departure Day 
-                        DateTime dtA = DateTime.Parse(dA.Value);
-                        worksheet.Cells[rowNumber, 47].Value = Convert.ToString(dtA.DayOfWeek);
+                        // DateTime dtA = DateTime.Parse(dA.Value);
+                        worksheet.Cells[rowNumber, 47].Value = Convert.ToString(timeA.Day);
 
                         //Departure Time
-                        worksheet.Cells[rowNumber, 48].Value = Convert.ToString(tA.Value);
+                        worksheet.Cells[rowNumber, 48].Value = timeA.TimeOfDay.ToString();
                     }
-                    //Arrival columns 
-                    string timeB = response_dest.TimeB.ToString();
-                    if (Regex.IsMatch(timeB, @"((20|20)\d\d-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))", RegexOptions.IgnoreCase))
+                        catch (Exception e)
                     {
+
+                    }
+                    // }
+                    //Arrival columns 
+                    try
+                    {
+                        DateTimeOffset timeB = response_dest.TimeB;
+
                         //Arrival Date
-                        Match dB = Regex.Match(timeB, @"((20|20)\d\d-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))", RegexOptions.IgnoreCase);
-                        Match tB = Regex.Match(timeB, @"(1[0-2]|0?[1-9]):(?:[012345]\d):(?:[012345]\d) ([AaPp][Mm])", RegexOptions.IgnoreCase);
-                        worksheet.Cells[rowNumber, 49].Value = Convert.ToString(dB.Value);
+                        //Match dB = Regex.Match(timeB, @"((20|20)\d\d-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))", RegexOptions.IgnoreCase);
+                        //Match tB = Regex.Match(timeB, @"(1[0-2]|0?[1-9]):(?:[012345]\d):(?:[012345]\d) ([AaPp][Mm])", RegexOptions.IgnoreCase);
+                        worksheet.Cells[rowNumber, 49].Value = timeB.Date.ToString();
 
                         //Arrival Day 
-                        DateTime dtB = DateTime.Parse(dB.Value);
-                        worksheet.Cells[rowNumber, 50].Value = Convert.ToString(dtB.DayOfWeek);
+                        worksheet.Cells[rowNumber, 50].Value = Convert.ToString(timeB.Day);
 
                         //Arrival Time 
-                        worksheet.Cells[rowNumber, 51].Value = Convert.ToString(tB.Value);
+                        worksheet.Cells[rowNumber, 51].Value = timeB.TimeOfDay.ToString();
+
                     }
+                    catch { }
+
                     //TpModes
                     worksheet.Cells[rowNumber, 52].Value = String.Empty;
 
@@ -1823,12 +1833,12 @@ namespace TRAISI.Export
                     {
                         if (respondent is PrimaryRespondent primaryRespondent)
                         {
-                            var result = JObject.Parse(primaryRespondent.SurveyAccessRecords.FirstOrDefault()?.QueryParams)["psid"]?.Value<string>();
+                            var result = JObject.Parse(primaryRespondent.SurveyAccessRecords.FirstOrDefault()?.QueryParams)["uid"]?.Value<string>();
                             worksheet.Cells[respondentRowNum[respondent], 3].Value = result;
                         }
                         else if (respondent is SubRespondent subRespondent)
                         {
-                            var result = JObject.Parse(subRespondent.PrimaryRespondent.SurveyAccessRecords.FirstOrDefault()?.QueryParams)["psid"]?.Value<string>();
+                            var result = JObject.Parse(subRespondent.PrimaryRespondent.SurveyAccessRecords.FirstOrDefault()?.QueryParams)["uid"]?.Value<string>();
                             worksheet.Cells[respondentRowNum[respondent], 3].Value = result;
                         }
                     }

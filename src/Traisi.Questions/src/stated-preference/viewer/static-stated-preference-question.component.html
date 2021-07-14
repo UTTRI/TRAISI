@@ -20,7 +20,7 @@
             <div class="table-row response-row">
                 <div class="table-cell"></div>
                 <div *ngFor="let number of selectedOption.cellData[0];let index = index" class="table-cell table-radio clickable">
-                    <input type="radio" [value]="index" name="{{questionId}}-static-sp" (ngModelChange)="onModelChanged($event)"  [(ngModel)]="selectedIndex" (change)="onResponseChanged($event,index)">
+                    <input class="static-sp-radio" type="radio" [value]="index" name="{{questionId}}-static-sp" (ngModelChange)="onModelChanged($event)"  [(ngModel)]="selectedIndex" (change)="onResponseChanged($event,index)">
                 </div>
             </div>
         </div>
