@@ -1,9 +1,17 @@
-<smooth-dnd-container [dragHandleSelector]="'.grab-handle'" (drop)="onDrop($event)"
-	[getChildPayload]="getPayload" [lockAxis]="'y'">
+<smooth-dnd-container [dragHandleSelector]="'.grab-handle'" (drop)="onDrop($event)" [getChildPayload]="getPayload"
+	[lockAxis]="'y'">
 	<smooth-dnd-draggable *ngFor="let screeningQuestion of questionsList; index as i; trackBy:trackByIdx">
 		<div class="form-group row response-option-container">
 			<div class="input-group col-lg-6 offset-lg-3">
-				<input type="text" class="form-control optionValue" name="question-{{i}}" id="label-{{i}}" [(ngModel)]="questionsList[i]" (change)="updateHTML()" />
+
+				<input type="text" class="form-control optionValue" name="question-{{i}}" id="label-{{i}}"
+					[(ngModel)]="questionsList[i].label" (change)="updateHTML()" style="flex-grow: 1;" />
+				<select id="screening-required-{{i}}" name="screening-required-{{i}}"
+					[(ngModel)]="questionsList[i].required" class="form-control" (change)="updateHTML()"
+					style="flex: 0 1 130px; border-left: solid 1px #CCC;">
+					<option [ngValue]="true">Required</option>
+					<option [ngValue]="false">Not Required</option>
+				</select>
 				<div class="input-group-append">
 					<button type="button" class="btn btn-danger" (click)="deleteQuestion(i)">
 						<i class="fas fa-trash-alt"></i>

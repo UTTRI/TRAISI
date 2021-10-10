@@ -108,6 +108,7 @@ export class StaticStatedPreferenceBuilderComponent
 			console.log(result);
 			let spResult = this._generateStaticSpTableOptions(result);
 			this._saveSpTableData(spResult);
+			console.log(spResult);
 		}
 		reader.onerror = (evt) => {
 			console.log('error reading file');
@@ -149,7 +150,9 @@ export class StaticStatedPreferenceBuilderComponent
 				rowIndex++;
 			}
 		}
-		console.log(tableOptions);
+		console.log(tableOption);
+		tableOptions.push(tableOption);
+
 		return tableOptions;
 	}
 

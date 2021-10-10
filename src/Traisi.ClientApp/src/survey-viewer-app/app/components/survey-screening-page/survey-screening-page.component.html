@@ -7,7 +7,7 @@
 	<div class="screening-questions-section">
 		<form #screeningForm="ngForm" (ngSubmit)="onSubmitScreeningQuestions()" [formGroup]="screeningFormGroup">
 			<div class="form-group screening-question-group" *ngFor="let question of screeningQuestions.questionsList; index as i">
-				<h5 class="screening-question-header">{{ question }}</h5>
+				<h5 class="screening-question-header">{{ question.label }}</h5>
 				<div class="custom-control custom-radio screening-input screening-input-yes">
 					<input
 						required
@@ -16,7 +16,8 @@
 						name="{{ i }}"
 						class="custom-control-input"
 						[value]="true"
-						formControlName="{{ i }}"
+						[attr.data-required]="question.required"
+						formControlName="{{ i }}" 
 						ngModel
 					/>
 					<label class="custom-control-label" for="customRadio-{{ i }}-1">{{ 'ScreeningQuestions.Yes' | translate }}</label>
@@ -29,6 +30,7 @@
 						name="{{ i }}"
 						class="custom-control-input"
 						[value]="false"
+						[attr.data-required]="question.required"
 						formControlName="{{ i }}"
 						ngModel
 					/>
