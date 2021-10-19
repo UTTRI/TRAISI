@@ -264,8 +264,8 @@ export class SurveyViewerComponent
 				}, 3000);
 			}
 		});
-
-		if (Modernizr.mq('(max-width: 768px)')) {
+		let portrait = window.innerWidth > window.innerHeight ? false : true;
+		if (Modernizr.mq('(max-width: 768px)') || portrait) {
 			this.menuToggled = true;
 		}
 	}

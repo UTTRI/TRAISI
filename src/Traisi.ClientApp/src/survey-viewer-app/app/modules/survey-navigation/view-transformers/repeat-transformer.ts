@@ -9,7 +9,7 @@ import { ValidationState } from 'app/services/survey-viewer-api-client.service';
 import { Observable } from 'rxjs';
 import { SurveyViewerStateService } from 'app/services/survey-viewer-state.service';
 
-const transit_modes = ['transit-all-way', 'transit-park-ride', 'transit-kiss-ride', 'transit-cycle-ride'];
+const transit_modes = ['transit-all-way', 'transit-park-ride', 'transit-kiss-ride', 'transit-cycle-ride', 'transit-ridehailing-ride'];
 
 @Injectable({
 	providedIn: 'root',

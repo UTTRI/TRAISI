@@ -130,6 +130,10 @@ namespace TRAISI.Export
                 .Include(r => r.Respondent)
                 .ThenInclude(r => r.SurveyRespondentGroup)
                 .ThenInclude(r => r.GroupMembers)
+                .Include( r => r.Respondent)
+                .ThenInclude(r => r.SurveyRespondentGroup)
+                .ThenInclude( r => r.GroupPrimaryRespondent)
+                .ThenInclude( r => r.SurveyAccessRecords)
                 .OrderBy(r => r.UpdatedDate)
                 .ToList();
         }
@@ -620,7 +624,7 @@ namespace TRAISI.Export
                         //Departure Time
                         worksheet.Cells[rowNumber, 48].Value = timeA.TimeOfDay.ToString();
                     }
-                        catch (Exception e)
+                    catch (Exception e)
                     {
 
                     }
@@ -1835,21 +1839,25 @@ namespace TRAISI.Export
                     {
                         if (respondent is PrimaryRespondent primaryRespondent)
                         {
+                            worksheet.Cells[respondentRowNum[respondent], 4].Value = primaryRespondent.SurveyAccessRecords.FirstOrDefault()?.RemoteIpAddress;
                             var result = JObject.Parse(primaryRespondent.SurveyAccessRecords.FirstOrDefault()?.QueryParams)["uid"]?.Value<string>();
                             worksheet.Cells[respondentRowNum[respondent], 3].Value = result;
-                             // IP Address
-                             worksheet.Cells[respondentRowNum[respondent], 4].Value = primaryRespondent.SurveyAccessRecords.FirstOrDefault()?.RemoteIpAddress;
+                            // IP Address
+
                         }
                         else if (respondent is SubRespondent subRespondent)
                         {
+                            worksheet.Cells[respondentRowNum[respondent], 4].Value = subRespondent.PrimaryRespondent.SurveyAccessRecords.FirstOrDefault()?.RemoteIpAddress;
                             var result = JObject.Parse(subRespondent.PrimaryRespondent.SurveyAccessRecords.FirstOrDefault()?.QueryParams)["uid"]?.Value<string>();
                             worksheet.Cells[respondentRowNum[respondent], 3].Value = result;
-                            worksheet.Cells[respondentRowNum[respondent], 4].Value = (subRespondent.PrimaryRespondent.SurveyAccessRecords.FirstOrDefault()?.RemoteIpAddress;
+
                         }
                     }
-                    catch { }
+                    catch (Exception e)
+                    {
+                    }
 
-                   
+
 
                     var checkboxResponses = responses.Where(r => this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ClassName ==
                                             typeof(CheckboxQuestion).Name).GroupBy(r => r.Respondent).Select(g => g).OrderBy(x => x.Key.SurveyRespondentGroup.Id).ToList();
