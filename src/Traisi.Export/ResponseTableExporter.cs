@@ -1839,6 +1839,7 @@ namespace TRAISI.Export
                     {
                         if (respondent is PrimaryRespondent primaryRespondent)
                         {
+                            worksheet.Cells[respondentRowNum[respondent], 4].Value = primaryRespondent.SurveyAccessRecords.FirstOrDefault()?.RemoteIpAddress;
                             var userId = primaryRespondent.SurveyAccessRecords.SelectMany(x =>
           x.QueryParams.Select(y => new { Key = y.Key, Value = y.Value }).Where(z => z.Key == "uid")).FirstOrDefault();
 
