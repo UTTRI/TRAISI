@@ -27,6 +27,7 @@ using Traisi.ViewModels.SurveyViewer;
 using Traisi.ViewModels.Users;
 using Traisi.Models.ViewModels;
 using Traisi.Models.Extensions;
+using Newtonsoft.Json;
 
 namespace Traisi.Services
 {
@@ -310,7 +311,7 @@ namespace Traisi.Services
                 AccessDateTime = DateTime.Now,
                 UserAgent = parameters.UserAgent,
                 RemoteIpAddress = parameters.RemoteIpAddress,
-                QueryParams = parameters.QueryParams,
+                QueryParams = JsonConvert.DeserializeObject<Dictionary<string, string>>(parameters.QueryParams),
                 AccessUser = respondent.User,
                 RequestUrl = parameters.RequestUrl
             };
@@ -410,46 +411,49 @@ namespace Traisi.Services
 
             var records = await this._unitOfWork.SurveyRespondents.GetSurveyAccessRecordsAsync(user, survey);
 
-            if (records == null || records.Count == 0)
+            if (records == null || records.Count == 0 || link == null)
             {
                 return null;
             }
 
-            var firstRecord = records.First();
+            // return a list of all keys across all survey access records
+            // only record a single instance and its value
+            var queryParams = records.SelectMany(x =>
+           x.QueryParams.Select(y => new { Key = y.Key, Value = y.Value }))
+            .GroupBy(x => x.Key)
+            .Select(x => x.First()).ToList();
 
-            var queryParamObj = JObject.Parse(firstRecord.QueryParams);
-
-            foreach(var param in queryParamObj) {
-                
-                //jey vakyue
-                link = link.Replace($"{{{{{param.Key}}}}}",param.Value.Value<string>());
+            foreach (var param in queryParams)
+            {
+                link = link.Replace($"{{{{{param.Key}}}}}", param.Value);
             }
-
+            link = System.Text.RegularExpressions.Regex.Replace(link, "\\{\\{.*\\}\\}", "UNKNOWN");
             return link;
-
         }
 
-         public async Task<string> GetSurveyRejectionLink(ApplicationUser user, Survey survey)
+        public async Task<string> GetSurveyRejectionLink(ApplicationUser user, Survey survey)
         {
             string link = survey.RejectionLink;
 
             var records = await this._unitOfWork.SurveyRespondents.GetSurveyAccessRecordsAsync(user, survey);
 
-            if (records == null || records.Count == 0)
+            if (records == null || records.Count == 0 || link == null)
             {
                 return null;
             }
 
-            var firstRecord = records.First();
+            // return a list of all keys across all survey access records
+            // only record a single instance and its value
+            var queryParams = records.SelectMany(x =>
+           x.QueryParams.Select(y => new { Key = y.Key, Value = y.Value }))
+            .GroupBy(x => x.Key)
+            .Select(x => x.First()).ToList();
 
-            var queryParamObj = JObject.Parse(firstRecord.QueryParams);
-
-            foreach(var param in queryParamObj) {
-                
-                //jey vakyue
-                link = link.Replace($"{{{{{param.Key}}}}}",param.Value.Value<string>());
+            foreach (var param in queryParams)
+            {
+                link = link.Replace($"{{{{{param.Key}}}}}", param.Value);
             }
-
+            link = System.Text.RegularExpressions.Regex.Replace(link, "\\{\\{.*\\}\\}", "UNKNOWN");
             return link;
 
         }

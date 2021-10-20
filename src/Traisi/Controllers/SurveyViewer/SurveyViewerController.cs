@@ -47,6 +47,8 @@ namespace Traisi.Controllers.SurveyViewer
 
         private UserManager<ApplicationUser> _userManager;
 
+        private SignInManager<ApplicationUser> _signInManager;
+
         private readonly IConfiguration _configuration;
 
         private readonly IHttpContextAccessor _contextAccessor;
@@ -70,6 +72,7 @@ namespace Traisi.Controllers.SurveyViewer
             UserManager<ApplicationUser> userManager,
             IConfiguration configuration,
             IHttpContextAccessor accessor,
+            SignInManager<ApplicationUser> signInManager,
             IMapper mapper
         )
         {
@@ -82,6 +85,7 @@ namespace Traisi.Controllers.SurveyViewer
             this._configuration = configuration;
             this._contextAccessor = accessor;
             this._mapper = mapper;
+            this._signInManager = signInManager;
         }
 
         /// <summary>
@@ -429,6 +433,7 @@ namespace Traisi.Controllers.SurveyViewer
                 {
                     shortcodeObj.SurveyCompleted = true;
                     await this._unitOfWork.SaveChangesAsync();
+
                 }
 
                 return new OkResult();
@@ -494,6 +499,7 @@ namespace Traisi.Controllers.SurveyViewer
             }
             var currentUser = await _userManager.GetUserAsync(User);
             var linkResult = await this._viewService.GetSurveySuccessLink(currentUser, survey);
+            await this._signInManager.SignOutAsync();
             return new OkObjectResult(new { successLink = linkResult });
         }
 
@@ -515,6 +521,7 @@ namespace Traisi.Controllers.SurveyViewer
             }
             var currentUser = await _userManager.GetUserAsync(User);
             var linkResult = await this._viewService.GetSurveyRejectionLink(currentUser, survey);
+            await this._signInManager.SignOutAsync();
             return new OkObjectResult(new { successLink = linkResult });
         }
 

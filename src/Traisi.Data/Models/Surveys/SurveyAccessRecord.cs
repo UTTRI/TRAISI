@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using Traisi.Data.Models.Interfaces;
 
@@ -11,7 +12,7 @@ namespace Traisi.Data.Models.Surveys {
 		public int Id { get; set; }
 
 		[Column (TypeName = "jsonb")]
-		public string QueryParams { get; set; }
+		public Dictionary<string,string> QueryParams { get; set; }
 		public DateTimeOffset AccessDateTime { get; set; }
 		public string UserAgent { get; set; }
 		public string RemoteIpAddress { get; set; }

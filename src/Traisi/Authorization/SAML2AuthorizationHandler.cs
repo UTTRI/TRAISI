@@ -136,6 +136,7 @@ namespace Traisi.Authorization.Extensions
             };
 
             await this._unitOfWork.Shortcodes.AddAsync(shortcode);
+
             await this._unitOfWork.SaveChangesAsync();
 
             var queryString = "";

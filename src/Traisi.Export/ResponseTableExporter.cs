@@ -130,10 +130,10 @@ namespace TRAISI.Export
                 .Include(r => r.Respondent)
                 .ThenInclude(r => r.SurveyRespondentGroup)
                 .ThenInclude(r => r.GroupMembers)
-                .Include( r => r.Respondent)
+                .Include(r => r.Respondent)
                 .ThenInclude(r => r.SurveyRespondentGroup)
-                .ThenInclude( r => r.GroupPrimaryRespondent)
-                .ThenInclude( r => r.SurveyAccessRecords)
+                .ThenInclude(r => r.GroupPrimaryRespondent)
+                .ThenInclude(r => r.SurveyAccessRecords)
                 .OrderBy(r => r.UpdatedDate)
                 .ToList();
         }
@@ -1839,17 +1839,21 @@ namespace TRAISI.Export
                     {
                         if (respondent is PrimaryRespondent primaryRespondent)
                         {
-                            worksheet.Cells[respondentRowNum[respondent], 4].Value = primaryRespondent.SurveyAccessRecords.FirstOrDefault()?.RemoteIpAddress;
-                            var result = JObject.Parse(primaryRespondent.SurveyAccessRecords.FirstOrDefault()?.QueryParams)["uid"]?.Value<string>();
-                            worksheet.Cells[respondentRowNum[respondent], 3].Value = result;
-                            // IP Address
+                            var userId = primaryRespondent.SurveyAccessRecords.SelectMany(x =>
+          x.QueryParams.Select(y => new { Key = y.Key, Value = y.Value }).Where(z => z.Key == "uid")).FirstOrDefault();
+
+                            worksheet.Cells[respondentRowNum[respondent], 3].Value = userId.Value;
+
 
                         }
                         else if (respondent is SubRespondent subRespondent)
                         {
                             worksheet.Cells[respondentRowNum[respondent], 4].Value = subRespondent.PrimaryRespondent.SurveyAccessRecords.FirstOrDefault()?.RemoteIpAddress;
-                            var result = JObject.Parse(subRespondent.PrimaryRespondent.SurveyAccessRecords.FirstOrDefault()?.QueryParams)["uid"]?.Value<string>();
-                            worksheet.Cells[respondentRowNum[respondent], 3].Value = result;
+
+                            var userId = subRespondent.PrimaryRespondent.SurveyAccessRecords.SelectMany(x =>
+x.QueryParams.Select(y => new { Key = y.Key, Value = y.Value }).Where(z => z.Key == "uid")).FirstOrDefault();
+
+                            worksheet.Cells[respondentRowNum[respondent], 3].Value = userId.Value;
 
                         }
                     }

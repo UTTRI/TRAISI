@@ -10,6 +10,7 @@ import { flatMap } from 'rxjs/operators';
 import { SurveyViewType } from '../../models/survey-view-type.enum';
 import { SurveyViewerClient } from 'app/services/survey-viewer-api-client.service';
 import { AuthService } from 'shared/services/auth.service';
+import { LOCAL_STORAGE, StorageService } from 'ngx-webstorage-service';
 
 @Component({
 	selector: 'traisi-survey-thankyou-page',
@@ -35,7 +36,8 @@ export class SurveyThankYouPageComponent implements OnInit {
 		@Inject('SurveyViewerService') private _surveyViewerService: SurveyViewerService,
 		private _viewerClient: SurveyViewerClient,
 		private _translate: TranslateService,
-		private _authService: AuthService
+		private _authService: AuthService,
+		@Inject(LOCAL_STORAGE) private _storage: StorageService
 	) {}
 
 	/**
@@ -79,6 +81,8 @@ export class SurveyThankYouPageComponent implements OnInit {
 			.subscribe((x2) => {
 				this._viewerClient.getSurveySuccessLink(this._surveyViewerService.surveyId).subscribe((x: any) => {
 					if (x.successLink) {
+						this._storage.remove(`surveyState:${this.surveyId}`);
+						this._authService.logout();
 						setTimeout(() => {
 							window.location.href = x.successLink;
 						});

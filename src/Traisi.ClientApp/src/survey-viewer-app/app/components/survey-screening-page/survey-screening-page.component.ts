@@ -12,6 +12,7 @@ import { SurveyViewerSession } from 'app/services/survey-viewer-session.service'
 import { SurveyViewerClient } from 'app/services/survey-viewer-api-client.service';
 import { AuthService } from 'shared/services/auth.service';
 import { TraisiValues, SurveyAnalyticsService } from 'traisi-question-sdk';
+import { LOCAL_STORAGE, StorageService } from 'ngx-webstorage-service';
 
 /**
  *
@@ -60,7 +61,8 @@ export class SurveyScreeningPageComponent implements OnInit {
 		private _surveySession: SurveyViewerSession,
 		private _viewerClient: SurveyViewerClient,
 		private _authService: AuthService,
-		@Inject(TraisiValues.SurveyAnalytics) private _analytics: SurveyAnalyticsService
+		@Inject(TraisiValues.SurveyAnalytics) private _analytics: SurveyAnalyticsService,
+		@Inject(LOCAL_STORAGE) private _storage: StorageService
 	) { }
 
 	/**
@@ -100,7 +102,7 @@ export class SurveyScreeningPageComponent implements OnInit {
 	public onSubmitScreeningQuestions(): void {
 		if (this.formGroup.submitted && this.formGroup.valid) {
 			// determine if all responses are yes
-			
+
 			let allNotRequiredFalse = true;
 			let hasOneRequired = false;
 			for (let value of Object.keys(this.screeningFormGroup.value)) {
@@ -130,6 +132,8 @@ export class SurveyScreeningPageComponent implements OnInit {
 								this._viewerClient
 									.getSurveyRejectionLink(this._surveyViewerService.surveyId)
 									.subscribe((x: any) => {
+										this._storage.clear();
+										this._authService.logout();
 										if (x.successLink) {
 											setTimeout(() => {
 												window.location.href = x.successLink;
