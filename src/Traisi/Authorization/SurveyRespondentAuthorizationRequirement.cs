@@ -16,8 +16,6 @@ namespace Traisi.Authorization
     public class SurveyRespondentAuthorizationRequirement : IAuthorizationRequirement
     {
 
-        
-
         public SurveyRespondentAuthorizationRequirement()
         {
    

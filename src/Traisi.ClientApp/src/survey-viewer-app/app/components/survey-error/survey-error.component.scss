@@ -21,6 +21,12 @@ p {
 	font-weight: bold;
 }
 
+
+.missing-identifier {
+	max-width: 400px;
+	margin: auto;;
+}
+
 @media #{$sm-down} {
 	.traisi-error-logo
 	{

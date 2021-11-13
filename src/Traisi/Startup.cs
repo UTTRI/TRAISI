@@ -52,6 +52,7 @@ using
     IAuthorizationHandler
     =
         Microsoft.AspNetCore.Authorization.IAuthorizationHandler;
+using Prometheus;
 
 namespace Traisi
 {
@@ -697,11 +698,13 @@ namespace Traisi
             app.UseWebSockets();
             app.UseAuthentication();
             app.UseRouting();
+            app.UseHttpMetrics();
             app.UseAuthorization();
             app
                 .UseEndpoints(endpoints =>
                 {
                     endpoints.MapControllers();
+                    endpoints.MapMetrics();
                 });
             app.UseStaticFiles();
             app.UseSpaStaticFiles();

@@ -18,6 +18,11 @@ export class AuthService {
 	public get loginUrl(): string {
 		return this.configurations.loginUrl;
 	}
+
+	public set loginUrl(loginUrl: string) {
+		this.configurations.loginUrl = loginUrl;
+	}
+
 	public get homeUrl(): string {
 		return this.configurations.homeUrl;
 	}
@@ -90,8 +95,8 @@ export class AuthService {
 	public redirectLoginUser(): void {
 		const redirect =
 			this.loginRedirectUrl &&
-			this.loginRedirectUrl !== '/' &&
-			this.loginRedirectUrl !== ConfigurationService.defaultHomeUrl
+				this.loginRedirectUrl !== '/' &&
+				this.loginRedirectUrl !== ConfigurationService.defaultHomeUrl
 				? this.loginRedirectUrl
 				: this.homeUrl;
 		this.loginRedirectUrl = null;
@@ -104,7 +109,6 @@ export class AuthService {
 			queryParams: Utilities.getQueryParamsFromString(urlAndParams.secondPart),
 			queryParamsHandling: 'merge',
 		};
-
 		this.router.navigate([urlAndParams.firstPart], navigationExtras);
 	}
 
@@ -117,7 +121,7 @@ export class AuthService {
 		const redirect = this.logoutRedirectUrl ? this.logoutRedirectUrl : this.loginUrl;
 		this.logoutRedirectUrl = null;
 
-		this.router.navigate([redirect]);
+		this.router.navigate([redirect], { queryParamsHandling: 'preserve' });
 	}
 
 	/**
@@ -127,7 +131,7 @@ export class AuthService {
 	 */
 	public redirectForLogin(): void {
 		this.loginRedirectUrl = this.router.url;
-		this.router.navigate([this.loginUrl]);
+		this.router.navigate([this.loginUrl], { queryParamsHandling: 'preserve' });
 	}
 
 	public reLogin(): void {
@@ -248,7 +252,6 @@ export class AuthService {
 		);
 		user.isEnabled = true;
 
-		console.log(user);
 
 		if (user.roles.includes('respondent')) {
 			(<SurveyUser>user).shortcode = shortcode;

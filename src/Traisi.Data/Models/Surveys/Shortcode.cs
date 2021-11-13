@@ -19,17 +19,25 @@ namespace Traisi.Data.Models.Surveys
         public Boolean IsTest { get; set; }
         public DateTime CreatedDate { get; set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <value></value>
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <value></value>
         public Boolean SurveyCompleted { get; set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <value></value>
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <value></value>
         public bool SurveyRejected { get; set; }
+
+        [Column(TypeName = "jsonb")]
+        public Dictionary<string, string> QueryParams { get; set; }
+
+        public Shortcode()
+        {
+            QueryParams = new Dictionary<string, string>();
+        }
     }
 
 }

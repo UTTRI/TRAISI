@@ -18,6 +18,7 @@ using Traisi.Data.Models.Questions;
 using Traisi.Sdk.Interfaces;
 using Traisi.Sdk.Questions;
 using System.IO;
+using Traisi.Data.Models;
 
 namespace TRAISI.Export
 {
@@ -1695,13 +1696,14 @@ namespace TRAISI.Export
             // build dictionary of questions and column numbers
             var questionColumnDict = new Dictionary<QuestionPart, int>();
             // place questions on headers and add to dictionary
-            var columnNum = 5;
+            var columnNum = 6;
 
             // Adding Respondent ID and Household ID column name
             worksheet.Cells[1, 1].Value = "RespId_Num";
             worksheet.Cells[1, 2].Value = "HhId_Num";
             worksheet.Cells[1, 3].Value = "Hh_Ps_Id";
             worksheet.Cells[1, 4].Value = "Hh_IpAddress";
+            worksheet.Cells[1, 5].Value = "Hh_Shortcode";
 
             //Matrix
             var matrixMap = new Dictionary<QuestionPart, Dictionary<string, string>>();
@@ -1861,6 +1863,20 @@ x.QueryParams.Select(y => new { Key = y.Key, Value = y.Value }).Where(z => z.Key
                     catch (Exception e)
                     {
                     }
+
+                    if (respondent?.SurveyRespondentGroup?.GroupPrimaryRespondent?.Shortcode != null)
+                    {
+                        worksheet.Cells[respondentRowNum[respondent], 5].Value = respondent?.SurveyRespondentGroup?.GroupPrimaryRespondent?.Shortcode?.Code;
+                    }
+                    else
+                    {
+                        if (respondent?.SurveyRespondentGroup?.GroupPrimaryRespondent?.User is SurveyUser surveyUser)
+                        {
+                            worksheet.Cells[respondentRowNum[respondent], 5].Value = surveyUser.Shortcode?.Code;
+                        }
+
+                    }
+
 
 
 

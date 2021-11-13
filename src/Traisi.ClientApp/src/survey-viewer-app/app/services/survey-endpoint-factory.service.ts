@@ -23,6 +23,7 @@ export class SurveyEndpointFactoryService extends EndpointFactory {
 	 * @param continuation
 	 */
 	protected handleError(error: any, continuation: () => Observable<any>): Observable<any> {
+		console.log('error occured');
 		if (error.status === 401 && this.lastCall !== error.url) {
 			this.lastCall = error.url;
 			if (this.isRefreshingLogin) {

@@ -24,6 +24,7 @@ using Traisi.Services.Interfaces;
 using Traisi.ViewModels;
 using Traisi.ViewModels.Extensions;
 using Traisi.ViewModels.SurveyViewer;
+using Prometheus;
 
 namespace Traisi.Controllers.SurveyViewer
 {
@@ -53,6 +54,13 @@ namespace Traisi.Controllers.SurveyViewer
 
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IMapper _mapper;
+
+        private static readonly Counter SURVEY_USER_REJECTION_COUNTER =
+         Metrics.CreateCounter("survey_user_rejection", "Count of number of times a survey was rejected.");
+
+        private static readonly Counter SURVEY_USER_COMPLETE_SURVEY_COUNTER =
+         Metrics.CreateCounter("survey_user_complete_survey", "Count of number of times a survey was completed by a user.");
+
 
         /// <summary>
         /// 
@@ -86,6 +94,9 @@ namespace Traisi.Controllers.SurveyViewer
             this._contextAccessor = accessor;
             this._mapper = mapper;
             this._signInManager = signInManager;
+
+            SURVEY_USER_COMPLETE_SURVEY_COUNTER.Publish();
+            SURVEY_USER_REJECTION_COUNTER.Publish();
         }
 
         /// <summary>
@@ -279,6 +290,7 @@ namespace Traisi.Controllers.SurveyViewer
             {
                 return new NotFoundResult();
             }
+
 
             return new ObjectResult(result);
         }
@@ -499,6 +511,7 @@ namespace Traisi.Controllers.SurveyViewer
             }
             var currentUser = await _userManager.GetUserAsync(User);
             var linkResult = await this._viewService.GetSurveySuccessLink(currentUser, survey);
+            SURVEY_USER_COMPLETE_SURVEY_COUNTER.Inc();
             await this._signInManager.SignOutAsync();
             return new OkObjectResult(new { successLink = linkResult });
         }
@@ -522,6 +535,7 @@ namespace Traisi.Controllers.SurveyViewer
             var currentUser = await _userManager.GetUserAsync(User);
             var linkResult = await this._viewService.GetSurveyRejectionLink(currentUser, survey);
             await this._signInManager.SignOutAsync();
+            SURVEY_USER_REJECTION_COUNTER.Inc();
             return new OkObjectResult(new { successLink = linkResult });
         }
 

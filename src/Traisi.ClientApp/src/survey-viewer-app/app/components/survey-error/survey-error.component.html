@@ -1,10 +1,18 @@
 <div class="traisi-error-logo">
-	<img  src="/admin/assets/img/logo_light.png">
+	<img src="/admin/assets/img/logo_light.png">
 </div>
 
 <div class="error-header">
-	<h1>Survey Not Found</h1>
+	<h1>Error Accessing Survey</h1>
 </div>
 <p>
-	Survey "<span class="survey-name">{{ surveyName }}</span>" was not found.
+	There was a problem accessing Survey "<span class="survey-name">{{ surveyName }}</span>".
 </p>
+<div *ngIf="missingIdentifier" class="missing-identifier">
+	<p>
+		Thank you for your willingness to take the survey.
+		The link used to access the survey is invalid. </p>
+	<p>
+		Certain identifying values are missing from the request link.
+		Please do not try to access the survey with the same link again. Thanks for your cooperation.</p>
+</div>

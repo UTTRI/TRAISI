@@ -22,6 +22,7 @@ import { SurveyViewerSession } from 'app/services/survey-viewer-session.service'
 import { SurveyViewerSessionData } from 'app/models/survey-viewer-session-data.model';
 import { zip, Observable, EMPTY } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
+import { DOCUMENT } from '@angular/common';
 
 @Component({
 	selector: 'traisi-survey-start-page',
@@ -67,8 +68,9 @@ export class SurveyStartPageComponent implements OnInit {
 		@Inject('SurveyViewerService') private _surveyViewerService: SurveyViewerService,
 		private _route: ActivatedRoute,
 		private _router: Router,
-		private _surveySession: SurveyViewerSession
-	) {}
+		private _surveySession: SurveyViewerSession,
+		@Inject(DOCUMENT) private _document: Document
+	) { }
 
 	/**
 	 *
@@ -87,7 +89,7 @@ export class SurveyStartPageComponent implements OnInit {
 			this._route.paramMap.subscribe((map) => {
 				if (map.has('shortcode')) {
 					let shortcode = map.get('shortcode');
-					shortcode = shortcode.replace(/[^a-zA-Z0-9\-]/g, '');
+					shortcode = shortcode.replace(/[^a-zA-Z0-9\-_]/g, '');
 					console.log(shortcode);
 					this.trySurveyLogin(shortcode);
 				}
@@ -175,7 +177,7 @@ export class SurveyStartPageComponent implements OnInit {
 			.surveyStart(this.surveyStartConfig.id, shortcode, this._queryParams)
 			.subscribe((r) => {
 				this._surveyViewerService.surveyLogin(this.surveyStartConfig.id, shortcode).subscribe(
-					(user: User) => {},
+					(user: User) => { },
 					(error) => {
 						console.log(' you are not logged in');
 					}
@@ -228,16 +230,22 @@ export class SurveyStartPageComponent implements OnInit {
 
 	private externalStart(): Observable<void> {
 		let paramUrl = this.authMode.authenticationUrl;
-		let paramMap = {};
-		for (let param of this._route.snapshot.queryParamMap.keys) {
-			paramMap[param] = this._route.snapshot.queryParams[param];
-		}
-		const querystring = this.encodeQueryData(paramMap);
+		let params = {};
+		this._route.queryParamMap.subscribe(paramMap => {
+			for (let param of paramMap.keys) {
+				params[param] = paramMap.get(param);
+			}
+			const querystring = this.encodeQueryData(params);
 
-		paramUrl = paramUrl + '?' + querystring;
+			paramUrl = paramUrl + '?' + querystring;
 
-		window.location.href = paramUrl;
+			this._document.location.href = paramUrl;
+			//}
+		});
+
+
 		return EMPTY;
+
 	}
 
 	private traisiInternalStart(): Observable<void> {
@@ -249,7 +257,6 @@ export class SurveyStartPageComponent implements OnInit {
 						this.isLoading = false;
 
 						if (!this.isAdmin) {
-							console.log(' in start her ');
 							this._surveyViewerService
 								.surveyLogin(this.surveyStartConfig.id, this.shortcode)
 								.subscribe((user: User) => {

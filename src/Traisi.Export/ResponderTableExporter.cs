@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Data;
 using Traisi.Data;
 using Traisi.Data.Models.Surveys;
+using Traisi.Data.Models;
 
 namespace TRAISI.Export
 {
@@ -59,6 +60,11 @@ namespace TRAISI.Export
                .ThenInclude(srg => srg.GroupMembers)
                .Include(r => r.SurveyRespondentGroup.GroupPrimaryRespondent)
                .ThenInclude(r => r.SurveyRespondentGroup.GroupPrimaryRespondent.SurveyAccessRecords)
+                .Include(r => r.SurveyRespondentGroup.GroupPrimaryRespondent)
+               .ThenInclude(r => r.SurveyRespondentGroup.GroupPrimaryRespondent.Shortcode)
+               .Include(r => r.SurveyRespondentGroup.GroupPrimaryRespondent)
+               .ThenInclude(r => r.SurveyRespondentGroup.GroupPrimaryRespondent.User)
+               .ThenInclude(r => ((SurveyUser)r).Shortcode)
                .ToList();
             return primaryRespondents;
         }

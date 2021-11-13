@@ -31,6 +31,7 @@ import { SurveyNavigator } from 'app/modules/survey-navigation/services/survey-n
 import { SurveyViewerResponseService } from './survey-viewer-response.service';
 import { NavigationState } from 'app/models/navigation-state.model';
 import { ThrowStmt } from '@angular/compiler';
+
 @Injectable({
 	providedIn: 'root',
 })
@@ -137,6 +138,8 @@ export class SurveyViewerService implements OnInit {
 
 				this.activeSurveyCode = route.snapshot.paramMap.get('surveyName');
 				this.surveyCode.next(this.activeSurveyCode);
+
+				this._authService.loginUrl = `/survey/${this.activeSurveyCode}/start`;
 
 				if (this._activeSurveyId < 0) {
 					this.restoreStatus();
@@ -343,7 +346,7 @@ export class SurveyViewerService implements OnInit {
 	 *
 	 * @memberof SurveyViewerService
 	 */
-	public ngOnInit(): void {}
+	public ngOnInit(): void { }
 
 	public isAdminUser(): boolean {
 		if (!this._authService.isLoggedIn) {

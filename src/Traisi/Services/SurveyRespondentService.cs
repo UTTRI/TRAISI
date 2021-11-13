@@ -26,14 +26,15 @@ namespace Traisi.Services
         /// <param name="user"></param>
         /// <param name="survey"></param>
         /// <returns></returns>
-        public async Task<PrimaryRespondent> CreatePrimaryRespondentForUser(ApplicationUser user, Survey survey)
+        public async Task<PrimaryRespondent> CreatePrimaryRespondentForUser(ApplicationUser user, Survey survey, Shortcode shortcodeRef)
         {
             var respondent = new PrimaryRespondent()
             {
                 Survey = survey,
                 User = user,
                 SurveyAccessRecords = new List<SurveyAccessRecord>(),
-                SurveyRespondentGroup = new SurveyRespondentGroup()
+                SurveyRespondentGroup = new SurveyRespondentGroup(),
+                Shortcode = shortcodeRef
 
             };
             await this._unitOfWork.SurveyRespondents.AddAsync(respondent);

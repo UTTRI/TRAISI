@@ -7,11 +7,19 @@ import {ActivatedRoute} from '@angular/router';
 	styleUrls: ['./survey-error.component.scss']
 })
 export class SurveyErrorComponent implements OnInit {
+
+	private missingIdentifier: boolean;
+
 	/**
 	 *
 	 * @param route
 	 */
 	constructor(private route: ActivatedRoute) {
+		route.queryParamMap.subscribe(paramMap => {
+			if(paramMap.has('missingIdentifier')) {
+				this.missingIdentifier = true;
+			}
+		});
 	}
 
 	public surveyName: string;

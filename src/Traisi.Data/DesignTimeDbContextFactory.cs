@@ -45,6 +45,7 @@ namespace Traisi.Data
                 .UseNpgsql(configuration["ConnectionStrings:DefaultConnection"],
                 b =>
                 {
+                    b.CommandTimeout(120);
                     b.MigrationsAssembly("Traisi");
                     b.UseNetTopologySuite();
                 });
