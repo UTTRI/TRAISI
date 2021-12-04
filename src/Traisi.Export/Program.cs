@@ -157,7 +157,7 @@ namespace TRAISI.Export
                 responseTableExporter.ResponseListToWorksheet(responses_houseHold, hhResponseSheet, true);
                 Console.WriteLine("Writing Household Response Pivot sheet");
                 var hhResponsePivotSheet = workbook.Worksheets.Add("Household Responses Pivot");
-                responseTableExporter.ResponsesPivot_HouseHold(questionParts_houseHold, responses_houseHold, respondents, hhResponsePivotSheet);
+                responseTableExporter.ResponsesPivot_HouseHold(survey, questionParts_houseHold, responses_houseHold, respondents, hhResponsePivotSheet);
                 eXp.Save();
             }
 

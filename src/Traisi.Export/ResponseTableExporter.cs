@@ -1687,6 +1687,7 @@ namespace TRAISI.Export
         }
 
         public void ResponsesPivot_HouseHold(
+            Survey survey,
         List<QuestionPart> questionParts,
         List<SurveyResponse> surveyResponses,
         List<SurveyRespondent> surveyRespondents,
@@ -1696,14 +1697,24 @@ namespace TRAISI.Export
             // build dictionary of questions and column numbers
             var questionColumnDict = new Dictionary<QuestionPart, int>();
             // place questions on headers and add to dictionary
-            var columnNum = 6;
+
 
             // Adding Respondent ID and Household ID column name
             worksheet.Cells[1, 1].Value = "RespId_Num";
             worksheet.Cells[1, 2].Value = "HhId_Num";
-            worksheet.Cells[1, 3].Value = "Hh_Ps_Id";
-            worksheet.Cells[1, 4].Value = "Hh_IpAddress";
-            worksheet.Cells[1, 5].Value = "Hh_Shortcode";
+
+            string pattern = @"\{\{(.*?)\}\}";
+            Regex rgx = new Regex(pattern);
+            MatchCollection matchCollection = rgx.Matches(survey.SuccessLink);
+            for (int i = 0; i < matchCollection.Count; i++)
+            {
+                worksheet.Cells[1, 3 + i].Value = "Hh_Ps_Id_" + matchCollection[i].Groups[1].Value;
+            }
+
+            worksheet.Cells[1, 3 + matchCollection.Count].Value = "Hh_IpAddress";
+            worksheet.Cells[1, 4 + matchCollection.Count].Value = "Hh_Shortcode";
+
+            var columnNum = 5 + matchCollection.Count;
 
             //Matrix
             var matrixMap = new Dictionary<QuestionPart, Dictionary<string, string>>();
@@ -1839,25 +1850,29 @@ namespace TRAISI.Export
                     // IP Address
                     try
                     {
-                        if (respondent is PrimaryRespondent primaryRespondent)
+                        for (int i = 0; i < matchCollection.Count; i++)
                         {
-                            worksheet.Cells[respondentRowNum[respondent], 4].Value = primaryRespondent.SurveyAccessRecords.FirstOrDefault()?.RemoteIpAddress;
-                            var userId = primaryRespondent.SurveyAccessRecords.SelectMany(x =>
-          x.QueryParams.Select(y => new { Key = y.Key, Value = y.Value }).Where(z => z.Key == "uid")).FirstOrDefault();
+                            if (respondent is PrimaryRespondent primaryRespondent)
+                            {
+                                worksheet.Cells[respondentRowNum[respondent], matchCollection.Count+3].Value = primaryRespondent.SurveyAccessRecords.FirstOrDefault()?.RemoteIpAddress;
 
-                            worksheet.Cells[respondentRowNum[respondent], 3].Value = userId.Value;
+                                var userId = primaryRespondent.SurveyAccessRecords.SelectMany(x =>
+              x.QueryParams.Select(y => new { Key = y.Key, Value = y.Value }).Where(z => z.Key == matchCollection[i].Groups[1].Value)).FirstOrDefault();
+
+                                worksheet.Cells[respondentRowNum[respondent],  3 + i].Value = userId.Value;
 
 
-                        }
-                        else if (respondent is SubRespondent subRespondent)
-                        {
-                            worksheet.Cells[respondentRowNum[respondent], 4].Value = subRespondent.PrimaryRespondent.SurveyAccessRecords.FirstOrDefault()?.RemoteIpAddress;
+                            }
+                            else if (respondent is SubRespondent subRespondent)
+                            {
+                                worksheet.Cells[respondentRowNum[respondent], matchCollection.Count +3].Value = subRespondent.PrimaryRespondent.SurveyAccessRecords.FirstOrDefault()?.RemoteIpAddress;
 
-                            var userId = subRespondent.PrimaryRespondent.SurveyAccessRecords.SelectMany(x =>
-x.QueryParams.Select(y => new { Key = y.Key, Value = y.Value }).Where(z => z.Key == "uid")).FirstOrDefault();
+                                var userId = subRespondent.PrimaryRespondent.SurveyAccessRecords.SelectMany(x =>
+                                x.QueryParams.Select(y => new { Key = y.Key, Value = y.Value }).Where(z => z.Key == matchCollection[i].Groups[1].Value)).FirstOrDefault();
 
-                            worksheet.Cells[respondentRowNum[respondent], 3].Value = userId.Value;
+                                worksheet.Cells[respondentRowNum[respondent], 3 + i].Value = userId.Value;
 
+                            }
                         }
                     }
                     catch (Exception e)
@@ -1866,18 +1881,16 @@ x.QueryParams.Select(y => new { Key = y.Key, Value = y.Value }).Where(z => z.Key
 
                     if (respondent?.SurveyRespondentGroup?.GroupPrimaryRespondent?.Shortcode != null)
                     {
-                        worksheet.Cells[respondentRowNum[respondent], 5].Value = respondent?.SurveyRespondentGroup?.GroupPrimaryRespondent?.Shortcode?.Code;
+                        worksheet.Cells[respondentRowNum[respondent], matchCollection.Count + 4].Value = respondent?.SurveyRespondentGroup?.GroupPrimaryRespondent?.Shortcode?.Code;
                     }
                     else
                     {
                         if (respondent?.SurveyRespondentGroup?.GroupPrimaryRespondent?.User is SurveyUser surveyUser)
                         {
-                            worksheet.Cells[respondentRowNum[respondent], 5].Value = surveyUser.Shortcode?.Code;
+                            worksheet.Cells[respondentRowNum[respondent], matchCollection.Count + 4].Value = surveyUser.Shortcode?.Code;
                         }
 
                     }
-
-
 
 
                     var checkboxResponses = responses.Where(r => this._questionTypeManager.QuestionTypeDefinitions[r.QuestionPart.QuestionType].ClassName ==
