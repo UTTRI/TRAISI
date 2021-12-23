@@ -433,7 +433,6 @@ export class SurveyBuilderComponent implements OnInit, OnDestroy {
 		this.surveyBuilderService
 			.getQuestionPartViewPageStructure(this.surveyId, pageId, this.currentLanguage)
 			.subscribe((page) => {
-				console.log(page); 
 				this.currentSurveyPage = page;
 				this.surveyPage.currentPage = page;
 				this.surveyPage.partsLeftToLoad = 1;

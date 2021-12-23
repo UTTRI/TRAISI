@@ -419,8 +419,10 @@ export class MapQuestionComponent
 	 * Loads configuration
 	 * @param mapConfig
 	 */
-	public loadConfiguration(mapConfig: any): void {
+	public loadConfiguration(mapConfig: MapQuestionConfiguration): void {
 		// this.accessToken = mapConfig.AccessToken;
+
+		console.log(mapConfig);
 	}
 
 	/**
