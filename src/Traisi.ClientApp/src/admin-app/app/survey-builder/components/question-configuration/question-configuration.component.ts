@@ -372,6 +372,7 @@ export class QuestionConfigurationComponent implements OnInit, AfterViewInit {
 	public processConfigurations() {
 		this.configurations = Object.values(this.questionType.questionConfigurations);
 
+
 		this.processQuestionTree();
 		if (this.questionType.typeName !== 'Survey Part') {
 			if (!this.newQuestion) {
@@ -418,25 +419,7 @@ export class QuestionConfigurationComponent implements OnInit, AfterViewInit {
 			.subscribe((conditionals) => {
 				this.conditionalOperators = conditionals;
 				this.conditionalsLoaded = true;
-				// this.builderService
-				// 	.getQuestionPartOptionConditionals(
-				// 		this.surveyId,
-				// 		this.questionBeingEdited.questionPart.id
-				// 	)
-				// 	.subscribe(oConditionals => {
 
-				// 		this.sourceQuestionConditionals = conditionals.filter(
-				// 			c =>
-				// 				c.sourceQuestionId ===
-				// 				this.questionBeingEdited.questionPart.id
-				// 		);
-				// 		this.sourceQuestionOptionConditionals = oConditionals.filter(
-				// 			c =>
-				// 				c.sourceQuestionId ===
-				// 				this.questionBeingEdited.questionPart.id
-				// 		);
-				// 		this.conditionalsLoaded = true;
-				// 	});
 			});
 	}
 

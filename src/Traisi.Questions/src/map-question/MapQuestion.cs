@@ -49,12 +49,12 @@ namespace Traisi.Sdk.Questions
             DefaultValue = "8")]
         public int Zoom = 8;
 
-        [QuestionConfiguration(ConfigurationValueType.Tuple,
-            DisplayName = "Mapbox Default Centre",
-            Description = "Initial centre location.",
-            SurveyBuilderValueType = QuestionBuilderType.Location,
-            DefaultValue = "-79.40|43.67")]
-        public Tuple<double, double> Centre = new Tuple<double, double>(-79.40, 43.67);
+        [QuestionConfiguration(ConfigurationValueType.String,
+            DisplayName = "Mapbox Default Centre Location",
+            Description = "Initial centre location by Lat,Lng.",
+            SurveyBuilderValueType = QuestionBuilderType.Text,
+            DefaultValue = "-79.40,43.67")]
+        public Tuple<double, double> DefaultCentreLocation = new Tuple<double, double>(-79.40, 43.67);
 
         [QuestionConfiguration(ConfigurationValueType.Custom,
             DisplayName = "Purpose",

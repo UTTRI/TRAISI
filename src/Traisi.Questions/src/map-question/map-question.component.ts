@@ -53,9 +53,9 @@ export class MapQuestionComponent
 	 */
 	public purpose: string = '';
 
-	private _markerPosition: number[] = [-79.4, 43.67];
+	private _markerPosition: number[] = [-123.1207, 49.2827];
 
-	private _defaultPosition: number[] = [-79.4, 43.67];
+	private _defaultPosition: number[] = [-123.1207, 49.2827];
 
 	public preferredHeight = 350;
 
@@ -204,7 +204,7 @@ export class MapQuestionComponent
 		(mapboxgl as any).accessToken = this.accessToken;
 		this._map = new mapboxgl.Map({
 			container: this.mapContainer.nativeElement,
-			center: [-79.4, 43.67],
+			center: [this._defaultPosition[0],this._defaultPosition[1]],
 			style: 'mapbox://styles/mapbox/streets-v9',
 			zoom: 14,
 		});
